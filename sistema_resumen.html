@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen del Sistema MiClinica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #16a085;
+        }
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .code {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: monospace;
+            padding: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .diagram {
+            text-align: center;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resumen del Sistema MiClinica</h1>
+        
+        <div class="section">
+            <h2>1. Estructura General del Proyecto</h2>
+            <p>El sistema MiClinica está desarrollado siguiendo el patrón de arquitectura Modelo-Vista-Controlador (MVC), lo que permite una separación clara de responsabilidades y facilita el mantenimiento del código.</p>
+            
+            <h3>Organización de Carpetas</h3>
+            <ul>
+                <li><strong>model/</strong>: Contiene las clases que interactúan con la base de datos y definen la lógica de negocio.</li>
+                <li><strong>view/</strong>: Contiene las plantillas y archivos de presentación que se muestran al usuario.</li>
+                <li><strong>controller/</strong>: Contiene los controladores que procesan las solicitudes del usuario y coordinan el modelo y la vista.</li>
+                <li><strong>ajax/</strong>: Contiene archivos para manejar solicitudes asíncronas.</li>
+                <li><strong>api/</strong>: Implementación de API REST para integración con otros sistemas.</li>
+                <li><strong>config/</strong>: Archivos de configuración del sistema.</li>
+                <li><strong>vendor/</strong>: Dependencias de terceros gestionadas por Composer.</li>
+            </ul>
+            
+            <h3>Flujo de Trabajo MVC</h3>
+            <div class="code">
+1. El usuario realiza una solicitud a través del navegador
+2. El archivo index.php recibe la solicitud y la dirige al controlador apropiado
+3. El controlador procesa la solicitud, interactúa con el modelo si es necesario
+4. El modelo realiza operaciones en la base de datos y devuelve los resultados
+5. El controlador pasa los datos a la vista
+6. La vista genera la presentación HTML que se envía al navegador
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>2. Sistema de Autenticación y Gestión de Usuarios</h2>
+            <p>El sistema implementa un mecanismo de autenticación basado en sesiones PHP para controlar el acceso a las diferentes áreas de la aplicación.</p>
+            
+            <h3>Características Principales</h3>
+            <ul>
+                <li>Inicio de sesión seguro con validación de credenciales</li>
+                <li>Registro de nuevos usuarios</li>
+                <li>Control de acceso basado en roles</li>
+                <li>Gestión de sesiones con PHP</li>
+                <li>Protección contra ataques comunes (CSRF, XSS, inyección SQL)</li>
+            </ul>
+            
+            <h3>Flujo de Autenticación</h3>
+            <div class="code">
+// Verificación de sesión en template.php
+if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
+    // Usuario autenticado - mostrar interfaz de administración
+} else {
+    // Usuario no autenticado - mostrar interfaz pública o login
+}
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>3. Módulo de Personas/Pacientes</h2>
+            <p>Este módulo gestiona la información de pacientes y personas relacionadas con la clínica, permitiendo el registro, consulta, actualización y eliminación de datos.</p>
+            
+            <h3>Funcionalidades</h3>
+            <ul>
+                <li>Registro de datos personales y médicos</li>
+                <li>Historial médico de pacientes</li>
+                <li>Gestión de consultas médicas</li>
+                <li>Programación de citas</li>
+                <li>Carga y gestión de archivos relacionados con pacientes</li>
+            </ul>
+            
+            <h3>Estructura de Datos</h3>
+            <table>
+                <tr>
+                    <th>Tabla</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>personas</td>
+                    <td>Almacena información básica de personas (pacientes, médicos, etc.)</td>
+                </tr>
+                <tr>
+                    <td>consultas</td>
+                    <td>Registra las consultas médicas realizadas</td>
+                </tr>
+                <tr>
+                    <td>citas</td>
+                    <td>Gestiona las citas programadas</td>
+                </tr>
+                <tr>
+                    <td>archivos</td>
+                    <td>Almacena referencias a documentos y archivos subidos al sistema</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>4. API REST y Controladores</h2>
+            <p>El sistema incluye una API REST que permite la integración con otros sistemas y aplicaciones móviles, facilitando el acceso a los datos de forma estructurada.</p>
+            
+            <h3>Estructura de la API</h3>
+            <ul>
+                <li><strong>api/controllers/</strong>: Controladores específicos para la API</li>
+                <li><strong>api/models/</strong>: Modelos utilizados por la API</li>
+                <li><strong>api/routes/</strong>: Definición de rutas y endpoints</li>
+                <li><strong>api/core/</strong>: Componentes centrales como Router, Response, etc.</li>
+            </ul>
+            
+            <h3>Endpoints Principales</h3>
+            <div class="code">
+// Ejemplos de endpoints disponibles
+GET /api/patients - Obtener lista de pacientes
+GET /api/patients/{id} - Obtener datos de un paciente específico
+POST /api/patients - Crear nuevo paciente
+PUT /api/patients/{id} - Actualizar datos de un paciente
+DELETE /api/patients/{id} - Eliminar un paciente
+
+GET /api/users - Obtener lista de usuarios
+POST /api/register - Registrar nuevo usuario
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>5. Integración con AdminLTE 3.2.0</h2>
+            <p>El sistema utiliza AdminLTE 3.2.0 como framework de interfaz de usuario, proporcionando una experiencia moderna y responsive para los usuarios.</p>
+            
+            <h3>Componentes Utilizados</h3>
+            <ul>
+                <li>Plantillas de diseño responsive</li>
+                <li>Componentes de UI como tablas, formularios, modales, etc.</li>
+                <li>Plugins integrados (Select2, Summernote, Dropzone, etc.)</li>
+                <li>Sistema de navegación con sidebar y navbar</li>
+                <li>Temas y personalización visual</li>
+            </ul>
+            
+            <h3>Estructura de Plantillas</h3>
+            <div class="code">
+// Estructura básica de plantillas
+- template.php (Plantilla principal)
+- nav/navbar.php (Barra de navegación superior)
+- nav/sidebar.php (Menú lateral)
+- nav/footer.php (Pie de página)
+- modules/ (Módulos específicos de contenido)
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>6. Sistema de Enrutamiento</h2>
+            <p>El sistema implementa un mecanismo de enrutamiento simple basado en parámetros GET para navegar entre diferentes módulos y funcionalidades.</p>
+            
+            <h3>Funcionamiento</h3>
+            <div class="code">
+// Ejemplo de enrutamiento en template.php
+if(isset($_GET["ruta"])){
+    if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout" || 
+        $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas") {
+        include "modules/".$_GET["ruta"].".php";
+    } else {
+        include "view/modules/404.php";
+    }
+} else {
+    include "view/modules/home.php";
+}
+            </div>
+            
+            <h3>Rutas Principales</h3>
+            <ul>
+                <li><strong>home</strong>: Página principal del sistema</li>
+                <li><strong>login</strong>: Página de inicio de sesión</li>
+                <li><strong>register</strong>: Registro de nuevos usuarios</li>
+                <li><strong>consultas</strong>: Gestión de consultas médicas</li>
+                <li><strong>personas</strong>: Administración de personas/pacientes</li>
+                <li><strong>start</strong>: Página de inicio pública</li>
+                <li><strong>web-servicios</strong>: Página de servicios pública</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>Resumen del Sistema MiClinica - Generado el <?php echo date('d/m/Y'); ?></p>
+        </div>
+    </div>
+</body>
+</html>

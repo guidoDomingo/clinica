@@ -1,0 +1,90 @@
+.fx {
+    background-color: #ffffff; /* Fondo blanco */
+    border: 1px solid #e0e0e0; /* Borde sutil */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 20px; /* Espaciado interno */
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Transiciones suaves */
+    margin-bottom: 20px; /* Margen inferior */
+}
+
+.fx:hover {
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5), 0 0 30px rgba(0, 123, 255, 0.3); /* Efecto de iluminación */
+    transform: translateY(-2px); /* Elevación sutil */
+}
+
+
+/* file choser */
+/* Contenedor del formulario */
+.form-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Título del formulario */
+.form-container h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Input de archivos */
+.form-container input[type="file"] {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-container input[type="file"]:hover {
+    border-color: #007bff;
+    background-color: #e9f5ff;
+}
+
+/* Botón de subir archivos */
+.form-container input[type="button"] {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.form-container input[type="button"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.form-container input[type="button"]:active {
+    transform: translateY(0);
+}
+
+/* Mensaje de error */
+.form-container .error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+/* Efecto de enfoque en el input de archivos */
+.form-container input[type="file"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
