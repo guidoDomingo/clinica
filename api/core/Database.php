@@ -171,4 +171,34 @@ class Database
         $stmt = self::query($sql, $params);
         return $stmt->rowCount();
     }
+
+    /**
+     * Begin a database transaction
+     * 
+     * @return bool
+     */
+    public static function beginTransaction()
+    {
+        return self::getConnection()->beginTransaction();
+    }
+
+    /**
+     * Commit a database transaction
+     * 
+     * @return bool
+     */
+    public static function commit()
+    {
+        return self::getConnection()->commit();
+    }
+
+    /**
+     * Rollback a database transaction
+     * 
+     * @return bool
+     */
+    public static function rollBack()
+    {
+        return self::getConnection()->rollBack();
+    }
 }

@@ -44,15 +44,24 @@ class SysUser extends Model
     {
         $offset = ($page - 1) * $perPage;
         
-        $sql = "SELECT u.*, r.reg_name, r.reg_lastname, r.reg_email, r.reg_document "
+        $sql = "SELECT u.*, r.reg_name, r.reg_lastname, r.reg_email, r.reg_document, "
+             . "ARRAY_AGG(DISTINCT jsonb_build_object('role_id', ro.role_id, 'role_name', ro.role_name)) FILTER (WHERE ro.role_id IS NOT NULL) as roles "
              . "FROM {$this->table} u "
              . "JOIN sys_register r ON u.reg_id = r.reg_id "
-             . "ORDER BY {$this->primaryKey} DESC LIMIT :limit OFFSET :offset";
+             . "LEFT JOIN sys_user_roles ur ON u.user_id = ur.user_id "
+             . "LEFT JOIN sys_roles ro ON ur.role_id = ro.role_id "
+             . "GROUP BY u.user_id, r.reg_name, r.reg_lastname, r.reg_email, r.reg_document "
+             . "ORDER BY u.{$this->primaryKey} DESC LIMIT :limit OFFSET :offset";
         
         $users = $this->raw($sql, [
             'limit' => $perPage,
             'offset' => $offset
         ])->fetchAll();
+        
+        // Parse the roles JSON array for each user
+        foreach ($users as &$user) {
+            $user['roles'] = $user['roles'] ? json_decode($user['roles']) : [];
+        }
         
         $countSql = "SELECT COUNT(*) as total FROM {$this->table}";
         $totalCount = $this->raw($countSql)->fetch()['total'];

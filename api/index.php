@@ -20,19 +20,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Include necessary files
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/routes/api.php';
 require_once __DIR__ . '/core/Router.php';
 require_once __DIR__ . '/core/Response.php';
+
+// Initialize the Router
+$router = new \Api\Core\Router();
+
+// Include routes
+require_once __DIR__ . '/routes/api.php';
 
 // Get the request URI and method
 $requestUri = isset($_GET['route']) ? $_GET['route'] : '';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
-
-// Initialize the router
-$router = new \Api\Core\Router();
-
-// Load routes from the routes file
-require_once __DIR__ . '/routes/api.php';
 
 // Process the request
 try {

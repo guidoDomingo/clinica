@@ -26,14 +26,16 @@ const motivosConsultaOculares = [
 // Seleccionar el elemento <select> por su ID
 const motivoConsulta = document.querySelector('#motivoscomunes');
 
-// Agregar cada motivo de consulta como una opción en el <select>
-motivosConsultaOculares.forEach(motivo => {
-  const optionElement = document.createElement('option');
-  optionElement.value = motivo;
-  optionElement.textContent = motivo;
-  motivoConsulta.appendChild(optionElement);
-});
- 
+if (motivoConsulta) {
+  motivosConsultaOculares.forEach(motivo => {
+    const optionElement = document.createElement('option');
+    optionElement.value = motivo;
+    optionElement.textContent = motivo;
+    motivoConsulta.appendChild(optionElement);
+  });
+} else {
+  console.warn('Elemento con id "motivoscomunes" no encontrado.');
+}
  
   const formatoConsulta = [
     "Sin formato",
@@ -405,117 +407,126 @@ function buscarConsultas(persona) {
 }
 });//cierre de document laoded
    
-document.getElementById('btnSubirArchivos').addEventListener('click', function() {
-  // Obtener el valor del campo oculto
-  let idPersona = document.getElementById('id_persona_file').value.trim();
+const btnSubirArchivos = document.getElementById('btnSubirArchivos');
 
-  // Validar que el campo oculto tenga valor
-  if (!idPersona) {
-      Swal.fire({
-          position: "center",
-          icon: "warning",
-          title: "Por favor, seleccione una persona 😊",
-          showConfirmButton: false,
-          timer: 1500
-      });
-      volverAlTop("container-fluid");
-      return; // Detiene la ejecución si el campo está vacío
-  }
+if (btnSubirArchivos) {
+    btnSubirArchivos.addEventListener('click', function() {
+        // Obtener el valor del campo oculto
+        let idPersona = document.getElementById('id_persona_file')?.value.trim() || '';
 
-  const fileInput = document.getElementById('files');
-  const errorDiv = document.getElementById('error');
-  errorDiv.textContent = '';
+        // Validar que el campo oculto tenga valor
+        if (!idPersona) {
+            Swal.fire({
+                position: "center",
+                icon: "warning",
+                title: "Por favor, seleccione una persona 😊",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            volverAlTop("container-fluid");
+            return; // Detiene la ejecución si el campo está vacío
+        }
 
-  // Tipos de archivo permitidos
-  const allowedTypes = [
-      'application/pdf', // PDF
-      'image/jpeg',      // JPG
-      'image/png',       // PNG
-      'image/gif',       // GIF
-      'image/webp',     // WEBP
-      'image/svg+xml'    // SVG
-  ];
+        const fileInput = document.getElementById('files');
+        const errorDiv = document.getElementById('error');
+        
+        if (!fileInput || !errorDiv) {
+            console.warn('Elementos del formulario no encontrados');
+            return;
+        }
 
-  // Tamaño máximo permitido (25 MB)
-  const maxSize = 25 * 1024 * 1024; // 25 MB
+        errorDiv.textContent = '';
 
-  if (fileInput.files.length === 0) {
-      Swal.fire({
-          position: "center",
-          icon: "info",
-          title: 'Por favor, selecciona al menos un archivo 😊',
-          text: "",
-          showConfirmButton: false,
-          timer: 1500
-      });
-  } else {
-      let valid = true;
-      for (let i = 0; i < fileInput.files.length; i++) {
-          const file = fileInput.files[i];
+        // Tipos de archivo permitidos
+        const allowedTypes = [
+            'application/pdf', // PDF
+            'image/jpeg',      // JPG
+            'image/png',       // PNG
+            'image/gif',       // GIF
+            'image/webp',     // WEBP
+            'image/svg+xml'    // SVG
+        ];
 
-          // Validar tipo de archivo
-          if (!allowedTypes.includes(file.type)) {
-              Swal.fire({
-                  position: "center",
-                  icon: "warning",
-                  title: 'El archivo ' + file.name + ' no es un PDF o una imagen válida (JPEG, PNG, GIF, WEBP, SVG).',
-                  text: file.name,
-                  showConfirmButton: false,
-                  timer: 1500
-              });
-              valid = false;
-              break;
-          }
+        // Tamaño máximo permitido (25 MB)
+        const maxSize = 25 * 1024 * 1024; // 25 MB
 
-          // Validar tamaño del archivo
-          if (file.size > maxSize) {
-              Swal.fire({
-                  position: "center",
-                  icon: "warning",
-                  title: 'El archivo ' + file.name + ' excede el tamaño máximo de 25 MB.',
-                  text: file.name,
-                  showConfirmButton: false,
-                  timer: 1500
-              });
-              valid = false;
-              break;
-          }
-      }
+        if (fileInput.files.length === 0) {
+            Swal.fire({
+                position: "center",
+                icon: "info",
+                title: 'Por favor, selecciona al menos un archivo 😊',
+                text: "",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } else {
+            let valid = true;
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
 
-      // Si todos los archivos son válidos, enviar el formulario
-      if (valid) {
-          const formData = new FormData(document.getElementById('uploadForm'));
-          // Agregar el valor de idPersona al FormData
-          formData.append('id_persona', idPersona);
-          formData.append('id_usuario', "1");
+                // Validar tipo de archivo
+                if (!allowedTypes.includes(file.type)) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "warning",
+                        title: 'El archivo ' + file.name + ' no es un PDF o una imagen válida (JPEG, PNG, GIF, WEBP, SVG).',
+                        text: file.name,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    valid = false;
+                    break;
+                }
 
-          fetch('ajax/upload.ajax.php', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.text())
-          .then(data => {
-              Swal.fire({
-                  position: "top-end",
-                  icon: "success",
-                  title: "Archivos subidos correctamente.",
-                  showConfirmButton: false,
-                  timer: 1500
-              });
-              volverAlTop("container-fluid");
-          })
-          .catch(error => {
-              Swal.fire({
-                  position: "center",
-                  icon: "warning",
-                  title: "Hubo un error al subir los archivos: " + error,
-                  text: error,
-                  showConfirmButton: false,
-                  timer: 1500
-              });
-          });
-      }
-  }
+                // Validar tamaño del archivo
+                if (file.size > maxSize) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "warning",
+                        title: 'El archivo ' + file.name + ' excede el tamaño máximo de 25 MB.',
+                        text: file.name,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    valid = false;
+                    break;
+                }
+            }
+
+            // Si todos los archivos son válidos, enviar el formulario
+            if (valid) {
+                const formData = new FormData(document.getElementById('uploadForm'));
+                // Agregar el valor de idPersona al FormData
+                formData.append('id_persona', idPersona);
+                formData.append('id_usuario', "1");
+
+                fetch('ajax/upload.ajax.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Archivos subidos correctamente.",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    volverAlTop("container-fluid");
+                })
+                .catch(error => {
+                    Swal.fire({
+                        position: "center",
+                        icon: "warning",
+                        title: "Hubo un error al subir los archivos: " + error,
+                        text: error,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                });
+            }
+        }
 });
 function volverAlTop(idDelDiv) {
   const div = document.getElementById(idDelDiv); // Obtén el div por su ID

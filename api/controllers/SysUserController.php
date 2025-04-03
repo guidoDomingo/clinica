@@ -172,6 +172,44 @@ class SysUserController
      * 
      * @return void
      */
+    /**
+     * Get roles for a specific user
+     * 
+     * @return void
+     */
+    public function getUserRoles($urlId = null)
+    {
+        // Try to get ID from URL parameter first, then from query string
+        $id = $urlId ?? $_GET['id'] ?? null;
+        
+        error_log("Getting roles for user ID: " . $id);
+        
+        if (!$id) {
+            error_log("User ID is missing");
+            Response::error(['message' => 'User ID is required'], 400);
+            return;
+        }
+        
+        // Check if the user exists
+        $user = $this->userModel->find($id);
+        error_log("User found: " . json_encode($user));
+        
+        if (!$user) {
+            error_log("User not found for ID: " . $id);
+            Response::error(['message' => 'User not foundddd'], 404);
+            return;
+        }
+        
+        try {
+            $roles = $this->userModel->getUserRoles($id);
+            error_log("Roles found: " . json_encode($roles));
+            Response::success($roles);
+        } catch (\Exception $e) {
+            error_log("Error getting roles: " . $e->getMessage());
+            Response::error(['message' => 'Failed to get user roles', 'error' => $e->getMessage()], 500);
+        }
+    }
+
     public function assignRole()
     {
         // Get the user ID and role ID from the request

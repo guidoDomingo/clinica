@@ -1,0 +1,20 @@
+[2025-04-03 06:38:41] [info] user: carlos@carlos.com.py
+Data: "carlos@carlos.com.py"
+----------------------------------------
+[2025-04-03 06:38:41] [info] user: adc52ab7517186c5da5499b655bab3b4
+Data: "adc52ab7517186c5da5499b655bab3b4"
+----------------------------------------
+[2025-04-03 06:38:41] [info] Login attempt for user: carlos@carlos.com.py
+Data: {
+    "user_id": 4,
+    "reg_id": 4,
+    "user_email": "carlos@carlos.com.py",
+    "user_pass": "adc52ab7517186c5da5499b655bab3b4",
+    "user_expire": "2025-05-02 22:17:22.102525",
+    "user_first_login": null,
+    "user_last_login": "2025-04-02 23:29:44.444452",
+    "user_is_active": true,
+    "reg_name": "carlos",
+    "reg_lastname": "andres"
+}
+----------------------------------------

@@ -5,14 +5,17 @@
  * This file contains all the configuration settings for the application
  */
 
+// Require composer autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
+
 // Database configuration
 $dbConfig = [
     'driver' => 'pgsql',
-    'host' => '192.168.0.39',
+    'host' => 'localhost',
     'port' => '5432',
-    'database' => 'crm_clinic_db',
-    'username' => 'admindba',
-    'password' => 'wjstks'
+    'database' => 'clinica',
+    'username' => 'postgres',
+    'password' => 'admin'
 ];
 
 // Initialize the database connection

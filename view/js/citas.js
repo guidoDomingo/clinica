@@ -76,34 +76,38 @@ if (tblCitas) {
 // Obtener el elemento <select>
 const selectMedicos = document.getElementById("cttratante");
 
-// Cargar las opciones en el <select>
-medicos.forEach(medico => {
-    const option = document.createElement("option");
-    option.value = medico.id; // Valor del option (id del médico)
-    option.textContent = `${medico.nombre} - ${medico.horario_atencion}`; // Texto del option
-    selectMedicos.appendChild(option);
-});
+if (selectMedicos) {
+    medicos.forEach(medico => {
+        const option = document.createElement("option");
+        option.value = medico.id;
+        option.textContent = `${medico.nombre} - ${medico.horario_atencion}`;
+        selectMedicos.appendChild(option);
+    });
+} else {
+    console.warn('Elemento con id "cttratante" no encontrado.');
+}
 
+// Lista de médicos remitentes
 const rtte = [
-    {"id": 1, "nombre": "Dr. Juan Pérez", "horario_atencion": "Lunes a Viernes, 8:00 AM - 12:00 PM"},
-    {"id": 2, "nombre": "Dra. María Gómez", "horario_atencion": "Lunes a Jueves, 2:00 PM - 6:00 PM"},
-    {"id": 3, "nombre": "Dr. Carlos López", "horario_atencion": "Martes y Jueves, 9:00 AM - 1:00 PM"},
-    {"id": 4, "nombre": "Dra. Ana Martínez", "horario_atencion": "Miércoles y Viernes, 10:00 AM - 2:00 PM"},
-    {"id": 5, "nombre": "Dr. Luis Rodríguez", "horario_atencion": "Lunes a Viernes, 4:00 PM - 8:00 PM"},
-    {"id": 6, "nombre": "Dra. Sofía Fernández", "horario_atencion": "Lunes, Miércoles y Viernes, 7:00 AM - 11:00 AM"},
-    {"id": 7, "nombre": "Dr. Pedro Sánchez", "horario_atencion": "Martes y Jueves, 3:00 PM - 7:00 PM"},
-    {"id": 8, "nombre": "Dra. Laura Díaz", "horario_atencion": "Lunes a Viernes, 1:00 PM - 5:00 PM"},
-    {"id": 9, "nombre": "Dr. Jorge Ramírez", "horario_atencion": "Miércoles y Viernes, 8:00 AM - 12:00 PM"},
-    {"id": 10, "nombre": "Dra. Carmen Ruiz", "horario_atencion": "Lunes a Jueves, 9:00 AM - 1:00 PM"}
+    {"id": 1, "nombre": "Dr. Roberto Pérez"},
+    {"id": 2, "nombre": "Dra. Patricia Gómez"},
+    {"id": 3, "nombre": "Dr. Miguel López"},
+    {"id": 4, "nombre": "Dra. Isabel Martínez"},
+    {"id": 5, "nombre": "Dr. Fernando Rodríguez"}
 ];
+
 const selectMedicosRtte = document.getElementById("ctremitente");
-// Cargar las opciones en el <select>
-rtte.forEach(medico => {
-    const option = document.createElement("option");
-    option.value = medico.id; // Valor del option (id del médico)
-    option.textContent = `${medico.nombre}`; // Texto del option
-    selectMedicosRtte.appendChild(option);
-});
+
+if (selectMedicosRtte) {
+    rtte.forEach(medico => {
+        const option = document.createElement("option");
+        option.value = medico.id;
+        option.textContent = medico.nombre;
+        selectMedicosRtte.appendChild(option);
+    });
+} else {
+    console.warn('Elemento con id "ctremitente" no encontrado.');
+}
 
  // Lista de seguros médicos en formato JSON
  const seguros = [
@@ -194,4 +198,12 @@ $(document).ready(function() {
         });
     });
 });
-});//cierre de document laoded
+    // Initialize select2 for seguros if it exists
+    if ($('#ctseguro').length) {
+        $('#ctseguro').select2({
+            theme: 'bootstrap4',
+            placeholder: "Seleccione un seguro",
+            allowClear: true
+        });
+    }
+});

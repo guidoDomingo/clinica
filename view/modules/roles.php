@@ -1,0 +1,241 @@
+<?php
+if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
+    echo '<script>window.location.href = "login";</script>';
+    exit();
+}
+?>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Gestión de Roles y Permisos</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Roles Management -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Roles</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#modalAddRole">
+                                    <i class="fas fa-plus"></i> Nuevo Rol
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="rolesTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Management -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Permisos</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#modalAddPermission">
+                                    <i class="fas fa-plus"></i> Nuevo Permiso
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="permissionsTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Roles Management -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Asignación de Roles a Usuarios</h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="userRolesTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Roles Actuales</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal Assign Role -->
+<div class="modal fade" id="modalAssignRole">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Asignar Roles al Usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formAssignRole">
+                <input type="hidden" id="assignUserId" name="user_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Roles Disponibles</label>
+                        <div id="roleCheckboxes" class="d-flex flex-wrap">
+                            <!-- Roles will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Role -->
+<div class="modal fade" id="modalAddRole">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar Nuevo Rol</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formAddRole">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="roleName">Nombre del Rol</label>
+                        <input type="text" class="form-control" id="roleName" name="role_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="roleDescription">Descripción</label>
+                        <textarea class="form-control" id="roleDescription" name="role_description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Permisos</label>
+                        <div id="permissionCheckboxes" class="d-flex flex-wrap">
+                            <!-- Permissions will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Permission -->
+<div class="modal fade" id="modalAddPermission">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar Nuevo Permiso</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formAddPermission">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="permissionName">Nombre del Permiso</label>
+                        <input type="text" class="form-control" id="permissionName" name="perm_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="permissionDescription">Descripción</label>
+                        <textarea class="form-control" id="permissionDescription" name="perm_description"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Role -->
+<div class="modal fade" id="modalEditRole">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Editar Rol</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formEditRole">
+                <input type="hidden" id="editRoleId" name="role_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editRoleName">Nombre del Rol</label>
+                        <input type="text" class="form-control" id="editRoleName" name="role_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRoleDescription">Descripción</label>
+                        <textarea class="form-control" id="editRoleDescription" name="role_description"
+                            rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Permisos</label>
+                        <div id="editPermissionCheckboxes" class="d-flex flex-wrap">
+                            <!-- Permissions will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -80,6 +80,8 @@ class SysRegisterController
     {
         // Get the request body
         $data = json_decode(file_get_contents('php://input'), true);
+
+        \Api\Core\Logger::info($data, 'New registration attempt');
         
         if (!$data) {
             Response::error(['message' => 'Invalid request data'], 400);
@@ -113,6 +115,9 @@ class SysRegisterController
         $data['reg_activation'] = md5(uniqid(rand(), true));
         
         try {
+            // Log the registration data before creation
+            \Api\Core\Logger::info($data, 'New registration attempt');
+            
             // Create the registration
             $regId = $this->registerModel->create($data);
             $registration = $this->registerModel->find($regId);
