@@ -18,15 +18,30 @@ $(document).ready(function() {
 
     // Initialize User Roles DataTable
     const userRolesTable = $('#userRolesTable').DataTable({
+        processing: true,
+        serverSide: false,
         ajax: {
             url: 'api/users',
             dataSrc: function(response) {
-                if (response && response.data) {
-                    const users = response.data.data || [];
-                    console.log('Users with roles:', users);
-                    return users;
-                }
-                return [];
+                if (!response || !response.data || !response.data.data) return [];
+                const users = response.data.data;
+                users.forEach(function(user) {
+                    user.roles = [];
+                    $.ajax({
+                        type: 'POST',
+                        url: 'api/users/roles',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ id: user.user_id }),
+                        async: false,
+                        success: function(data) {
+                            user.roles = data.data || [];
+                        },
+                        error: function() {
+                            console.error('Error fetching roles for user:', user.user_id);
+                        }
+                    });
+                });
+                return users;
             },
             error: function(xhr, error, thrown) {
                 console.error('Error loading users:', error, thrown);
@@ -212,7 +227,7 @@ $(document).ready(function() {
     // Edit Role
     $(document).on('click', '.editRole', function() {
         const roleId = $(this).data('id');
-        $.get(`api/roles/show?id=${roleId}`, function(response) {
+        $.get('api/roles/' + roleId, function(response) {
             const role = response.data;
             $('#editRoleId').val(role.role_id);
             $('#editRoleName').val(role.role_name);
@@ -238,8 +253,8 @@ $(document).ready(function() {
         });
 
         $.ajax({
-            url: `api/roles?id=${roleId}`,
-            method: 'PUT',
+            url: 'api/roles',
+            method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
                 role_name: $('#editRoleName').val(),
@@ -265,18 +280,41 @@ $(document).ready(function() {
         $('#assignUserId').val(userId);
         
         // Load user's current roles
-        $.get(`api/users/${userId}/roles`, function(response) {
-            const userRoles = response.data;
-            
-            // Reset all checkboxes
-            $('#roleCheckboxes input').prop('checked', false);
-            
-            // Check the roles that user has
-            userRoles.forEach(function(role) {
-                $(`#roleCheckboxes #role_${role.role_id}`).prop('checked', true);
-            });
-            
-            $('#modalAssignRole').modal('show');
+        $.ajax({
+            url: 'api/users/roles',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: userId }),
+            success: function(response) {
+                const userRoles = response.data;
+                console.log('User roles:', userRoles);
+                
+                // First, ensure all roles are loaded
+                $.get('api/roles', function(rolesResponse) {
+                    const allRoles = rolesResponse.data;
+                    let checkboxes = '';
+                    
+                    // Create checkboxes for all roles
+                    allRoles.forEach(function(role) {
+                        // Check if this role is assigned to the user
+                        const isChecked = userRoles.some(userRole => userRole.role_id === role.role_id);
+                        checkboxes += `
+                            <div class="custom-control custom-checkbox mr-3 mb-2">
+                                <input type="checkbox" class="custom-control-input" id="role_${role.role_id}" 
+                                       value="${role.role_id}" ${isChecked ? 'checked' : ''}>
+                                <label class="custom-control-label" for="role_${role.role_id}">${role.role_name}</label>
+                            </div>
+                        `;
+                    });
+                    
+                    // Update the modal with the new checkboxes
+                    $('#roleCheckboxes').html(checkboxes);
+                    $('#modalAssignRole').modal('show');
+                });
+            },
+            error: function(xhr) {
+                Swal.fire('Error', xhr.responseJSON?.message || 'Error loading user roles', 'error');
+            }
         });
     });
 
@@ -291,8 +329,8 @@ $(document).ready(function() {
         });
         
         $.ajax({
-            url: `api/users/${userId}/roles`,
-            method: 'PUT',
+            url: 'api/users/roles/' + userId,
+            method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ roles: roles }),
             success: function(response) {
@@ -326,8 +364,10 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `api/roles?id=${roleId}`,
-                    method: 'DELETE',
+                    url: 'api/roles',
+                    method: 'POST',
+                    data: JSON.stringify({ id: roleId, action: 'delete' }),
+                    contentType: 'application/json',
                     success: function() {
                         rolesTable.ajax.reload();
                         Swal.fire('¡Eliminado!', 'El rol ha sido eliminado', 'success');
@@ -355,8 +395,10 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `api/permissions?id=${permId}`,
-                    method: 'DELETE',
+                    url: 'api/permissions',
+                    method: 'POST',
+                    data: JSON.stringify({ id: permId, action: 'delete' }),
+                    contentType: 'application/json',
                     success: function() {
                         permissionsTable.ajax.reload();
                         loadPermissions();

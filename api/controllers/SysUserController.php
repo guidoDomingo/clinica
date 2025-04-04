@@ -179,10 +179,15 @@ class SysUserController
      */
     public function getUserRoles($urlId = null)
     {
+    
         // Try to get ID from URL parameter first, then from query string
-        $id = $urlId ?? $_GET['id'] ?? null;
+        //$id = $urlId ?? $_POST['id'] ?? null;
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = $data['id'] ?? null;
         
         error_log("Getting roles for user ID: " . $id);
+        
         
         if (!$id) {
             error_log("User ID is missing");
@@ -250,6 +255,43 @@ class SysUserController
      * 
      * @return void
      */
+    public function updateUserRoles($userId)
+    {
+        if (!$userId) {
+            Response::error(['message' => 'User ID is required'], 400);
+            return;
+        }
+
+        // Get the request body
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($data['roles']) || !is_array($data['roles'])) {
+            Response::error(['message' => 'Roles array is required'], 400);
+            return;
+        }
+
+        try {
+            // First, remove all existing roles
+            $currentRoles = $this->userModel->getUserRoles($userId);
+            foreach ($currentRoles as $role) {
+                $this->userModel->removeRole($userId, $role['role_id']);
+            }
+
+            // Then assign new roles
+            foreach ($data['roles'] as $roleId) {
+                $this->userModel->assignRole($userId, $roleId);
+            }
+
+            $updatedRoles = $this->userModel->getUserRoles($userId);
+            Response::success([
+                'roles' => $updatedRoles,
+                'message' => 'User roles updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to update user roles', 'error' => $e->getMessage()], 500);
+        }
+    }
+
     public function removeRole()
     {
         // Get the user ID and role ID from the request

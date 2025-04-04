@@ -31,6 +31,11 @@ class Router
         $this->addRoute('GET', $uri, $controller, $method);
     }
 
+    public function map($method, $uri, $controller, $action)
+    {
+        $this->addRoute($method, $uri, $controller, $action);
+    }
+
     /**
      * Add a POST route
      * 
@@ -79,8 +84,17 @@ class Router
      * @param string $action The controller method
      * @return void
      */
+    // private function addRoute($method, $uri, $controller, $action)
+    // {
+    //     $this->routes[$method][$uri] = [
+    //         'controller' => $controller,
+    //         'action' => $action
+    //     ];
+    // }
+
     private function addRoute($method, $uri, $controller, $action)
     {
+        $uri = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^\/]+)', $uri);
         $this->routes[$method][$uri] = [
             'controller' => $controller,
             'action' => $action
@@ -97,9 +111,10 @@ class Router
      */
     public function dispatch($uri, $method)
     {
+
         // Check if the route exists
         if (!isset($this->routes[$method][$uri])) {
-            throw new \Exception('Route not found', 404);
+            throw new \Exception('Route not founddddd', 404);
         }
 
         $route = $this->routes[$method][$uri];
@@ -122,4 +137,6 @@ class Router
         // Call the controller method
         return $controllerInstance->$action();
     }
+
+
 }

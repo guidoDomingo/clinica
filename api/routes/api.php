@@ -29,7 +29,8 @@ $router->delete('register', 'Api\\Controllers\\SysRegisterController', 'destroy'
 $router->get('users', 'Api\\Controllers\\SysUserController', 'index');
 $router->get('users/show', 'Api\\Controllers\\SysUserController', 'show');
 // Change this route
-$router->get('users/{id}/roles', 'Api\\Controllers\\SysUserController', 'getUserRoles');
+// $router->get('users/{id}/roles', 'Api\\Controllers\\SysUserController', 'getUserRoles');
+$router->post('users/roles', 'Api\\Controllers\\SysUserController', 'getUserRoles');
 $router->put('users', 'Api\\Controllers\\SysUserController', 'update');
 $router->put('users/toggle-active', 'Api\\Controllers\\SysUserController', 'toggleActive');
 $router->post('users/assign-role', 'Api\\Controllers\\SysUserController', 'assignRole');
@@ -38,17 +39,17 @@ $router->post('users/associate-person', 'Api\\Controllers\\SysUserController', '
 
 // Role routes
 $router->get('roles', 'Api\\Controllers\\SysRoleController', 'index');
-$router->get('roles/show', 'Api\\Controllers\\SysRoleController', 'show');
-$router->post('roles', 'Api\\Controllers\\SysRoleController', 'create');
-$router->put('roles', 'Api\\Controllers\\SysRoleController', 'update');
-$router->delete('roles', 'Api\\Controllers\\SysRoleController', 'delete');
+$router->post('roles/show', 'Api\\Controllers\\SysRoleController', 'show');
+$router->post('roles/create', 'Api\\Controllers\\SysRoleController', 'create');
+$router->post('roles/update', 'Api\\Controllers\\SysRoleController', 'update');
+$router->post('roles/delete', 'Api\\Controllers\\SysRoleController', 'delete');
 
 // Permission routes
 $router->get('permissions', 'Api\\Controllers\\SysPermissionController', 'index');
-$router->get('permissions/show', 'Api\\Controllers\\SysPermissionController', 'show');
-$router->post('permissions', 'Api\\Controllers\\SysPermissionController', 'create');
-$router->put('permissions', 'Api\\Controllers\\SysPermissionController', 'update');
-$router->delete('permissions', 'Api\\Controllers\\SysPermissionController', 'delete');
+$router->post('permissions/show', 'Api\\Controllers\\SysPermissionController', 'show');
+$router->post('permissions/create', 'Api\\Controllers\\SysPermissionController', 'create');
+$router->post('permissions/update', 'Api\\Controllers\\SysPermissionController', 'update');
+$router->post('permissions/delete', 'Api\\Controllers\\SysPermissionController', 'delete');
 
 // Person Management routes
 $router->get('persons', 'Api\\Controllers\\RhPersonController', 'index');

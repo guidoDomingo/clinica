@@ -33,12 +33,13 @@ require_once __DIR__ . '/routes/api.php';
 $requestUri = isset($_GET['route']) ? $_GET['route'] : '';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
+
 // Process the request
 try {
     $router->dispatch($requestUri, $requestMethod);
 } catch (\Exception $e) {
     \Api\Core\Response::error([
-        'message' => $e->getMessage(),
-        'code' => $e->getCode() ?: 500
+        'message' => [$e->getMessage(),$requestUri, $requestMethod],
+        'codes' => $e->getCode() ?: 500
     ], $e->getCode() ?: 500);
 }
