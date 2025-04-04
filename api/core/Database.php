@@ -84,9 +84,20 @@ class Database
      */
     public static function query($sql, $params = [])
     {
-        $stmt = self::getConnection()->prepare($sql);
-        $stmt->execute($params);
-        return $stmt;
+        try {
+            $stmt = self::getConnection()->prepare($sql);
+            $stmt->execute($params);
+            return $stmt;
+        } catch (\PDOException $e) {
+            // Log the error details with proper parameter handling
+            $errorMessage = "Database error: " . $e->getMessage();
+            if (!empty($params)) {
+                $errorMessage .= " | Parameters: " . json_encode($params);
+            }
+            error_log($errorMessage);
+            // Re-throw as a standard exception with a user-friendly message
+            throw new \Exception("Database operation failed", 500);
+        }
     }
     
     /**

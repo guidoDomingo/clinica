@@ -39,7 +39,7 @@ $router->post('users/associate-person', 'Api\\Controllers\\SysUserController', '
 
 // Role routes
 $router->get('roles', 'Api\\Controllers\\SysRoleController', 'index');
-$router->post('roles/show', 'Api\\Controllers\\SysRoleController', 'show');
+$router->get('roles/{id}', 'Api\\Controllers\\SysRoleController', 'show');
 $router->post('roles/create', 'Api\\Controllers\\SysRoleController', 'create');
 $router->post('roles/update', 'Api\\Controllers\\SysRoleController', 'update');
 $router->post('roles/delete', 'Api\\Controllers\\SysRoleController', 'delete');

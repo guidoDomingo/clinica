@@ -144,16 +144,24 @@ $(document).ready(function() {
         $.get('api/permissions', function(response) {
             console.log('Permissions loaded:', response);
             const permissions = response.data;
-            let checkboxes = '';
+            let addCheckboxes = '';
+            let editCheckboxes = '';
             permissions.forEach(function(permission) {
-                checkboxes += `
+                addCheckboxes += `
                     <div class="custom-control custom-checkbox mr-3 mb-2">
                         <input type="checkbox" class="custom-control-input" id="perm_${permission.perm_id}" value="${permission.perm_id}">
                         <label class="custom-control-label" for="perm_${permission.perm_id}">${permission.perm_name}</label>
                     </div>
                 `;
+                editCheckboxes += `
+                    <div class="custom-control custom-checkbox mr-3 mb-2">
+                        <input type="checkbox" class="custom-control-input" id="edit_perm_${permission.perm_id}" value="${permission.perm_id}">
+                        <label class="custom-control-label" for="edit_perm_${permission.perm_id}">${permission.perm_name}</label>
+                    </div>
+                `;
             });
-            $('#permissionCheckboxes, #editPermissionCheckboxes').html(checkboxes);
+            $('#permissionCheckboxes').html(addCheckboxes);
+            $('#editPermissionCheckboxes').html(editCheckboxes);
         });
     }
 
@@ -227,6 +235,7 @@ $(document).ready(function() {
     // Edit Role
     $(document).on('click', '.editRole', function() {
         const roleId = $(this).data('id');
+        console.log('Editing role with ID:', roleId);
         $.get('api/roles/' + roleId, function(response) {
             const role = response.data;
             $('#editRoleId').val(role.role_id);
@@ -236,7 +245,7 @@ $(document).ready(function() {
             // Check permissions
             $('#editPermissionCheckboxes input').prop('checked', false);
             role.permission_ids.forEach(function(permId) {
-                $(`#editPermissionCheckboxes #perm_${permId}`).prop('checked', true);
+                $(`#editPermissionCheckboxes #edit_perm_${permId}`).prop('checked', true);
             });
             
             $('#modalEditRole').modal('show');
@@ -251,12 +260,13 @@ $(document).ready(function() {
         $('#editPermissionCheckboxes input:checked').each(function() {
             permissions.push($(this).val());
         });
-
+    
         $.ajax({
-            url: 'api/roles',
+            url: 'api/roles/update',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
+                id: roleId,
                 role_name: $('#editRoleName').val(),
                 role_description: $('#editRoleDescription').val(),
                 permissions: permissions
@@ -269,7 +279,7 @@ $(document).ready(function() {
                 Swal.fire('¡Éxito!', 'Rol actualizado correctamente', 'success');
             },
             error: function(xhr) {
-                Swal.fire('Error', xhr.responseJSON.message || 'Error al actualizar el rol', 'error');
+                Swal.fire('Error', xhr.responseJSON?.message || 'Error al actualizar el rol', 'error');
             }
         });
     });
@@ -364,7 +374,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'api/roles',
+                    url: 'api/roles/delete',
                     method: 'POST',
                     data: JSON.stringify({ id: roleId, action: 'delete' }),
                     contentType: 'application/json',

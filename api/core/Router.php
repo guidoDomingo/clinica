@@ -111,15 +111,31 @@ class Router
      */
     public function dispatch($uri, $method)
     {
+        // Iterate through registered routes to find a match
+        foreach ($this->routes[$method] as $route => $handler) {
+            $pattern = '#^' . $route . '$#';
+            if (preg_match($pattern, $uri, $matches)) {
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                $controller = $handler['controller'];
+                $action = $handler['action'];
 
-        // Check if the route exists
-        if (!isset($this->routes[$method][$uri])) {
-            throw new \Exception('Route not founddddd', 404);
+                // Create controller instance
+                if (!class_exists($controller)) {
+                    throw new \Exception("Controller {$controller} not found", 500);
+                }
+                $controllerInstance = new $controller();
+
+                // Check method exists
+                if (!method_exists($controllerInstance, $action)) {
+                    throw new \Exception("Method {$action} not found in controller {$controller}", 500);
+                }
+
+                // Call controller method with parameters
+                return empty($params) ? $controllerInstance->$action() : $controllerInstance->$action($params);
+            }
         }
 
-        $route = $this->routes[$method][$uri];
-        $controller = $route['controller'];
-        $action = $route['action'];
+        throw new \Exception('Route not found', 404);
 
         // Check if the controller exists
         if (!class_exists($controller)) {

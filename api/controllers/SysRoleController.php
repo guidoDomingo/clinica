@@ -47,23 +47,48 @@ class SysRoleController
      * 
      * @return void
      */
-    public function show()
+    public function show($data)
     {
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
-        
-        if (!$id) {
-            Response::error(['message' => 'Role ID is required'], 400);
-            return;
+        try {
+           
+            $id = $data['id'];
+            
+            if (!$id) {
+                Response::error(['message' => 'Role ID is required'], 400);
+                return;
+            }
+            
+            $role = $this->roleModel->getWithPermissions($id);
+            
+            if (!$role) {
+                Response::error(['message' => 'Role not found'], 404);
+                return;
+            }
+            
+            // Process array fields before sending response
+            if (isset($role['permission_ids']) && $role['permission_ids'] === '{NULL}') {
+                $role['permission_ids'] = [];
+            } else if (isset($role['permission_ids'])) {
+                $role['permission_ids'] = array_filter(
+                    explode(',', trim($role['permission_ids'], '{}'))
+                );
+            }
+            
+            if (isset($role['permission_names']) && $role['permission_names'] === '{NULL}') {
+                $role['permission_names'] = [];
+            } else if (isset($role['permission_names'])) {
+                $role['permission_names'] = array_filter(
+                    explode(',', trim($role['permission_names'], '{}'))
+                );
+            }
+            
+            Response::success($role);
+        } catch (\PDOException $e) {
+            // Handle database errors with appropriate HTTP status code
+            Response::error(['message' => 'Database error occurred'], 500);
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Error processing request'], 500);
         }
-        
-        $role = $this->roleModel->getWithPermissions($id);
-        
-        if (!$role) {
-            Response::error(['message' => 'Role not found'], 404);
-            return;
-        }
-        
-        Response::success($role);
     }
     
     /**
@@ -104,14 +129,13 @@ class SysRoleController
      */
     public function update()
     {
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = $data['id'] ?? null;
         
         if (!$id) {
             Response::error(['message' => 'Role ID is required'], 400);
             return;
         }
-        
-        $data = json_decode(file_get_contents('php://input'), true);
         
         try {
             $this->roleModel->update($id, [
@@ -137,7 +161,10 @@ class SysRoleController
      */
     public function delete()
     {
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        //$id = isset($_GET['id']) ? $_GET['id'] : null;
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = $data['id'] ?? null;
         
         if (!$id) {
             Response::error(['message' => 'Role ID is required'], 400);
