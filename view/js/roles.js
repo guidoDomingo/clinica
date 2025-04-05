@@ -184,7 +184,7 @@ $(document).ready(function() {
         console.log('Submitting role:', { roleName, roleDescription, permissions });
         
         $.ajax({
-            url: 'api/roles',
+            url: 'api/roles/create',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -211,7 +211,7 @@ $(document).ready(function() {
     $('#formAddPermission').on('submit', function(e) {
         e.preventDefault();
         $.ajax({
-            url: 'api/permissions',
+            url: 'api/permissions/create',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -227,7 +227,8 @@ $(document).ready(function() {
                 Swal.fire('¡Éxito!', 'Permiso creado correctamente', 'success');
             },
             error: function(xhr) {
-                Swal.fire('Error', xhr.responseJSON.message || 'Error al crear el permiso', 'error');
+                console.error('Error creating permission:', xhr.responseText);
+                Swal.fire('Error', xhr.responseJSON?.message || 'Error al crear el permiso', 'error');
             }
         });
     });
@@ -354,10 +355,11 @@ $(document).ready(function() {
         });
     });
 
-    // Load roles for assignment modal when it opens
-    $('#modalAssignRole').on('show.bs.modal', function() {
+    // We don't need to load roles here as they are already loaded in the click event
+    // and properly checked based on user's current roles
+    /*$('#modalAssignRole').on('show.bs.modal', function() {
         loadRolesForAssignment();
-    });
+    });*/
 
     // Delete Role
     $(document).on('click', '.deleteRole', function() {
