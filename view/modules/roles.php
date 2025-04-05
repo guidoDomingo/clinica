@@ -239,3 +239,35 @@ if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
         </div>
     </div>
 </div>
+
+<!-- Modal Edit Permission -->
+<div class="modal fade" id="modalEditPermission">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Editar Permiso</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formEditPermission">
+                <input type="hidden" id="editPermissionId" name="perm_id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editPermissionName">Nombre del Permiso</label>
+                        <input type="text" class="form-control" id="editPermissionName" name="perm_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPermissionDescription">Descripción</label>
+                        <textarea class="form-control" id="editPermissionDescription" name="perm_description"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

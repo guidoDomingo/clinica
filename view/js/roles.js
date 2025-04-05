@@ -339,10 +339,10 @@ $(document).ready(function() {
         });
         
         $.ajax({
-            url: 'api/users/roles/' + userId,
+            url: 'api/users/assign-role',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ roles: roles }),
+            data: JSON.stringify({ roles: roles, id: userId }),
             success: function(response) {
                 $('#modalAssignRole').modal('hide');
                 userRolesTable.ajax.reload();
@@ -390,6 +390,57 @@ $(document).ready(function() {
         });
     });
 
+    // Edit Permission
+    $(document).on('click', '.editPermission', function() {
+        const permId = $(this).data('id');
+        console.log('Editing permission with ID:', permId);
+        $.ajax({
+            url: 'api/permissions/show',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: permId }),
+            success: function(response) {
+                const permission = response.data;
+                $('#editPermissionId').val(permission.perm_id);
+                $('#editPermissionName').val(permission.perm_name);
+                $('#editPermissionDescription').val(permission.perm_description);
+                $('#modalEditPermission').modal('show');
+            },
+            error: function(xhr) {
+                console.error('Error loading permission:', xhr.responseText);
+                Swal.fire('Error', xhr.responseJSON?.message || 'Error al cargar el permiso', 'error');
+            }
+        });
+    });
+
+    // Update Permission
+    $('#formEditPermission').on('submit', function(e) {
+        e.preventDefault();
+        const permId = $('#editPermissionId').val();
+        
+        $.ajax({
+            url: 'api/permissions/update',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: permId,
+                perm_name: $('#editPermissionName').val(),
+                perm_description: $('#editPermissionDescription').val()
+            }),
+            success: function(response) {
+                console.log('Permission updated - Full response:', response);
+                $('#modalEditPermission').modal('hide');
+                permissionsTable.ajax.reload();
+                loadPermissions();
+                Swal.fire('¡Éxito!', 'Permiso actualizado correctamente', 'success');
+            },
+            error: function(xhr) {
+                console.error('Error updating permission:', xhr.responseText);
+                Swal.fire('Error', xhr.responseJSON?.message || 'Error al actualizar el permiso', 'error');
+            }
+        });
+    });
+
     // Delete Permission
     $(document).on('click', '.deletePermission', function() {
         const permId = $(this).data('id');
@@ -405,9 +456,9 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'api/permissions',
+                    url: 'api/permissions/delete',
                     method: 'POST',
-                    data: JSON.stringify({ id: permId, action: 'delete' }),
+                    data: JSON.stringify({ id: permId }),
                     contentType: 'application/json',
                     success: function() {
                         permissionsTable.ajax.reload();
@@ -415,7 +466,8 @@ $(document).ready(function() {
                         Swal.fire('¡Eliminado!', 'El permiso ha sido eliminado', 'success');
                     },
                     error: function(xhr) {
-                        Swal.fire('Error', xhr.responseJSON.message || 'Error al eliminar el permiso', 'error');
+                        console.error('Error deleting permission:', xhr.responseText);
+                        Swal.fire('Error', xhr.responseJSON?.message || 'Error al eliminar el permiso', 'error');
                     }
                 });
             }

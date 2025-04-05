@@ -217,9 +217,25 @@ class SysUserController
 
     public function assignRole()
     {
+        // Get the request body
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        // Check if we're receiving the new format (array of roles)
+        if (isset($data['roles']) && is_array($data['roles']) && isset($data['id'])) {
+            // This is the new format from the form, use updateUserRoles method
+            return $this->updateUserRoles($data['id']);
+        }
+        
+        // Legacy format handling
         // Get the user ID and role ID from the request
         $userId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
         $roleId = isset($_GET['role_id']) ? $_GET['role_id'] : null;
+        
+        // If not in GET, check if it's in POST data
+        if (!$userId || !$roleId) {
+            $userId = isset($data['user_id']) ? $data['user_id'] : null;
+            $roleId = isset($data['role_id']) ? $data['role_id'] : null;
+        }
         
         if (!$userId || !$roleId) {
             Response::error(['message' => 'User ID and Role ID are required'], 400);

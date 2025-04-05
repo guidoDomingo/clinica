@@ -42,7 +42,14 @@ class SysPermissionController
      */
     public function show()
     {
+        // Check if ID is in GET parameters
         $id = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        // If not in GET, check if it's in POST data
+        if (!$id) {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $id = isset($data['id']) ? $data['id'] : null;
+        }
         
         if (!$id) {
             Response::error(['message' => 'Permission ID is required'], 400);
@@ -93,14 +100,21 @@ class SysPermissionController
      */
     public function update()
     {
+        // Check if ID is in GET parameters
         $id = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        // If not in GET, check if it's in POST data
+        if (!$id) {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $id = isset($data['id']) ? $data['id'] : null;
+        } else {
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
         
         if (!$id) {
             Response::error(['message' => 'Permission ID is required'], 400);
             return;
         }
-        
-        $data = json_decode(file_get_contents('php://input'), true);
         
         try {
             $this->permissionModel->update($id, [
