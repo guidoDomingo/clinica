@@ -210,6 +210,85 @@ class RhPersonController
     }
     
     /**
+     * Upload a profile photo for a person
+     * 
+     * @return void
+     */
+    public function uploadProfilePhoto()
+    {
+        // Get the person ID from the request
+        $personId = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        if (!$personId) {
+            Response::error(['message' => 'Person ID is required'], 400);
+            return;
+        }
+        
+        // Check if the person exists
+        $person = $this->personModel->find($personId);
+        
+        if (!$person) {
+            Response::error(['message' => 'Person not found'], 404);
+            return;
+        }
+        
+        // Check if file was uploaded
+        if (!isset($_FILES['profile_photo']) || $_FILES['profile_photo']['error'] !== UPLOAD_ERR_OK) {
+            Response::error(['message' => 'No file uploaded or upload error'], 400);
+            return;
+        }
+        
+        $file = $_FILES['profile_photo'];
+        
+        // Validate file type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!in_array($file['type'], $allowedTypes)) {
+            Response::error(['message' => 'Invalid file type. Only JPG, PNG and GIF are allowed'], 400);
+            return;
+        }
+        
+        // Validate file size (max 2MB)
+        $maxSize = 2 * 1024 * 1024; // 2MB
+        if ($file['size'] > $maxSize) {
+            Response::error(['message' => 'File too large. Maximum size is 2MB'], 400);
+            return;
+        }
+        
+        try {
+            // Create upload directory if it doesn't exist
+            $uploadDir = __DIR__ . '/../../view/uploads/profile/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            // Generate unique filename
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = 'person_' . $personId . '_' . time() . '.' . $extension;
+            $targetPath = $uploadDir . $filename;
+            
+            // Move uploaded file
+            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                // Update person profile photo in database
+                $this->personModel->update($personId, ['profile_photo' => $filename]);
+                
+                // Update last modified timestamp
+                $this->personModel->update($personId, ['last_modified_at' => date('Y-m-d H:i:s')]);
+                
+                Response::success([
+                    'message' => 'Profile photo uploaded successfully',
+                    'data' => [
+                        'photo_url' => 'view/uploads/profile/' . $filename
+                    ]
+                ]);
+            } else {
+                Response::error(['message' => 'Failed to move uploaded file'], 500);
+            }
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to upload profile photo', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+    /**
      * Search persons by name, lastname or document
      * 
      * @return void

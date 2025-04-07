@@ -11,13 +11,6 @@ use Api\Core\Router;
  * @var Router $router
  */
 
-// Patient routes
-$router->get('patients', 'Api\\Controllers\\PatientController', 'index');
-$router->get('patients/show', 'Api\\Controllers\\PatientController', 'show');
-$router->post('patients', 'Api\\Controllers\\PatientController', 'store');
-$router->put('patients', 'Api\\Controllers\\PatientController', 'update');
-$router->delete('patients', 'Api\\Controllers\\PatientController', 'destroy');
-
 // User Registration routes
 $router->get('register', 'Api\\Controllers\\SysRegisterController', 'index');
 $router->get('register/show', 'Api\\Controllers\\SysRegisterController', 'show');
@@ -36,6 +29,12 @@ $router->put('users/toggle-active', 'Api\\Controllers\\SysUserController', 'togg
 $router->post('users/assign-role', 'Api\\Controllers\\SysUserController', 'assignRole');
 $router->post('users/remove-role', 'Api\\Controllers\\SysUserController', 'removeRole');
 $router->post('users/associate-person', 'Api\\Controllers\\SysUserController', 'associateWithPerson');
+
+// User Profile routes
+$router->get('users/profile', 'Api\\Controllers\\SysUserController', 'getProfile');
+$router->post('users/update-profile', 'Api\\Controllers\\SysUserController', 'updateProfile');
+$router->post('users/change-password', 'Api\\Controllers\\SysUserController', 'changePassword');
+$router->post('users/upload-photo', 'Api\\Controllers\\SysUserController', 'uploadProfilePhoto');
 
 // Role routes
 $router->get('roles', 'Api\\Controllers\\SysRoleController', 'index');
@@ -59,3 +58,4 @@ $router->put('persons', 'Api\\Controllers\\RhPersonController', 'update');
 $router->delete('persons', 'Api\\Controllers\\RhPersonController', 'destroy');
 $router->get('persons/search', 'Api\\Controllers\\RhPersonController', 'search');
 $router->get('persons/active', 'Api\\Controllers\\RhPersonController', 'getActive');
+$router->post('persons/upload-photo', 'Api\\Controllers\\RhPersonController', 'uploadProfilePhoto');

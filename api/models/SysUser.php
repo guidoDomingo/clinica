@@ -30,7 +30,8 @@ class SysUser extends Model
         'user_expire',
         'user_first_login',
         'user_last_login',
-        'user_is_active'
+        'user_is_active',
+        'profile_photo'
     ];
     
     /**

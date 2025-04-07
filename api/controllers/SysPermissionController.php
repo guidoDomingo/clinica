@@ -136,7 +136,14 @@ class SysPermissionController
      */
     public function delete()
     {
+        // Check if ID is in GET parameters
         $id = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        // If not in GET, check if it's in POST data
+        if (!$id) {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $id = isset($data['id']) ? $data['id'] : null;
+        }
         
         if (!$id) {
             Response::error(['message' => 'Permission ID is required'], 400);

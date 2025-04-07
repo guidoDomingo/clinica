@@ -24,7 +24,18 @@ class Logger
     public static function log($data, $type = 'info', $context = '')
     {
         $timestamp = date('Y-m-d H:i:s');
-        $logData = json_encode($data, JSON_PRETTY_PRINT);
+        
+        // Asegurar que el contexto sea una cadena
+        if (is_array($context) || is_object($context)) {
+            $context = json_encode($context, JSON_UNESCAPED_UNICODE);
+        }
+        
+        // Asegurar que los datos sean una cadena
+        if (is_array($data) || is_object($data)) {
+            $logData = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } else {
+            $logData = (string)$data;
+        }
         
         $message = "[{$timestamp}] [{$type}] {$context}\n";
         $message .= "Data: {$logData}\n";

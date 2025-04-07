@@ -44,7 +44,8 @@ class RhPerson extends Model
         'last_accessed_at',
         'owner_id',
         'is_active',
-        'business_id'
+        'business_id',
+        'profile_photo'
     ];
     
     /**

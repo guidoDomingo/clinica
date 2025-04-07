@@ -2,6 +2,7 @@
 namespace Api\Controllers;
 
 use Api\Core\Response;
+use Api\Core\Logger;
 use Api\Models\SysUser;
 use Api\Models\SysRegister;
 use Api\Models\RhPerson;
@@ -388,6 +389,263 @@ class SysUserController
             }
         } catch (\Exception $e) {
             Response::error(['message' => 'Failed to associate person with user', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Get the profile of the currently logged in user
+     * 
+     * @return void
+     */
+    public function getProfile()
+    {
+        // Get the user ID from the session
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            Response::error(['message' => 'User not authenticated'], 401);
+            return;
+        }
+        
+        try {
+            // Get user with registration data
+            $user = $this->userModel->getUserWithRegistration($userId);
+            
+            if (!$user) {
+                Response::error(['message' => 'User not found'], 404);
+                return;
+            }
+            
+            // Get user roles
+            $roles = $this->userModel->getUserRoles($userId);
+            $user['roles'] = $roles;
+            
+            Response::success($user);
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to get user profile', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Update the profile of the currently logged in user
+     * 
+     * @return void
+     */
+    public function updateProfile()
+    {
+        // Get the user ID from the session
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            Response::error(['message' => 'User not authenticated'], 401);
+            return;
+        }
+        
+        // Get the request body
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$data) {
+            Response::error(['message' => 'Invalid request data'], 400);
+            return;
+        }
+        
+        try {
+            // Check if email is being updated and already exists
+            if (isset($data['user_email'])) {
+                $existingUser = $this->userModel->getByEmail($data['user_email']);
+                if ($existingUser && $existingUser['user_id'] != $userId) {
+                    Response::error(['message' => 'Email already registered'], 400);
+                    return;
+                }
+                
+                // Update user email
+                $this->userModel->update($userId, ['user_email' => $data['user_email']]);
+            }
+            
+            // Update registration data if provided
+            $regData = [];
+            if (isset($data['reg_name'])) $regData['reg_name'] = $data['reg_name'];
+            if (isset($data['reg_lastname'])) $regData['reg_lastname'] = $data['reg_lastname'];
+            if (isset($data['reg_phone'])) $regData['reg_phone'] = $data['reg_phone'];
+            
+            if (!empty($regData)) {
+                $regId = $this->userModel->getRegistrationId($userId);
+                if ($regId) {
+                    $this->registerModel->update($regId, $regData);
+                }
+            }
+            
+            // Get updated user data
+            $updatedUser = $this->userModel->getUserWithRegistration($userId);
+            Response::success($updatedUser);
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to update profile', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Change the password of the currently logged in user
+     * 
+     * @return void
+     */
+    public function changePassword()
+    {
+        // Get the user ID from the session
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            Logger::info('Intento de cambio de contraseña sin autenticación');
+            Response::error(['message' => 'No has iniciado sesión. Por favor, inicia sesión para cambiar tu contraseña.'], 401);
+            return;
+        }
+        
+        // Get the request body
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($data['current_password']) || !isset($data['new_password'])) {
+            Logger::info('Intento de cambio de contraseña con datos incompletos');
+            Response::error(['message' => 'La contraseña actual y la nueva contraseña son obligatorias.'], 400);
+            return;
+        }
+
+        // Validar longitud mínima de la nueva contraseña
+        if (strlen($data['new_password']) < 6) {
+            Logger::info('Intento de cambio de contraseña con formato inválido');
+            Response::error(['message' => 'La nueva contraseña debe tener al menos 6 caracteres.'], 400);
+            return;
+        }
+        
+        try {
+            // Get the user
+            $user = $this->userModel->find($userId);
+            
+            if (!$user) {
+                Logger::error('Usuario no encontrado al cambiar contraseña', ['user_id' => $userId]);
+                Response::error(['message' => 'No se pudo encontrar la información del usuario.'], 404);
+                return;
+            }
+            
+            // Obtener la contraseña actual y almacenada
+            $currentPassword = $data['current_password'];
+            $storedPassword = $user['user_pass'];
+
+            // Verificación de contraseña usando password_verify
+            $rehashed = crypt($currentPassword, $storedPassword);
+            
+            Logger::debug('Proceso de verificación de contraseña', [
+                'user_id' => $userId,
+                'rehashed_length' => strlen($rehashed),
+                'stored_length' => strlen($storedPassword),
+                'is_rehashed_string' => is_string($rehashed)
+            ]);
+
+            if (!is_string($rehashed) || strlen($rehashed) !== strlen($storedPassword)) {
+                Logger::warning('Fallo en la verificación de contraseña - validación de longitud o tipo', [
+                    'user_id' => $userId,
+                    'rehashed_type' => gettype($rehashed),
+                    'rehashed_length' => strlen($rehashed),
+                    'stored_length' => strlen($storedPassword)
+                ]);
+                $passwordMatch = false;
+            } else {
+                $passwordMatch = hash_equals($rehashed, $storedPassword);
+                Logger::debug('Comparación final de contraseña', [
+                    'user_id' => $userId,
+                    'password_match' => $passwordMatch
+                ]);
+            }
+            
+            if (!isset($user['user_pass']) || !$passwordMatch) {
+                Logger::info('Intento de cambio de contraseña con contraseña actual incorrecta', ['user_id' => $userId]);
+                Response::error(['message' => 'La contraseña actual es incorrecta. Por favor, verifica e intenta nuevamente.'], 400);
+                return;
+            }
+            
+            // Update password
+            $hashedPassword = password_hash($data['new_password'], PASSWORD_DEFAULT);
+            $result = $this->userModel->update($userId, ['user_pass' => $hashedPassword]);
+            
+            if ($result) {
+                Logger::info('Cambio de contraseña exitoso', ['user_id' => $userId]);
+                Response::success(['message' => 'Contraseña actualizada exitosamente']);
+            } else {
+                Logger::error('Error al actualizar la contraseña en la base de datos', ['user_id' => $userId]);
+                Response::error(['message' => 'No se pudo actualizar la contraseña. Por favor, intenta nuevamente.'], 500);
+            }
+        } catch (\Exception $e) {
+            Logger::error('Error en el cambio de contraseña', [
+                'user_id' => $userId,
+                'error' => $e->getMessage()
+            ]);
+            Response::error(['message' => 'Ocurrió un error al cambiar la contraseña. Por favor, intenta nuevamente más tarde.'], 500);
+        }
+    }
+    
+    /**
+     * Upload a profile photo for the currently logged in user
+     * 
+     * @return void
+     */
+    public function uploadProfilePhoto()
+    {
+        // Get the user ID from the session
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId) {
+            Response::error(['message' => 'User not authenticated'], 401);
+            return;
+        }
+        
+        // Check if file was uploaded
+        if (!isset($_FILES['profile_photo']) || $_FILES['profile_photo']['error'] !== UPLOAD_ERR_OK) {
+            Response::error(['message' => 'No file uploaded or upload error'], 400);
+            return;
+        }
+        
+        $file = $_FILES['profile_photo'];
+        
+        // Validate file type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!in_array($file['type'], $allowedTypes)) {
+            Response::error(['message' => 'Invalid file type. Only JPG, PNG and GIF are allowed'], 400);
+            return;
+        }
+        
+        // Validate file size (max 2MB)
+        $maxSize = 2 * 1024 * 1024; // 2MB
+        if ($file['size'] > $maxSize) {
+            Response::error(['message' => 'File too large. Maximum size is 2MB'], 400);
+            return;
+        }
+        
+        try {
+            // Create upload directory if it doesn't exist
+            $uploadDir = __DIR__ . '/../../view/uploads/profile/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            // Generate unique filename
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = 'user_' . $userId . '_' . time() . '.' . $extension;
+            $targetPath = $uploadDir . $filename;
+            
+            // Move uploaded file
+            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                // Update user profile photo in database
+                $this->userModel->update($userId, ['profile_photo' => $filename]);
+                
+                Response::success([
+                    'message' => 'Profile photo uploaded successfully',
+                    'data' => [
+                        'photo_url' => 'view/uploads/profile/' . $filename
+                    ]
+                ]);
+            } else {
+                Response::error(['message' => 'Failed to move uploaded file'], 500);
+            }
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to upload profile photo', 'error' => $e->getMessage()], 500);
         }
     }
 }
