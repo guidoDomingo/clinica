@@ -70,10 +70,62 @@ abstract class Model
      */
     public function create($data)
     {
-        // Filter data to only include fillable attributes
-        $filteredData = array_intersect_key($data, array_flip($this->fillable));
-        
-        return Database::insert($this->table, $filteredData);
+        try {
+            // Log original data before filtering
+            $logData = [
+                'table' => $this->table,
+                'original_data' => $data,
+                'fillable_fields' => $this->fillable
+            ];
+            
+            // Filter data to only include fillable attributes
+            $filteredData = array_intersect_key($data, array_flip($this->fillable));
+            
+            // Add filtered data to log
+            $logData['filtered_data'] = $filteredData;
+            
+            // Log data that was excluded by the filter
+            $excludedData = array_diff_key($data, $filteredData);
+            if (!empty($excludedData)) {
+                $logData['excluded_data'] = $excludedData;
+            }
+            
+            // Validate that we have data to insert
+            if (empty($filteredData)) {
+                throw new \Exception('No valid data provided for insertion');
+            }
+            
+            // Log the insert attempt to database.log
+            error_log(
+                "[" . date('Y-m-d H:i:s') . "] [INFO] [Model::create]\n" .
+                "Table: {$this->table}\n" .
+                "Original Data: " . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n" .
+                "Filtered Data: " . json_encode($filteredData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n" .
+                "Excluded Data: " . json_encode($excludedData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n" .
+                "----------------------------------------\n",
+                3,
+                'c:/laragon/www/clinica/logs/database.log'
+            );
+            
+            $id = Database::insert($this->table, $filteredData);
+            
+            if (!$id) {
+                throw new \Exception('Failed to insert record');
+            }
+            
+            return $id;
+        } catch (\Exception $e) {
+            // Log error to database.log
+            error_log(
+                "[" . date('Y-m-d H:i:s') . "] [ERROR] [Model::create]\n" .
+                "Table: {$this->table}\n" .
+                "Error: " . $e->getMessage() . "\n" .
+                "----------------------------------------\n",
+                3,
+                'c:/laragon/www/clinica/logs/database.log'
+            );
+            throw $e;
+        }
     }
     
     /**

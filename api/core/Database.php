@@ -14,6 +14,43 @@ class Database
     private static $connection = null;
     
     /**
+     * @var string The database log file path
+     */
+    private static $logFile = 'c:/laragon/www/clinica/logs/database.log';
+    
+    /**
+     * Log SQL query to database log file
+     * 
+     * @param string $sql The SQL query
+     * @param array $params The query parameters
+     * @param string $error Error message if any
+     * @param bool $isError Whether this is an error log
+     * @return void
+     */
+    private static function logQuery($sql, $params = [], $error = '', $isError = false)
+    {
+        $timestamp = date('Y-m-d H:i:s');
+        $level = $isError ? 'ERROR' : 'INFO';
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $caller = isset($backtrace[1]) ? basename($backtrace[1]['file']) . ':' . $backtrace[1]['line'] : 'unknown';
+        
+        $message = sprintf("[%s] [%s] [%s]\n", $timestamp, $level, $caller);
+        $message .= "SQL: {$sql}\n";
+        
+        if (!empty($params)) {
+            $message .= "Parameters: " . json_encode($params, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n";
+        }
+        
+        if (!empty($error)) {
+            $message .= "Error: {$error}\n";
+        }
+        
+        $message .= "----------------------------------------\n";
+        
+        error_log($message, 3, self::$logFile);
+    }
+    
+    /**
      * @var array Database configuration
      */
     private static $config = [
@@ -85,18 +122,34 @@ class Database
     public static function query($sql, $params = [])
     {
         try {
+            // Log the query before execution
+            self::logQuery($sql, $params);
+            
             $stmt = self::getConnection()->prepare($sql);
             $stmt->execute($params);
             return $stmt;
         } catch (\PDOException $e) {
-            // Log the error details with proper parameter handling
-            $errorMessage = "Database error: " . $e->getMessage();
+            // Log detailed error information
+            $errorInfo = $e->errorInfo ?? [];
+            $errorCode = $errorInfo[1] ?? $e->getCode();
+            $errorMessage = "Database error ({$errorCode}): " . $e->getMessage();
+            $errorMessage .= "\nSQL: {$sql}";
             if (!empty($params)) {
-                $errorMessage .= " | Parameters: " . json_encode($params);
+                $errorMessage .= "\nParameters: " . json_encode($params);
             }
-            error_log($errorMessage);
-            // Re-throw as a standard exception with a user-friendly message
-            throw new \Exception("Database operation failed", 500);
+            self::logQuery($sql, $params, $errorMessage, true);
+            
+            // Provide specific error messages based on error codes
+            switch ($errorCode) {
+                case '23505': // Unique violation
+                    throw new \Exception("Duplicate entry found", 400);
+                case '23502': // Not null violation
+                    throw new \Exception("Required field missing", 400);
+                case '23503': // Foreign key violation
+                    throw new \Exception("Invalid reference", 400);
+                default:
+                    throw new \Exception("Database operation failed: " . $e->getMessage(), 500);
+            }
         }
     }
     
@@ -142,6 +195,9 @@ class Database
         $sql = "INSERT INTO $table (" . implode(', ', $columns) . ") "
              . "VALUES (" . implode(', ', $placeholders) . ")";
         
+        // Log the insert operation
+        self::logQuery($sql, $data, '', false);
+        
         self::query($sql, $data);
         return self::getConnection()->lastInsertId();
     }
@@ -164,6 +220,10 @@ class Database
         $sql = "UPDATE $table SET " . implode(', ', $setClauses) . " WHERE $where";
         
         $params = array_merge($data, $whereParams);
+        
+        // Log the update operation
+        self::logQuery($sql, $params, '', false);
+        
         $stmt = self::query($sql, $params);
         return $stmt->rowCount();
     }
@@ -179,6 +239,10 @@ class Database
     public static function delete($table, $where, $params = [])
     {
         $sql = "DELETE FROM $table WHERE $where";
+        
+        // Log the delete operation
+        self::logQuery($sql, $params, '', false);
+        
         $stmt = self::query($sql, $params);
         return $stmt->rowCount();
     }

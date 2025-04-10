@@ -12,18 +12,51 @@ class Logger
      * @var string The default log file path
      */
     private static $logFile = 'c:/laragon/www/clinica/logs/application.log';
-    
+
+    /**
+     * @var int Maximum size of log file in bytes (5MB)
+     */
+    private static $maxFileSize = 5242880;
+
+    /**
+     * @var array Valid log levels
+     */
+    private static $validLevels = ['debug', 'info', 'warning', 'error', 'critical'];
+
+    /**
+     * Rotate log file if it exceeds maximum size
+     */
+    private static function rotateLogFile()
+    {
+        if (!file_exists(self::$logFile)) {
+            return;
+        }
+
+        if (filesize(self::$logFile) > self::$maxFileSize) {
+            $backupFile = self::$logFile . '.' . date('Y-m-d-H-i-s') . '.backup';
+            rename(self::$logFile, $backupFile);
+        }
+    }
+
     /**
      * Log a message with context data
      * 
      * @param mixed $data The data to log
-     * @param string $type The type of log (info, error, debug)
+     * @param string $level The log level (debug, info, warning, error, critical)
      * @param string $context Additional context information
      * @return void
      */
-    public static function log($data, $type = 'info', $context = '')
+    public static function log($data, $level = 'info', $context = '')
     {
+        if (!in_array($level, self::$validLevels)) {
+            $level = 'info';
+        }
+
+        self::rotateLogFile();
+
         $timestamp = date('Y-m-d H:i:s');
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $caller = isset($backtrace[1]) ? basename($backtrace[1]['file']) . ':' . $backtrace[1]['line'] : 'unknown';
         
         // Asegurar que el contexto sea una cadena
         if (is_array($context) || is_object($context)) {
@@ -37,7 +70,13 @@ class Logger
             $logData = (string)$data;
         }
         
-        $message = "[{$timestamp}] [{$type}] {$context}\n";
+        $message = sprintf(
+            "[%s] [%s] [%s] %s\n",
+            $timestamp,
+            strtoupper($level),
+            $caller,
+            $context
+        );
         $message .= "Data: {$logData}\n";
         $message .= "----------------------------------------\n";
         

@@ -1,107 +1,72 @@
+<!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="view/index3.html" class="brand-link">
+    <a href="index.php" class="brand-link">
         <img src="view/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
             style="opacity: .8">
-        <span class="brand-text font-weight-light">AdminLTE 3</span>
+        <span class="brand-text font-weight-light">MiClinica</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- SidebarSearch Form -->
-        <div class="form-inline mt-2">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-sidebar">
-                        <i class="fas fa-search fa-fw"></i>
-                    </button>
-                </div>
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="view/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#"
+                    class="d-block"><?php echo isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario'; ?></a>
             </div>
         </div>
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Nivel 1 -->
+                <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fa-solid fa-folder-tree"></i>
-                        <p>
-                            Dashboard
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
+                    <a href="index.php?ruta=home" class="nav-link">
+                        <i class="nav-icon fas fa-home"></i>
+                        <p>Inicio</p>
                     </a>
-                    <!-- Nivel 2 -->
-                    <ul class="nav nav-treeview">
-                        <!-- <li class="nav-item">
-                            <a href="view/index.html" class="nav-link">
-                                <i class="fa-solid fa-people-arrows"></i>
-                                <p>Personas</p>
-                            </a>
-                        </li> -->
-                        <li class="nav-item">
-                            <a href="consultas" class="nav-link">
-                                <i class="fa-solid fa-people-arrows"></i>
-                                <p>Consultas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fa-solid fa-calendar-days"></i>
-                                <p>
-                                    Gestion de reservas
-                                    <i class="right fas fa-angle-left"></i>
-
-                                </p>
-                            </a>
-                            <!-- Nivel 3 -->
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="view/index2.html" class="nav-link">
-                                        <i class="fa-solid fa-calendar-plus"></i>
-                                        <p>Agenda</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="view/index2.html" class="nav-link">
-                                        <i class="fa-solid fa-list-ol"></i>
-                                        <p>Reserva</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>
-                                            Submenu 2
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
-                                    <!-- Nivel 4 -->
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="view/index3.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Submenu 2.1</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="view/index4.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Submenu 2.2</p>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="roles" class="nav-link">
-                                <i class="fas fa-user-lock"></i>
-                                <p>Roles y Permisos</p>
-                            </a>
-                        </li>
-                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=consultas" class="nav-link">
+                        <i class="nav-icon fas fa-stethoscope"></i>
+                        <p>Consultas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=citas" class="nav-link">
+                        <i class="nav-icon fas fa-calendar-alt"></i>
+                        <p>Citas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=personas" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Personas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=rhpersonas" class="nav-link">
+                        <i class="nav-icon fas fa-user-md"></i>
+                        <p>RH Personas</p>
+                    </a>
+                </li>
+                <li class="nav-header">CONFIGURACIÓN</li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=roles" class="nav-link">
+                        <i class="nav-icon fas fa-user-tag"></i>
+                        <p>Roles y Permisos</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=logout" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Cerrar Sesión</p>
+                    </a>
                 </li>
             </ul>
         </nav>

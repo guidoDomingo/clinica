@@ -1,10 +1,11 @@
 <?php
+// Iniciamos la sesión al principio del archivo antes de cualquier salida
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 class ControllerUser {
     static public function ctrLoginUser() {
-        // Verifica si la sesión ya ha sido iniciada
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
 
         // Si ya hay una sesión activa, redirige al home
         if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] === "ok") {

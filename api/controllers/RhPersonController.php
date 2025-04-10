@@ -106,7 +106,10 @@ class RhPersonController
         
         // Set additional fields
         $data['created_at'] = date('Y-m-d H:i:s');
-        $data['is_active'] = true;
+        
+        // Ensure boolean fields are properly handled with strict type casting
+        $data['is_active'] = isset($data['is_active']) && $data['is_active'] !== '' ? filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN) : true;
+        $data['is_minor'] = isset($data['is_minor']) && $data['is_minor'] !== '' ? filter_var($data['is_minor'], FILTER_VALIDATE_BOOLEAN) : false;
         
         try {
             $id = $this->personModel->create($data);

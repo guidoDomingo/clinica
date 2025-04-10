@@ -1,0 +1,84 @@
+/**
+ * Estilos para el módulo de gestión de personas
+ */
+
+/* Estilos para la foto de perfil */
+.profile-photo-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-upload-btn {
+  margin-top: 10px;
+}
+
+/* Estilos para los formularios */
+.required-field::after {
+  content: " *";
+  color: red;
+}
+
+/* Estilos para la tabla de personas */
+.table-actions .btn {
+  margin-right: 5px;
+}
+
+/* Estilos para el modal de detalles */
+.person-details-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.person-photo-container {
+  flex: 0 0 30%;
+  text-align: center;
+  padding: 15px;
+}
+
+.person-info-container {
+  flex: 0 0 70%;
+  padding: 15px;
+}
+
+/* Estilos para campos de tutor */
+.tutor-fields {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* Estilos para estados */
+.status-active {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Estilos para la vista móvil */
+@media (max-width: 768px) {
+  .person-photo-container,
+  .person-info-container {
+    flex: 0 0 100%;
+  }
+
+  .profile-photo-container {
+    width: 120px;
+    height: 120px;
+  }
+}
