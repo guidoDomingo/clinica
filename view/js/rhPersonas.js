@@ -43,7 +43,8 @@ function inicializarTabla() {
         "ajax": {
             "url": "api/persons",
             "dataSrc": function(json) {
-                return json.data || [];
+                console.log('Datos recibidos:', json);
+                return json.data.data || [];
             }
         },
         "columns": [
@@ -204,7 +205,10 @@ function guardarPersona() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.person_id) {
+        console.log(data);
+        console.log(data.data.person_id);
+        if (data.data.person_id) {
+         
             // Si hay una foto para subir, hacerlo después de crear la persona
             const inputFoto = document.getElementById('inputFotoPerfil');
             if (inputFoto.files.length > 0) {

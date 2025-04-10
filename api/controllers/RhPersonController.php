@@ -1,6 +1,7 @@
 <?php
 namespace Api\Controllers;
 
+use Api\Core\Logger;
 use Api\Core\Response;
 use Api\Models\RhPerson;
 
@@ -108,8 +109,33 @@ class RhPersonController
         $data['created_at'] = date('Y-m-d H:i:s');
         
         // Ensure boolean fields are properly handled with strict type casting
-        $data['is_active'] = isset($data['is_active']) && $data['is_active'] !== '' ? filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN) : true;
-        $data['is_minor'] = isset($data['is_minor']) && $data['is_minor'] !== '' ? filter_var($data['is_minor'], FILTER_VALIDATE_BOOLEAN) : false;
+        // Convert empty strings to null first to avoid PostgreSQL error with empty strings in boolean fields
+        $data['is_active'] = isset($data['is_active']) ? (is_string($data['is_active']) && $data['is_active'] === '' ? true : filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN)) : true;
+        $data['is_minor'] = isset($data['is_minor']) ? (is_string($data['is_minor']) && $data['is_minor'] === '' ? false : filter_var($data['is_minor'], FILTER_VALIDATE_BOOLEAN)) : false;
+        
+        // Ensure guardian fields are properly handled
+        // If is_minor is false, guardian fields should be null
+        if (!$data['is_minor']) {
+            $data['guardian_name'] = null;
+            $data['guardian_document'] = null;
+        } else {
+            // If is_minor is true but guardian fields are empty strings, set them to null
+            $data['guardian_name'] = (isset($data['guardian_name']) && $data['guardian_name'] !== '') ? $data['guardian_name'] : null;
+            $data['guardian_document'] = (isset($data['guardian_document']) && $data['guardian_document'] !== '') ? $data['guardian_document'] : null;
+        }
+        
+        // Ensure guardian fields are properly handled
+        // If is_minor is false, guardian fields should be null
+        if (!$data['is_minor']) {
+            $data['guardian_name'] = null;
+            $data['guardian_document'] = null;
+        } else {
+            // If is_minor is true but guardian fields are empty strings, set them to null
+            $data['guardian_name'] = (isset($data['guardian_name']) && $data['guardian_name'] !== '') ? $data['guardian_name'] : null;
+            $data['guardian_document'] = (isset($data['guardian_document']) && $data['guardian_document'] !== '') ? $data['guardian_document'] : null;
+        }
+
+        Logger::info('Creating person', $data);
         
         try {
             $id = $this->personModel->create($data);
@@ -171,6 +197,15 @@ class RhPersonController
         
         // Set additional fields
         $data['last_modified_at'] = date('Y-m-d H:i:s');
+        
+        // Ensure boolean fields are properly handled with strict type casting for updates
+        if (isset($data['is_active'])) {
+            $data['is_active'] = is_string($data['is_active']) && $data['is_active'] === '' ? true : filter_var($data['is_active'], FILTER_VALIDATE_BOOLEAN);
+        }
+        
+        if (isset($data['is_minor'])) {
+            $data['is_minor'] = is_string($data['is_minor']) && $data['is_minor'] === '' ? false : filter_var($data['is_minor'], FILTER_VALIDATE_BOOLEAN);
+        }
         
         try {
             $this->personModel->update($id, $data);

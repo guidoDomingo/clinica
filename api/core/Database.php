@@ -1,6 +1,8 @@
 <?php
 namespace Api\Core;
 
+use PDO;
+
 /**
  * Database Class
  * 
@@ -119,14 +121,65 @@ class Database
      * @param array $params The query parameters
      * @return \PDOStatement
      */
+    // public static function query($sql, $params = [])
+    // {
+    //     try {
+    //         // Log the query before execution
+    //         self::logQuery($sql, $params);
+            
+    //         $stmt = self::getConnection()->prepare($sql);
+    //         $stmt->execute($params);
+    //         return $stmt;
+    //     } catch (\PDOException $e) {
+    //         // Log detailed error information
+    //         $errorInfo = $e->errorInfo ?? [];
+    //         $errorCode = $errorInfo[1] ?? $e->getCode();
+    //         $errorMessage = "Database error ({$errorCode}): " . $e->getMessage();
+    //         $errorMessage .= "\nSQL: {$sql}";
+    //         if (!empty($params)) {
+    //             $errorMessage .= "\nParameters: " . json_encode($params);
+    //         }
+    //         self::logQuery($sql, $params, $errorMessage, true);
+            
+    //         // Provide specific error messages based on error codes
+    //         switch ($errorCode) {
+    //             case '23505': // Unique violation
+    //                 throw new \Exception("Duplicate entry found", 400);
+    //             case '23502': // Not null violation
+    //                 throw new \Exception("Required field missing", 400);
+    //             case '23503': // Foreign key violation
+    //                 throw new \Exception("Invalid reference", 400);
+    //             default:
+    //                 throw new \Exception("Database operation failed: " . $e->getMessage(), 500);
+    //         }
+    //     }
+    // }
+
     public static function query($sql, $params = [])
     {
         try {
             // Log the query before execution
             self::logQuery($sql, $params);
-            
+
             $stmt = self::getConnection()->prepare($sql);
-            $stmt->execute($params);
+
+            // Nueva lógica para bindear cada valor con su tipo
+            foreach ($params as $key => $value) {
+                $paramType = PDO::PARAM_STR;
+
+                if (is_int($value)) {
+                    $paramType = PDO::PARAM_INT;
+                } elseif (is_bool($value)) {
+                    $paramType = PDO::PARAM_BOOL;
+                } elseif (is_null($value)) {
+                    $paramType = PDO::PARAM_NULL;
+                }
+
+                $stmt->bindValue(":$key", $value, $paramType);
+            }
+
+            $stmt->execute(); // ejecutamos sin pasar los $params porque ya hicimos bindValue
+
             return $stmt;
         } catch (\PDOException $e) {
             // Log detailed error information
@@ -138,7 +191,7 @@ class Database
                 $errorMessage .= "\nParameters: " . json_encode($params);
             }
             self::logQuery($sql, $params, $errorMessage, true);
-            
+
             // Provide specific error messages based on error codes
             switch ($errorCode) {
                 case '23505': // Unique violation
@@ -152,6 +205,7 @@ class Database
             }
         }
     }
+
     
     /**
      * Fetch all records from a query

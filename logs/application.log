@@ -1,0 +1,21 @@
+[2025-04-10 00:18:48] [INFO] [RhPersonController.php:138] {"document_number":"23424","birth_date":"2025-04-10","first_name":"DSFDS","last_name":"FSDF","phone_number":"3424","gender":"M","record_number":"3245345","address":"SDFDSF","email":"GUIDO@GUIDO.COM","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:18:48"}
+Data: Creating person
+----------------------------------------
+[2025-04-10 00:21:33] [INFO] [RhPersonController.php:138] {"document_number":"789465","birth_date":"2025-04-10","first_name":"DSFDS","last_name":"DSFDS","phone_number":"32432","gender":"M","record_number":"3454","address":"FSDFSDF","email":"SADF@SDFDS.COM","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:21:33"}
+Data: Creating person
+----------------------------------------
+[2025-04-10 00:24:40] [INFO] [RhPersonController.php:138] {"document_number":"456123","birth_date":"2025-04-10","first_name":"DSFDS","last_name":"DSFDS","phone_number":"32432","gender":"M","record_number":"3454","address":"FSDFSDF","email":"SADF@SDFDS.COMJK","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:24:40"}
+Data: Creating person
+----------------------------------------
+[2025-04-10 00:26:07] [INFO] [RhPersonController.php:138] {"document_number":"4561234","birth_date":"2025-04-10","first_name":"DSFDS","last_name":"DSFDS","phone_number":"32432","gender":"M","record_number":"3454","address":"FSDFSDF","email":"SADF@SDFDS.COMJKF","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:26:07"}
+Data: Creating person
+----------------------------------------
+[2025-04-10 00:27:06] [INFO] [RhPersonController.php:138] {"document_number":"234234234","birth_date":"2025-04-10","first_name":"dsfds","last_name":"sdfdsf","phone_number":"234234","gender":"M","record_number":"34535","address":"sdfdsf","email":"guido@ugido.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:27:06"}
+Data: Creating person
+----------------------------------------
+[2025-04-10 00:31:09] [INFO] [RhPersonController.php:138] {"document_number":"3333234","birth_date":"2025-04-10","first_name":"dsfsdf","last_name":"sdfds","phone_number":"32453","gender":"M","record_number":"345435","address":"dsfdsf","email":"sdfsd@sdfdsf.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:31:09"}
+Data: Creating person
+----------------------------------------
+[2025-04-10 00:33:16] [INFO] [RhPersonController.php:138] {"document_number":"5553465346","birth_date":"2025-04-10","first_name":"dsfsdf","last_name":"sdfds","phone_number":"34543","gender":"M","record_number":"45654","address":"sdfdsf","email":"sdfds@sdfds.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:33:16"}
+Data: Creating person
+----------------------------------------
