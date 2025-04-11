@@ -327,21 +327,69 @@ class RhPersonController
     }
     
     /**
-     * Search persons by name, lastname or document
+     * Search persons by name, lastname, document, record or gender
      * 
      * @return void
      */
     public function search()
     {
-        // Get the search query from the request
+        // Get search parameters from the request
+        $document = isset($_GET['document']) ? $_GET['document'] : null;
+        $name = isset($_GET['name']) ? $_GET['name'] : null;
+        $lastname = isset($_GET['lastname']) ? $_GET['lastname'] : null;
+        $record = isset($_GET['record']) ? $_GET['record'] : null;
+        $gender = isset($_GET['gender']) ? $_GET['gender'] : null;
+        
+        // Legacy support for old search method
         $query = isset($_GET['q']) ? $_GET['q'] : null;
         
-        if (!$query) {
-            Response::error(['message' => 'Search query is required'], 400);
+        // If no specific parameters are provided but q parameter exists, use the old search method
+        if ($query && !$document && !$name && !$lastname && !$record && !$gender) {
+            $persons = $this->personModel->search($query);
+            Response::success($persons);
             return;
         }
         
-        $persons = $this->personModel->search($query);
+        // If no search parameters are provided, return all persons
+        if (!$document && !$name && !$lastname && !$record && !$gender) {
+            $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+            $perPage = isset($_GET['per_page']) ? (int) $_GET['per_page'] : 10;
+            $persons = $this->personModel->paginate($page, $perPage);
+            Response::success($persons);
+            return;
+        }
+        
+        // Build search conditions
+        $conditions = [];
+        $params = [];
+        
+        if ($document) {
+            $conditions[] = "document_number ILIKE :document";
+            $params['document'] = "%{$document}%";
+        }
+        
+        if ($name) {
+            $conditions[] = "first_name ILIKE :name";
+            $params['name'] = "%{$name}%";
+        }
+        
+        if ($lastname) {
+            $conditions[] = "last_name ILIKE :lastname";
+            $params['lastname'] = "%{$lastname}%";
+        }
+        
+        if ($record) {
+            $conditions[] = "record_number ILIKE :record";
+            $params['record'] = "%{$record}%";
+        }
+        
+        if ($gender) {
+            $conditions[] = "gender = :gender";
+            $params['gender'] = $gender;
+        }
+        
+        // Execute search with advanced filters
+        $persons = $this->personModel->advancedSearch($conditions, $params);
         Response::success($persons);
     }
     

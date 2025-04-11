@@ -99,6 +99,28 @@ class RhPerson extends Model
     }
     
     /**
+     * Advanced search for persons with multiple filters
+     * 
+     * @param array $conditions Array of SQL conditions
+     * @param array $params Array of parameters for the conditions
+     * @return array
+     */
+    public function advancedSearch($conditions, $params)
+    {
+        $whereClause = implode(' AND ', $conditions);
+        
+        $sql = "SELECT * FROM {$this->table}";
+        
+        if (!empty($whereClause)) {
+            $sql .= " WHERE " . $whereClause;
+        }
+        
+        $sql .= " ORDER BY {$this->primaryKey} DESC";
+        
+        return $this->raw($sql, $params)->fetchAll();
+    }
+    
+    /**
      * Get person by document number
      * 
      * @param string $documentNumber The document number

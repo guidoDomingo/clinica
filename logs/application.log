@@ -19,3 +19,9 @@ Data: Creating person
 [2025-04-10 00:33:16] [INFO] [RhPersonController.php:138] {"document_number":"5553465346","birth_date":"2025-04-10","first_name":"dsfsdf","last_name":"sdfds","phone_number":"34543","gender":"M","record_number":"45654","address":"sdfdsf","email":"sdfds@sdfds.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-10 00:33:16"}
 Data: Creating person
 ----------------------------------------
+[2025-04-11 07:04:41] [INFO] [RhPersonController.php:138] {"document_number":"5004615","birth_date":"0199-08-04","first_name":"Guido","last_name":"Ruiz","phone_number":"09823133858","gender":"M","record_number":"1324564","address":"caacupe","email":"guido@guido.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-11 07:04:41"}
+Data: Creating person
+----------------------------------------
+[2025-04-11 07:12:38] [INFO] [RhPersonController.php:138] {"document_number":"5004616","birth_date":"1999-08-04","first_name":"carlos","last_name":"ruiz","phone_number":"4561328","gender":"M","record_number":"456789","address":"asuncion","email":"carlos@carlos.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-11 07:12:38"}
+Data: Creating person
+----------------------------------------
