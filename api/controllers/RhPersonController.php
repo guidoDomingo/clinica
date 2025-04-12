@@ -403,4 +403,145 @@ class RhPersonController
         $persons = $this->personModel->getActive();
         Response::success($persons);
     }
+    
+    /**
+     * Get professional information for a person
+     * 
+     * @return void
+     */
+    public function getProfessionalInfo()
+    {
+        // Get the person ID from the request
+        $personId = isset($_GET['person_id']) ? $_GET['person_id'] : null;
+        
+        if (!$personId) {
+            Response::error(['message' => 'Person ID is required'], 400);
+            return;
+        }
+        
+        // Check if the person exists
+        $person = $this->personModel->find($personId);
+        
+        if (!$person) {
+            Response::error(['message' => 'Person not found'], 404);
+            return;
+        }
+        
+        try {
+            // Get professional data from database
+            $db = \Api\Core\Database::getConnection();
+            $query = "SELECT * FROM person_professional WHERE person_id = :person_id";
+            $stmt = $db->prepare($query);
+            $stmt->bindParam(':person_id', $personId);
+            $stmt->execute();
+            
+            $professionalInfo = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if ($professionalInfo) {
+                Response::success($professionalInfo);
+            } else {
+                // Return empty data if no professional info exists
+                Response::success(null);
+            }
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to get professional information', 'error' => $e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Save professional information for a person
+     * 
+     * @return void
+     */
+    public function saveProfessionalInfo()
+    {
+        // Get the request body
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$data) {
+            Response::error(['message' => 'Invalid request data'], 400);
+            return;
+        }
+        
+        // Validate required fields
+        if (!isset($data['person_id']) || empty($data['person_id'])) {
+            Response::error(['message' => "Person ID is required"], 400);
+            return;
+        }
+        
+        $personId = $data['person_id'];
+        
+        // Check if the person exists
+        $person = $this->personModel->find($personId);
+        
+        if (!$person) {
+            Response::error(['message' => 'Person not found'], 404);
+            return;
+        }
+        
+        try {
+            $db = \Api\Core\Database::getConnection();
+            
+            // Check if professional info already exists for this person
+            $checkQuery = "SELECT professional_id FROM person_professional WHERE person_id = :person_id";
+            $checkStmt = $db->prepare($checkQuery);
+            $checkStmt->bindParam(':person_id', $personId);
+            $checkStmt->execute();
+            
+            $existingRecord = $checkStmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if ($existingRecord) {
+                // Update existing record
+                $updateQuery = "UPDATE person_professional SET 
+                    profesion = :profesion,
+                    direccion_corporativa = :direccion_corporativa,
+                    email_profesional = :email_profesional,
+                    denominacion_corporativa = :denominacion_corporativa,
+                    ruc = :ruc,
+                    whatsapp = :whatsapp,
+                    plan = :plan,
+                    fecha_actualizacion = CURRENT_TIMESTAMP
+                WHERE person_id = :person_id";
+                
+                $updateStmt = $db->prepare($updateQuery);
+                $updateStmt->bindParam(':person_id', $personId);
+                $updateStmt->bindParam(':profesion', $data['profesion']);
+                $updateStmt->bindParam(':direccion_corporativa', $data['direccion_corporativa']);
+                $updateStmt->bindParam(':email_profesional', $data['email_profesional']);
+                $updateStmt->bindParam(':denominacion_corporativa', $data['denominacion_corporativa']);
+                $updateStmt->bindParam(':ruc', $data['ruc']);
+                $updateStmt->bindParam(':whatsapp', $data['whatsapp']);
+                $updateStmt->bindParam(':plan', $data['plan']);
+                
+                $updateStmt->execute();
+                
+                Response::success(['message' => 'Professional information updated successfully']);
+            } else {
+                // Insert new record
+                $insertQuery = "INSERT INTO person_professional (
+                    person_id, profesion, direccion_corporativa, email_profesional,
+                    denominacion_corporativa, ruc, whatsapp, plan
+                ) VALUES (
+                    :person_id, :profesion, :direccion_corporativa, :email_profesional,
+                    :denominacion_corporativa, :ruc, :whatsapp, :plan
+                )";
+                
+                $insertStmt = $db->prepare($insertQuery);
+                $insertStmt->bindParam(':person_id', $personId);
+                $insertStmt->bindParam(':profesion', $data['profesion']);
+                $insertStmt->bindParam(':direccion_corporativa', $data['direccion_corporativa']);
+                $insertStmt->bindParam(':email_profesional', $data['email_profesional']);
+                $insertStmt->bindParam(':denominacion_corporativa', $data['denominacion_corporativa']);
+                $insertStmt->bindParam(':ruc', $data['ruc']);
+                $insertStmt->bindParam(':whatsapp', $data['whatsapp']);
+                $insertStmt->bindParam(':plan', $data['plan']);
+                
+                $insertStmt->execute();
+                
+                Response::success(['message' => 'Professional information saved successfully']);
+            }
+        } catch (\Exception $e) {
+            Response::error(['message' => 'Failed to save professional information', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

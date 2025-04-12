@@ -51,11 +51,18 @@ $router->post('permissions/update', 'Api\\Controllers\\SysPermissionController',
 $router->post('permissions/delete', 'Api\\Controllers\\SysPermissionController', 'delete');
 
 // Person Management routes
-$router->get('persons', 'Api\\Controllers\\RhPersonController', 'index');
-$router->get('persons/show', 'Api\\Controllers\\RhPersonController', 'show');
-$router->post('persons', 'Api\\Controllers\\RhPersonController', 'store');
-$router->put('persons', 'Api\\Controllers\\RhPersonController', 'update');
-$router->delete('persons', 'Api\\Controllers\\RhPersonController', 'destroy');
-$router->get('persons/search', 'Api\\Controllers\\RhPersonController', 'search');
-$router->get('persons/active', 'Api\\Controllers\\RhPersonController', 'getActive');
-$router->post('persons/upload-photo', 'Api\\Controllers\\RhPersonController', 'uploadProfilePhoto');
+$router->get('persons', 'Api\Controllers\RhPersonController', 'index');
+$router->get('persons/show', 'Api\Controllers\RhPersonController', 'show');
+$router->post('persons', 'Api\Controllers\RhPersonController', 'store');
+$router->put('persons', 'Api\Controllers\RhPersonController', 'update');
+$router->delete('persons', 'Api\Controllers\RhPersonController', 'destroy');
+$router->get('persons/search', 'Api\Controllers\RhPersonController', 'search');
+$router->get('persons/active', 'Api\Controllers\RhPersonController', 'getActive');
+$router->post('persons/upload-photo', 'Api\Controllers\RhPersonController', 'uploadProfilePhoto');
+$router->get('persons/professional', 'Api\Controllers\RhPersonController', 'getProfessionalInfo');
+$router->post('persons/professional', 'Api\Controllers\RhPersonController', 'saveProfessionalInfo');
+
+// Rutas para especialidades
+$router->get('especialidades', 'Api\Controllers\EspecialidadController', 'index');
+$router->get('especialidades/person', 'Api\Controllers\EspecialidadController', 'getForPerson');
+$router->post('especialidades/assign', 'Api\Controllers\EspecialidadController', 'assignToPerson');

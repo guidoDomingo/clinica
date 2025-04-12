@@ -229,6 +229,7 @@ if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
                                         placeholder="Documento del tutor">
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Columna derecha para foto de perfil -->
@@ -368,6 +369,7 @@ if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
                                         placeholder="Documento del tutor">
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Columna derecha para foto de perfil -->
@@ -399,5 +401,22 @@ if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
     </div>
 </div>
 
+<!-- Incluir el modal de especialidades -->
+<?php include 'view/modules/modalEspecialidades.php'; ?>
+
 <script src="view/js/rhPersonas.js"></script>
 <script src="view/js/test-modal.js"></script>
+
+<style>
+.btn-purple {
+    background-color: #6f42c1;
+    border-color: #643ab0;
+    color: #fff;
+}
+
+.btn-purple:hover {
+    background-color: #5a32a3;
+    border-color: #4d2b8a;
+    color: #fff;
+}
+</style>

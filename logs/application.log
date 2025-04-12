@@ -52,3 +52,6 @@ Data: {
 [2025-04-12 10:34:08] [INFO] [RhPersonController.php:138] {"document_number":"753159","birth_date":"2010-02-01","first_name":"ronaldo","last_name":"jesus","phone_number":"098231325","gender":"M","record_number":"79846","address":"españa","email":"ronaldo@ronaldo.com","department_id":null,"city_id":null,"is_minor":true,"guardian_name":"carlos","guardian_document":"456789","is_active":true,"created_at":"2025-04-12 10:34:08"}
 Data: Creating person
 ----------------------------------------
+[2025-04-12 13:56:45] [INFO] [RhPersonController.php:138] {"document_number":"899568","birth_date":"1995-03-02","first_name":"drogba","last_name":"meli","phone_number":"0982313358","gender":"M","record_number":"0002","address":"marfil","email":"drogba@drogba.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-12 13:56:45"}
+Data: Creating person
+----------------------------------------
