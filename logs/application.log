@@ -25,3 +25,30 @@ Data: Creating person
 [2025-04-11 07:12:38] [INFO] [RhPersonController.php:138] {"document_number":"5004616","birth_date":"1999-08-04","first_name":"carlos","last_name":"ruiz","phone_number":"4561328","gender":"M","record_number":"456789","address":"asuncion","email":"carlos@carlos.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-11 07:12:38"}
 Data: Creating person
 ----------------------------------------
+[2025-04-11 17:28:18] [INFO] [RhPersonController.php:138] {"document_number":"465","birth_date":"1995-05-04","first_name":"guido","last_name":"sdfds","phone_number":"3245345","gender":"M","record_number":"34543","address":"dsf","email":"guifdo@guifd.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-11 17:28:18"}
+Data: Creating person
+----------------------------------------
+[2025-04-12 13:20:11] [INFO] [user.controller.php:21] user: ronal@ronal.com
+Data: ronal@ronal.com
+----------------------------------------
+[2025-04-12 13:20:11] [INFO] [user.controller.php:22] user: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+Data: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+----------------------------------------
+[2025-04-12 13:20:11] [INFO] [user.controller.php:33] Login attempt for user: ronal@ronal.com
+Data: {
+    "user_id": 5,
+    "reg_id": 5,
+    "user_email": "ronal@ronal.com",
+    "user_pass": "$2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\\\/UNdHCW",
+    "user_expire": "2025-05-05 14:51:04.340773",
+    "user_first_login": null,
+    "user_last_login": "2025-04-09 19:09:43.263421",
+    "user_is_active": true,
+    "profile_photo": "user_5_1743885959.jpg",
+    "reg_name": "ronal",
+    "reg_lastname": "ruiz"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [RhPersonController.php:138] {"document_number":"753159","birth_date":"2010-02-01","first_name":"ronaldo","last_name":"jesus","phone_number":"098231325","gender":"M","record_number":"79846","address":"españa","email":"ronaldo@ronaldo.com","department_id":null,"city_id":null,"is_minor":true,"guardian_name":"carlos","guardian_document":"456789","is_active":true,"created_at":"2025-04-12 10:34:08"}
+Data: Creating person
+----------------------------------------

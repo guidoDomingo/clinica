@@ -22,6 +22,9 @@ $(document).ready(function () {
   $("#btnSubirFoto").on("click", function () {
     $("#inputFotoPerfil").click();
   });
+  $("#btnEditSubirFoto").on("click", function () {
+    $("#inputEditFotoPerfil").click();
+  });
 
   // Configurar preview de imagen
   $("#inputFotoPerfil").on("change", mostrarPreviewImagen);
@@ -357,7 +360,8 @@ function actualizarPersona() {
     body: JSON.stringify(personaData),
   })
     .then((response) => response.json())
-    .then((data) => {
+    .then((respuesta) => {
+      const data = respuesta.data;
       if (data.person_id) {
         // Si hay una foto para subir, hacerlo después de actualizar la persona
         const inputFoto = document.getElementById("inputEditFotoPerfil");
@@ -402,7 +406,8 @@ function eliminarPersona() {
         method: "DELETE",
       })
         .then((response) => response.json())
-        .then((data) => {
+        .then((respuesta) => {
+          const data = respuesta.data;
           if (data.message) {
             mostrarAlerta("success", "Persona eliminada correctamente");
             tablaPersonas.ajax.reload();
@@ -447,7 +452,8 @@ function cambiarEstadoPersona() {
       });
     })
     .then((response) => response.json())
-    .then((data) => {
+    .then((respuesta) => {
+      const data = respuesta.data;
       if (data.person_id) {
         mostrarAlerta(
           "success",
@@ -477,7 +483,8 @@ function verPersona() {
   // Obtener datos de la persona
   fetch(`api/persons/show?id=${personId}`)
     .then((response) => response.json())
-    .then((data) => {
+    .then((respuesta) => {
+      const data = respuesta.data;
       // Construir HTML con los detalles
       let html = `
             <div class="row">
@@ -572,7 +579,8 @@ function subirFotoPerfil(personId, file) {
     body: formData,
   })
     .then((response) => response.json())
-    .then((data) => {
+    .then((respuesta) => {
+      const data = respuesta.data;
       if (data.message) {
         mostrarAlerta(
           "success",

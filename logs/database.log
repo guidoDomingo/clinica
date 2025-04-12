@@ -2345,3 +2345,2972 @@ Parameters: {
 [2025-04-11 07:30:51] [INFO] [Model.php:175]
 SQL: SELECT COUNT(*) as total FROM rh_person
 ----------------------------------------
+[2025-04-11 17:26:52] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-11 17:26:53] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-11 17:27:00] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-11 17:27:00] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-11 17:27:00] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-11 17:27:03] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:27:08] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:27:11] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:27:22] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:27:22] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "23424",
+    "birth_date": "2025-04-10",
+    "first_name": "Guido",
+    "last_name": "Ruiz",
+    "phone_number": "3424",
+    "gender": "M",
+    "record_number": "3245345",
+    "address": "SDFDSF",
+    "email": "GUIDO@GUIDO.COM",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-11 17:27:22",
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:27:22] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "23424",
+    "birth_date": "2025-04-10",
+    "first_name": "Guido",
+    "last_name": "Ruiz",
+    "phone_number": "3424",
+    "gender": "M",
+    "record_number": "3245345",
+    "address": "SDFDSF",
+    "email": "GUIDO@GUIDO.COM",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-11 17:27:22",
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:27:22] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "465"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "guifdo@guifd.com"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "465",
+    "birth_date": "1995-05-04",
+    "first_name": "guido",
+    "last_name": "sdfds",
+    "phone_number": "3245345",
+    "gender": "M",
+    "record_number": "34543",
+    "address": "dsf",
+    "email": "guifdo@guifd.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-11 17:28:18"
+}
+Filtered Data: {
+    "document_number": "465",
+    "birth_date": "1995-05-04",
+    "first_name": "guido",
+    "last_name": "sdfds",
+    "phone_number": "3245345",
+    "gender": "M",
+    "record_number": "34543",
+    "address": "dsf",
+    "email": "guifdo@guifd.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-11 17:28:18"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "465",
+    "birth_date": "1995-05-04",
+    "first_name": "guido",
+    "last_name": "sdfds",
+    "phone_number": "3245345",
+    "gender": "M",
+    "record_number": "34543",
+    "address": "dsf",
+    "email": "guifdo@guifd.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "465",
+    "birth_date": "1995-05-04",
+    "first_name": "guido",
+    "last_name": "sdfds",
+    "phone_number": "3245345",
+    "gender": "M",
+    "record_number": "34543",
+    "address": "dsf",
+    "email": "guifdo@guifd.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_11_1744406898.jpg",
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_11_1744406898.jpg",
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-11 17:28:18",
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-11 17:28:18",
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-11 17:28:18] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-11 17:28:35] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:45] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:45] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "465",
+    "birth_date": "1995-05-04",
+    "first_name": "guido",
+    "last_name": "benitez",
+    "phone_number": "3245345",
+    "gender": "M",
+    "record_number": "34543",
+    "address": "dsf",
+    "email": "guifdo@guifd.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-11 17:28:45",
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:45] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "465",
+    "birth_date": "1995-05-04",
+    "first_name": "guido",
+    "last_name": "benitez",
+    "phone_number": "3245345",
+    "gender": "M",
+    "record_number": "34543",
+    "address": "dsf",
+    "email": "guifdo@guifd.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-11 17:28:45",
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:45] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-11 17:28:52] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-11 17:28:52] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-11 17:28:52] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-11 17:29:03] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number ILIKE :document ORDER BY person_id DESC
+Parameters: {
+    "document": "%23424%"
+}
+----------------------------------------
+[2025-04-12 09:18:16] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 09:20:01] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 09:20:11] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 09:20:14] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 09:20:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 09:20:14] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 09:20:36] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "gender": "M"
+}
+----------------------------------------
+[2025-04-12 09:20:38] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "gender": "M"
+}
+----------------------------------------
+[2025-04-12 09:20:55] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE record_number ILIKE :record AND gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "record": "%345435%",
+    "gender": "M"
+}
+----------------------------------------
+[2025-04-12 09:20:58] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:14] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2025-04-10",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 09:22:14",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:14] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2025-04-10",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 09:22:14",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:28] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:28] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2025-04-10",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 09:22:28",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:28] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2025-04-10",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 09:22:28",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:28] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 09:22:41] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE record_number ILIKE :record AND gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "record": "%345435%",
+    "gender": "M"
+}
+----------------------------------------
+[2025-04-12 09:34:36] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 09:34:36] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 09:34:36] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 09:34:42] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 09:35:02] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 09:35:02] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 09:35:02",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 09:35:02] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 09:35:02",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 09:35:02] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 09:35:02] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 09:35:02] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 09:44:31] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 09:44:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 09:44:32] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 09:44:37] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "8"
+}
+----------------------------------------
+[2025-04-12 09:44:37] [INFO] [Model.php:159]
+SQL: DELETE FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "8"
+}
+----------------------------------------
+[2025-04-12 09:44:37] [INFO] [Database.php:300]
+SQL: DELETE FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "8"
+}
+----------------------------------------
+[2025-04-12 09:44:37] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 09:44:37] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 09:44:44] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-12 09:44:44] [INFO] [Model.php:159]
+SQL: DELETE FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-12 09:44:44] [INFO] [Database.php:300]
+SQL: DELETE FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "2"
+}
+----------------------------------------
+[2025-04-12 09:44:44] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 09:44:44] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 09:44:49] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:02:40] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:02:41] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:02:41] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:02:45] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:04:33] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-12 10:04:50] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:05:08] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:05:08] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2000-02-01",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:05:08",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:05:08] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2000-02-01",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:05:08",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:05:08] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:05:08] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:05:08] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:05:13] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:05:29] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:29] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:29] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:05:29",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:29] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:05:29",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:29] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:32] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:05:32] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:05:32] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:05:32",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:05:32] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:05:32",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:05:32] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:05:37] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:37] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:37] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:05:37",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:37] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:05:37",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:05:37] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:07:30] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-12 10:10:40] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:10:40] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:10:40] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:10:45] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:10:46] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:10:46] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:10:46",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:10:46] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:10:46",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:10:46] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:12:10] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:12:10] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:12:10] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:12:14",
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": false,
+    "last_modified_at": "2025-04-12 10:12:14",
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:12:14] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": true,
+    "last_modified_at": "2025-04-12 10:12:20",
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET is_active = :is_active, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "is_active": true,
+    "last_modified_at": "2025-04-12 10:12:20",
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:12:20] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:12:48] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-12 10:13:16] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:13:17] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:13:21] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:13:21] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:13:21] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:15:37] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:15:37] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:15:37] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:15:40] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-12 10:23:55] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:23:56] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:23:56] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:23:59] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-12 10:24:01] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2000-02-01",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:24:14",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2000-02-01",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:24:14",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_7_1744467854.jpg",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_7_1744467854.jpg",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:24:14",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:24:14",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:24:14] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:24:22] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:25:35] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:25:35] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:25:35] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:25:41] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:25:54] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:25:55] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:25:55",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:25:55] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:25:55",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:25:55] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:25:55] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:25:55] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:25:59] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:03] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:09] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:26:13] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:26:17] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "11"
+}
+----------------------------------------
+[2025-04-12 10:26:19] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:29] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:29] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:26:29",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:29] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:26:29",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:29] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:29] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:26:29] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:26:32] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:26:39] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:26:39] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:26:39] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:26:41] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:29:11] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2000-02-01",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:29:18",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "3333234",
+    "birth_date": "2000-02-01",
+    "first_name": "mary",
+    "last_name": "paz",
+    "phone_number": "32453",
+    "gender": "M",
+    "record_number": "345435",
+    "address": "dsfdsf",
+    "email": "sdfsd@sdfdsf.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:29:18",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_7_1744468158.jpg",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_7_1744468158.jpg",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:29:18",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:29:18",
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:29:19] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:29:21] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:29:26] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:36] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:36] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "234234234",
+    "birth_date": "2025-04-10",
+    "first_name": "dsfds",
+    "last_name": "sdfdsf",
+    "phone_number": "234234",
+    "gender": "M",
+    "record_number": "34535",
+    "address": "sdfdsf",
+    "email": "guido@ugido.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:29:36",
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:36] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "234234234",
+    "birth_date": "2025-04-10",
+    "first_name": "dsfds",
+    "last_name": "sdfdsf",
+    "phone_number": "234234",
+    "gender": "M",
+    "record_number": "34535",
+    "address": "sdfdsf",
+    "email": "guido@ugido.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:29:36",
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:36] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:37] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:29:37] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:29:40] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:43] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "6"
+}
+----------------------------------------
+[2025-04-12 10:29:51] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:10] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "789465",
+    "birth_date": "2025-04-10",
+    "first_name": "aldo",
+    "last_name": "DSFDS",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COM",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:30:11",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "789465",
+    "birth_date": "2025-04-10",
+    "first_name": "aldo",
+    "last_name": "DSFDS",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COM",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:30:11",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_3_1744468211.jpg",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_3_1744468211.jpg",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:30:11",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:30:11",
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:30:11] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:30:36] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "3"
+}
+----------------------------------------
+[2025-04-12 10:30:50] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:04] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:04] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:31:04",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:04] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:31:04",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:04] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:04] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:31:04] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:31:26] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:31] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:31:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:31:31] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:31:34] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:53] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:31:54",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:31:54",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_4_1744468314.jpg",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_4_1744468314.jpg",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:31:54",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:31:54",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:31:54] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:32:01] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:32:10",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "456123",
+    "birth_date": "2025-04-10",
+    "first_name": "karen",
+    "last_name": "medina",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJK",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:32:10",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_4_1744468330.jpg",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_4_1744468330.jpg",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:32:10",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:32:10",
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:32:10] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:32:14] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "4"
+}
+----------------------------------------
+[2025-04-12 10:32:21] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "4561234",
+    "birth_date": "2025-04-10",
+    "first_name": "DSFDS",
+    "last_name": "DSFDS",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJKF",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:32:27",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "4561234",
+    "birth_date": "2025-04-10",
+    "first_name": "DSFDS",
+    "last_name": "DSFDS",
+    "phone_number": "32432",
+    "gender": "M",
+    "record_number": "3454",
+    "address": "FSDFSDF",
+    "email": "SADF@SDFDS.COMJKF",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-04-12 10:32:27",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_5_1744468347.jpg",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_5_1744468347.jpg",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:32:27",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:32:27",
+    "id": "5"
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:32:27] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:32:40] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "7"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "753159"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "ronaldo@ronaldo.com"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "753159",
+    "birth_date": "2010-02-01",
+    "first_name": "ronaldo",
+    "last_name": "jesus",
+    "phone_number": "098231325",
+    "gender": "M",
+    "record_number": "79846",
+    "address": "españa",
+    "email": "ronaldo@ronaldo.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": true,
+    "guardian_name": "carlos",
+    "guardian_document": "456789",
+    "is_active": true,
+    "created_at": "2025-04-12 10:34:08"
+}
+Filtered Data: {
+    "document_number": "753159",
+    "birth_date": "2010-02-01",
+    "first_name": "ronaldo",
+    "last_name": "jesus",
+    "phone_number": "098231325",
+    "gender": "M",
+    "record_number": "79846",
+    "address": "españa",
+    "email": "ronaldo@ronaldo.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": true,
+    "guardian_name": "carlos",
+    "guardian_document": "456789",
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-12 10:34:08"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "753159",
+    "birth_date": "2010-02-01",
+    "first_name": "ronaldo",
+    "last_name": "jesus",
+    "phone_number": "098231325",
+    "gender": "M",
+    "record_number": "79846",
+    "address": "españa",
+    "email": "ronaldo@ronaldo.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": true,
+    "guardian_name": "carlos",
+    "guardian_document": "456789",
+    "is_active": true
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "753159",
+    "birth_date": "2010-02-01",
+    "first_name": "ronaldo",
+    "last_name": "jesus",
+    "phone_number": "098231325",
+    "gender": "M",
+    "record_number": "79846",
+    "address": "españa",
+    "email": "ronaldo@ronaldo.com",
+    "department_id": null,
+    "city_id": null,
+    "is_minor": true,
+    "guardian_name": "carlos",
+    "guardian_document": "456789",
+    "is_active": true
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_12_1744468448.jpg",
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_12_1744468448.jpg",
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:34:08",
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-12 10:34:08",
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:34:08] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:34:24] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%ronaldo%"
+}
+----------------------------------------
+[2025-04-12 10:34:26] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:34:41] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "12"
+}
+----------------------------------------
+[2025-04-12 10:38:26] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:38:26] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:38:26] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:47:38] [INFO] [Model.php:175]
+SQL: SELECT u.*, r.reg_name, r.reg_lastname, r.reg_email, r.reg_document, ARRAY_AGG(DISTINCT jsonb_build_object('role_id', ro.role_id, 'role_name', ro.role_name)) FILTER (WHERE ro.role_id IS NOT NULL) as roles FROM sys_users u JOIN sys_register r ON u.reg_id = r.reg_id LEFT JOIN sys_user_roles ur ON u.user_id = ur.user_id LEFT JOIN sys_roles ro ON ur.role_id = ro.role_id GROUP BY u.user_id, r.reg_name, r.reg_lastname, r.reg_email, r.reg_document ORDER BY u.user_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM sys_users
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT r.*, 
+                       array_agg(DISTINCT p.perm_id) as permission_ids,
+                       array_agg(DISTINCT p.perm_name) as permission_names
+                FROM sys_roles r
+                LEFT JOIN sys_role_permissions rp ON r.role_id = rp.role_id
+                LEFT JOIN sys_permissions p ON rp.perm_id = p.perm_id
+                GROUP BY r.role_id, r.role_name, r.role_description
+                ORDER BY r.role_id
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Database.php:231]
+SQL: SELECT * FROM sys_users WHERE user_id = :id
+Parameters: {
+    "id": 5
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT r.* FROM sys_roles r JOIN sys_user_roles ur ON r.role_id = ur.role_id WHERE ur.user_id = :userId
+Parameters: {
+    "userId": 5
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Database.php:231]
+SQL: SELECT * FROM sys_users WHERE user_id = :id
+Parameters: {
+    "id": 4
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT r.* FROM sys_roles r JOIN sys_user_roles ur ON r.role_id = ur.role_id WHERE ur.user_id = :userId
+Parameters: {
+    "userId": 4
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Database.php:231]
+SQL: SELECT * FROM sys_users WHERE user_id = :id
+Parameters: {
+    "id": 3
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT r.* FROM sys_roles r JOIN sys_user_roles ur ON r.role_id = ur.role_id WHERE ur.user_id = :userId
+Parameters: {
+    "userId": 3
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Database.php:231]
+SQL: SELECT * FROM sys_users WHERE user_id = :id
+Parameters: {
+    "id": 2
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT r.* FROM sys_roles r JOIN sys_user_roles ur ON r.role_id = ur.role_id WHERE ur.user_id = :userId
+Parameters: {
+    "userId": 2
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Database.php:231]
+SQL: SELECT * FROM sys_users WHERE user_id = :id
+Parameters: {
+    "id": 1
+}
+----------------------------------------
+[2025-04-12 10:47:39] [INFO] [Model.php:175]
+SQL: SELECT r.* FROM sys_roles r JOIN sys_user_roles ur ON r.role_id = ur.role_id WHERE ur.user_id = :userId
+Parameters: {
+    "userId": 1
+}
+----------------------------------------
+[2025-04-12 10:47:46] [INFO] [Model.php:175]
+SQL: SELECT r.*, 
+                       array_agg(DISTINCT p.perm_id) as permission_ids,
+                       array_agg(DISTINCT p.perm_name) as permission_names
+                FROM sys_roles r
+                LEFT JOIN sys_role_permissions rp ON r.role_id = rp.role_id
+                LEFT JOIN sys_permissions p ON rp.perm_id = p.perm_id
+                WHERE r.role_id = :roleId
+                GROUP BY r.role_id, r.role_name, r.role_description
+Parameters: {
+    "roleId": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:143]
+SQL: UPDATE sys_roles SET role_name = :role_name, role_description = :role_description WHERE role_id = :id
+Parameters: {
+    "role_name": "Usuario",
+    "role_description": "Acceso limitado al sistema asdfdf",
+    "id": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Database.php:281]
+SQL: UPDATE sys_roles SET role_name = :role_name, role_description = :role_description WHERE role_id = :id
+Parameters: {
+    "role_name": "Usuario",
+    "role_description": "Acceso limitado al sistema asdfdf",
+    "id": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: DELETE FROM sys_role_permissions WHERE role_id = :roleId
+Parameters: {
+    "roleId": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: INSERT INTO sys_role_permissions (role_id, perm_id) VALUES (:roleId, :permId)
+Parameters: {
+    "roleId": "2",
+    "permId": "1"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: INSERT INTO sys_role_permissions (role_id, perm_id) VALUES (:roleId, :permId)
+Parameters: {
+    "roleId": "2",
+    "permId": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: INSERT INTO sys_role_permissions (role_id, perm_id) VALUES (:roleId, :permId)
+Parameters: {
+    "roleId": "2",
+    "permId": "3"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: INSERT INTO sys_role_permissions (role_id, perm_id) VALUES (:roleId, :permId)
+Parameters: {
+    "roleId": "2",
+    "permId": "4"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: SELECT r.*, 
+                       array_agg(DISTINCT p.perm_id) as permission_ids,
+                       array_agg(DISTINCT p.perm_name) as permission_names
+                FROM sys_roles r
+                LEFT JOIN sys_role_permissions rp ON r.role_id = rp.role_id
+                LEFT JOIN sys_permissions p ON rp.perm_id = p.perm_id
+                WHERE r.role_id = :roleId
+                GROUP BY r.role_id, r.role_name, r.role_description
+Parameters: {
+    "roleId": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:49] [INFO] [Model.php:175]
+SQL: SELECT r.*, 
+                       array_agg(DISTINCT p.perm_id) as permission_ids,
+                       array_agg(DISTINCT p.perm_name) as permission_names
+                FROM sys_roles r
+                LEFT JOIN sys_role_permissions rp ON r.role_id = rp.role_id
+                LEFT JOIN sys_permissions p ON rp.perm_id = p.perm_id
+                GROUP BY r.role_id, r.role_name, r.role_description
+                ORDER BY r.role_id
+----------------------------------------
+[2025-04-12 10:47:52] [INFO] [Model.php:175]
+SQL: SELECT r.*, 
+                       array_agg(DISTINCT p.perm_id) as permission_ids,
+                       array_agg(DISTINCT p.perm_name) as permission_names
+                FROM sys_roles r
+                LEFT JOIN sys_role_permissions rp ON r.role_id = rp.role_id
+                LEFT JOIN sys_permissions p ON rp.perm_id = p.perm_id
+                WHERE r.role_id = :roleId
+                GROUP BY r.role_id, r.role_name, r.role_description
+Parameters: {
+    "roleId": "2"
+}
+----------------------------------------
+[2025-04-12 10:47:58] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:47:58] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:47:58] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "gender": "M"
+}
+----------------------------------------
+[2025-04-12 10:48:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "gender": "F"
+}
+----------------------------------------
+[2025-04-12 10:48:25] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE gender = :gender ORDER BY person_id DESC
+Parameters: {
+    "gender": "M"
+}
+----------------------------------------
+[2025-04-12 10:48:29] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:29] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:30] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:31] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:32] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:32] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:33] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:33] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:36] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:48:36] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:36] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:47] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number ILIKE :document ORDER BY person_id DESC
+Parameters: {
+    "document": "%789465%"
+}
+----------------------------------------
+[2025-04-12 10:48:49] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:49] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:48:56] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:48:56] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:49:00] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number ILIKE :document ORDER BY person_id DESC
+Parameters: {
+    "document": "%789465%"
+}
+----------------------------------------
+[2025-04-12 10:49:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:49:02] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:50:49] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:50:50] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:50:50] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:50:59] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number ILIKE :document ORDER BY person_id DESC
+Parameters: {
+    "document": "%789465%"
+}
+----------------------------------------
+[2025-04-12 10:51:19] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:51:19] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 10:56:45] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 10:56:45] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 10:56:45] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 11:00:05] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:00:05] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 11:00:05] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 11:04:06] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:04:06] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 11:04:06] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 11:07:28] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:28] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:30] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:32] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:32] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 11:08:32] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 11:08:35] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:38] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:41] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:08:41] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 11:08:41] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 11:10:08] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-12 11:10:08] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-12 11:10:08] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-12 11:10:12] [INFO] [Model.php:175]
+SQL: SELECT u.*, r.reg_name, r.reg_lastname, r.reg_email, r.reg_document, r.reg_phone FROM sys_users u JOIN sys_register r ON u.reg_id = r.reg_id WHERE u.user_id = :userId
+Parameters: {
+    "userId": 5
+}
+----------------------------------------
+[2025-04-12 11:10:12] [INFO] [Model.php:175]
+SQL: SELECT r.* FROM sys_roles r JOIN sys_user_roles ur ON r.role_id = ur.role_id WHERE ur.user_id = :userId
+Parameters: {
+    "userId": 5
+}
+----------------------------------------
+[2025-04-12 11:10:12] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
