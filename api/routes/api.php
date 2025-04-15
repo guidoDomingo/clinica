@@ -66,3 +66,7 @@ $router->post('persons/professional', 'Api\Controllers\RhPersonController', 'sav
 $router->get('especialidades', 'Api\Controllers\EspecialidadController', 'index');
 $router->get('especialidades/person', 'Api\Controllers\EspecialidadController', 'getForPerson');
 $router->post('especialidades/assign', 'Api\Controllers\EspecialidadController', 'assignToPerson');
+
+// Location routes (departamentos y ciudades)
+$router->get('departments', 'Api\Controllers\LocationController', 'getDepartments');
+$router->get('cities', 'Api\Controllers\LocationController', 'getCities');

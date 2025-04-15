@@ -13,6 +13,9 @@ $(document).ready(function () {
 
   // Cargar especialidades disponibles
   cargarEspecialidades();
+  
+  // Cargar departamentos y ciudades
+  cargarDepartamentos();
 
   // Inicializar Select2 para especialidades
   $("#perEspecialidades").select2({
@@ -58,6 +61,15 @@ $(document).ready(function () {
   // Configurar comportamiento para menores de edad
   $("#perMenor").on("change", toggleCamposTutor);
   $("#EditperMenor").on("change", toggleCamposTutorEdit);
+  
+  // Configurar evento para cambio de departamento
+  $("#perDpto").on("change", function() {
+    cargarCiudades($(this).val(), "#perCity");
+  });
+  
+  $("#EditperDpto").on("change", function() {
+    cargarCiudades($(this).val(), "#EditperCity");
+  });
 
   // Agregar un log para verificar que los eventos se han configurado
   console.log("Eventos configurados correctamente");
@@ -190,28 +202,172 @@ function cargarEspecialidades() {
         
         // Agregar opciones para cada especialidad
         data.data.forEach((especialidad) => {
-          const option = new Option(
+          // Crear opciones separadas para cada selector
+          const option1 = new Option(
             especialidad.nombre, 
             especialidad.especialidad_id,
             false,
             false
           );
           
-          $("#perEspecialidades").append(option);
-          $("#EditperEspecialidades").append(option.cloneNode(true));
-          $("#modalPerEspecialidades").append(option.cloneNode(true));
+          const option2 = new Option(
+            especialidad.nombre, 
+            especialidad.especialidad_id,
+            false,
+            false
+          );
+          
+          const option3 = new Option(
+            especialidad.nombre, 
+            especialidad.especialidad_id,
+            false,
+            false
+          );
+          
+          $("#perEspecialidades").append(option1);
+          $("#EditperEspecialidades").append(option2);
+          $("#modalPerEspecialidades").append(option3);
         });
         
         // Refrescar Select2
         $("#perEspecialidades").trigger("change");
         $("#EditperEspecialidades").trigger("change");
         $("#modalPerEspecialidades").trigger("change");
+        
+        console.log("Especialidades cargadas correctamente");
       } else {
         console.error("Error al cargar especialidades:", data);
       }
     })
     .catch((error) => {
       console.error("Error al cargar especialidades:", error);
+    });
+}
+
+/**
+ * Carga los departamentos disponibles desde la vista v_departments
+ */
+function cargarDepartamentos() {
+  console.log("Iniciando carga de departamentos...");
+  fetch("api/departments")
+    .then((response) => {
+      console.log("Respuesta recibida de API departamentos:", response);
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Datos de departamentos recibidos:", data);
+      // Mostrar datos completos de departamentos en consola
+      console.log("Datos completos de departamentos:", JSON.stringify(data.data, null, 2));
+      
+      if (data.status === "success" && Array.isArray(data.data)) {
+        // Limpiar opciones actuales
+        $("#perDpto").empty();
+        $("#EditperDpto").empty();
+        
+        // Agregar opción por defecto para cada selector
+        const defaultOption1 = new Option("-- Seleccione un departamento --", "0", true, true);
+        const defaultOption2 = new Option("-- Seleccione un departamento --", "0", true, true);
+        $("#perDpto").append(defaultOption1);
+        $("#EditperDpto").append(defaultOption2);
+        
+        // Agregar opciones para cada departamento
+        data.data.forEach((departamento) => {
+          console.log("Procesando departamento:", departamento.department_id, departamento.department_description);
+          console.log("Datos completos del departamento:", departamento);
+          // Crear opciones separadas para cada selector
+          const option1 = new Option(
+            departamento.department_description, 
+            departamento.department_id,
+            false,
+            false
+          );
+          
+          const option2 = new Option(
+            departamento.department_description, 
+            departamento.department_id,
+            false,
+            false
+          );
+          
+          $("#perDpto").append(option1);
+          $("#EditperDpto").append(option2);
+        });
+        
+        // Refrescar selects
+        $("#perDpto").trigger("change");
+        $("#EditperDpto").trigger("change");
+        
+        console.log("Departamentos cargados correctamente. Total:", data.data.length);
+      } else {
+        console.error("Error al cargar departamentos:", data);
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar departamentos:", error);
+    });
+}
+
+/**
+ * Carga las ciudades disponibles para un departamento específico
+ * @param {number} departmentId - ID del departamento seleccionado
+ * @param {string} selectElement - Selector del elemento select donde cargar las ciudades
+ * @returns {Promise} - Promesa que se resuelve cuando se han cargado las ciudades
+ */
+function cargarCiudades(departmentId, selectElement) {
+  console.log(`Iniciando carga de ciudades para departamento ${departmentId} en selector ${selectElement}`);
+  // Si no hay departamento seleccionado, limpiar ciudades
+  if (!departmentId || departmentId === "0") {
+    console.log("No hay departamento seleccionado, limpiando ciudades");
+    $(selectElement).empty();
+    $(selectElement).append(new Option("-- Seleccione una ciudad --", "0", true, true));
+    $(selectElement).trigger("change");
+    return Promise.resolve();
+  }
+  
+  return fetch(`api/cities?department_id=${departmentId}`)
+    .then((response) => {
+      console.log(`Respuesta recibida de API ciudades para departamento ${departmentId}:`, response.status);
+      return response.json();
+    })
+    .then((data) => {
+      console.log(`Datos de ciudades recibidos para departamento ${departmentId}:`, data);
+      // Mostrar datos completos de ciudades en consola
+      console.log(`Datos completos de ciudades para departamento ${departmentId}:`, JSON.stringify(data.data, null, 2));
+      
+      if (data.status === "success" && Array.isArray(data.data)) {
+        // Limpiar opciones actuales
+        $(selectElement).empty();
+        
+        // Agregar opción por defecto
+        const defaultOption = new Option("-- Seleccione una ciudad --", "0", true, true);
+        $(selectElement).append(defaultOption);
+        
+        // Agregar opciones para cada ciudad
+        data.data.forEach((ciudad) => {
+          console.log("Procesando ciudad:", ciudad.city_id, ciudad.city_description);
+          console.log("Datos completos de la ciudad:", ciudad);
+          const option = new Option(
+            ciudad.city_description, 
+            ciudad.city_id,
+            false,
+            false
+          );
+          
+          $(selectElement).append(option);
+        });
+        
+        // Refrescar select
+        $(selectElement).trigger("change");
+        console.log(`Ciudades cargadas correctamente para departamento ${departmentId} en selector ${selectElement}. Total: ${data.data.length}`);
+        return data;
+      } else {
+        console.error("Error al cargar ciudades:", data);
+        return Promise.reject("Error al cargar ciudades");
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar ciudades:", error);
+      return Promise.reject(error);
     });
 }
 
@@ -354,7 +510,16 @@ function editarPersona() {
       document.getElementById("EditperAdrress").value = data.address;
       document.getElementById("EditperEmail").value = data.email;
       document.getElementById("EditperDpto").value = data.department_id || "0";
-      document.getElementById("EditperCity").value = data.city_id || "0";
+      
+      // Cargar ciudades correspondientes al departamento seleccionado
+      if (data.department_id) {
+        cargarCiudades(data.department_id, "#EditperCity").then(() => {
+          document.getElementById("EditperCity").value = data.city_id || "0";
+        });
+      } else {
+        document.getElementById("EditperCity").value = "0";
+      }
+      
       document.getElementById("EditperMenor").value = data.is_minor ? "true" : "false";
       document.getElementById("EditperTutor").value = data.guardian_name || "N/A";
       document.getElementById("EditperDocTutor").value = data.guardian_document || "";
@@ -371,6 +536,9 @@ function editarPersona() {
         previewImg.src = "view/dist/img/user-default.jpg";
         previewImg.style.display = "block";
       }
+      
+      // Cargar las especialidades de la persona
+      cargarEspecialidadesPersona(data.person_id);
 
       // Mostrar modal
       $("#modalEditarPersonas").modal("show");
@@ -380,6 +548,7 @@ function editarPersona() {
       mostrarAlerta("error", "Error al cargar los datos de la persona");
     });
 }
+
 
 /**
  * Carga las especialidades asignadas a una persona

@@ -43,16 +43,16 @@
                         <p>Citas</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="index.php?ruta=personas" class="nav-link">
                         <i class="nav-icon fas fa-users"></i>
                         <p>Personas</p>
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a href="index.php?ruta=rhpersonas" class="nav-link">
                         <i class="nav-icon fas fa-user-md"></i>
-                        <p>RH Personas</p>
+                        <p>Personas</p>
                     </a>
                 </li>
                 <li class="nav-header">CONFIGURACIÓN</li>
