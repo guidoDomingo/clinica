@@ -6479,3 +6479,717 @@ Parameters: {
     "id": "13"
 }
 ----------------------------------------
+[2025-04-15 19:30:45] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 19:31:05] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 19:31:05] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 19:31:05] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 19:31:05] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 19:31:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 19:33:17] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:11:22] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:11:31] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 20:11:31] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:11:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 20:11:32] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 20:11:42] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 00:24:00] Database Error: could not find driver
+File: C:\laragon\www\clinica\model\conexion.php
+Line: 12
+Trace: #0 C:\laragon\www\clinica\model\conexion.php(12): PDO->__construct('pgsql:host=loca...', 'postgres', Object(SensitiveParameterValue))
+#1 C:\laragon\www\clinica\sys_sql\init_consultas_db.php(5): Conexion::conectar()
+#2 {main}[2025-04-15 20:33:54] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:34:18] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 20:34:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:34:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 20:34:18] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 20:34:22] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-15 20:34:27] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:42:37] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:43:37] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:48:09] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:48:27] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:48:33] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 20:48:33] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:48:34] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 20:48:34] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 20:48:55] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-15 20:49:02] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 20:54:04] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 21:02:13] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 21:03:15] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:08:32] Operación solicitada: getPreformatosConsulta[2025-04-16 01:08:32] Solicitando preformatos de tipo: consulta[2025-04-16 01:08:32] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:08:32] Operación solicitada: getMotivosComunes[2025-04-16 01:08:32] Solicitando motivos comunes[2025-04-16 01:08:32] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:08:32] Operación solicitada: getPreformatosReceta[2025-04-16 01:08:32] Solicitando preformatos de tipo: receta[2025-04-16 01:08:32] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:08:32] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:08:32] Resultado de preformatos de tipo receta: [][2025-04-16 01:08:32] Resultado de preformatos de tipo consulta: [][2025-04-16 01:08:32] Preformatos obtenidos: [][2025-04-16 01:08:32] Motivos comunes obtenidos: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:08:32] Preformatos obtenidos: [][2025-04-15 21:08:32] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:19:28] Operación solicitada: getPreformatosConsulta[2025-04-16 01:19:28] Solicitando preformatos de tipo: consulta[2025-04-16 01:19:28] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:19:28] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:19:28] Operación solicitada: getMotivosComunes[2025-04-16 01:19:28] Solicitando motivos comunes[2025-04-16 01:19:28] Ejecutando consulta para obtener motivos comunes[2025-04-15 21:19:29] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:19:29] Resultado de preformatos de tipo receta: [][2025-04-16 01:19:29] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:19:29] Preformatos obtenidos: [][2025-04-16 01:19:29] Motivos comunes obtenidos: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:19:29] Resultado de preformatos de tipo consulta: [][2025-04-16 01:19:29] Preformatos obtenidos: [][2025-04-15 21:19:59] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 21:19:59] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 21:19:59] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 21:19:59] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 21:20:07] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-16 01:20:12] Operación solicitada: getMotivosComunes[2025-04-16 01:20:12] Solicitando motivos comunes[2025-04-16 01:20:12] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:20:12] Operación solicitada: getPreformatosConsulta[2025-04-16 01:20:12] Solicitando preformatos de tipo: consulta[2025-04-16 01:20:12] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:20:12] Operación solicitada: getPreformatosReceta[2025-04-16 01:20:12] Solicitando preformatos de tipo: receta[2025-04-16 01:20:12] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:20:12] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:20:12] Motivos comunes obtenidos: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:20:12] Resultado de preformatos de tipo receta: [][2025-04-16 01:20:12] Resultado de preformatos de tipo consulta: [][2025-04-16 01:20:12] Preformatos obtenidos: [][2025-04-16 01:20:12] Preformatos obtenidos: [][2025-04-15 21:20:12] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:26:04] Ejecutando consulta para obtener motivos comunestipo: recetata[2025-04-16 01:26:04] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:26:04] Resultado de preformatos de tipo receta: [][2025-04-16 01:26:04] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:26:04] Resultado de preformatos de tipo consulta: [][2025-04-16 01:26:04] Resultado de preformatos de tipo receta: [][2025-04-16 01:26:04] Resultado de preformatos de tipo consulta: [][2025-04-16 01:26:04] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-15 21:26:04] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:26:08] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:26:08] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:26:08] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:26:08] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:26:08] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:26:08] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:26:09] Resultado de preformatos de tipo consulta: [][2025-04-15 21:26:09] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:26:09] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:26:09] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:26:09] Resultado de preformatos de tipo receta: [][2025-04-16 01:26:09] Resultado de preformatos de tipo receta: [][2025-04-16 01:26:09] Resultado de preformatos de tipo consulta: [][2025-04-16 01:26:31] Ejecutando consulta para obtener motivos comunestipo: consulta[2025-04-16 01:26:31] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:26:31] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:26:31] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:26:31] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:26:31] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:26:31] Resultado de preformatos de tipo consulta: [][2025-04-16 01:26:31] Resultado de preformatos de tipo receta: [][2025-04-15 21:26:31] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:26:31] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:26:31] Resultado de preformatos de tipo receta: [][2025-04-16 01:26:32] Resultado de preformatos de tipo consulta: [][2025-04-15 21:26:34] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 21:26:34] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 21:26:34] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 21:26:34] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 21:26:40] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-16 01:26:47] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:26:47] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:26:47] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:26:47] Ejecutando consulta para obtener preformatos de tipo: recetata[2025-04-16 01:26:47] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:26:47] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-15 21:26:47] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:26:47] Resultado de preformatos de tipo receta: [][2025-04-16 01:26:47] Resultado de preformatos de tipo consulta: [][2025-04-16 01:26:47] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:26:47] Resultado de preformatos de tipo receta: [][][2025-04-16 01:27:39] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:27:39] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:27:39] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:27:39] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:27:39] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:27:39] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:27:39] Resultado de preformatos de tipo consulta: [][2025-04-16 01:27:39] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:27:39] Resultado de preformatos de tipo receta: [][2025-04-15 21:27:39] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:27:39] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:27:39] Resultado de preformatos de tipo receta: [][2025-04-16 01:27:39] Resultado de preformatos de tipo consulta: [][2025-04-16 01:29:12] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:29:12] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:29:12] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:29:12] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:29:12] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-15 21:29:12] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:29:12] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 01:29:12] Resultado de preformatos de tipo consulta: [][2025-04-16 01:33:10] Database Error: could not find driver
+File: C:\laragon\www\clinica\model\conexion.php
+Line: 12
+Trace: #0 C:\laragon\www\clinica\model\conexion.php(12): PDO->__construct('pgsql:host=loca...', 'postgres', Object(SensitiveParameterValue))
+#1 C:\laragon\www\clinica\insertar_preformatos.php(10): Conexion::conectar()
+#2 {main}[2025-04-16 01:35:30] Database Error: could not find driver
+File: C:\laragon\www\clinica\model\conexion.php
+Line: 12
+Trace: #0 C:\laragon\www\clinica\model\conexion.php(12): PDO->__construct('pgsql:host=loca...', 'postgres', Object(SensitiveParameterValue))
+#1 C:\laragon\www\clinica\insertar_preformatos.php(10): Conexion::conectar()
+#2 {main}[2025-04-16 01:45:24] Database Error: could not find driver
+File: C:\laragon\www\clinica\model\conexion.php
+Line: 12
+Trace: #0 C:\laragon\www\clinica\model\conexion.php(12): PDO->__construct('pgsql:host=loca...', 'postgres', Object(SensitiveParameterValue))
+#1 C:\laragon\www\clinica\sys_sql\init_consultas_db.php(5): Conexion::conectar()
+#2 {main}[2025-04-16 01:50:42] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:50:42] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-15 21:50:42] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:50:42] Resultado de preformatos de tipo receta: [][2025-04-16 01:50:42] Resultado de preformatos de tipo consulta: [][2025-04-16 01:51:04] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:51:04] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-15 21:51:04] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:51:04] Resultado de preformatos de tipo receta: [][][2025-04-15 21:51:06] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 21:51:06] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 21:51:06] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 21:51:07] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 21:51:12] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-16 01:51:18] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:51:18] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:51:18] Resultado de preformatos de tipo receta: [][][2025-04-15 21:51:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 01:52:20] Ejecutando consulta para obtener motivos comunes[2025-04-16 01:52:20] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:52:20] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:52:20] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 01:52:20] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 01:52:20] Resultado de preformatos de tipo consulta: [][2025-04-16 01:52:20] Resultado de preformatos de tipo receta: [][2025-04-16 01:52:20] Resultado de preformatos de tipo consulta: [][2025-04-16 01:52:20] Resultado de preformatos de tipo receta: [][2025-04-16 01:52:20] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-15 21:52:20] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 02:01:04] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:01:04] Ejecutando consulta para obtener motivos comunestipo: receta[2025-04-16 02:01:04] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:01:04] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-15 22:01:04] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 02:01:04] Resultado de preformatos de tipo consulta: [][2025-04-16 02:01:04] Resultado de preformatos de tipo receta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:01:04] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 02:01:04] Resultado de preformatos de tipo receta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:02:13] Ejecutando consulta para obtener motivos comunes[2025-04-16 02:02:13] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:02:13] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:02:13] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:02:13] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-15 22:02:13] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 02:02:13] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:02:13] Resultado de preformatos de tipo receta: [][2025-04-16 02:02:13] Resultado de preformatos de tipo receta: [][2025-04-16 02:02:13] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:02:13] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-15 22:04:30] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 22:04:30] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 22:04:30] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 22:04:31] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 22:04:36] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-15 22:04:46] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 22:04:46] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 22:04:46] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 22:04:46] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-16 02:04:48] Ejecutando consulta para obtener motivos comunestipo: consulta[2025-04-16 02:04:48] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:04:48] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:04:48] Resultado de preformatos de tipo receta: [][2025-04-16 02:04:48] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 02:04:48] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:04:48] Resultado de preformatos de tipo receta: [][2025-04-15 22:04:48] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 22:06:00] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 22:06:00] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 22:06:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 22:06:01] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 22:06:06] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-16 02:06:13] Ejecutando consulta para obtener motivos comunes[2025-04-16 02:06:13] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:06:13] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:06:13] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:06:13] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:06:13] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 02:06:13] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:06:13] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:06:13] Resultado de preformatos de tipo receta: [][2025-04-15 22:06:13] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 02:06:13] Resultado de preformatos de tipo receta: [][2025-04-16 02:06:35] Ejecutando consulta para obtener motivos comunes[2025-04-16 02:06:35] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:06:35] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:06:35] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:06:35] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-15 22:06:35] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 02:06:35] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 02:06:35] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:06:35] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:06:35] Resultado de preformatos de tipo receta: [][2025-04-16 02:06:35] Resultado de preformatos de tipo receta: [][2025-04-16 02:07:29] Ejecutando consulta para obtener motivos comunes[2025-04-16 02:07:29] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:07:29] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:07:29] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}]rmato 2 "}][2025-04-15 22:07:29] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-16 02:07:35] Ejecutando consulta para obtener motivos comunes[2025-04-16 02:07:35] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:07:35] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:07:35] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:07:35] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 02:07:35] Resultado de preformatos de tipo receta: [][2025-04-15 22:07:35] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 22:08:01] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-15 22:08:01] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-15 22:08:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-15 22:08:01] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-15 22:08:07] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-16 02:08:13] Ejecutando consulta para obtener motivos comunes[2025-04-16 02:08:13] Ejecutando consulta para obtener preformatos de tipo: consulta[2025-04-16 02:08:13] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-16 02:08:13] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-16 02:08:13] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-16 02:08:13] Resultado de preformatos de tipo receta: [][2025-04-15 22:08:13] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------

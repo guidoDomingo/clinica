@@ -124,7 +124,7 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
 <!-- Template -->
 <script src="view/js/template.js"></script>
 <!-- Consulta -->
-<script src="view/js/consulta.js"></script>
+<script src="view/js/consultas.js"></script>
 <!-- Citas -->
 <script src="view/js/citas.js"></script>
 <!-- Archivos -->
@@ -132,9 +132,12 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
 <!-- Register -->
 <script src="view/js/register.js"></script>
 <!-- Personas -->
-<script src="view/js/register.js"></script>
+<script src="view/js/personas.js"></script>
 <!-- Roles -->
 <script src="view/js/roles.js"></script>
+
+<!-- Cargar datos (preformatos y motivos) -->
+<script src="view/js/cargar_datos.js"></script>
 </body>
 
 </html>

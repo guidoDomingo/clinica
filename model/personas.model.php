@@ -6,22 +6,22 @@ class ModelPersonas {
         $params = [];
 
         if (!empty($datos['documento'])) {
-            $where .= " AND documento = :documento";
+            $where .= " AND document_number = :documento";
             $params[':documento'] = $datos['documento'];
         }
 
         if (!empty($datos['nro_ficha'])) {
-            $where .= " AND nro_ficha = :nro_ficha";
+            $where .= " AND record_number = :nro_ficha";
             $params[':nro_ficha'] = $datos['nro_ficha'];
         }
 
         if (!empty($datos['nombres'])) {
-            $where .= " AND nombres ILIKE :nombres";
+            $where .= " AND first_name ILIKE :nombres";
             $params[':nombres'] = '%' . $datos['nombres'] . '%';
         }
 
-        $sql = "SELECT id_persona, documento, nro_ficha, nombres, apellidos, fecha_registro 
-                FROM public.personas " . $where;
+        $sql = "SELECT person_id as id_persona, document_number as documento, record_number as nro_ficha, first_name as nombres, last_name as apellidos, created_at as fecha_registro 
+                FROM public.rh_person " . $where;
 
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->execute($params);
