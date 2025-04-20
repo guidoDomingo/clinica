@@ -3,7 +3,12 @@ require_once "conexion.php"; // Archivo para la conexión a la base de datos
 
 class ModelConsulta {
     public static function mdlSetConsulta($datos) {
-        // Preparar la consulta SQL
+        // Verificar si es una actualización o una nueva consulta
+        if (isset($datos["id_consulta"]) && !empty($datos["id_consulta"])) {
+            return self::mdlActualizarConsulta($datos);
+        }
+        
+        // Preparar la consulta SQL para inserción
         $stmt = Conexion::conectar()->prepare(
             "INSERT INTO consultas (
                 motivoscomunes, txtmotivo, visionod, visionoi, tensionod, tensionoi,
@@ -32,7 +37,6 @@ class ModelConsulta {
         } else {
             $stmt->bindParam(":proximaconsulta", $datos["proximaconsulta"], PDO::PARAM_STR);
         }
-        // $stmt->bindParam(":proximaconsulta", $datos["proximaconsulta"], PDO::PARAM_STR);
         $stmt->bindParam(":whatsapptxt", $datos["whatsapptxt"], PDO::PARAM_STR);
         $stmt->bindParam(":email", $datos["email"], PDO::PARAM_STR);
         $stmt->bindParam(":id_user", $datos["id_user"], PDO::PARAM_INT);
@@ -42,6 +46,54 @@ class ModelConsulta {
         // Ejecutar la consulta
         if ($stmt->execute()) {
             return "ok";
+        } else {
+            return "error";
+        }
+    }
+    
+    public static function mdlActualizarConsulta($datos) {
+        // Preparar la consulta SQL para actualización
+        $stmt = Conexion::conectar()->prepare(
+            "UPDATE consultas SET 
+                motivoscomunes = :motivoscomunes, 
+                txtmotivo = :txtmotivo, 
+                visionod = :visionod, 
+                visionoi = :visionoi, 
+                tensionod = :tensionod, 
+                tensionoi = :tensionoi,
+                consulta_textarea = :consulta_textarea, 
+                receta_textarea = :receta_textarea, 
+                txtnota = :txtnota, 
+                proximaconsulta = :proximaconsulta,
+                whatsapptxt = :whatsapptxt, 
+                email = :email, 
+                ultima_modificacion = NOW() 
+            WHERE id_consulta = :id_consulta"
+        );
+
+        // Bind de parámetros
+        $stmt->bindParam(":motivoscomunes", $datos["motivoscomunes"], PDO::PARAM_STR);
+        $stmt->bindParam(":txtmotivo", $datos["txtmotivo"], PDO::PARAM_STR);
+        $stmt->bindParam(":visionod", $datos["visionod"], PDO::PARAM_STR);
+        $stmt->bindParam(":visionoi", $datos["visionoi"], PDO::PARAM_STR);
+        $stmt->bindParam(":tensionod", $datos["tensionod"], PDO::PARAM_STR);
+        $stmt->bindParam(":tensionoi", $datos["tensionoi"], PDO::PARAM_STR);
+        $stmt->bindParam(":consulta_textarea", $datos["consulta-textarea"], PDO::PARAM_STR);
+        $stmt->bindParam(":receta_textarea", $datos["receta-textarea"], PDO::PARAM_STR);
+        $stmt->bindParam(":txtnota", $datos["txtnota"], PDO::PARAM_STR);
+        // Manejo de proximaconsulta (puede ser NULL)
+        if (empty($datos["proximaconsulta"])) {
+            $stmt->bindValue(":proximaconsulta", null, PDO::PARAM_NULL); // Asignar NULL
+        } else {
+            $stmt->bindParam(":proximaconsulta", $datos["proximaconsulta"], PDO::PARAM_STR);
+        }
+        $stmt->bindParam(":whatsapptxt", $datos["whatsapptxt"], PDO::PARAM_STR);
+        $stmt->bindParam(":email", $datos["email"], PDO::PARAM_STR);
+        $stmt->bindParam(":id_consulta", $datos["id_consulta"], PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        if ($stmt->execute()) {
+            return "actualizado";
         } else {
             return "error";
         }
@@ -93,6 +145,34 @@ class ModelConsulta {
             return json_encode([
                 'status' => 'error',
                 'message' => 'Error al obtener las consultas: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    public static function mdlGetDetalleConsulta($idConsulta) {
+        try {
+            $stmt = Conexion::conectar()->prepare("SELECT id_consulta, motivoscomunes as motivo, txtmotivo, visionod, visionoi, tensionod, tensionoi, 
+                consulta_textarea as diagnostico, receta_textarea, txtnota as observaciones, proximaconsulta, 
+                whatsapptxt, email, id_user, id_reserva, fecha_registro, ultima_modificacion, id_persona 
+                FROM public.consultas WHERE id_consulta = :id_consulta");
+            $stmt->bindParam(":id_consulta", $idConsulta, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $consulta = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (empty($consulta)) {
+                return json_encode([
+                    'status' => 'warning',
+                    'message' => 'No se encontró la consulta solicitada.'
+                ]);
+            } else {
+                // Devolver directamente los datos de la consulta para que el frontend pueda procesarlos
+                return json_encode($consulta);
+            }
+        } catch (PDOException $e) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Error al obtener el detalle de la consulta: ' . $e->getMessage()
             ]);
         }
     }

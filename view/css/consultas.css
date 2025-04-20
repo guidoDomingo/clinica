@@ -1,0 +1,31 @@
+/**
+ * Estilos para la funcionalidad de consultas médicas
+ */
+
+/* Estilo para indicar que un elemento es clickeable */
+.consulta-link {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.consulta-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Estilos para el timeline de consultas */
+.timeline-item .timeline-header {
+  font-weight: bold;
+}
+
+.timeline-item .timeline-body {
+  padding: 10px 0;
+}
+
+/* Estilos para el modal de detalle de consulta */
+#detalleConsultaModal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}

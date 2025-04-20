@@ -55,3 +55,24 @@ Data: Creating person
 [2025-04-12 13:56:45] [INFO] [RhPersonController.php:138] {"document_number":"899568","birth_date":"1995-03-02","first_name":"drogba","last_name":"meli","phone_number":"0982313358","gender":"M","record_number":"0002","address":"marfil","email":"drogba@drogba.com","department_id":null,"city_id":null,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-12 13:56:45"}
 Data: Creating person
 ----------------------------------------
+[2025-04-20 13:52:29] [INFO] [user.controller.php:21] user: ronal@ronal.com
+Data: ronal@ronal.com
+----------------------------------------
+[2025-04-20 13:52:29] [INFO] [user.controller.php:22] user: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+Data: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+----------------------------------------
+[2025-04-20 13:52:29] [INFO] [user.controller.php:33] Login attempt for user: ronal@ronal.com
+Data: {
+    "user_id": 5,
+    "reg_id": 5,
+    "user_email": "ronal@ronal.com",
+    "user_pass": "$2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\\\/UNdHCW",
+    "user_expire": "2025-05-05 14:51:04.340773",
+    "user_first_login": null,
+    "user_last_login": "2025-04-12 14:59:13.922322",
+    "user_is_active": true,
+    "profile_photo": "user_5_1743885959.jpg",
+    "reg_name": "ronal",
+    "reg_lastname": "ruiz"
+}
+----------------------------------------

@@ -1,4 +1,6 @@
 <div class="content-wrapper">
+    <!-- Incluir CSS para la carga de archivos -->
+    <link rel="stylesheet" href="view/css/fileupload.css">
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">

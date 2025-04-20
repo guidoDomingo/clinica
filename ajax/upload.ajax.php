@@ -6,20 +6,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
-        $persona = $_POST["id_persona_file"];
-        $usuario = $_POST["id_usuario"];
+        $persona = isset($_POST["id_persona_file"]) ? $_POST["id_persona_file"] : null;
+        
+        // Verificar que el ID de persona sea válido
+        if (!$persona || empty($persona)) {
+            header('Content-Type: application/json');
+            echo json_encode(array('status' => 'error', 'message' => 'Debe seleccionar un paciente para subir archivos.'));
+            exit;
+        }
+        $usuario = isset($_POST["id_usuario"]) ? $_POST["id_usuario"] : 1; // Valor predeterminado si no existe
+        $consulta = isset($_POST["id_consulta"]) ? $_POST["id_consulta"] : null; // Obtener ID de consulta si existe
         
         $allowedTypes = [
-            'application/pdf', // PDF
-            'image/jpeg',      // JPG
-            'image/png',       // PNG
-            'image/gif',       // GIF
-            'image/webp',     // WEBP
-            'image/svg+xml'    // SVG
+            'application/pdf',                                          // PDF
+            'image/jpeg', 'image/jpg',                                 // JPG
+            'image/png',                                               // PNG
+            'image/gif',                                               // GIF
+            'image/webp',                                              // WEBP
+            'image/svg+xml',                                           // SVG
+            'application/msword',                                      // DOC
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+            'application/vnd.ms-excel',                               // XLS
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
+            'application/vnd.ms-powerpoint',                          // PPT
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' // PPTX
         ];
 
         $maxSize = 25 * 1024 * 1024; // 25 MB
 
+        $response = array('status' => 'success', 'message' => '', 'files' => array());
         $errors = [];
         foreach ($_FILES['files']['tmp_name'] as $key => $tmpName) {
             $fileName = basename($_FILES['files']['name'][$key]);
@@ -29,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Validar tipo de archivo
             if (!in_array($fileType, $allowedTypes)) {
-                $errors[] = "El archivo $fileName no es un PDF o una imagen válida.";
+                $errors[] = "El archivo $fileName no es un tipo de archivo permitido.";
                 continue;
             }
 
@@ -41,7 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Mover el archivo al directorio de subida
             if (move_uploaded_file($tmpName, $filePath)) {
-                echo "El archivo $fileName se ha subido correctamente.<br>";
+                $response['files'][] = array(
+                    'name' => $fileName,
+                    'size' => $fileSize,
+                    'type' => $fileType,
+                    'path' => $filePath
+                );
                 
                 $checksum = "";
                 // Verifica si el archivo existe
@@ -59,22 +79,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $datos["checksum"] = $checksum;  
                 $datos["tipo_archivo"] = $fileType;
                 $resultado = ModelArchivos::mdlSetArchivo($datos);
-                // return $resultado;
                 
-
-
+                // Añadir resultado a la respuesta
+                if ($resultado === "ok") {
+                    $response['message'] .= "El archivo $fileName se ha subido correctamente. ";
+                    
+                    // Si hay un ID de consulta, relacionar el archivo con la consulta
+                    if ($consulta) {
+                        // Obtener el ID del archivo recién insertado
+                        $idArchivo = ModelArchivos::mdlGetUltimoIdArchivo();
+                        
+                        if ($idArchivo) {
+                            // Relacionar el archivo con la consulta
+                            $relacionado = ModelArchivos::mdlRelacionarArchivoConsulta($consulta, $idArchivo);
+                            
+                            if ($relacionado !== "ok") {
+                                $errors[] = "Error al relacionar el archivo $fileName con la consulta.";
+                            }
+                        } else {
+                            $errors[] = "Error al obtener el ID del archivo $fileName.";
+                        }
+                    }
+                } else {
+                    $errors[] = "Error al guardar la información del archivo $fileName en la base de datos.";
+                }
             } else {
                 $errors[] = "Error al subir el archivo $fileName.";
             }
         }
 
         if (!empty($errors)) {
-            foreach ($errors as $error) {
-                echo $error . "<br>";
-            }
+            $response['status'] = 'error';
+            $response['message'] = implode(" ", $errors);
         }
+        
+        // Devolver respuesta en formato JSON
+        header('Content-Type: application/json');
+        echo json_encode($response);
     } else {
-        echo "No se han seleccionado archivos para subir.";
+        header('Content-Type: application/json');
+        echo json_encode(array('status' => 'error', 'message' => 'No se han seleccionado archivos para subir.'));
     }
 }
 ?>

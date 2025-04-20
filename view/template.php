@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="view/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Estilos propios -->
     <link rel="stylesheet" href="view/css/frmConsulta.css">
+    <link rel="stylesheet" href="view/css/consultas.css">
     <!-- Toastr -->
     <link rel="stylesheet" href="view/plugins/toastr/toastr.min.css">
 

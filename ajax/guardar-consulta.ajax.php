@@ -14,7 +14,7 @@ class TableConsultas {
     }
 }
 
-// Procesar la inserción de una nueva consulta
+// Procesar la inserción o actualización de una consulta
 if (isset($_POST["motivoscomunes"]) && isset($_POST["formatoConsulta"])) {
     $insertar = new TableConsultas();
     $datos = array();
@@ -41,8 +41,14 @@ if (isset($_POST["motivoscomunes"]) && isset($_POST["formatoConsulta"])) {
         }
     }
 
-    // Insertar los datos de la consulta
-    $insertar->ajaxInsertarConsulta($datos);
+    // Verificar si es una actualización o una nueva consulta
+    if (isset($datos['id_consulta']) && !empty($datos['id_consulta'])) {
+        // Es una actualización
+        $insertar->ajaxInsertarConsulta($datos); // El modelo ya maneja la diferencia
+    } else {
+        // Es una nueva consulta
+        $insertar->ajaxInsertarConsulta($datos);
+    }
 }
 
 // Procesar la eliminación de una consulta

@@ -2,7 +2,8 @@
     <div class="form-row fx" id="fx">
         <div class="form-group col-md-2">
             <label for="txtdocumento">Documento</label>
-            <input type="text" class="form-control" id="txtdocumento" name="txtdocumento" placeholder="Cedula de identidad">
+            <input type="text" class="form-control" id="txtdocumento" name="txtdocumento"
+                placeholder="Cedula de identidad">
         </div>
         <div class="form-group col-md-2">
             <label for="txtficha">Ficha</label>
@@ -11,16 +12,17 @@
         <div class="col-md-6 col-md-8">
             <label for="txtnombres">Nombres</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="paciente" placeholder="Buscar paciente..." aria-label="Buscar paciente">
+                <input type="text" class="form-control" id="paciente" placeholder="Buscar paciente..."
+                    aria-label="Buscar paciente">
                 <div class="input-group-append">
                     <!-- <button  type="button"  class="btn btn-primary" onclick="buscar(document.getElementById('txtdocumento').value, document.getElementById('txtficha').value)" aria-label="Buscar"> -->
-                    <button  type="button"  class="btn btn-primary" id="btnBuscarPersona" aria-label="Buscar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <button type="button" class="btn btn-primary" id="btnBuscarPersona" aria-label="Buscar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <button   type="button" class="btn btn-success">
+                    <button type="button" class="btn btn-success">
                         <i class="fa-solid fa-user-plus"></i>
                     </button>
-                    <button  type="button" class="btn btn-dark" id="btnLimpiarPersona" aria-label="Limpiar">
+                    <button type="button" class="btn btn-dark" id="btnLimpiarPersona" aria-label="Limpiar">
                         <i class="fa-solid fa-eraser"></i>
                     </button>
                 </div>
@@ -73,7 +75,8 @@
 
     <div class="form-group">
         <label for="consulta-textarea">Descripción</label>
-        <textarea id="consulta-textarea" name="consulta-textarea" class="form-control compose-textarea" style="height: 180px"></textarea>
+        <textarea id="consulta-textarea" name="consulta-textarea" class="form-control compose-textarea"
+            style="height: 180px"></textarea>
     </div>
 
     <div class="form-group">
@@ -85,7 +88,8 @@
 
     <div class="form-group">
         <label for="receta-textarea">Receta</label>
-        <textarea id="receta-textarea" name="receta-textarea" class="form-control compose-textarea" style="height: 180px"></textarea>
+        <textarea id="receta-textarea" name="receta-textarea" class="form-control compose-textarea"
+            style="height: 180px"></textarea>
     </div>
 
     <div class="form-group">
@@ -108,7 +112,7 @@
         </div>
     </div>
 
-   
+
 
     <div class="form-group">
         <div class="form-check">
@@ -127,10 +131,18 @@
 
 <div class="form-container">
     <h2>Subir Archivos</h2>
-    <form id="uploadForm"  method="post" enctype="multipart/form-data">
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
         <input type="hidden" id="id_persona_file" name="id_persona_file">
-        <input type="file" name="files[]" id="files" multiple>
+        <input type="hidden" id="id_usuario" name="id_usuario" value="1"> <!-- Añadido campo id_usuario -->
+        <div class="file-upload-container">
+            <div class="file-drop-area" id="dropArea">
+                <span class="file-message">Arrastra y suelta archivos aquí o</span>
+                <label for="files" class="file-input-label">Seleccionar archivos</label>
+                <input type="file" name="files[]" id="files" multiple class="file-input">
+            </div>
+            <div class="file-preview-container" id="filePreviewContainer"></div>
+        </div>
         <div class="error" id="error"></div>
-        <input type="button" id="btnSubirArchivos" value="Subir Archivos">
+        <input type="button" id="btnSubirArchivos" value="Subir Archivos" class="btn btn-primary mt-3">
     </form>
 </div>
