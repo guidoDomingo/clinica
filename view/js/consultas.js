@@ -726,7 +726,6 @@ function cargarConsultaEnFormulario(consulta, archivos) {
     
     // Mapear los campos de la consulta a los campos del formulario
     const camposACargar = {
-        'motivo': 'motivoscomunes',
         'txtmotivo': 'txtmotivo',
         'visionod': 'visionod',
         'visionoi': 'visionoi',
@@ -746,6 +745,91 @@ function cargarConsultaEnFormulario(consulta, archivos) {
         if (elemento && consulta[campoConsulta] !== undefined) {
             elemento.value = consulta[campoConsulta];
         }
+    }
+    
+    // Seleccionar el motivo común correcto en el selector
+    const selectMotivosComunes = document.getElementById('motivoscomunes');
+    if (selectMotivosComunes && consulta.motivo) {
+        // Primero asegurarse de que los motivos comunes estén cargados
+        cargarMotivosComunes();
+        
+        // Esperar un momento para que se carguen las opciones
+        setTimeout(() => {
+            // Buscar la opción que coincida con el motivo de la consulta
+            for (let i = 0; i < selectMotivosComunes.options.length; i++) {
+                if (selectMotivosComunes.options[i].value === consulta.motivo) {
+                    selectMotivosComunes.selectedIndex = i;
+                    break;
+                }
+            }
+            // Disparar evento change para actualizar cualquier listener
+            const event = new Event('change');
+            selectMotivosComunes.dispatchEvent(event);
+        }, 500);
+    }
+    
+    // Seleccionar el preformato correcto en el selector de consulta
+    const selectFormatoConsulta = document.getElementById('formatoConsulta');
+    if (selectFormatoConsulta && consulta.id_preformato_consulta) {
+        // Verificar si los preformatos ya están cargados
+        if (selectFormatoConsulta.options.length <= 1) {
+            // Si no hay opciones cargadas, cargar los preformatos primero
+            cargarPreformatosConsulta();
+        }
+        
+        // Esperar un momento para que se carguen las opciones
+        setTimeout(() => {
+            // Buscar la opción que coincida con el preformato de la consulta
+            let preformatoEncontrado = false;
+            for (let i = 0; i < selectFormatoConsulta.options.length; i++) {
+                if (selectFormatoConsulta.options[i].value === consulta.id_preformato_consulta) {
+                    selectFormatoConsulta.selectedIndex = i;
+                    preformatoEncontrado = true;
+                    break;
+                }
+            }
+            
+            // Si se encontró el preformato, disparar evento change para aplicar el contenido
+            if (preformatoEncontrado) {
+                console.log('Preformato de consulta encontrado y seleccionado:', consulta.id_preformato_consulta);
+                const event = new Event('change');
+                selectFormatoConsulta.dispatchEvent(event);
+            } else {
+                console.log('No se encontró el preformato de consulta con ID:', consulta.id_preformato_consulta);
+            }
+        }, 800); // Aumentamos el tiempo de espera para asegurar que las opciones estén cargadas
+    }
+    
+    // Seleccionar el preformato correcto en el selector de receta
+    const selectFormatoReceta = document.getElementById('formatoreceta');
+    if (selectFormatoReceta && consulta.id_preformato_receta) {
+        // Verificar si los preformatos ya están cargados
+        if (selectFormatoReceta.options.length <= 1) {
+            // Si no hay opciones cargadas, cargar los preformatos primero
+            cargarPreformatosReceta();
+        }
+        
+        // Esperar un momento para que se carguen las opciones
+        setTimeout(() => {
+            // Buscar la opción que coincida con el preformato de la receta
+            let preformatoEncontrado = false;
+            for (let i = 0; i < selectFormatoReceta.options.length; i++) {
+                if (selectFormatoReceta.options[i].value === consulta.id_preformato_receta) {
+                    selectFormatoReceta.selectedIndex = i;
+                    preformatoEncontrado = true;
+                    break;
+                }
+            }
+            
+            // Si se encontró el preformato, disparar evento change para aplicar el contenido
+            if (preformatoEncontrado) {
+                console.log('Preformato de receta encontrado y seleccionado:', consulta.id_preformato_receta);
+                const event = new Event('change');
+                selectFormatoReceta.dispatchEvent(event);
+            } else {
+                console.log('No se encontró el preformato de receta con ID:', consulta.id_preformato_receta);
+            }
+        }, 800); // Aumentamos el tiempo de espera para asegurar que las opciones estén cargadas
     }
     
     // Si tenemos archivos, mostrarlos en la sección de archivos
