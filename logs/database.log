@@ -7981,4 +7981,14 @@ SQL: SELECT p.*,
                 GROUP BY p.perm_id, p.perm_name, p.perm_description
                 ORDER BY p.perm_id
 ----------------------------------------
-[2025-04-21 00:45:15] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-21 00:45:15] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-21 00:45:15] Resultado de preformatos de tipo receta: [][2025-04-21 00:45:20] Ejecutando consulta para obtener motivos comunes[2025-04-21 00:45:20] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}]
+[2025-04-21 00:45:15] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-21 00:45:15] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-21 00:45:15] Resultado de preformatos de tipo receta: [][2025-04-21 00:45:20] Ejecutando consulta para obtener motivos comunes[2025-04-21 00:45:20] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-21 23:06:55] Ejecutando consulta para obtener preformatos de tipo: receta[2025-04-21 23:06:55] Ejecutando consulta para obtener motivos comunestipo: consulta[2025-04-21 19:06:55] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-21 23:06:55] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}][2025-04-21 23:06:55] Resultado de preformatos de tipo consulta: [{"id_preformato":1,"nombre":"preformato 1","contenido":"preformato 2 "}][2025-04-21 23:06:55] Resultado de preformatos de tipo receta: [][2025-04-21 23:07:01] Ejecutando consulta para obtener motivos comunes[2025-04-21 23:07:01] Resultado de motivos comunes: [{"id_motivo":1,"nombre":"Dolor de diente","descripcion":"dolor de muela"}]

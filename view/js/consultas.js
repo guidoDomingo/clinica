@@ -197,7 +197,7 @@ function obtenerCuota(idPersona) {
         success: function(response) {
             const cuotaValorElement = document.getElementById('cuota-valor');
             if (response && response.cuota) {
-                cuotaValorElement.textContent = response.cuota;
+                cuotaValorElement.textContent = '0'; //response.cuota;
             } else {
                 cuotaValorElement.textContent = '0';
             }
