@@ -8,36 +8,89 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, iniciando carga de datos...');
     // Verificar si estamos en la página de consultas
     if (window.location.href.includes('consultas') || document.getElementById('motivoscomunes')) {
+        console.log('En página de consultas, cargando datos...');
+        
         // Cargar los motivos comunes y preformatos
         cargarMotivosComunes();
         cargarPreformatosConsulta();
         cargarPreformatosReceta();
         
         // Agregar event listeners a los selectores
-        const selectMotivosComunes = document.getElementById('motivoscomunes');
-        const selectFormatoConsulta = document.getElementById('formatoConsulta');
-        const selectFormatoReceta = document.getElementById('formatoreceta');
-        
-        if (selectMotivosComunes) {
-            selectMotivosComunes.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                if (selectedOption.value !== 'Seleccionar') {
-                    document.getElementById('txtmotivo').value = selectedOption.text;
+        setTimeout(function() {
+            console.log('Configurando eventos para selectores...');
+            
+            // Evento para motivos comunes (tanto nativo como Select2)
+            const selectMotivosComunes = document.getElementById('motivoscomunes');
+            if (selectMotivosComunes) {
+                // Evento nativo
+                selectMotivosComunes.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption.value !== 'Seleccionar') {
+                        document.getElementById('txtmotivo').value = selectedOption.text;
+                    }
+                });
+                
+                // Evento Select2 (si está activado)
+                if ($.fn.select2) {
+                    $('#motivoscomunes').on('select2:select', function(e) {
+                        console.log('Select2: Motivo común seleccionado:', e.params.data);
+                        if (e.params.data.id !== 'Seleccionar') {
+                            document.getElementById('txtmotivo').value = e.params.data.text;
+                        }
+                    });
                 }
-            });
-        }
-        
-        if (selectFormatoConsulta) {
-            selectFormatoConsulta.addEventListener('change', function() {
-                aplicarPreformato('consulta', this.value);
-            });
-        }
-        
-        if (selectFormatoReceta) {
-            selectFormatoReceta.addEventListener('change', function() {
-                aplicarPreformato('receta', this.value);
-            });
-        }
+            }
+            
+            // Evento para preformato de consulta (tanto nativo como Select2)
+            const selectFormatoConsulta = document.getElementById('formatoConsulta');
+            if (selectFormatoConsulta) {
+                console.log('Agregando event listener al selector de preformatos de consulta');
+                
+                // Evento nativo
+                selectFormatoConsulta.addEventListener('change', function() {
+                    console.log('Preformato de consulta seleccionado (evento nativo):', this.value);
+                    if (this.value !== 'Seleccionar') {
+                        aplicarPreformato('consulta', this.value);
+                    }
+                });
+                
+                // Evento Select2 (si está activado)
+                if ($.fn.select2) {
+                    $('#formatoConsulta').on('select2:select', function(e) {
+                        console.log('Select2: Preformato de consulta seleccionado:', e.params.data);
+                        if (e.params.data.id !== 'Seleccionar') {
+                            aplicarPreformato('consulta', e.params.data.id);
+                        }
+                    });
+                }
+            }
+            
+            // Evento para preformato de receta (tanto nativo como Select2)
+            const selectFormatoReceta = document.getElementById('formatoreceta');
+            if (selectFormatoReceta) {
+                console.log('Agregando event listener al selector de preformatos de receta');
+                
+                // Evento nativo
+                selectFormatoReceta.addEventListener('change', function() {
+                    console.log('Preformato de receta seleccionado (evento nativo):', this.value);
+                    if (this.value !== 'Seleccionar') {
+                        aplicarPreformato('receta', this.value);
+                    }
+                });
+                
+                // Evento Select2 (si está activado)
+                if ($.fn.select2) {
+                    $('#formatoreceta').on('select2:select', function(e) {
+                        console.log('Select2: Preformato de receta seleccionado:', e.params.data);
+                        if (e.params.data.id !== 'Seleccionar') {
+                            aplicarPreformato('receta', e.params.data.id);
+                        }
+                    });
+                }
+            }
+            
+            console.log('Eventos para selectores configurados');
+        }, 1000); // Esperar 1 segundo para asegurarse de que los selectores se han inicializado correctamente
     }
 });
 
@@ -155,7 +208,7 @@ function cargarPreformatosConsulta() {
  * Función para cargar los preformatos de receta en el selector
  */
 function cargarPreformatosReceta() {
-    console.log('Iniciando carga de preformatos de receta...');
+    console.log('==== INICIANDO CARGA DE PREFORMATOS DE RECETA ====');
     const selectFormatoReceta = document.getElementById('formatoreceta');
     if (!selectFormatoReceta) {
         console.log('Elemento formatoreceta no encontrado en el DOM');
@@ -192,8 +245,32 @@ function cargarPreformatosReceta() {
                     option.text = preformato.nombre;
                     option.setAttribute('data-contenido', preformato.contenido);
                     selectFormatoReceta.appendChild(option);
+                    console.log(`Agregado preformato: ${preformato.nombre}, ID: ${preformato.id_preformato}`);
                 });
                 console.log('Preformatos de receta agregados al selector');
+                
+                // Verificar si tiene ya un evento change y si no, agregarlo
+                if (!selectFormatoReceta.hasAttribute('data-event-attached')) {
+                    console.log('Agregando evento change al selector de preformatos de receta');
+                    
+                    selectFormatoReceta.addEventListener('change', function() {
+                        console.log('Selector de preformato de receta cambiado:', this.value);
+                        
+                        if (this.value !== 'Seleccionar') {
+                            const selectedOption = this.options[this.selectedIndex];
+                            const contenido = selectedOption.getAttribute('data-contenido');
+                            console.log('Preformato seleccionado:', selectedOption.text);
+                            console.log('Contenido del preformato:', contenido);
+                            
+                            // Aplicar el preformato al textarea de receta
+                            aplicarPreformato('receta', this.value);
+                        }
+                    });
+                    
+                    // Marcar que ya tiene el evento adjunto
+                    selectFormatoReceta.setAttribute('data-event-attached', 'true');
+                    console.log('Evento change agregado correctamente al selector de preformatos de receta');
+                }
             } else {
                 console.log('No se encontraron preformatos de receta o hubo un error:', response);
             }
@@ -204,39 +281,269 @@ function cargarPreformatosReceta() {
             console.error("Respuesta del servidor:", xhr.responseText);
         }
     });
+    console.log('==== FIN DE CARGA DE PREFORMATOS DE RECETA ====');
 }
 
 /**
  * Función para aplicar un preformato seleccionado
- * @param {string} tipo - Tipo de preformato ('consulta' o 'receta')
+ * @param {string} tipo - Tipo de preformato ('consulta', 'receta', etc.)
  * @param {string} idPreformato - ID del preformato seleccionado
  */
 function aplicarPreformato(tipo, idPreformato) {
-    console.log(`Aplicando preformato de tipo ${tipo} con ID ${idPreformato}`);
-    if (idPreformato === 'Seleccionar') return;
+    console.log(`===== INICIO: Aplicando preformato de tipo ${tipo} con ID ${idPreformato} =====`);
     
-    let selector, textareaId;
-    
-    if (tipo === 'consulta') {
-        selector = document.getElementById('formatoConsulta');
-        textareaId = 'consulta-textarea';
-    } else if (tipo === 'receta') {
-        selector = document.getElementById('formatoreceta');
-        textareaId = 'receta-textarea';
-    } else {
-        console.log('Tipo de preformato no válido:', tipo);
+    // Si se seleccionó la opción "Seleccionar", no hacer nada
+    if (idPreformato === 'Seleccionar') {
+        console.log('Opción "Seleccionar" elegida, no se aplicará ningún preformato');
         return;
     }
     
-    // Obtener el contenido del preformato
-    const selectedOption = selector.options[selector.selectedIndex];
-    const contenido = selectedOption.getAttribute('data-contenido');
+    let selector, textareaId;
     
-    if (contenido) {
-        console.log(`Aplicando contenido al textarea ${textareaId}`);
-        // Aplicar el contenido al textarea correspondiente
-        document.getElementById(textareaId).value = contenido;
-    } else {
-        console.log('No se encontró contenido para el preformato seleccionado');
+    // Determinar el selector y el ID del textarea según el tipo de preformato
+    switch (tipo) {
+        case 'consulta':
+            selector = document.getElementById('formatoConsulta');
+            textareaId = 'consulta-textarea';
+            break;
+        case 'receta':
+            selector = document.getElementById('formatoreceta');
+            textareaId = 'receta-textarea';
+            break;
+        case 'receta_anteojos':
+            selector = document.querySelector(`select[data-tipo="${tipo}"]`);
+            textareaId = 'receta-anteojos-textarea';
+            break;
+        case 'orden_estudios':
+            selector = document.querySelector(`select[data-tipo="${tipo}"]`);
+            textareaId = 'orden-estudios-textarea';
+            break;
+        case 'orden_cirugias':
+            selector = document.querySelector(`select[data-tipo="${tipo}"]`);
+            textareaId = 'orden-cirugias-textarea';
+            break;
+        default:
+            console.error('Tipo de preformato no válido:', tipo);
+            return;
     }
+    
+    // Si no se encontró el selector, intentar con un selector más genérico
+    if (!selector) {
+        console.log('Selector específico no encontrado, buscando selector genérico...');
+        selector = document.querySelector(`select[data-tipo="${tipo}"]`) || document.querySelector(`select[id*="${tipo}"]`);
+        if (!selector) {
+            console.error('No se encontró ningún selector para el tipo de preformato:', tipo);
+            return;
+        }
+    }
+    
+    console.log(`Selector encontrado: ${selector.id}`);
+    console.log(`Textarea objetivo: ${textareaId}`);
+    
+    // Obtener la opción seleccionada y su contenido
+    const selectedOption = selector.options[selector.selectedIndex];
+    let contenido = selectedOption.getAttribute('data-contenido');
+    
+    console.log('Opción seleccionada:', selectedOption.text);
+    console.log('¿Tiene atributo data-contenido?', contenido ? 'Sí' : 'No');
+    
+    // Si el contenido está vacío, intentar obtenerlo directamente del servidor
+    if (!contenido) {
+        console.log('Contenido no encontrado en el atributo data-contenido. Solicitándolo al servidor...');
+        
+        // Realizar la petición AJAX de forma síncrona para asegurar que tengamos el contenido antes de continuar
+        const formData = new FormData();
+        formData.append('operacion', 'getPreformatoById');
+        formData.append('id_preformato', idPreformato);
+        
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/preformatos.ajax.php',
+            data: formData,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            async: false, // Hacemos la petición síncrona para garantizar que tenemos el contenido
+            success: function(response) {
+                if (response.status === 'success' && response.data && response.data.contenido) {
+                    console.log('Contenido obtenido del servidor:', response.data.contenido);
+                    contenido = response.data.contenido;
+                    
+                    // Actualizar el atributo data-contenido de la opción para futuras selecciones
+                    selectedOption.setAttribute('data-contenido', contenido);
+                } else {
+                    console.error('Error en la respuesta del servidor:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al obtener preformato del servidor:", error);
+                console.error("Estado de la petición:", status);
+                console.error("Respuesta del servidor:", xhr.responseText);
+            }
+        });
+    }
+    
+    // Si después de intentar obtenerlo del servidor seguimos sin contenido, mostrar error
+    if (!contenido) {
+        console.error('No se pudo obtener el contenido del preformato');
+        return;
+    }
+    
+    console.log('Contenido a aplicar:', contenido);
+    
+    // Aplicar el contenido al textarea
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) {
+        console.error(`No se encontró el textarea con id ${textareaId}`);
+        return;
+    }
+    
+    console.log('Elemento textarea encontrado:', textarea.id);
+    
+    // Verificar si el textarea tiene un editor Summernote asociado
+    if ($(textarea).data('summernote')) {
+        console.log(`Usando Summernote para aplicar el contenido a ${textareaId}`);
+        try {
+            // Limpiar el editor primero para evitar problemas
+            $(textarea).summernote('code', '');
+            // Breve pausa para asegurar que se limpió correctamente
+            setTimeout(() => {
+                // Aplicar el nuevo contenido
+                $(textarea).summernote('code', contenido);
+                console.log('Contenido aplicado con Summernote');
+            }, 50);
+        } catch (error) {
+            console.error('Error al aplicar contenido con Summernote:', error);
+            // Como fallback, intentar directamente con el textarea
+            textarea.value = contenido;
+        }
+    } else {
+        console.log('No se detectó Summernote, aplicando directamente al textarea');
+        textarea.value = contenido;
+    }
+    
+    // Disparar un evento change para notificar a otros componentes
+    try {
+        const event = new Event('change');
+        textarea.dispatchEvent(event);
+        console.log('Evento change disparado en el textarea');
+    } catch (error) {
+        console.error('Error al disparar evento change:', error);
+    }
+    
+    console.log(`===== FIN: Aplicación de preformato de tipo ${tipo} =====`);
+}
+
+/**
+ * Función para obtener el contenido de un preformato desde el servidor
+ * @param {string} idPreformato - ID del preformato
+ * @param {function} callback - Función de callback que recibe el contenido
+ */
+function obtenerContenidoPreformato(idPreformato, callback) {
+    console.log('Obteniendo contenido del preformato desde el servidor:', idPreformato);
+    
+    // Crear objeto FormData para enviar los datos
+    const formData = new FormData();
+    formData.append('operacion', 'getPreformatoById');
+    formData.append('id_preformato', idPreformato);
+    
+    // Realizar petición AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/preformatos.ajax.php',
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.status === 'success' && response.data && response.data.contenido) {
+                console.log('Contenido del preformato obtenido correctamente:', response.data.contenido);
+                callback(response.data.contenido);
+            } else {
+                console.error('Error al obtener el contenido del preformato:', response);
+                callback(null);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al obtener el contenido del preformato:", error);
+            console.error("Estado de la petición:", status);
+            console.error("Respuesta del servidor:", xhr.responseText);
+            callback(null);
+        }
+    });
+}
+
+/**
+ * Función para aplicar el contenido a un textarea, sea simple o con editor
+ * @param {string} textareaId - ID del textarea
+ * @param {string} contenido - Contenido a aplicar
+ */
+function aplicarContenidoAlTextarea(textareaId, contenido) {
+    console.log(`==== APLICANDO CONTENIDO AL TEXTAREA ${textareaId} ====`);
+    console.log('Contenido a aplicar:', contenido);
+    
+    // Obtener el elemento textarea
+    const textarea = document.getElementById(textareaId);
+    
+    if (!textarea) {
+        console.error(`No se encontró el textarea con id ${textareaId}`);
+        return;
+    }
+    
+    console.log('Elemento textarea encontrado:', textarea);
+    
+    // Verificar si el textarea tiene un editor Summernote asociado
+    if ($(textarea).data('summernote')) {
+        console.log(`Usando Summernote para aplicar el contenido a ${textareaId}`);
+        console.log('Estado del editor antes de aplicar:', $(textarea).summernote('code'));
+        
+        try {
+            $(textarea).summernote('code', contenido);
+            console.log('Contenido aplicado con Summernote');
+            console.log('Estado del editor después de aplicar:', $(textarea).summernote('code'));
+        } catch (error) {
+            console.error('Error al aplicar contenido con Summernote:', error);
+        }
+    } 
+    // Verificar si tiene un editor CKEditor
+    else if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[textareaId]) {
+        console.log(`Usando CKEditor para aplicar el contenido a ${textareaId}`);
+        
+        try {
+            CKEDITOR.instances[textareaId].setData(contenido);
+            console.log('Contenido aplicado con CKEditor');
+        } catch (error) {
+            console.error('Error al aplicar contenido con CKEditor:', error);
+        }
+    } 
+    // Verificar si tiene un editor TinyMCE
+    else if (typeof tinymce !== 'undefined' && tinymce.get(textareaId)) {
+        console.log(`Usando TinyMCE para aplicar el contenido a ${textareaId}`);
+        
+        try {
+            tinymce.get(textareaId).setContent(contenido);
+            console.log('Contenido aplicado con TinyMCE');
+        } catch (error) {
+            console.error('Error al aplicar contenido con TinyMCE:', error);
+        }
+    }
+    // Si no tiene editor, aplicar al textarea directamente
+    else {
+        console.log(`Aplicando contenido directamente al textarea ${textareaId}`);
+        textarea.value = contenido;
+        console.log('Contenido aplicado directamente al textarea');
+        console.log('Valor del textarea después de aplicar:', textarea.value);
+    }
+    
+    // Disparar evento de cambio para notificar a otros componentes
+    try {
+        console.log('Disparando evento change en el textarea');
+        const event = new Event('change');
+        textarea.dispatchEvent(event);
+        console.log('Evento change disparado correctamente');
+    } catch (error) {
+        console.error('Error al disparar evento change:', error);
+    }
+    
+    console.log(`==== FIN DE APLICACIÓN DE CONTENIDO A ${textareaId} ====`);
 }

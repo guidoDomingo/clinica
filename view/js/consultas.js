@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnGuardarConsulta = document.getElementById('btnGuardarConsulta');
     const btnSubirArchivos = document.getElementById('btnSubirArchivos');
     
+    // Inicializar editores de texto enriquecido si existen
+    inicializarEditoresTexto();
+    
     // Agregar event listeners a los botones
     if (btnBuscarPersona) {
         btnBuscarPersona.addEventListener('click', buscarPersona);
@@ -28,6 +31,113 @@ document.addEventListener('DOMContentLoaded', function() {
         btnSubirArchivos.addEventListener('click', subirArchivos);
     }
 });
+
+/**
+ * Función para inicializar los editores de texto enriquecido
+ */
+function inicializarEditoresTexto() {
+    console.log('Inicializando editores de texto enriquecido...');
+    
+    // Inicializar editor de texto para el campo de descripción
+    if (document.getElementById('consulta-textarea')) {
+        console.log('Inicializando editor para consulta-textarea');
+        
+        try {
+            $('#consulta-textarea').summernote({
+                placeholder: 'Escriba aquí la descripción de la consulta...',
+                height: 200,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear', 'strikethrough']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'help']]
+                ],
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+                fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '24', '36'],
+                callbacks: {
+                    onChange: function(contents, $editable) {
+                        console.log('Contenido del editor de consulta cambiado:', contents);
+                        // Guardar contenido en el textarea para asegurar que se envíe con el formulario
+                        document.getElementById('consulta-textarea').value = contents;
+                    }
+                }
+            });
+            console.log('Editor Summernote inicializado correctamente para el campo de descripción');
+            
+            // Verificar si el editor se inicializó correctamente
+            if (!$('#consulta-textarea').data('summernote')) {
+                console.error('Error: El editor Summernote no se inicializó correctamente para consulta-textarea');
+            }
+        } catch (error) {
+            console.error('Error al inicializar Summernote para consulta-textarea:', error);
+        }
+    } else {
+        console.log('No se encontró el elemento consulta-textarea en el DOM');
+    }
+    
+    // Inicializar editor de texto para el campo de receta (opcional)
+    if (document.getElementById('receta-textarea')) {
+        console.log('Inicializando editor para receta-textarea');
+        
+        try {
+            $('#receta-textarea').summernote({
+                placeholder: 'Escriba aquí la receta...',
+                height: 200,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear', 'strikethrough']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['view', ['fullscreen', 'help']]
+                ],
+                fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18'],
+                callbacks: {
+                    onChange: function(contents, $editable) {
+                        console.log('Contenido del editor de receta cambiado:', contents);
+                        // Guardar contenido en el textarea para asegurar que se envíe con el formulario
+                        document.getElementById('receta-textarea').value = contents;
+                    },
+                    onInit: function() {
+                        console.log('Editor de receta inicializado');
+                        // Verificar si hay eventos de cambio en el selector de preformato de receta
+                        const formatoreceta = document.getElementById('formatoreceta');
+                        if (formatoreceta) {
+                            console.log('Verificando eventos en selector de preformato de receta');
+                            // Comprobar si ya tiene un listener
+                            const clonedSelect = formatoreceta.cloneNode(true);
+                            formatoreceta.parentNode.replaceChild(clonedSelect, formatoreceta);
+                            
+                            // Agregar nuevo listener
+                            clonedSelect.addEventListener('change', function() {
+                                console.log('Preformato de receta seleccionado desde evento onInit:', this.value);
+                                if (this.value !== 'Seleccionar') {
+                                    aplicarPreformato('receta', this.value);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+            console.log('Editor Summernote inicializado correctamente para el campo de receta');
+            
+            // Verificar si el editor se inicializó correctamente
+            if (!$('#receta-textarea').data('summernote')) {
+                console.error('Error: El editor Summernote no se inicializó correctamente para receta-textarea');
+            }
+        } catch (error) {
+            console.error('Error al inicializar Summernote para receta-textarea:', error);
+        }
+    } else {
+        console.log('No se encontró el elemento receta-textarea en el DOM');
+    }
+}
 
 /**
  * Función para buscar una persona por documento o ficha
