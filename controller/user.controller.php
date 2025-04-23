@@ -78,4 +78,27 @@ class ControllerUser {
         }
             }
     }
+    
+    /**
+     * Obtiene todos los usuarios activos del sistema
+     * @return array|false Array con los usuarios o false si hay error
+     */
+    public function ctrObtenerUsuarios() {
+        try {
+            $stmt = Conexion::conectar()->prepare("
+                SELECT u.user_id as id_usuario, r.reg_name as nombre, r.reg_lastname as apellido 
+                FROM sys_users u 
+                JOIN sys_register r ON u.reg_id = r.reg_id 
+                WHERE u.user_is_active = true 
+                ORDER BY r.reg_name, r.reg_lastname
+            ");
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log("Error al obtener usuarios: " . $e->getMessage());
+            return false;
+        }
+    }
 }

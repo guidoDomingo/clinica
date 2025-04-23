@@ -8,7 +8,6 @@ class ModelPreformatos {
      */
     public static function mdlGetMotivosComunes() {
         try {
-            error_log("[" . date('Y-m-d H:i:s') . "] Ejecutando consulta para obtener motivos comunes", 3, "c:/laragon/www/clinica/logs/database.log");
             $stmt = Conexion::conectar()->prepare(
                 "SELECT id_motivo, nombre, descripcion 
                 FROM motivos_comunes 
@@ -18,10 +17,9 @@ class ModelPreformatos {
             
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            error_log("[" . date('Y-m-d H:i:s') . "] Resultado de motivos comunes: " . json_encode($resultado), 3, "c:/laragon/www/clinica/logs/database.log");
             return $resultado;
         } catch (PDOException $e) {
-            error_log("Error al obtener motivos comunes: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error al obtener motivos comunes: " . $e->getMessage());
             return [];
         }
     }
@@ -33,7 +31,6 @@ class ModelPreformatos {
      */
     public static function mdlGetPreformatos($tipo) {
         try {
-            error_log("[" . date('Y-m-d H:i:s') . "] Ejecutando consulta para obtener preformatos de tipo: " . $tipo, 3, "c:/laragon/www/clinica/logs/database.log");
             $stmt = Conexion::conectar()->prepare(
                 "SELECT id_preformato, nombre, contenido 
                 FROM preformatos 
@@ -44,11 +41,33 @@ class ModelPreformatos {
             $stmt->bindParam(":tipo", $tipo, PDO::PARAM_STR);
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            error_log("[" . date('Y-m-d H:i:s') . "] Resultado de preformatos de tipo " . $tipo . ": " . json_encode($resultado), 3, "c:/laragon/www/clinica/logs/database.log");
             return $resultado;
         } catch (PDOException $e) {
-            error_log("Error al obtener preformatos: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error al obtener preformatos: " . $e->getMessage());
             return [];
+        }
+    }
+    
+    /**
+     * Obtiene un preformato por su ID
+     * @param int $idPreformato ID del preformato a obtener
+     * @return array|false Arreglo con los datos del preformato o false si no existe
+     */
+    public static function mdlGetPreformatoById($idPreformato) {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT id_preformato, nombre, contenido, tipo, creado_por 
+                FROM preformatos 
+                WHERE id_preformato = :id_preformato AND activo = true"
+            );
+            
+            $stmt->bindParam(":id_preformato", $idPreformato, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado;
+        } catch (PDOException $e) {
+            error_log("Error al obtener preformato por ID: " . $e->getMessage());
+            return false;
         }
     }
     
@@ -74,7 +93,7 @@ class ModelPreformatos {
                 return "error";
             }
         } catch (PDOException $e) {
-            error_log("Error al crear motivo común: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error al crear motivo común: " . $e->getMessage());
             return "error";
         }
     }
@@ -102,7 +121,63 @@ class ModelPreformatos {
                 return "error";
             }
         } catch (PDOException $e) {
-            error_log("Error al crear preformato: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error al crear preformato: " . $e->getMessage());
+            return "error";
+        }
+    }
+    
+    /**
+     * Actualiza un preformato existente
+     * @param array $datos Datos del preformato
+     * @return string 'ok' si se actualizó correctamente, 'error' en caso contrario
+     */
+    public static function mdlActualizarPreformato($datos) {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "UPDATE preformatos 
+                SET nombre = :nombre, contenido = :contenido, tipo = :tipo, creado_por = :creado_por 
+                WHERE id_preformato = :id_preformato"
+            );
+            
+            $stmt->bindParam(":nombre", $datos['nombre'], PDO::PARAM_STR);
+            $stmt->bindParam(":contenido", $datos['contenido'], PDO::PARAM_STR);
+            $stmt->bindParam(":tipo", $datos['tipo'], PDO::PARAM_STR);
+            $stmt->bindParam(":creado_por", $datos['creado_por'], PDO::PARAM_INT);
+            $stmt->bindParam(":id_preformato", $datos['id_preformato'], PDO::PARAM_INT);
+            
+            if ($stmt->execute()) {
+                return "ok";
+            } else {
+                return "error";
+            }
+        } catch (PDOException $e) {
+            error_log("Error al actualizar preformato: " . $e->getMessage());
+            return "error";
+        }
+    }
+    
+    /**
+     * Elimina un preformato (inactivación lógica)
+     * @param int $idPreformato ID del preformato a eliminar
+     * @return string 'ok' si se eliminó correctamente, 'error' en caso contrario
+     */
+    public static function mdlEliminarPreformato($idPreformato) {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "UPDATE preformatos 
+                SET activo = false 
+                WHERE id_preformato = :id_preformato"
+            );
+            
+            $stmt->bindParam(":id_preformato", $idPreformato, PDO::PARAM_INT);
+            
+            if ($stmt->execute()) {
+                return "ok";
+            } else {
+                return "error";
+            }
+        } catch (PDOException $e) {
+            error_log("Error al eliminar preformato: " . $e->getMessage());
             return "error";
         }
     }

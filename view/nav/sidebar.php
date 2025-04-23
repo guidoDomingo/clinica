@@ -55,6 +55,12 @@
                         <p>Personas</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=preformatos" class="nav-link">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>Preformatos</p>
+                    </a>
+                </li>
                 <li class="nav-header">CONFIGURACIÓN</li>
                 <li class="nav-item">
                     <a href="index.php?ruta=roles" class="nav-link">

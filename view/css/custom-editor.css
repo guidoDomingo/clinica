@@ -1,0 +1,94 @@
+/**
+ * Estilos personalizados para el editor CKEditor
+ * Estos estilos hacen que el editor se vea más como Microsoft Word
+ */
+
+/* Estilos para el área de edición */
+body.cke_editable {
+    font-family: 'Arial', sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+    padding: 20px;
+    margin: 0;
+}
+
+/* Estilos para los encabezados */
+h1.heading-message {
+    font-size: 24pt;
+    font-weight: bold;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+h2.subheading {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #333;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+/* Estilos para párrafos */
+p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Estilos para listas */
+ol, ul {
+    margin-left: 20px;
+    padding-left: 20px;
+}
+
+/* Estilos para tablas */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para enlaces */
+a {
+    color: #0066cc;
+    text-decoration: underline;
+}
+
+/* Estilos para bloques de citas */
+blockquote {
+    margin-left: 20px;
+    padding-left: 20px;
+    border-left: 3px solid #ccc;
+    color: #666;
+}
+
+/* Estilos para el editor mismo */
+.cke_chrome {
+    border: 1px solid #d1d1d1 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1) !important;
+}
+
+.cke_top {
+    background: #f8f8f8 !important;
+    border-bottom: 1px solid #d1d1d1 !important;
+}
+
+.cke_bottom {
+    background: #f8f8f8 !important;
+    border-top: 1px solid #d1d1d1 !important;
+}

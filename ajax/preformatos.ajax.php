@@ -15,7 +15,7 @@ class PreformatosAjax {
     
     /**
      * Obtiene todos los preformatos activos de un tipo específico
-     * @param string $tipo Tipo de preformato ('consulta' o 'receta')
+     * @param string $tipo Tipo de preformato ('consulta', 'receta', etc.)
      */
     public function ajaxGetPreformatos($tipo) {
         $preformatos = ControllerPreformatos::ctrGetPreformatos($tipo);
@@ -26,21 +26,21 @@ class PreformatosAjax {
     }
     
     /**
-     * Crea un nuevo motivo común
-     * @param array $datos Datos del motivo común
+     * Obtiene un preformato por su ID
+     * @param int $idPreformato ID del preformato a obtener
      */
-    public function ajaxCrearMotivoComun($datos) {
-        $resultado = ControllerPreformatos::ctrCrearMotivoComun($datos);
+    public function ajaxGetPreformatoById($idPreformato) {
+        $preformato = ControllerPreformatos::ctrGetPreformatoById($idPreformato);
         
-        if ($resultado === "ok") {
+        if ($preformato) {
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Motivo común creado correctamente'
+                'data' => $preformato
             ]);
         } else {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Error al crear el motivo común'
+                'message' => 'No se pudo obtener la información del preformato'
             ]);
         }
     }
@@ -64,6 +64,46 @@ class PreformatosAjax {
             ]);
         }
     }
+    
+    /**
+     * Actualiza un preformato existente
+     * @param array $datos Datos del preformato
+     */
+    public function ajaxActualizarPreformato($datos) {
+        $resultado = ControllerPreformatos::ctrActualizarPreformato($datos);
+        
+        if ($resultado === "ok") {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Preformato actualizado correctamente'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al actualizar el preformato'
+            ]);
+        }
+    }
+    
+    /**
+     * Elimina un preformato
+     * @param int $idPreformato ID del preformato a eliminar
+     */
+    public function ajaxEliminarPreformato($idPreformato) {
+        $resultado = ControllerPreformatos::ctrEliminarPreformato($idPreformato);
+        
+        if ($resultado === "ok") {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Preformato eliminado correctamente'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al eliminar el preformato'
+            ]);
+        }
+    }
 }
 
 // Procesar solicitudes AJAX
@@ -83,13 +123,22 @@ if (isset($_POST['operacion'])) {
             $preformatos->ajaxGetPreformatos('receta');
             break;
             
-        case 'crearMotivoComun':
-            $datos = [
-                'nombre' => $_POST['nombre'],
-                'descripcion' => $_POST['descripcion'] ?? '',
-                'creado_por' => $_POST['creado_por'] ?? 1
-            ];
-            $preformatos->ajaxCrearMotivoComun($datos);
+        case 'getPreformatosRecetaAnteojos':
+            $preformatos->ajaxGetPreformatos('receta_anteojos');
+            break;
+            
+        case 'getPreformatosOrdenEstudios':
+            $preformatos->ajaxGetPreformatos('orden_estudios');
+            break;
+            
+        case 'getPreformatosOrdenCirugias':
+            $preformatos->ajaxGetPreformatos('orden_cirugias');
+            break;
+            
+        case 'getPreformatoById':
+            if (isset($_POST['id_preformato'])) {
+                $preformatos->ajaxGetPreformatoById($_POST['id_preformato']);
+            }
             break;
             
         case 'crearPreformato':
@@ -97,9 +146,26 @@ if (isset($_POST['operacion'])) {
                 'nombre' => $_POST['nombre'],
                 'contenido' => $_POST['contenido'],
                 'tipo' => $_POST['tipo'],
-                'creado_por' => $_POST['creado_por'] ?? 1
+                'creado_por' => $_POST['creado_por']
             ];
             $preformatos->ajaxCrearPreformato($datos);
+            break;
+            
+        case 'actualizarPreformato':
+            $datos = [
+                'id_preformato' => $_POST['id_preformato'],
+                'nombre' => $_POST['nombre'],
+                'contenido' => $_POST['contenido'],
+                'tipo' => $_POST['tipo'],
+                'creado_por' => $_POST['creado_por']
+            ];
+            $preformatos->ajaxActualizarPreformato($datos);
+            break;
+            
+        case 'eliminarPreformato':
+            if (isset($_POST['id_preformato'])) {
+                $preformatos->ajaxEliminarPreformato($_POST['id_preformato']);
+            }
             break;
     }
 }

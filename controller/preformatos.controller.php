@@ -12,11 +12,20 @@ class ControllerPreformatos {
     
     /**
      * Obtiene todos los preformatos activos de un tipo específico
-     * @param string $tipo Tipo de preformato ('consulta' o 'receta')
+     * @param string $tipo Tipo de preformato ('consulta', 'receta', etc.)
      * @return array Arreglo con los preformatos
      */
     public static function ctrGetPreformatos($tipo) {
         return ModelPreformatos::mdlGetPreformatos($tipo);
+    }
+    
+    /**
+     * Obtiene un preformato por su ID
+     * @param int $idPreformato ID del preformato a obtener
+     * @return array|false Arreglo con los datos del preformato o false si no existe
+     */
+    public static function ctrGetPreformatoById($idPreformato) {
+        return ModelPreformatos::mdlGetPreformatoById($idPreformato);
     }
     
     /**
@@ -45,10 +54,48 @@ class ControllerPreformatos {
         }
         
         // Validar que el tipo sea válido
-        if ($datos['tipo'] != 'consulta' && $datos['tipo'] != 'receta') {
+        if (!in_array($datos['tipo'], ['consulta', 'receta', 'receta_anteojos', 'orden_estudios', 'orden_cirugias'])) {
             return "error_tipo";
         }
         
         return ModelPreformatos::mdlCrearPreformato($datos);
+    }
+    
+    /**
+     * Actualiza un preformato existente
+     * @param array $datos Datos del preformato
+     * @return string 'ok' si se actualizó correctamente, 'error' en caso contrario
+     */
+    public static function ctrActualizarPreformato($datos) {
+        // Validar que el ID exista
+        if (empty($datos['id_preformato'])) {
+            return "error_id";
+        }
+        
+        // Validar que el nombre y contenido no estén vacíos
+        if (empty($datos['nombre']) || empty($datos['contenido'])) {
+            return "error_datos";
+        }
+        
+        // Validar que el tipo sea válido
+        if (!in_array($datos['tipo'], ['consulta', 'receta', 'receta_anteojos', 'orden_estudios', 'orden_cirugias'])) {
+            return "error_tipo";
+        }
+        
+        return ModelPreformatos::mdlActualizarPreformato($datos);
+    }
+    
+    /**
+     * Elimina un preformato (inactivación lógica)
+     * @param int $idPreformato ID del preformato a eliminar
+     * @return string 'ok' si se eliminó correctamente, 'error' en caso contrario
+     */
+    public static function ctrEliminarPreformato($idPreformato) {
+        // Validar que el ID exista
+        if (empty($idPreformato)) {
+            return "error_id";
+        }
+        
+        return ModelPreformatos::mdlEliminarPreformato($idPreformato);
     }
 }
