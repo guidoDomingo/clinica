@@ -72,8 +72,8 @@
                                                     <label for="tipo-preformato">Tipo</label>
                                                     <select class="form-control" id="tipo-preformato">
                                                         <option value="" selected disabled>Seleccionar...</option>
-                                                        <option value="Texas">Texas</option>
-                                                        <option value="Receta de lente">Receta de lente</option>
+                                                        <option value="consulta">Consultas generales</option>
+                                                        <option value="receta">Receta de lente</option>
                                                         <option value="California">California</option>
                                                         <option value="Delaware">Delaware</option>
                                                         <option value="Tennessee">Tennessee</option>
@@ -129,6 +129,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Título</th>
+                                        <th>Tipo</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>

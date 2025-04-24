@@ -41,6 +41,25 @@ function inicializarComponentes() {
         });
     }
     
+    // Inicializar Quill editor para preformatos en el modal si existe el contenedor
+    window.editorPreformato = null;
+    const editorContainer = document.getElementById('editor-preformato-container');
+    if (editorContainer) {
+        window.editorPreformato = new Quill('#editor-preformato-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['clean']
+                ]
+            }
+        });
+    }
+    
     // Cargar usuarios para el selector de propietario
     cargarUsuarios();
     
@@ -145,6 +164,7 @@ function cargarPreformatosPorTipo(tipo) {
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${preformato.nombre}</td>
+                        <td>${preformato.tipo}</td>
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-info btn-sm btn-editar" data-id="${preformato.id_preformato}" title="Editar preformato">
@@ -173,53 +193,132 @@ function cargarPreformatosPorTipo(tipo) {
 }
 
 /**
- * Carga todos los preformatos disponibles
+ * Carga los preformatos en la tabla al inicializar la página
  */
 function cargarPreformatos() {
-    const selectAplicarA = document.getElementById('aplicar-a');
-    if (selectAplicarA && selectAplicarA.value !== '') {
-        cargarPreformatosPorTipo(selectAplicarA.value);
-    }
+    const tbodyPreformatos = document.getElementById('tbody-preformatos');
+    const tablaPreformatos = document.getElementById('tabla-preformatos');
+    
+    if (!tbodyPreformatos || !tablaPreformatos) return;
+    
+    // Mostrar indicador de carga
+    tbodyPreformatos.innerHTML = '<tr><td colspan="3" class="text-center">Cargando preformatos...</td></tr>';
+    
+    // Crear objeto FormData para enviar los datos
+    const formData = new FormData();
+    formData.append('operacion', 'getAllPreformatos');
+    
+    // Realizar petición AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/preformatos.ajax.php',
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            // Limpiar tabla
+            tbodyPreformatos.innerHTML = '';
+            
+            if (response.status === 'success' && response.data.length > 0) {
+                console.log('Datos recibidos:', response.data);
+                // Agregar filas a la tabla
+                response.data.forEach(function(preformato, index) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${preformato.nombre}</td>
+                        <td>${preformato.tipo}</td>
+                        <td>
+                            <button class="btn btn-info btn-sm btn-editar" data-id="${preformato.id_preformato}" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-eliminar" data-id="${preformato.id_preformato}" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-warning btn-sm btn-ver" data-id="${preformato.id_preformato}" title="Ver">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbodyPreformatos.appendChild(row);
+                });
+                
+                // Inicializar DataTable si aún no se ha inicializado
+                if (!$.fn.DataTable.isDataTable('#tabla-preformatos')) {
+                    $('#tabla-preformatos').DataTable({
+                        "responsive": true,
+                        "lengthChange": true,
+                        "autoWidth": false,
+                        "pageLength": 10,
+                        "language": {
+                            "lengthMenu": "Mostrar _MENU_ registros por página",
+                            "zeroRecords": "No se encontraron resultados",
+                            "info": "Mostrando página _PAGE_ de _PAGES_",
+                            "infoEmpty": "No hay registros disponibles",
+                            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                            "search": "Buscar:",
+                            "paginate": {
+                                "first": "Primero",
+                                "last": "Último",
+                                "next": "Siguiente",
+                                "previous": "Anterior"
+                            }
+                        }
+                    });
+                } else {
+                    // Si ya está inicializado, recargar los datos
+                    $('#tabla-preformatos').DataTable().clear().draw();
+                    $('#tabla-preformatos').DataTable().rows.add($(tbodyPreformatos).find('tr')).draw();
+                }
+            } else {
+                // Mostrar mensaje si no hay preformatos
+                tbodyPreformatos.innerHTML = '<tr><td colspan="3" class="text-center">No hay preformatos disponibles</td></tr>';
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cargar preformatos:", error);
+            tbodyPreformatos.innerHTML = '<tr><td colspan="3" class="text-center">Error al cargar preformatos</td></tr>';
+        }
+    });
 }
 
 /**
  * Guarda un nuevo preformato o actualiza uno existente
  */
 function guardarPreformato() {
-    const idPreformato = document.getElementById('id-preformato').value;
-    const propietario = document.getElementById('propietario').value;
-    const aplicarA = document.getElementById('aplicar-a').value;
-    const titulo = document.getElementById('titulo-preformato').value;
-    
-    // Obtener contenido del editor si existe, o del textarea si no
-    let observaciones = '';
-    if ($('#obs-preformato').summernote) {
-        observaciones = $('#obs-preformato').summernote('code');
-    } else {
-        observaciones = document.getElementById('obs-preformato').value;
-    }
-    
-    // Validar campos obligatorios
-    if (!propietario || !aplicarA || !titulo || !observaciones) {
+    // Validar campos requeridos
+    if (!$("#titulo-preformato").val()) {
         Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Todos los campos son obligatorios',
-            confirmButtonText: 'Aceptar'
+            icon: "warning",
+            title: "Campo requerido",
+            text: "Por favor ingrese un nombre para el preformato"
         });
         return;
     }
     
+    // Obtener el contenido del editor Summernote
+    let contenido = $('#obs-preformato').summernote('code');
+    
+    // Determinar si estamos en modo creación o edición
+    const idPreformato = $("#id-preformato").val();
+    const modo = idPreformato ? "edicion" : "creacion";
+    const operacion = modo === "edicion" ? "actualizarPreformato" : "crearPreformato";
+    
     // Crear objeto FormData para enviar los datos
     const formData = new FormData();
-    formData.append('operacion', idPreformato ? 'actualizarPreformato' : 'crearPreformato');
-    if (idPreformato) formData.append('id_preformato', idPreformato);
-    formData.append('creado_por', propietario);
-    formData.append('tipo', aplicarA);
-    formData.append('nombre', titulo);
-    formData.append('contenido', observaciones);
+    formData.append('operacion', operacion);
+    formData.append('nombre', $("#titulo-preformato").val());
+    formData.append('contenido', contenido);
+    formData.append('tipo', $("#aplicar-a").val());
+    formData.append('creado_por', $("#propietario").val() || 1);
     
-    // Mostrar indicador de carga
+    // Si estamos en modo edición, agregar el ID
+    if (modo === "edicion") {
+        formData.append('id_preformato', idPreformato);
+    }
+    
+    // Mostrar spinner o indicador de carga
     Swal.fire({
         title: 'Guardando...',
         text: 'Por favor espere',
@@ -239,20 +338,29 @@ function guardarPreformato() {
         contentType: false,
         success: function(response) {
             if (response.status === 'success') {
+                // Mostrar mensaje de éxito
                 Swal.fire({
                     icon: 'success',
-                    title: 'Éxito',
+                    title: modo === "edicion" ? 'Preformato actualizado' : 'Preformato creado',
                     text: response.message,
                     confirmButtonText: 'Aceptar'
                 }).then(() => {
+                    // Limpiar formulario
                     limpiarFormulario();
-                    cargarPreformatosPorTipo(aplicarA);
+                    
+                    // Recargar la tabla de preformatos
+                    const aplicarA = document.getElementById('aplicar-a').value;
+                    if (aplicarA) {
+                        cargarPreformatosPorTipo(aplicarA);
+                    } else {
+                        cargarPreformatos();
+                    }
                 });
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: response.message,
+                    text: response.message || 'Error al guardar el preformato',
                     confirmButtonText: 'Aceptar'
                 });
             }
@@ -270,59 +378,29 @@ function guardarPreformato() {
 }
 
 /**
- * Edita un preformato existente
- * @param {string} idPreformato ID del preformato a editar
+ * Maneja el evento de editar un preformato
+ * @param {number} idPreformato - ID del preformato a editar
  */
 function editarPreformato(idPreformato) {
-    // Crear objeto FormData para enviar los datos
-    const formData = new FormData();
-    formData.append('operacion', 'getPreformatoById');
-    formData.append('id_preformato', idPreformato);
+    // Cargar los datos del preformato en el formulario
+    cargarPreformatoParaEdicion(idPreformato);
     
-    // Realizar petición AJAX
-    $.ajax({
-        type: 'POST',
-        url: 'ajax/preformatos.ajax.php',
-        data: formData,
-        dataType: "json",
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.status === 'success' && response.data) {
-                // Llenar formulario con datos del preformato
-                document.getElementById('id-preformato').value = response.data.id_preformato;
-                document.getElementById('propietario').value = response.data.creado_por;
-                document.getElementById('aplicar-a').value = response.data.tipo;
-                document.getElementById('titulo-preformato').value = response.data.nombre;
-                
-                // Actualizar el contenido en el editor si existe, o en el textarea si no
-                if ($('#obs-preformato').summernote) {
-                    $('#obs-preformato').summernote('code', response.data.contenido);
-                } else {
-                    document.getElementById('obs-preformato').value = response.data.contenido;
-                }
-                
-                // Hacer scroll al formulario
-                document.getElementById('form-preformato-textarea').scrollIntoView({ behavior: 'smooth' });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo obtener la información del preformato',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al obtener preformato:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al obtener la información del preformato',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
+    // Cambiar el título del formulario
+    $('#titulo-formulario').text('Editar Preformato');
+    
+    // Cambiar el texto del botón de guardar
+    $('#btn-guardar-preformato').text('Actualizar Preformato');
+    
+    // Mostrar el botón para cancelar la edición
+    $('#btn-cancelar-edicion').removeClass('d-none').addClass('d-inline-block');
+    
+    // Asegurarse que el formulario esté visible
+    $('#form-preformato-container').removeClass('d-none');
+    
+    // Scroll hacia el formulario
+    $('html, body').animate({
+        scrollTop: $("#preformato-textarea").offset().top - 100
+    }, 500);
 }
 
 /**
@@ -517,3 +595,183 @@ function verPreformato(idPreformato) {
         }
     });
 }
+
+/**
+ * Carga un preformato para edición
+ * @param {number} idPreformato ID del preformato a editar
+ */
+function cargarPreformatoParaEdicion(idPreformato) {
+    // Mostrar spinner de carga
+    $("#modalSpinner").modal("show");
+    
+    // Crear objeto FormData para enviar los datos
+    const formData = new FormData();
+    formData.append('operacion', 'getPreformatoById');
+    formData.append('id_preformato', idPreformato);
+    
+    // Realizar petición AJAX para obtener el preformato
+    $.ajax({
+        url: "ajax/preformatos.ajax.php",
+        method: "POST",
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function(respuesta) {
+            // Ocultar spinner de carga
+            console.log(respuesta);
+            $("#modalSpinner").modal("hide");
+            
+            if (respuesta.status === "success") {
+                // Cambiar el título del modal si existe
+                if ($("#tituloModalPreformato").length) {
+                    $("#tituloModalPreformato").text("Editar preformato");
+                }
+                
+                // Llenar el formulario con los datos del preformato
+                $("#id-preformato").val(respuesta.data.id_preformato);
+                $("#titulo-preformato").val(respuesta.data.nombre);
+                
+                // Establecer el tipo de preformato
+                if ($("#tipo-preformato").length) {
+                    $("#tipo-preformato").val(respuesta.data.tipo || "");
+                }
+                
+                // Establecer el propietario
+                if ($("#propietario").length) {
+                    $("#propietario").val(respuesta.data.creado_por);
+                }
+                
+                // Establecer el valor de "Aplicar a:" basado en el tipo del preformato
+                if ($("#aplicar-a").length) {
+                    const tipoAplicacion = respuesta.data.tipo_aplicacion || respuesta.data.tipo || "";
+                    $("#aplicar-a").val(tipoAplicacion);
+                    
+                    // Si es necesario, disparar el evento change para actualizar dependencias
+                    if (tipoAplicacion) {
+                        $("#aplicar-a").trigger('change');
+                    }
+                }
+                
+                // Establecer el contenido del editor si se usa Quill
+                if (window.editorPreformato) {
+                    try {
+                        const contenido = respuesta.data.contenido;
+                        if (typeof contenido === 'string' && contenido.trim().startsWith('{')) {
+                            window.editorPreformato.setContents(JSON.parse(contenido));
+                        } else {
+                            window.editorPreformato.clipboard.dangerouslyPasteHTML(0, contenido || "");
+                        }
+                    } catch (e) {
+                        console.error("Error al establecer contenido en Quill:", e);
+                        window.editorPreformato.clipboard.dangerouslyPasteHTML(0, respuesta.data.contenido || "");
+                    }
+                }
+                
+                // Establecer el contenido del editor si se usa Summernote
+                if ($('#obs-preformato').summernote) {
+                    $('#obs-preformato').summernote('code', respuesta.data.contenido || "");
+                } else if ($('#obs-preformato').length) {
+                    // Si no hay Summernote pero existe el textarea, establecer el valor directamente
+                    $('#obs-preformato').val(respuesta.data.contenido || "");
+                }
+                
+                // Cambiar el texto del botón si existe
+                if ($("#btnGuardarPreformato").length) {
+                    $("#btnGuardarPreformato").text("Actualizar");
+                }
+                
+                // Hacer scroll al formulario de edición
+                $('html, body').animate({
+                    scrollTop: $("#form-preformato-textarea").offset().top - 100
+                }, 500);
+            } else {
+                // Mostrar mensaje de error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: respuesta.message || 'No se pudo cargar el preformato para edición',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            // Ocultar spinner de carga
+            $("#modalSpinner").modal("hide");
+            
+            // Mostrar mensaje de error
+            console.error("Error al obtener preformato:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al obtener la información del preformato',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
+// Agregar evento al botón de guardar preformato
+$(document).on("click", "#btnGuardarPreformato", function() {
+    guardarPreformato();
+});
+
+// Agregar evento para el botón de editar en la tabla de preformatos
+$(document).on("click", ".btnEditarPreformato", function() {
+    const idPreformato = $(this).attr("data-id");
+    cargarPreformatoParaEdicion(idPreformato);
+});
+
+// Actualizar evento para abrir modal de nuevo preformato (asegura modo creación)
+$(document).on("click", "#btnNuevoPreformato", function() {
+    // Cambiar el título del modal
+    $("#tituloModalPreformato").text("Nuevo preformato");
+    
+    // Reiniciar formulario
+    $("#formPreformato").trigger("reset");
+    $("#idPreformato").val("");
+    
+    // Reiniciar editor
+    if (editorPreformato) {
+        editorPreformato.setContents([{ insert: "" }]);
+    }
+    
+    // Cambiar el texto del botón
+    $("#btnGuardarPreformato").text("Guardar");
+    
+    // Marcar el formulario como en modo creación
+    $("#formPreformato").data("modo", "creacion");
+    
+    // Abrir modal
+    $("#modalNuevoPreformato").modal("show");
+});
+
+// Document ready function
+$(document).ready(function() {
+    // Inicializar Summernote en el campo de observaciones
+    $('#obs-preformato').summernote({
+        height: 250,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        callbacks: {
+            onImageUpload: function(files) {
+                // Opcional: código para manejar la subida de imágenes
+                for (let i = 0; i < files.length; i++) {
+                    uploadSummernoteImage(files[i]);
+                }
+            }
+        }
+    });
+
+    // Resto del código existente
+    // ...existing code...
+});

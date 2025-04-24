@@ -26,6 +26,34 @@ class PreformatosAjax {
     }
     
     /**
+     * Obtiene todos los preformatos con opciones de filtrado
+     * @param array $filtros Filtros a aplicar (tipo, propietario, título)
+     */
+    public function ajaxGetAllPreformatos($filtros = []) {
+        $preformatos = ControllerPreformatos::ctrGetAllPreformatos($filtros);
+        // Añadir información de diagnóstico
+        echo json_encode([
+            'status' => 'success',
+            'data' => $preformatos,
+            'debug_info' => [
+                'filtros_aplicados' => $filtros,
+                'total_registros' => count($preformatos)
+            ]
+        ]);
+    }
+    
+    /**
+     * Obtiene la lista de usuarios para el selector de propietarios
+     */
+    public function ajaxGetUsuarios() {
+        $usuarios = ControllerPreformatos::ctrGetUsuarios();
+        echo json_encode([
+            'status' => 'success',
+            'data' => $usuarios
+        ]);
+    }
+    
+    /**
      * Obtiene un preformato por su ID
      * @param int $idPreformato ID del preformato a obtener
      */
@@ -110,6 +138,9 @@ class PreformatosAjax {
 if (isset($_POST['operacion'])) {
     $preformatos = new PreformatosAjax();
     
+    // Guardar información de diagnóstico
+    error_log("Operación solicitada: " . $_POST['operacion']);
+    
     switch ($_POST['operacion']) {
         case 'getMotivosComunes':
             $preformatos->ajaxGetMotivosComunes();
@@ -133,6 +164,16 @@ if (isset($_POST['operacion'])) {
             
         case 'getPreformatosOrdenCirugias':
             $preformatos->ajaxGetPreformatos('orden_cirugias');
+            break;
+            
+        case 'getAllPreformatos':
+            $filtros = isset($_POST['filtros']) ? $_POST['filtros'] : [];
+            error_log("Filtros recibidos: " . json_encode($filtros));
+            $preformatos->ajaxGetAllPreformatos($filtros);
+            break;
+            
+        case 'getUsuarios':
+            $preformatos->ajaxGetUsuarios();
             break;
             
         case 'getPreformatoById':
@@ -167,5 +208,15 @@ if (isset($_POST['operacion'])) {
                 $preformatos->ajaxEliminarPreformato($_POST['id_preformato']);
             }
             break;
+            
+        default:
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Operación no reconocida'
+            ]);
     }
+} else {
+    // Si no hay operación especificada pero se accede directamente a la URL, mostrar todos los preformatos
+    $preformatos = new PreformatosAjax();
+    $preformatos->ajaxGetAllPreformatos([]);
 }

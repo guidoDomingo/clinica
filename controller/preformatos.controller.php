@@ -20,6 +20,28 @@ class ControllerPreformatos {
     }
     
     /**
+     * Obtiene todos los preformatos con opciones de filtrado
+     * @param array $filtros Filtros a aplicar (tipo, propietario, título)
+     * @return array Arreglo con los preformatos filtrados
+     */
+    public static function ctrGetAllPreformatos($filtros = []) {
+        // Si hay filtros, usamos el método con filtros, sino el ordenado simple
+        if (!empty($filtros)) {
+            return ModelPreformatos::mdlGetAllPreformatos($filtros);
+        } else {
+            return ModelPreformatos::mdlGetAllPreformatosOrdered();
+        }
+    }
+    
+    /**
+     * Obtiene la lista de usuarios para el selector de propietarios
+     * @return array Arreglo con los usuarios
+     */
+    public static function ctrGetUsuarios() {
+        return ModelPreformatos::mdlGetUsuarios();
+    }
+    
+    /**
      * Obtiene un preformato por su ID
      * @param int $idPreformato ID del preformato a obtener
      * @return array|false Arreglo con los datos del preformato o false si no existe
