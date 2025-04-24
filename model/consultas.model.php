@@ -176,5 +176,54 @@ class ModelConsulta {
             ]);
         }
     }
+    
+    /**
+     * Método para obtener todas las consultas con datos básicos del paciente
+     * 
+     * @return array Arreglo con todas las consultas y datos básicos de pacientes
+     */
+    public static function mdlGetAllConsultas() {
+        try {
+            // Logging para depuración
+            $startTime = microtime(true);
+            error_log("Iniciando consulta mdlGetAllConsultas");
+            
+            $stmt = Conexion::conectar()->prepare("
+                SELECT 
+                    c.id_consulta,
+                    c.id_persona,
+                    rh.document_number AS documento,
+                    rh.first_name AS nombre,
+                    rh.last_name AS apellido,
+                    c.motivoscomunes,
+                    c.consulta_textarea,
+                    c.fecha_registro
+                FROM public.consultas c
+                JOIN public.rh_person rh ON c.id_persona = rh.person_id
+                ORDER BY c.fecha_registro DESC
+            ");
+            
+            $stmt->execute();
+            $consultas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000; // convertir a milisegundos
+            error_log("Consulta mdlGetAllConsultas completada en {$executionTime}ms. Registros encontrados: " . count($consultas));
+            
+            // Si no hay datos, loguear para depuración
+            if (empty($consultas)) {
+                error_log("No se encontraron consultas en la base de datos");
+            } else {
+                // Mostrar un ejemplo del primer registro para verificación
+                error_log("Muestra del primer registro: " . print_r($consultas[0], true));
+            }
+            
+            return $consultas;
+        } catch (PDOException $e) {
+            error_log("Error en mdlGetAllConsultas: " . $e->getMessage() . " - SQL: " . $e->getCode());
+            // Cambiado para evitar salida no JSON en la respuesta AJAX
+            return ['error' => $e->getMessage()];
+        }
+    }
 }
 ?>

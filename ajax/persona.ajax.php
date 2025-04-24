@@ -28,14 +28,31 @@ class TablePersonas {
     //     echo json_encode($response);
     // }
     
+    /**
+     * Busca una persona por su ID
+     * @param int $idPersona - ID de la persona a buscar
+     */
+    public function ajaxBuscarPersonaPorId($idPersona) {
+        $response = ModelPersonas::mdlGetPersonaPorId($idPersona);
+        
+        if ($response) {
+            echo json_encode([
+                'status' => 'success',
+                'persona' => $response
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'No se encontró la persona con el ID proporcionado'
+            ]);
+        }
+    }
 
     public function ajaxEliminarConsulta($id) {
         $response = ControllerConsulta::ctrEliminarConsulta($id);
         echo json_encode($response);
     }
 }
-
-
 
 // Procesar la consulta de una persona
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['operacion']) && $_POST['operacion'] === 'buscarparam') {
@@ -53,6 +70,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['operacion']) && $_POS
     $personaLike = new TablePersonas();
     $personaLike->ajaxBuscarPersonaParam($datos);
 }
+
+// Procesar la búsqueda de una persona por su ID
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['operacion']) && $_POST['operacion'] === 'getPersonById') {
+    // Validar que el ID sea un número
+    if (isset($_POST['idPersona']) && is_numeric($_POST['idPersona'])) {
+        $idPersona = intval($_POST['idPersona']);
+        
+        $persona = new TablePersonas();
+        $persona->ajaxBuscarPersonaPorId($idPersona);
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'ID de persona no proporcionado o inválido'
+        ]);
+    }
+}
+
 // Procesar la consulta de una persona
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['operacion']) && $_POST['operacion'] === 'insertPersona') {
     // Validar y sanitizar los datos de entrada manualmente

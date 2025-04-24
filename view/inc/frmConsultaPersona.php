@@ -31,7 +31,27 @@
             </div>
             <!-- /.card -->
 
-            <!-- About Me Box -->
-            
+            <!-- Lista de Consultas -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Todas las consultas</h3>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table id="tabla-consultas" class="table table-bordered table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Datos cargados por DataTable -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
             <!-- /.card -->
           </div>

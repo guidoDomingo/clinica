@@ -8749,3 +8749,300 @@ SQL: SELECT p.*,
                 GROUP BY p.perm_id, p.perm_name, p.perm_description
                 ORDER BY p.perm_id
 ----------------------------------------
+[2025-04-24 06:56:44] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 06:57:09] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:03:15] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:07:44] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:08:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:27:30] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:31:47] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:31:54] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 07:58:14] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 08:50:21] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 08:50:40] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 08:55:27] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 08:56:18] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-24 08:56:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 08:56:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-24 08:56:18] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "78945258"
+}
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "alexis@alexis.com"
+}
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "78945258",
+    "birth_date": "1990-03-02",
+    "first_name": "alexis",
+    "last_name": "perez",
+    "phone_number": "09823155",
+    "gender": "M",
+    "record_number": "159753",
+    "address": "san lorenzo",
+    "email": "alexis@alexis.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "daniel",
+    "guardian_document": "465798123",
+    "is_active": true,
+    "created_at": "2025-04-24 08:58:00"
+}
+Filtered Data: {
+    "document_number": "78945258",
+    "birth_date": "1990-03-02",
+    "first_name": "alexis",
+    "last_name": "perez",
+    "phone_number": "09823155",
+    "gender": "M",
+    "record_number": "159753",
+    "address": "san lorenzo",
+    "email": "alexis@alexis.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "daniel",
+    "guardian_document": "465798123",
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-24 08:58:00"
+}
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "78945258",
+    "birth_date": "1990-03-02",
+    "first_name": "alexis",
+    "last_name": "perez",
+    "phone_number": "09823155",
+    "gender": "M",
+    "record_number": "159753",
+    "address": "san lorenzo",
+    "email": "alexis@alexis.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "daniel",
+    "guardian_document": "465798123",
+    "is_active": true
+}
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "78945258",
+    "birth_date": "1990-03-02",
+    "first_name": "alexis",
+    "last_name": "perez",
+    "phone_number": "09823155",
+    "gender": "M",
+    "record_number": "159753",
+    "address": "san lorenzo",
+    "email": "alexis@alexis.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "daniel",
+    "guardian_document": "465798123",
+    "is_active": true
+}
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "25"
+}
+----------------------------------------
+[2025-04-24 08:58:00] [INFO] [Model.php:175]
+SQL: DELETE FROM persona_especialidad WHERE persona_id = :persona_id
+Parameters: {
+    "persona_id": 25
+}
+----------------------------------------
+[2025-04-24 08:58:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-24 08:58:01] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-24 08:58:07] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%alexis%"
+}
+----------------------------------------
+[2025-04-24 08:58:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 09:01:14] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 09:02:29] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------

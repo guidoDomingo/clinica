@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnSubirArchivos) {
         btnSubirArchivos.addEventListener('click', subirArchivos);
     }
+    
+    // Inicializar tabla de consultas
+    inicializarTablaConsultas();
 });
 
 /**
@@ -1319,5 +1322,342 @@ function subirArchivos() {
                 timer: 1500
             });
         }
+    });
+}
+
+/**
+ * Inicializa la tabla de consultas para mostrar todas las consultas
+ */
+function inicializarTablaConsultas() {
+    console.log('Iniciando proceso de inicialización de tabla de consultas...');
+    
+    // Asegurarnos de que jQuery y DataTables estén completamente cargados
+    if (typeof $ !== 'function' || typeof $.fn.DataTable !== 'function') {
+        console.error('jQuery o DataTables no están disponibles');
+        return null;
+    }
+
+    // Definir una variable global para almacenar la instancia de DataTable
+    // Si ya existe una instancia global, no necesitamos reinicializar
+    if (window.tablaConsultasInstance) {
+        console.log('Ya existe una instancia de tablaConsultas, no reinicializando.');
+        return window.tablaConsultasInstance;
+    }
+
+    // Verificar si estamos en la página correcta que contiene la tabla
+    // Esperar a que el DOM esté completamente cargado
+    $(document).ready(function() {
+        // Verificar si el elemento existe en el DOM
+        const tablaElement = document.getElementById('tabla-consultas');
+        if (!tablaElement) {
+            console.log('No se encontró el elemento tabla-consultas en el DOM');
+            return null;
+        }
+        
+        console.log('Elemento tabla-consultas encontrado en el DOM');
+        
+        try {            
+            // Verificar si la tabla ya está inicializada como DataTable
+            if ($.fn.DataTable.isDataTable('#tabla-consultas')) {
+                console.log('La tabla ya está inicializada como DataTable');
+                // Capturar la instancia existente en vez de reinicializar
+                window.tablaConsultasInstance = $('#tabla-consultas').DataTable();
+                
+                // Recargar los datos si es necesario
+                window.tablaConsultasInstance.ajax.reload();
+                
+                console.log('Se reutilizó la instancia existente de DataTable');
+                return window.tablaConsultasInstance;
+            }
+            
+            // Verificar que la tabla tenga estructura básica (thead y tbody)
+            if (!tablaElement.querySelector('thead') || !tablaElement.querySelector('tbody')) {
+                console.error('La tabla no tiene la estructura necesaria (thead y tbody)');
+                return null;
+            }
+            
+            console.log('Inicializando DataTable por primera vez...');
+            
+            let ajaxUrl = 'ajax/consultas.ajax.php';
+            console.log('URL para petición AJAX:', ajaxUrl);
+            
+            // Hacer una prueba de la llamada AJAX para verificar que devuelve datos
+            $.ajax({
+                url: ajaxUrl,
+                type: 'POST',
+                data: {
+                    operacion: 'getAllConsultas'
+                },
+                success: function(preCheck) {
+                    console.log('Pre-verificación de datos recibidos:', preCheck);
+                    try {
+                        // Intentar parsear el resultado si viene como string
+                        if (typeof preCheck === 'string') {
+                            preCheck = JSON.parse(preCheck);
+                        }
+                        console.log('Datos parseados para pre-verificación:', preCheck);
+                        console.log('Se encontraron ' + (Array.isArray(preCheck) ? preCheck.length : 'desconocido') + ' registros.');
+                        
+                        // Proceder con la inicialización de la tabla
+                        initializeDataTableWithData();
+                    } catch (parseError) {
+                        console.error('Error al parsear respuesta de pre-verificación:', parseError);
+                        console.log('Respuesta original de pre-verificación:', preCheck);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en pre-verificación AJAX:', error);
+                    console.error('Estado HTTP:', xhr.status);
+                    console.error('Respuesta:', xhr.responseText);
+                }
+            });
+            
+            function initializeDataTableWithData() {
+                console.log('Iniciando DataTable con configuración...');
+                
+                // Asegurarse nuevamente de que la tabla no esté ya inicializada
+                if ($.fn.DataTable.isDataTable('#tabla-consultas')) {
+                    console.log('La tabla ya está inicializada como DataTable (verificación secundaria)');
+                    window.tablaConsultasInstance = $('#tabla-consultas').DataTable();
+                    return window.tablaConsultasInstance;
+                }
+                
+                // Guardar la instancia de DataTable en una variable global para referencia futura
+                try {
+                    window.tablaConsultasInstance = $('#tabla-consultas').DataTable({
+                        // No reinicializar si ya existe (prevenir advertencia)
+                        retrieve: true,
+                        processing: true, // Mostrar indicador de procesamiento
+                        serverSide: false, // No usar procesamiento del lado del servidor
+                        ajax: {
+                            url: ajaxUrl,
+                            type: 'POST',
+                            data: function(d) {
+                                return {
+                                    operacion: 'getAllConsultas'
+                                };
+                            },
+                            dataSrc: function (json) {
+                                console.log('Datos recibidos para tabla de consultas:', json);
+                                
+                                // Verificar el tipo de respuesta y convertir si es necesario
+                                if (typeof json === 'string') {
+                                    try {
+                                        json = JSON.parse(json);
+                                        console.log('Datos convertidos de string a objeto:', json);
+                                    } catch (e) {
+                                        console.error('Error al parsear JSON:', e);
+                                        console.log('Contenido del string recibido:', json);
+                                        return [];
+                                    }
+                                }
+                                
+                                // Verificar si json es array o tiene una propiedad data
+                                let datos = Array.isArray(json) ? json : (json.data || []);
+                                
+                                console.log('Se procesarán ' + datos.length + ' registros para la tabla');
+                                return datos;
+                            },
+                            error: function(xhr, error, thrown) {
+                                console.error('Error en la petición AJAX de DataTables:', error);
+                                console.error('Respuesta del servidor:', xhr.responseText);
+                            }
+                        },
+                        columns: [
+                            // Coincide con la estructura de la tabla HTML (3 columnas)
+                            { 
+                                data: 'fecha_registro',
+                                render: function(data, type, row) {
+                                    // Formatear fecha si existe
+                                    if (data) {
+                                        try {
+                                            const fecha = new Date(data);
+                                            return fecha.toLocaleDateString();
+                                        } catch (e) {
+                                            return data;
+                                        }
+                                    }
+                                    return 'Sin fecha';
+                                }
+                            },
+                            { 
+                                data: null,
+                                render: function(data, type, row) {
+                                    return `${row.nombre || ''} ${row.apellido || ''}`;
+                                }
+                            },
+                            {
+                                data: null,
+                                render: function(data, type, row) {
+                                    if (!row.id_consulta) {
+                                        return '<button class="btn btn-secondary btn-sm" disabled>Sin ID</button>';
+                                    }
+                                    return `<button class="btn btn-info btn-sm ver-consulta" data-id="${row.id_consulta}" data-idpersona="${row.id_persona || ''}">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </button>`;
+                                },
+                                orderable: false
+                            }
+                        ],
+                        language: {
+                            "sProcessing": "Procesando...",
+                            "sLengthMenu": "Mostrar _MENU_ registros",
+                            "sZeroRecords": "No se encontraron resultados",
+                            "sEmptyTable": "Ningún dato disponible en esta tabla",
+                            "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                            "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                            "sInfoPostFix": "",
+                            "sSearch": "Buscar:",
+                            "sUrl": "",
+                            "sInfoThousands": ",",
+                            "sLoadingRecords": "Cargando...",
+                            "oPaginate": {
+                                "sFirst": "Primero",
+                                "sLast": "Último",
+                                "sNext": "Siguiente",
+                                "sPrevious": "Anterior"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                            }
+                        },
+                        order: [[0, 'desc']], // Ordenar por fecha (primera columna) descendente
+                        responsive: true, // Hacer que la tabla sea responsive
+                        pageLength: 10, // Mostrar 10 registros por página
+                        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]] // Opciones de registros por página
+                    });
+                    
+                    console.log('Tabla de consultas inicializada correctamente');
+                    
+                    // Agregar evento para ver detalle de consulta
+                    $('#tabla-consultas tbody').on('click', 'button.ver-consulta', function() {
+                        const idConsulta = $(this).data('id');
+                        const idPersona = $(this).data('idpersona');
+                        console.log('Ver consulta:', idConsulta, 'de persona:', idPersona);
+                        verDetalleConsulta(idConsulta);
+                    });
+                    
+                } catch (dtError) {
+                    console.error('Error al inicializar DataTable:', dtError);
+                }
+            }
+            
+            return window.tablaConsultasInstance;
+            
+        } catch (error) {
+            console.error('Error general en inicializarTablaConsultas:', error);
+            return null;
+        }
+    });
+    
+    // Devolver la instancia global si ya existe
+    return window.tablaConsultasInstance;
+}
+
+/**
+ * Función para buscar una persona por su ID
+ * @param {number} idPersona - ID de la persona a buscar
+ * @param {function} callback - Función de callback que recibe los datos de la persona
+ */
+function buscarPersonaPorId(idPersona, callback) {
+    // Crear objeto FormData para enviar los datos
+    const formData = new FormData();
+    formData.append('idPersona', idPersona);
+    formData.append('operacion', 'getPersonById');
+    
+    // Realizar petición AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/persona.ajax.php',
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                // Llamar al callback con los datos de la persona
+                callback(response.persona);
+            } else {
+                console.error("Error al buscar persona por ID:", response.message);
+                callback(null);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error en la petición AJAX:", error);
+            callback(null);
+        }
+    });
+}
+
+/**
+ * Función para buscar una persona por su ID
+ * @param {number} idPersona - ID de la persona
+ */
+function buscarPersonaPorId(idPersona) {
+    console.log('Buscando persona por ID:', idPersona);
+    
+    // Mostrar spinner de carga
+    document.getElementById('loadingSpinner')?.classList.remove('d-none');
+    
+    // Crear objeto para enviar datos
+    const formData = new FormData();
+    formData.append('operacion', 'getPersonById');
+    formData.append('idPersona', idPersona);
+    
+    // Realizar petición AJAX
+    fetch('ajax/persona.ajax.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos recibidos de persona:', data);
+        
+        // Ocultar spinner de carga
+        document.getElementById('loadingSpinner')?.classList.add('d-none');
+        
+        if (data.status === 'success') {
+            // Llenar los campos del formulario con los datos de la persona
+            document.getElementById('idPersona').value = data.persona.id_persona;
+            document.getElementById('documentoPersona').value = data.persona.documento;
+            document.getElementById('fichaPersona').value = data.persona.ficha || '';
+            document.getElementById('nombrePersona').value = data.persona.nombre;
+            document.getElementById('apellidoPersona').value = data.persona.apellido;
+            document.getElementById('edadPersona').value = data.persona.edad;
+            document.getElementById('telefonoPersona').value = data.persona.telefono || '';
+            
+            // También actualizar el campo oculto para archivos
+            document.getElementById('id_persona_file').value = data.persona.id_persona;
+            
+            // Obtener historial de consultas después de cargar los datos de la persona
+            obtenerResumenConsulta(data.persona.id_persona);
+            
+            // Obtener información de cuota si está disponible
+            obtenerCuota(data.persona.id_persona);
+        } else {
+            // Mostrar mensaje de error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se encontró la persona solicitada',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error al buscar persona por ID:', error);
+        
+        // Ocultar spinner de carga
+        document.getElementById('loadingSpinner')?.classList.add('d-none');
+        
+        // Mostrar mensaje de error
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al buscar la persona',
+            confirmButtonText: 'Aceptar'
+        });
     });
 }

@@ -11,5 +11,9 @@ class ControllerConsulta {
     public static function ctrEliminarConsulta($id) {
         return ModelConsulta::mdlEliminarConsulta($id);
     }
+    
+    public static function ctrGetAllConsultas() {
+        return ModelConsulta::mdlGetAllConsultas();
+    }
 }
 ?>

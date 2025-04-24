@@ -27,6 +27,19 @@ class ConsultaAjax {
         $response = ModelConsulta::mdlGetDetalleConsulta($idConsulta);
         echo $response; // El modelo ya devuelve un JSON formateado
     }
+    
+    public function ajaxGetAllConsultas() {
+        $response = ModelConsulta::mdlGetAllConsultas();
+        
+        // Verificar si hay error y devolverlo como JSON válido
+        if(isset($response['error'])) {
+            echo json_encode(['error' => $response['error']]);
+            return;
+        }
+        
+        // Asegurar que la respuesta sea JSON válido
+        echo json_encode($response);
+    }
 }
 // Procesar la eliminación de una consulta
 if (isset($_POST["id_persona"]) && isset($_POST["operacion"]) && $_POST["operacion"] === "buscarConsultaPersona") {
@@ -55,4 +68,10 @@ if (isset($_POST["id_persona"]) && isset($_POST["operacion"]) && $_POST["operaci
 if (isset($_POST["id_consulta"]) && isset($_POST["operacion"]) && $_POST["operacion"] === "detalleConsulta") {
     $detalleConsulta = new ConsultaAjax();
     $detalleConsulta->ajaxGetDetalleConsulta($_POST["id_consulta"]);
+}
+
+// Procesar lista de todas las consultas
+if (isset($_POST["operacion"]) && $_POST["operacion"] === "getAllConsultas") {
+    $allConsultas = new ConsultaAjax();
+    $allConsultas->ajaxGetAllConsultas();
 }
