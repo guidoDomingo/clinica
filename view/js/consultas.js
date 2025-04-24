@@ -823,6 +823,8 @@ function obtenerArchivosConsulta(idConsulta, callback) {
  * @param {Array} archivos - Archivos asociados a la consulta (opcional)
  */
 function cargarConsultaEnFormulario(consulta, archivos) {
+    console.log('Cargando consulta en formulario:', consulta);
+    
     // Limpiar el formulario primero
     limpiarFormularioConsulta();
     
@@ -837,26 +839,59 @@ function cargarConsultaEnFormulario(consulta, archivos) {
     }
     idConsultaInput.value = consulta.id_consulta;
     
-    // Mapear los campos de la consulta a los campos del formulario
-    const camposACargar = {
+    // Mapear los campos normales (no textareas con Summernote ni selects)
+    const camposNormales = {
         'txtmotivo': 'txtmotivo',
         'visionod': 'visionod',
         'visionoi': 'visionoi',
         'tensionod': 'tensionod',
         'tensionoi': 'tensionoi',
-        'diagnostico': 'consulta-textarea',
-        'receta_textarea': 'receta-textarea',
         'observaciones': 'txtnota',
         'proximaconsulta': 'proximaconsulta',
         'whatsapptxt': 'whatsapptxt',
         'email': 'email'
     };
     
-    // Cargar cada campo
-    for (const [campoConsulta, campoFormulario] of Object.entries(camposACargar)) {
+    // Cargar cada campo normal
+    for (const [campoConsulta, campoFormulario] of Object.entries(camposNormales)) {
         const elemento = document.getElementById(campoFormulario);
         if (elemento && consulta[campoConsulta] !== undefined) {
             elemento.value = consulta[campoConsulta];
+        }
+    }
+    
+    // Manejar específicamente los textareas con Summernote
+    // Para diagnóstico (consulta-textarea)
+    if (consulta.diagnostico !== undefined) {
+        const consultaTextarea = document.getElementById('consulta-textarea');
+        if (consultaTextarea) {
+            // Primero asegurarse de que Summernote está inicializado
+            if ($('#consulta-textarea').data('summernote')) {
+                // Si Summernote está inicializado, usar su API
+                $('#consulta-textarea').summernote('code', consulta.diagnostico);
+                console.log('Contenido de diagnóstico cargado en Summernote');
+            } else {
+                // Si no está inicializado, establecer el valor directamente
+                consultaTextarea.value = consulta.diagnostico;
+                console.log('Contenido de diagnóstico cargado directamente en textarea');
+            }
+        }
+    }
+    
+    // Para receta (receta-textarea)
+    if (consulta.receta_textarea !== undefined) {
+        const recetaTextarea = document.getElementById('receta-textarea');
+        if (recetaTextarea) {
+            // Primero asegurarse de que Summernote está inicializado
+            if ($('#receta-textarea').data('summernote')) {
+                // Si Summernote está inicializado, usar su API
+                $('#receta-textarea').summernote('code', consulta.receta_textarea);
+                console.log('Contenido de receta cargado en Summernote');
+            } else {
+                // Si no está inicializado, establecer el valor directamente
+                recetaTextarea.value = consulta.receta_textarea;
+                console.log('Contenido de receta cargado directamente en textarea');
+            }
         }
     }
     
@@ -866,15 +901,42 @@ function cargarConsultaEnFormulario(consulta, archivos) {
         // Primero asegurarse de que los motivos comunes estén cargados
         cargarMotivosComunes();
         
-        // Esperar un momento para que se carguen las opciones
+        // Buscar la opción que coincida con el motivo de la consulta
+        // Usar setTimeout para asegurar que los datos se hayan cargado
         setTimeout(() => {
-            // Buscar la opción que coincida con el motivo de la consulta
+            let encontrado = false;
             for (let i = 0; i < selectMotivosComunes.options.length; i++) {
                 if (selectMotivosComunes.options[i].value === consulta.motivo) {
                     selectMotivosComunes.selectedIndex = i;
+                    encontrado = true;
+                    console.log('Motivo encontrado y seleccionado:', consulta.motivo);
                     break;
                 }
             }
+            
+            // Si no se encontró el motivo, verificar si podemos agregarlo
+            if (!encontrado && consulta.motivo) {
+                console.log('No se encontró el motivo, intentando agregarlo:', consulta.motivo);
+                // Verificar si el motivo ya existe como texto (no como valor)
+                let existeComoTexto = false;
+                for (let i = 0; i < selectMotivosComunes.options.length; i++) {
+                    if (selectMotivosComunes.options[i].text === consulta.motivo) {
+                        selectMotivosComunes.selectedIndex = i;
+                        existeComoTexto = true;
+                        break;
+                    }
+                }
+                
+                // Si no existe ni como valor ni como texto, agregar nueva opción
+                if (!existeComoTexto) {
+                    const nuevaOpcion = document.createElement('option');
+                    nuevaOpcion.value = consulta.motivo;
+                    nuevaOpcion.text = consulta.motivo;
+                    selectMotivosComunes.add(nuevaOpcion);
+                    selectMotivosComunes.value = consulta.motivo;
+                }
+            }
+            
             // Disparar evento change para actualizar cualquier listener
             const event = new Event('change');
             selectMotivosComunes.dispatchEvent(event);
@@ -898,19 +960,22 @@ function cargarConsultaEnFormulario(consulta, archivos) {
                 if (selectFormatoConsulta.options[i].value === consulta.id_preformato_consulta) {
                     selectFormatoConsulta.selectedIndex = i;
                     preformatoEncontrado = true;
+                    console.log('Preformato de consulta encontrado y seleccionado:', consulta.id_preformato_consulta);
                     break;
                 }
             }
             
-            // Si se encontró el preformato, disparar evento change para aplicar el contenido
-            if (preformatoEncontrado) {
-                console.log('Preformato de consulta encontrado y seleccionado:', consulta.id_preformato_consulta);
-                const event = new Event('change');
-                selectFormatoConsulta.dispatchEvent(event);
-            } else {
-                console.log('No se encontró el preformato de consulta con ID:', consulta.id_preformato_consulta);
+            // Si no se encontró pero existe el valor, intentar establecerlo directamente
+            if (!preformatoEncontrado && consulta.id_preformato_consulta) {
+                console.log('Intentando establecer preformato de consulta directamente:', consulta.id_preformato_consulta);
+                selectFormatoConsulta.value = consulta.id_preformato_consulta;
             }
-        }, 800); // Aumentamos el tiempo de espera para asegurar que las opciones estén cargadas
+            
+            // Disparar evento change para aplicar el contenido
+            console.log('Disparando evento change en selectFormatoConsulta');
+            const event = new Event('change');
+            selectFormatoConsulta.dispatchEvent(event);
+        }, 800);
     }
     
     // Seleccionar el preformato correcto en el selector de receta
@@ -930,19 +995,22 @@ function cargarConsultaEnFormulario(consulta, archivos) {
                 if (selectFormatoReceta.options[i].value === consulta.id_preformato_receta) {
                     selectFormatoReceta.selectedIndex = i;
                     preformatoEncontrado = true;
+                    console.log('Preformato de receta encontrado y seleccionado:', consulta.id_preformato_receta);
                     break;
                 }
             }
             
-            // Si se encontró el preformato, disparar evento change para aplicar el contenido
-            if (preformatoEncontrado) {
-                console.log('Preformato de receta encontrado y seleccionado:', consulta.id_preformato_receta);
-                const event = new Event('change');
-                selectFormatoReceta.dispatchEvent(event);
-            } else {
-                console.log('No se encontró el preformato de receta con ID:', consulta.id_preformato_receta);
+            // Si no se encontró pero existe el valor, intentar establecerlo directamente
+            if (!preformatoEncontrado && consulta.id_preformato_receta) {
+                console.log('Intentando establecer preformato de receta directamente:', consulta.id_preformato_receta);
+                selectFormatoReceta.value = consulta.id_preformato_receta;
             }
-        }, 800); // Aumentamos el tiempo de espera para asegurar que las opciones estén cargadas
+            
+            // Disparar evento change para aplicar el contenido
+            console.log('Disparando evento change en selectFormatoReceta');
+            const event = new Event('change');
+            selectFormatoReceta.dispatchEvent(event);
+        }, 800);
     }
     
     // Si tenemos archivos, mostrarlos en la sección de archivos
@@ -966,73 +1034,6 @@ function cargarConsultaEnFormulario(consulta, archivos) {
         showConfirmButton: false,
         timer: 2000
     });
-}
-
-/**
- * Función para mostrar los archivos en el formulario
- * @param {Array} archivos - Archivos a mostrar
- */
-function mostrarArchivosEnFormulario(archivos) {
-    const previewContainer = document.getElementById('filePreviewContainer');
-    if (!previewContainer) return;
-    
-    // Limpiar previsualizaciones anteriores
-    previewContainer.innerHTML = '';
-    
-    // Mostrar cada archivo
-    archivos.forEach(archivo => {
-        const preview = document.createElement('div');
-        preview.className = 'file-preview';
-        
-        // Crear elemento para mostrar información del archivo
-        const fileInfo = document.createElement('div');
-        fileInfo.className = 'file-info';
-        fileInfo.textContent = archivo.nombre_archivo;
-        
-        // Determinar el tipo de archivo y mostrar el icono correspondiente
-        const fileTypeIcon = document.createElement('div');
-        fileTypeIcon.className = 'file-type-icon';
-        
-        let iconClass = 'fas ';
-        if (archivo.tipo_archivo.includes('image')) {
-            iconClass += 'fa-image img-icon';
-        } else if (archivo.tipo_archivo.includes('pdf')) {
-            iconClass += 'fa-file-pdf pdf-icon';
-        } else if (archivo.tipo_archivo.includes('word') || archivo.tipo_archivo.includes('document')) {
-            iconClass += 'fa-file-word doc-icon';
-        } else if (archivo.tipo_archivo.includes('excel') || archivo.tipo_archivo.includes('sheet')) {
-            iconClass += 'fa-file-excel xls-icon';
-        } else {
-            iconClass += 'fa-file file-icon';
-        }
-        
-        const icon = document.createElement('i');
-        icon.className = iconClass;
-        fileTypeIcon.appendChild(icon);
-        
-        // Crear botón de descarga
-        const downloadBtn = document.createElement('a');
-        downloadBtn.href = archivo.ruta_archivo;
-        downloadBtn.className = 'btn btn-sm btn-info download-btn';
-        downloadBtn.setAttribute('download', '');
-        downloadBtn.setAttribute('target', '_blank');
-        downloadBtn.innerHTML = '<i class="fas fa-download"></i>';
-        downloadBtn.title = 'Descargar archivo';
-        
-        // Agregar elementos al contenedor de previsualización
-        preview.appendChild(fileTypeIcon);
-        preview.appendChild(fileInfo);
-        preview.appendChild(downloadBtn);
-        
-        // Agregar al contenedor principal
-        previewContainer.appendChild(preview);
-    });
-    
-    // Mostrar mensaje informativo
-    const infoMsg = document.createElement('div');
-    infoMsg.className = 'alert alert-info mt-2';
-    infoMsg.innerHTML = `<i class="fas fa-info-circle"></i> Se han cargado ${archivos.length} archivo(s) de la consulta anterior.`;
-    previewContainer.appendChild(infoMsg);
 }
 
 /**

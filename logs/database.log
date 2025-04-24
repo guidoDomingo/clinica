@@ -9046,3 +9046,39 @@ SQL: SELECT p.*,
                 GROUP BY p.perm_id, p.perm_name, p.perm_description
                 ORDER BY p.perm_id
 ----------------------------------------
+[2025-04-24 09:14:24] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 09:16:25] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-24 09:16:25] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-24 09:16:25] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-24 09:16:25] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
