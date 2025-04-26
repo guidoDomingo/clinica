@@ -19,7 +19,7 @@
                     <button type="button" class="btn btn-primary" id="btnBuscarPersona" aria-label="Buscar">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <button type="button" class="btn btn-success">
+                    <button type="button" class="btn btn-success" id="btnNuevaPersona" aria-label="Agregar">
                         <i class="fa-solid fa-user-plus"></i>
                     </button>
                     <button type="button" class="btn btn-dark" id="btnLimpiarPersona" aria-label="Limpiar">

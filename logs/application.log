@@ -79,3 +79,60 @@ Data: {
 [2025-04-24 08:58:00] [INFO] [RhPersonController.php:138] {"document_number":"78945258","birth_date":"1990-03-02","first_name":"alexis","last_name":"perez","phone_number":"09823155","gender":"M","record_number":"159753","address":"san lorenzo","email":"alexis@alexis.com","department_id":1,"city_id":1,"is_minor":true,"guardian_name":"daniel","guardian_document":"465798123","is_active":true,"created_at":"2025-04-24 08:58:00"}
 Data: Creating person
 ----------------------------------------
+[2025-04-25 21:09:28] [INFO] [RhPersonController.php:138] {"document_number":"234234454","birth_date":"2025-04-25","first_name":"drdsfdsf","last_name":"dfdsfsdf","phone_number":"3243244234","gender":"M","record_number":"23423423423","address":"sdfdsf","email":"sdfds@sdfdsfdsfds.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:09:28"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [RhPersonController.php:138] {"document_number":"66655544888","birth_date":"2025-04-25","first_name":"dsfdsfdsf","last_name":"sdfsdfsdfds","phone_number":"234324234","gender":"M","record_number":"234234234","address":"dfgdfgfdgfdg@sdfsdfdsf.com","email":"zxcxzczc@sdfsdfdsf.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:12:42"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [RhPersonController.php:138] {"document_number":"5566665656565","birth_date":"2025-04-25","first_name":"andres","last_name":"cantero","phone_number":"234234234","gender":"M","record_number":"32423423424","address":"2dsfdsfdsfsd","email":"sdfdsfdsf@sdfdsfdsf.com","department_id":2,"city_id":2,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:15:01"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [RhPersonController.php:138] {"document_number":"333333444444","birth_date":"2025-04-25","first_name":"fffsdsss","last_name":"sssdfff","phone_number":"324234","gender":"M","record_number":"34324234","address":"234234234","email":"gsdfsdfds@sadfdsfdsf.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:27:40"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:29:23] [INFO] [RhPersonController.php:138] {"document_number":"55556666767","birth_date":"2025-04-25","first_name":"pirlo","last_name":"tv","phone_number":"234535435","gender":"M","record_number":"345435345","address":"retretret","email":"retretert@sdfdsfsdf.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:29:23"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [RhPersonController.php:138] {"document_number":"677776676767","birth_date":"2025-04-25","first_name":"angel","last_name":"isnardi","phone_number":"234234","gender":"M","record_number":"34543543","address":"345435435","email":"sdfdsfds@sdfdsf.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:39:45"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [RhPersonController.php:138] {"document_number":"88867676767","birth_date":"2025-04-25","first_name":"alejandro","last_name":"visconte","phone_number":"3242343","gender":"M","record_number":"3245435435","address":"sdfsdfdsf","email":"sdfdsfd@sdfsdfds.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:43:12"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [RhPersonController.php:138] {"document_number":"6767677667","birth_date":"2025-04-25","first_name":"Nico","last_name":"maldonado","phone_number":"45345435","gender":"M","record_number":"345435435","address":"dsfsdfsdfdsfdsfds","email":"sdfdsfsdfsdf@sdss.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:52:58"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [RhPersonController.php:138] {"document_number":"666555544444","birth_date":"2025-04-25","first_name":"abel","last_name":"lescano","phone_number":"4534534534","gender":"M","record_number":"4354345345","address":"ddsfsfsdfdsfsfsf","email":"sdfsdfsdfsdf@sdfdsfsdfdsf.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 21:59:31"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [RhPersonController.php:138] {"document_number":"3333456565","birth_date":"2025-04-25","first_name":"pedro","last_name":"angel","phone_number":"09823215","gender":"M","record_number":"67575765","address":"xdfdsfsd","email":"sdfdsf@pedro.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 22:10:46"}
+Data: Creating person
+----------------------------------------
+[2025-04-26 02:34:04] [INFO] [user.controller.php:21] user: ronal@ronal.com
+Data: ronal@ronal.com
+----------------------------------------
+[2025-04-26 02:34:04] [INFO] [user.controller.php:22] user: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+Data: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+----------------------------------------
+[2025-04-26 02:34:04] [INFO] [user.controller.php:33] Login attempt for user: ronal@ronal.com
+Data: {
+    "user_id": 5,
+    "reg_id": 5,
+    "user_email": "ronal@ronal.com",
+    "user_pass": "$2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\\\/UNdHCW",
+    "user_expire": "2025-05-05 14:51:04.340773",
+    "user_first_login": null,
+    "user_last_login": "2025-04-24 21:38:53.990823",
+    "user_is_active": true,
+    "profile_photo": "user_5_1743885959.jpg",
+    "reg_name": "ronal",
+    "reg_lastname": "ruiz"
+}
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [RhPersonController.php:138] {"document_number":"11111222222","birth_date":"2025-04-25","first_name":"pablo","last_name":"feliz","phone_number":"234324","gender":"M","record_number":"23423423","address":"dsfdsf","email":"sdfdsfsd@sdfdsfdsf.cmo","department_id":2,"city_id":2,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-25 22:41:37"}
+Data: Creating person
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [RhPersonController.php:138] {"document_number":"222333","birth_date":"2025-04-25","first_name":"maria","last_name":"asds","phone_number":"234234324","gender":"M","record_number":"324234234","address":"dcfdgdgdfg","email":"sdfsdfsdf@sdfdsfsdf.com","department_id":1,"city_id":1,"is_minor":true,"guardian_name":"dfdsfds","guardian_document":"231325465","is_active":true,"created_at":"2025-04-25 22:43:35"}
+Data: Creating person
+----------------------------------------

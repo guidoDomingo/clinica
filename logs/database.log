@@ -9082,3 +9082,1937 @@ Parameters: {
 [2025-04-24 09:16:25] [INFO] [Model.php:175]
 SQL: SELECT COUNT(*) as total FROM rh_person
 ----------------------------------------
+[2025-04-25 20:42:29] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 20:42:30] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 20:42:30] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 20:42:30] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 20:43:50] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 20:43:50] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 20:43:50] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 20:43:50] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 20:43:52] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 20:43:58] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 20:46:34] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 20:48:41] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:05:55] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "234234454"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfds@sdfdsfdsfds.com"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "234234454",
+    "birth_date": "2025-04-25",
+    "first_name": "drdsfdsf",
+    "last_name": "dfdsfsdf",
+    "phone_number": "3243244234",
+    "gender": "M",
+    "record_number": "23423423423",
+    "address": "sdfdsf",
+    "email": "sdfds@sdfdsfdsfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:09:28"
+}
+Filtered Data: {
+    "document_number": "234234454",
+    "birth_date": "2025-04-25",
+    "first_name": "drdsfdsf",
+    "last_name": "dfdsfsdf",
+    "phone_number": "3243244234",
+    "gender": "M",
+    "record_number": "23423423423",
+    "address": "sdfdsf",
+    "email": "sdfds@sdfdsfdsfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:09:28"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "234234454",
+    "birth_date": "2025-04-25",
+    "first_name": "drdsfdsf",
+    "last_name": "dfdsfsdf",
+    "phone_number": "3243244234",
+    "gender": "M",
+    "record_number": "23423423423",
+    "address": "sdfdsf",
+    "email": "sdfds@sdfdsfdsfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "234234454",
+    "birth_date": "2025-04-25",
+    "first_name": "drdsfdsf",
+    "last_name": "dfdsfsdf",
+    "phone_number": "3243244234",
+    "gender": "M",
+    "record_number": "23423423423",
+    "address": "sdfdsf",
+    "email": "sdfds@sdfdsfdsfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "39"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "234234454"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "39"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_39_1745629768.jpg",
+    "id": "39"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_39_1745629768.jpg",
+    "id": "39"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-25 21:09:28",
+    "id": "39"
+}
+----------------------------------------
+[2025-04-25 21:09:28] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-25 21:09:28",
+    "id": "39"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "66655544888"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "zxcxzczc@sdfsdfdsf.com"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "66655544888",
+    "birth_date": "2025-04-25",
+    "first_name": "dsfdsfdsf",
+    "last_name": "sdfsdfsdfds",
+    "phone_number": "234324234",
+    "gender": "M",
+    "record_number": "234234234",
+    "address": "dfgdfgfdgfdg@sdfsdfdsf.com",
+    "email": "zxcxzczc@sdfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:12:42"
+}
+Filtered Data: {
+    "document_number": "66655544888",
+    "birth_date": "2025-04-25",
+    "first_name": "dsfdsfdsf",
+    "last_name": "sdfsdfsdfds",
+    "phone_number": "234324234",
+    "gender": "M",
+    "record_number": "234234234",
+    "address": "dfgdfgfdgfdg@sdfsdfdsf.com",
+    "email": "zxcxzczc@sdfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:12:42"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "66655544888",
+    "birth_date": "2025-04-25",
+    "first_name": "dsfdsfdsf",
+    "last_name": "sdfsdfsdfds",
+    "phone_number": "234324234",
+    "gender": "M",
+    "record_number": "234234234",
+    "address": "dfgdfgfdgfdg@sdfsdfdsf.com",
+    "email": "zxcxzczc@sdfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "66655544888",
+    "birth_date": "2025-04-25",
+    "first_name": "dsfdsfdsf",
+    "last_name": "sdfsdfsdfds",
+    "phone_number": "234324234",
+    "gender": "M",
+    "record_number": "234234234",
+    "address": "dfgdfgfdgfdg@sdfsdfdsf.com",
+    "email": "zxcxzczc@sdfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "40"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "66655544888"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "40"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_40_1745629962.jpg",
+    "id": "40"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_40_1745629962.jpg",
+    "id": "40"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-25 21:12:42",
+    "id": "40"
+}
+----------------------------------------
+[2025-04-25 21:12:42] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-25 21:12:42",
+    "id": "40"
+}
+----------------------------------------
+[2025-04-25 21:13:17] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:13:18] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:13:18] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:13:18] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:13:24] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number ILIKE :document ORDER BY person_id DESC
+Parameters: {
+    "document": "%66655544888%"
+}
+----------------------------------------
+[2025-04-25 21:14:14] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:14:14] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:14:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:14:14] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "5566665656565"
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfdsfdsf@sdfdsfdsf.com"
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "5566665656565",
+    "birth_date": "2025-04-25",
+    "first_name": "andres",
+    "last_name": "cantero",
+    "phone_number": "234234234",
+    "gender": "M",
+    "record_number": "32423423424",
+    "address": "2dsfdsfdsfsd",
+    "email": "sdfdsfdsf@sdfdsfdsf.com",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:15:01"
+}
+Filtered Data: {
+    "document_number": "5566665656565",
+    "birth_date": "2025-04-25",
+    "first_name": "andres",
+    "last_name": "cantero",
+    "phone_number": "234234234",
+    "gender": "M",
+    "record_number": "32423423424",
+    "address": "2dsfdsfdsfsd",
+    "email": "sdfdsfdsf@sdfdsfdsf.com",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:15:01"
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "5566665656565",
+    "birth_date": "2025-04-25",
+    "first_name": "andres",
+    "last_name": "cantero",
+    "phone_number": "234234234",
+    "gender": "M",
+    "record_number": "32423423424",
+    "address": "2dsfdsfdsfsd",
+    "email": "sdfdsfdsf@sdfdsfdsf.com",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "5566665656565",
+    "birth_date": "2025-04-25",
+    "first_name": "andres",
+    "last_name": "cantero",
+    "phone_number": "234234234",
+    "gender": "M",
+    "record_number": "32423423424",
+    "address": "2dsfdsfdsfsd",
+    "email": "sdfdsfdsf@sdfdsfdsf.com",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "41"
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "5566665656565"
+}
+----------------------------------------
+[2025-04-25 21:15:01] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "41"
+}
+----------------------------------------
+[2025-04-25 21:15:02] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_41_1745630102.jpg",
+    "id": "41"
+}
+----------------------------------------
+[2025-04-25 21:15:02] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET profile_photo = :profile_photo WHERE person_id = :id
+Parameters: {
+    "profile_photo": "person_41_1745630102.jpg",
+    "id": "41"
+}
+----------------------------------------
+[2025-04-25 21:15:02] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-25 21:15:02",
+    "id": "41"
+}
+----------------------------------------
+[2025-04-25 21:15:02] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "last_modified_at": "2025-04-25 21:15:02",
+    "id": "41"
+}
+----------------------------------------
+[2025-04-25 21:26:56] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:26:56] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:26:56] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:26:56] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "333333444444"
+}
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "gsdfsdfds@sadfdsfdsf.com"
+}
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "333333444444",
+    "birth_date": "2025-04-25",
+    "first_name": "fffsdsss",
+    "last_name": "sssdfff",
+    "phone_number": "324234",
+    "gender": "M",
+    "record_number": "34324234",
+    "address": "234234234",
+    "email": "gsdfsdfds@sadfdsfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:27:40"
+}
+Filtered Data: {
+    "document_number": "333333444444",
+    "birth_date": "2025-04-25",
+    "first_name": "fffsdsss",
+    "last_name": "sssdfff",
+    "phone_number": "324234",
+    "gender": "M",
+    "record_number": "34324234",
+    "address": "234234234",
+    "email": "gsdfsdfds@sadfdsfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:27:40"
+}
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "333333444444",
+    "birth_date": "2025-04-25",
+    "first_name": "fffsdsss",
+    "last_name": "sssdfff",
+    "phone_number": "324234",
+    "gender": "M",
+    "record_number": "34324234",
+    "address": "234234234",
+    "email": "gsdfsdfds@sadfdsfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "333333444444",
+    "birth_date": "2025-04-25",
+    "first_name": "fffsdsss",
+    "last_name": "sssdfff",
+    "phone_number": "324234",
+    "gender": "M",
+    "record_number": "34324234",
+    "address": "234234234",
+    "email": "gsdfsdfds@sadfdsfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "42"
+}
+----------------------------------------
+[2025-04-25 21:27:40] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "333333444444"
+}
+----------------------------------------
+[2025-04-25 21:27:53] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:27:53] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:28:25] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:28:25] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:28:25] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:28:25] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:29:23] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "55556666767"
+}
+----------------------------------------
+[2025-04-25 21:29:23] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "retretert@sdfdsfsdf.com"
+}
+----------------------------------------
+[2025-04-25 21:29:23] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "55556666767",
+    "birth_date": "2025-04-25",
+    "first_name": "pirlo",
+    "last_name": "tv",
+    "phone_number": "234535435",
+    "gender": "M",
+    "record_number": "345435345",
+    "address": "retretret",
+    "email": "retretert@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:29:23"
+}
+Filtered Data: {
+    "document_number": "55556666767",
+    "birth_date": "2025-04-25",
+    "first_name": "pirlo",
+    "last_name": "tv",
+    "phone_number": "234535435",
+    "gender": "M",
+    "record_number": "345435345",
+    "address": "retretret",
+    "email": "retretert@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:29:23"
+}
+----------------------------------------
+[2025-04-25 21:29:23] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "55556666767",
+    "birth_date": "2025-04-25",
+    "first_name": "pirlo",
+    "last_name": "tv",
+    "phone_number": "234535435",
+    "gender": "M",
+    "record_number": "345435345",
+    "address": "retretret",
+    "email": "retretert@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:29:23] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "55556666767",
+    "birth_date": "2025-04-25",
+    "first_name": "pirlo",
+    "last_name": "tv",
+    "phone_number": "234535435",
+    "gender": "M",
+    "record_number": "345435345",
+    "address": "retretret",
+    "email": "retretert@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:29:24] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "43"
+}
+----------------------------------------
+[2025-04-25 21:29:24] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "55556666767"
+}
+----------------------------------------
+[2025-04-25 21:29:34] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%pirlo%"
+}
+----------------------------------------
+[2025-04-25 21:38:57] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "677776676767"
+}
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfdsfds@sdfdsf.com"
+}
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "677776676767",
+    "birth_date": "2025-04-25",
+    "first_name": "angel",
+    "last_name": "isnardi",
+    "phone_number": "234234",
+    "gender": "M",
+    "record_number": "34543543",
+    "address": "345435435",
+    "email": "sdfdsfds@sdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:39:45"
+}
+Filtered Data: {
+    "document_number": "677776676767",
+    "birth_date": "2025-04-25",
+    "first_name": "angel",
+    "last_name": "isnardi",
+    "phone_number": "234234",
+    "gender": "M",
+    "record_number": "34543543",
+    "address": "345435435",
+    "email": "sdfdsfds@sdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:39:45"
+}
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "677776676767",
+    "birth_date": "2025-04-25",
+    "first_name": "angel",
+    "last_name": "isnardi",
+    "phone_number": "234234",
+    "gender": "M",
+    "record_number": "34543543",
+    "address": "345435435",
+    "email": "sdfdsfds@sdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "677776676767",
+    "birth_date": "2025-04-25",
+    "first_name": "angel",
+    "last_name": "isnardi",
+    "phone_number": "234234",
+    "gender": "M",
+    "record_number": "34543543",
+    "address": "345435435",
+    "email": "sdfdsfds@sdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "44"
+}
+----------------------------------------
+[2025-04-25 21:39:45] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "677776676767"
+}
+----------------------------------------
+[2025-04-25 21:42:31] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:42:31] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:42:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:42:31] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "88867676767"
+}
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfdsfd@sdfsdfds.com"
+}
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "88867676767",
+    "birth_date": "2025-04-25",
+    "first_name": "alejandro",
+    "last_name": "visconte",
+    "phone_number": "3242343",
+    "gender": "M",
+    "record_number": "3245435435",
+    "address": "sdfsdfdsf",
+    "email": "sdfdsfd@sdfsdfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:43:12"
+}
+Filtered Data: {
+    "document_number": "88867676767",
+    "birth_date": "2025-04-25",
+    "first_name": "alejandro",
+    "last_name": "visconte",
+    "phone_number": "3242343",
+    "gender": "M",
+    "record_number": "3245435435",
+    "address": "sdfsdfdsf",
+    "email": "sdfdsfd@sdfsdfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:43:12"
+}
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "88867676767",
+    "birth_date": "2025-04-25",
+    "first_name": "alejandro",
+    "last_name": "visconte",
+    "phone_number": "3242343",
+    "gender": "M",
+    "record_number": "3245435435",
+    "address": "sdfsdfdsf",
+    "email": "sdfdsfd@sdfsdfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "88867676767",
+    "birth_date": "2025-04-25",
+    "first_name": "alejandro",
+    "last_name": "visconte",
+    "phone_number": "3242343",
+    "gender": "M",
+    "record_number": "3245435435",
+    "address": "sdfsdfdsf",
+    "email": "sdfdsfd@sdfsdfds.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "45"
+}
+----------------------------------------
+[2025-04-25 21:43:12] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "88867676767"
+}
+----------------------------------------
+[2025-04-25 21:52:14] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:52:14] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:52:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:52:14] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "6767677667"
+}
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfdsfsdfsdf@sdss.com"
+}
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "6767677667",
+    "birth_date": "2025-04-25",
+    "first_name": "Nico",
+    "last_name": "maldonado",
+    "phone_number": "45345435",
+    "gender": "M",
+    "record_number": "345435435",
+    "address": "dsfsdfsdfdsfdsfds",
+    "email": "sdfdsfsdfsdf@sdss.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:52:58"
+}
+Filtered Data: {
+    "document_number": "6767677667",
+    "birth_date": "2025-04-25",
+    "first_name": "Nico",
+    "last_name": "maldonado",
+    "phone_number": "45345435",
+    "gender": "M",
+    "record_number": "345435435",
+    "address": "dsfsdfsdfdsfdsfds",
+    "email": "sdfdsfsdfsdf@sdss.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:52:58"
+}
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "6767677667",
+    "birth_date": "2025-04-25",
+    "first_name": "Nico",
+    "last_name": "maldonado",
+    "phone_number": "45345435",
+    "gender": "M",
+    "record_number": "345435435",
+    "address": "dsfsdfsdfdsfdsfds",
+    "email": "sdfdsfsdfsdf@sdss.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "6767677667",
+    "birth_date": "2025-04-25",
+    "first_name": "Nico",
+    "last_name": "maldonado",
+    "phone_number": "45345435",
+    "gender": "M",
+    "record_number": "345435435",
+    "address": "dsfsdfsdfdsfdsfds",
+    "email": "sdfdsfsdfsdf@sdss.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "46"
+}
+----------------------------------------
+[2025-04-25 21:52:58] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "6767677667"
+}
+----------------------------------------
+[2025-04-25 21:58:33] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:58:34] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:58:34] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:58:34] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:58:41] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 21:58:41] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 21:58:41] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 21:58:41] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "666555544444"
+}
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfsdfsdfsdf@sdfdsfsdfdsf.com"
+}
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "666555544444",
+    "birth_date": "2025-04-25",
+    "first_name": "abel",
+    "last_name": "lescano",
+    "phone_number": "4534534534",
+    "gender": "M",
+    "record_number": "4354345345",
+    "address": "ddsfsfsdfdsfsfsf",
+    "email": "sdfsdfsdfsdf@sdfdsfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 21:59:31"
+}
+Filtered Data: {
+    "document_number": "666555544444",
+    "birth_date": "2025-04-25",
+    "first_name": "abel",
+    "last_name": "lescano",
+    "phone_number": "4534534534",
+    "gender": "M",
+    "record_number": "4354345345",
+    "address": "ddsfsfsdfdsfsfsf",
+    "email": "sdfsdfsdfsdf@sdfdsfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 21:59:31"
+}
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "666555544444",
+    "birth_date": "2025-04-25",
+    "first_name": "abel",
+    "last_name": "lescano",
+    "phone_number": "4534534534",
+    "gender": "M",
+    "record_number": "4354345345",
+    "address": "ddsfsfsdfdsfsfsf",
+    "email": "sdfsdfsdfsdf@sdfdsfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "666555544444",
+    "birth_date": "2025-04-25",
+    "first_name": "abel",
+    "last_name": "lescano",
+    "phone_number": "4534534534",
+    "gender": "M",
+    "record_number": "4354345345",
+    "address": "ddsfsfsdfdsfsfsf",
+    "email": "sdfsdfsdfsdf@sdfdsfsdfdsf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "47"
+}
+----------------------------------------
+[2025-04-25 21:59:31] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "666555544444"
+}
+----------------------------------------
+[2025-04-25 22:09:49] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 22:09:49] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:09:50] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 22:09:50] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "3333456565"
+}
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfdsf@pedro.com"
+}
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "3333456565",
+    "birth_date": "2025-04-25",
+    "first_name": "pedro",
+    "last_name": "angel",
+    "phone_number": "09823215",
+    "gender": "M",
+    "record_number": "67575765",
+    "address": "xdfdsfsd",
+    "email": "sdfdsf@pedro.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 22:10:46"
+}
+Filtered Data: {
+    "document_number": "3333456565",
+    "birth_date": "2025-04-25",
+    "first_name": "pedro",
+    "last_name": "angel",
+    "phone_number": "09823215",
+    "gender": "M",
+    "record_number": "67575765",
+    "address": "xdfdsfsd",
+    "email": "sdfdsf@pedro.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 22:10:46"
+}
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "3333456565",
+    "birth_date": "2025-04-25",
+    "first_name": "pedro",
+    "last_name": "angel",
+    "phone_number": "09823215",
+    "gender": "M",
+    "record_number": "67575765",
+    "address": "xdfdsfsd",
+    "email": "sdfdsf@pedro.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "3333456565",
+    "birth_date": "2025-04-25",
+    "first_name": "pedro",
+    "last_name": "angel",
+    "phone_number": "09823215",
+    "gender": "M",
+    "record_number": "67575765",
+    "address": "xdfdsfsd",
+    "email": "sdfdsf@pedro.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "48"
+}
+----------------------------------------
+[2025-04-25 22:10:46] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "3333456565"
+}
+----------------------------------------
+[2025-04-25 22:33:48] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:33:48] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:34:05] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:34:10] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 22:34:10] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:34:10] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 22:34:10] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 22:34:13] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:34:39] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:34:43] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 22:34:43] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:34:43] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 22:34:43] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 22:34:50] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-04-25 22:35:00] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:35:51] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:40:55] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "11111222222"
+}
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfdsfsd@sdfdsfdsf.cmo"
+}
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "11111222222",
+    "birth_date": "2025-04-25",
+    "first_name": "pablo",
+    "last_name": "feliz",
+    "phone_number": "234324",
+    "gender": "M",
+    "record_number": "23423423",
+    "address": "dsfdsf",
+    "email": "sdfdsfsd@sdfdsfdsf.cmo",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true,
+    "created_at": "2025-04-25 22:41:37"
+}
+Filtered Data: {
+    "document_number": "11111222222",
+    "birth_date": "2025-04-25",
+    "first_name": "pablo",
+    "last_name": "feliz",
+    "phone_number": "234324",
+    "gender": "M",
+    "record_number": "23423423",
+    "address": "dsfdsf",
+    "email": "sdfdsfsd@sdfdsfdsf.cmo",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 22:41:37"
+}
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "11111222222",
+    "birth_date": "2025-04-25",
+    "first_name": "pablo",
+    "last_name": "feliz",
+    "phone_number": "234324",
+    "gender": "M",
+    "record_number": "23423423",
+    "address": "dsfdsf",
+    "email": "sdfdsfsd@sdfdsfdsf.cmo",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "11111222222",
+    "birth_date": "2025-04-25",
+    "first_name": "pablo",
+    "last_name": "feliz",
+    "phone_number": "234324",
+    "gender": "M",
+    "record_number": "23423423",
+    "address": "dsfdsf",
+    "email": "sdfdsfsd@sdfdsfdsf.cmo",
+    "department_id": 2,
+    "city_id": 2,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 22:41:37] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "49"
+}
+----------------------------------------
+[2025-04-25 22:42:42] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 22:42:42] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:42:42] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 22:42:42] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "222333"
+}
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE email = :email
+Parameters: {
+    "email": "sdfsdfsdf@sdfdsfsdf.com"
+}
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Model::create]
+Table: rh_person
+Original Data: {
+    "document_number": "222333",
+    "birth_date": "2025-04-25",
+    "first_name": "maria",
+    "last_name": "asds",
+    "phone_number": "234234324",
+    "gender": "M",
+    "record_number": "324234234",
+    "address": "dcfdgdgdfg",
+    "email": "sdfsdfsdf@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "dfdsfds",
+    "guardian_document": "231325465",
+    "is_active": true,
+    "created_at": "2025-04-25 22:43:35"
+}
+Filtered Data: {
+    "document_number": "222333",
+    "birth_date": "2025-04-25",
+    "first_name": "maria",
+    "last_name": "asds",
+    "phone_number": "234234324",
+    "gender": "M",
+    "record_number": "324234234",
+    "address": "dcfdgdgdfg",
+    "email": "sdfsdfsdf@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "dfdsfds",
+    "guardian_document": "231325465",
+    "is_active": true
+}
+Excluded Data: {
+    "created_at": "2025-04-25 22:43:35"
+}
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Model.php:110]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "222333",
+    "birth_date": "2025-04-25",
+    "first_name": "maria",
+    "last_name": "asds",
+    "phone_number": "234234324",
+    "gender": "M",
+    "record_number": "324234234",
+    "address": "dcfdgdgdfg",
+    "email": "sdfsdfsdf@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "dfdsfds",
+    "guardian_document": "231325465",
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Database.php:255]
+SQL: INSERT INTO rh_person (document_number, birth_date, first_name, last_name, phone_number, gender, record_number, address, email, department_id, city_id, is_minor, guardian_name, guardian_document, is_active) VALUES (:document_number, :birth_date, :first_name, :last_name, :phone_number, :gender, :record_number, :address, :email, :department_id, :city_id, :is_minor, :guardian_name, :guardian_document, :is_active)
+Parameters: {
+    "document_number": "222333",
+    "birth_date": "2025-04-25",
+    "first_name": "maria",
+    "last_name": "asds",
+    "phone_number": "234234324",
+    "gender": "M",
+    "record_number": "324234234",
+    "address": "dcfdgdgdfg",
+    "email": "sdfsdfsdf@sdfdsfsdf.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": true,
+    "guardian_name": "dfdsfds",
+    "guardian_document": "231325465",
+    "is_active": true
+}
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "50"
+}
+----------------------------------------
+[2025-04-25 22:43:35] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "222333"
+}
+----------------------------------------
+[2025-04-25 22:43:44] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-25 22:43:45] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:43:45] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-25 22:43:45] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-25 22:44:17] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-25 22:44:28] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------

@@ -10,9 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnLimpiarPersona = document.getElementById('btnLimpiarPersona');
     const btnGuardarConsulta = document.getElementById('btnGuardarConsulta');
     const btnSubirArchivos = document.getElementById('btnSubirArchivos');
+   
     
     // Inicializar editores de texto enriquecido si existen
     inicializarEditoresTexto();
+
+    $("#btnNuevaPersona").on("click", abrirModalNuevaPersona);
     
     // Agregar event listeners a los botones
     if (btnBuscarPersona) {
@@ -33,7 +36,48 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar tabla de consultas
     inicializarTablaConsultas();
+    
+    // Configurar eventos para el modal de nueva persona - Check if button exists first
+    const btnGuardarPersona = document.getElementById('btnGuardarPersona');
+    if (btnGuardarPersona) {
+        btnGuardarPersona.addEventListener('click', guardarPersona);
+    }
+    
+    $("#btnSubirFoto").on("click", function() {
+        $("#inputFotoPerfil").click();
+    });
+    $("#inputFotoPerfil").on("change", mostrarPreviewImagen);
+    $("#perMenor").on("change", toggleCamposTutor);
+    
+    // Cargar departamentos y ciudades
+    cargarDepartamentos();
+    
+    // Configurar evento para cambio de departamento
+    $("#perDpto").on("change", function() {
+        cargarCiudades($(this).val(), "#perCity");
+    });
 });
+
+function abrirModalNuevaPersona() {
+    console.log("Función abrirModalNuevaPersona ejecutada");
+  
+    try {
+      // Limpiar formulario
+      $("#personaForm")[0].reset();
+      $("#previewFotoPerfil").attr("src", "view/dist/img/user-default.jpg");
+      $("#previewFotoPerfil").show();
+  
+      // Ocultar campos de tutor por defecto
+      $("#divTutor").hide();
+      $("#divDocTutor").hide();
+      
+      // Mostrar modal usando jQuery
+      $("#modalAgregarPersonas").modal("show");
+      console.log("Modal mostrado correctamente");
+    } catch (error) {
+      console.error("Error al abrir el modal:", error);
+    }
+  }
 
 /**
  * Función para inicializar los editores de texto enriquecido
@@ -554,7 +598,7 @@ function verDetalleConsulta(idConsulta) {
                                         </thead>
                                         <tbody>
                         `;
-                        
+
                         archivos.forEach(archivo => {
                             const fecha = new Date(archivo.fecha_creacion).toLocaleDateString('es-ES');
                             archivosHTML += `
@@ -571,7 +615,7 @@ function verDetalleConsulta(idConsulta) {
                             </tr>
                             `;
                         });
-                        
+
                         archivosHTML += `
                                         </tbody>
                                     </table>
@@ -921,7 +965,7 @@ function cargarConsultaEnFormulario(consulta, archivos) {
                 let existeComoTexto = false;
                 for (let i = 0; i < selectMotivosComunes.options.length; i++) {
                     if (selectMotivosComunes.options[i].text === consulta.motivo) {
-                        selectMotivosComunes.selectedIndex = i;
+                        selectMotivosComunes.options[i].selected = true;
                         existeComoTexto = true;
                         break;
                     }
@@ -1207,123 +1251,405 @@ function initFileUpload() {
 }
 
 /**
- * Función para subir archivos
+ * Función para subir una foto de perfil
+ * @param {number} personId - ID de la persona
+ * @param {File} file - Archivo de imagen a subir
+ */
+function subirFotoPerfil(personId, file) {
+  const formData = new FormData();
+  formData.append("profile_photo", file);
+
+  fetch(`api/persons/upload-photo?id=${personId}`, {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((respuesta) => {
+      const data = respuesta.data;
+      if (data.message) {
+        mostrarAlerta(
+          "success",
+          "Persona guardada y foto subida correctamente"
+        );
+        $("#modalAgregarPersonas").modal("hide");
+        // Refrescar información del paciente si es necesario
+        if (document.getElementById('idPersona').value === personId) {
+          buscarPersona();
+        }
+      } else {
+        mostrarAlerta(
+          "warning",
+          data.message ||
+            "La persona se guardó pero hubo un error al subir la foto"
+        );
+        $("#modalAgregarPersonas").modal("hide");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      mostrarAlerta(
+        "warning",
+        "La persona se guardó pero hubo un error al subir la foto"
+      );
+      $("#modalAgregarPersonas").modal("hide");
+    });
+}
+
+/**
+ * Muestra una vista previa de la imagen seleccionada
+ */
+function mostrarPreviewImagen() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("previewFotoPerfil").src = e.target.result;
+      document.getElementById("previewFotoPerfil").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+/**
+ * Muestra/oculta los campos de tutor según si es menor de edad
+ */
+function toggleCamposTutor() {
+  const esmenor = document.getElementById("perMenor").value === "true";
+  document.getElementById("divTutor").style.display = esmenor
+    ? "block"
+    : "none";
+  document.getElementById("divDocTutor").style.display = esmenor
+    ? "block"
+    : "none";
+}
+
+/**
+ * Carga los departamentos disponibles desde la vista v_departments
+ */
+function cargarDepartamentos() {
+  console.log("Iniciando carga de departamentos...");
+  fetch("api/departments")
+    .then((response) => {
+      console.log("Respuesta recibida de API departamentos:", response);
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Datos de departamentos recibidos:", data);
+      
+      if (data.status === "success" && Array.isArray(data.data)) {
+        // Limpiar opciones actuales
+        $("#perDpto").empty();
+        
+        // Agregar opción por defecto
+        const defaultOption = new Option("-- Seleccione un departamento --", "0", true, true);
+        $("#perDpto").append(defaultOption);
+        
+        // Agregar opciones para cada departamento
+        data.data.forEach((departamento) => {
+          console.log("Procesando departamento:", departamento.department_id, departamento.department_description);
+          
+          const option = new Option(
+            departamento.department_description, 
+            departamento.department_id,
+            false,
+            false
+          );
+          
+          $("#perDpto").append(option);
+        });
+        
+        // Refrescar select
+        $("#perDpto").trigger("change");
+        
+        console.log("Departamentos cargados correctamente. Total:", data.data.length);
+      } else {
+        console.error("Error al cargar departamentos:", data);
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar departamentos:", error);
+    });
+}
+
+/**
+ * Carga las ciudades disponibles para un departamento específico
+ * @param {number} departmentId - ID del departamento seleccionado
+ * @param {string} selectElement - Selector del elemento select donde cargar las ciudades
+ * @returns {Promise} - Promesa que se resuelve cuando se han cargado las ciudades
+ */
+function cargarCiudades(departmentId, selectElement) {
+  console.log(`Iniciando carga de ciudades para departamento ${departmentId} en selector ${selectElement}`);
+  // Si no hay departamento seleccionado, limpiar ciudades
+  if (!departmentId || departmentId === "0") {
+    console.log("No hay departamento seleccionado, limpiando ciudades");
+    $(selectElement).empty();
+    $(selectElement).append(new Option("-- Seleccione una ciudad --", "0", true, true));
+    $(selectElement).trigger("change");
+    return Promise.resolve();
+  }
+  
+  return fetch(`api/cities?department_id=${departmentId}`)
+    .then((response) => {
+      console.log(`Respuesta recibida de API ciudades para departamento ${departmentId}:`, response.status);
+      return response.json();
+    })
+    .then((data) => {
+      console.log(`Datos de ciudades recibidos para departamento ${departmentId}:`, data);
+      
+      if (data.status === "success" && Array.isArray(data.data)) {
+        // Limpiar opciones actuales
+        $(selectElement).empty();
+        
+        // Agregar opción por defecto
+        const defaultOption = new Option("-- Seleccione una ciudad --", "0", true, true);
+        $(selectElement).append(defaultOption);
+        
+        // Agregar opciones para cada ciudad
+        data.data.forEach((ciudad) => {
+          console.log("Procesando ciudad:", ciudad.city_id, ciudad.city_description);
+          
+          const option = new Option(
+            ciudad.city_description, 
+            ciudad.city_id,
+            false,
+            false
+          );
+          
+          $(selectElement).append(option);
+        });
+        
+        // Refrescar select
+        $(selectElement).trigger("change");
+        console.log(`Ciudades cargadas correctamente para departamento ${departmentId} en selector ${selectElement}. Total: ${data.data.length}`);
+        return data;
+      } else {
+        console.error("Error al cargar ciudades:", data);
+        return Promise.reject("Error al cargar ciudades");
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar ciudades:", error);
+      return Promise.reject(error);
+    });
+}
+
+/**
+ * Guarda una nueva persona
+ */
+function guardarPersona() {
+  // Validar campos requeridos
+  if (!validarFormularioPersona()) {
+    return;
+  }
+
+  // Obtener datos del formulario
+  const formData = new FormData(document.getElementById("personaForm"));
+
+  // Preparar datos para enviar como JSON
+  const personaData = {
+    document_number: formData.get("perDocument"),
+    birth_date: formData.get("perDate"),
+    first_name: formData.get("perName"),
+    last_name: formData.get("perLastname"),
+    phone_number: formData.get("perPhone"),
+    gender: formData.get("perSex"),
+    record_number: formData.get("perFicha"),
+    address: formData.get("perAdrress"),
+    email: formData.get("perEmail"),
+    department_id:
+      formData.get("perDpto") !== "0"
+        ? parseInt(formData.get("perDpto"))
+        : null,
+    city_id:
+      formData.get("perCity") !== "0"
+        ? parseInt(formData.get("perCity"))
+        : null,
+    is_minor: formData.get("perMenor") === "true",
+    guardian_name:
+      formData.get("perMenor") === "true" ? formData.get("perTutor") : null,
+    guardian_document:
+      formData.get("perMenor") === "true" ? formData.get("perDocTutor") : null,
+    is_active: true,
+  };
+
+  // Enviar datos al servidor
+  fetch("api/persons", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(personaData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      // Verificar la estructura de la respuesta
+      if (
+        data.status === "success" &&
+        data.data &&
+        typeof data.data === "object"
+      ) {
+        console.log("ID de persona:", data.data.person_id);
+        const personId = data.data.person_id;
+        
+        // Si hay una foto para subir, hacerlo después de crear la persona
+        const inputFoto = document.getElementById("inputFotoPerfil");
+        if (inputFoto.files.length > 0) {
+            console.log("Subiendo foto de perfil...");
+          subirFotoPerfil(personId, inputFoto.files[0]);
+        } else {
+            console.log("No se subirá foto de perfil, ya que no se seleccionó ninguna.");
+          mostrarAlerta("success", "Persona guardada correctamente");
+          $("#modalAgregarPersonas").modal("hide");
+        }
+      } else {
+        mostrarAlerta("error", data.message || "Error al guardar la persona");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      mostrarAlerta("error", "Error al procesar la solicitud");
+    });
+}
+
+/**
+ * Valida los campos requeridos del formulario de persona
+ */
+function validarFormularioPersona() {
+  const documento = document.getElementById("perDocument").value;
+  const fecha = document.getElementById("perDate").value;
+  const nombre = document.getElementById("perName").value;
+  const apellido = document.getElementById("perLastname").value;
+  const sexo = document.getElementById("perSex").value;
+
+  if (!documento || !fecha || !nombre || !apellido || !sexo) {
+    mostrarAlerta(
+      "warning",
+      "Por favor complete todos los campos obligatorios"
+    );
+    return false;
+  }
+
+  // Validar campos de tutor si es menor
+  const esmenor = document.getElementById("perMenor").value === "true";
+  if (esmenor) {
+    const tutor = document.getElementById("perTutor").value;
+    const docTutor = document.getElementById("perDocTutor").value;
+
+    if (!tutor || !docTutor) {
+      mostrarAlerta(
+        "warning",
+        "Para menores de edad, debe completar la información del tutor"
+      );
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Muestra una alerta con SweetAlert2
+ */
+function mostrarAlerta(tipo, mensaje) {
+  Swal.fire({
+    position: "center",
+    icon: tipo,
+    title: mensaje,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+}
+
+/**
+ * Función para subir archivos asociados a una consulta
  */
 function subirArchivos() {
-    // Verificar que se haya seleccionado un paciente
-    const idPersona = document.getElementById('id_persona_file').value;
-    if (!idPersona) {
-        Swal.fire({
-            position: "center",
-            icon: "warning",
-            title: "Debe seleccionar un paciente",
-            showConfirmButton: false,
-            timer: 1500
-        });
-        return;
+  const idPersona = document.getElementById('id_persona_file').value;
+  const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : '';
+  
+  if (!idPersona) {
+    mostrarAlerta('warning', 'Debe seleccionar un paciente antes de subir archivos');
+    return;
+  }
+  
+  const fileInput = document.getElementById('archivo');
+  if (!fileInput.files.length) {
+    mostrarAlerta('warning', 'Debe seleccionar un archivo para subir');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('id_persona', idPersona);
+  if (idConsulta) {
+    formData.append('id_consulta', idConsulta);
+  }
+  formData.append('file', fileInput.files[0]);
+  formData.append('descripcion', document.getElementById('descripcion_archivo').value || '');
+  formData.append('operacion', 'upload');
+  
+  // Mostrar indicador de carga
+  Swal.fire({
+    title: 'Subiendo archivo...',
+    text: 'Por favor espere',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
     }
-    
-    // Verificar que se hayan seleccionado archivos
-    const files = document.getElementById('files').files;
-    if (files.length === 0) {
-        Swal.fire({
-            position: "center",
-            icon: "warning",
-            title: "Debe seleccionar al menos un archivo",
-            showConfirmButton: false,
-            timer: 1500
-        });
-        return;
-    }
-    
-    // Mostrar indicador de carga
-    Swal.fire({
-        title: 'Subiendo archivos...',
-        text: 'Por favor espere',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
+  });
+  
+  $.ajax({
+    type: 'POST',
+    url: 'ajax/upload.ajax.php',
+    data: formData,
+    cache: false,
+    contentType: false,
+    processData: false,
+    success: function(response) {
+      try {
+        const result = JSON.parse(response);
+        if (result.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito!',
+            text: 'Archivo subido correctamente',
+            timer: 1500,
+            showConfirmButton: false
+          });
+          
+          // Limpiar campo de archivo
+          fileInput.value = '';
+          document.getElementById('descripcion_archivo').value = '';
+          
+          // Actualizar lista de archivos si existe
+          if (typeof actualizarListaArchivos === 'function') {
+            actualizarListaArchivos(idPersona);
+          }
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: result.message || 'Error al subir el archivo'
+          });
         }
-    });
-    
-    // Enviar el formulario
-    const formData = new FormData(document.getElementById('uploadForm'));
-    
-    // Añadir el ID de la consulta actual si existe
-    const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : null;
-    if (idConsulta) {
-        formData.append('id_consulta', idConsulta);
+      } catch (e) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Error en la respuesta del servidor'
+        });
+        console.error('Error al analizar la respuesta:', e, response);
+      }
+    },
+    error: function(xhr, status, error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Error al comunicarse con el servidor'
+      });
+      console.error('Error en la solicitud:', error);
     }
-    
-    $.ajax({
-        type: 'POST',
-        url: 'ajax/upload.ajax.php',
-        data: formData,
-        dataType: "json",
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            Swal.close();
-            
-            if (response.status === "success") {
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Archivos subidos correctamente",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                
-                // Limpiar el formulario de archivos
-                document.getElementById('files').value = '';
-                
-                // Obtener el ID de la consulta actual si existe
-                const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : null;
-                
-                if (idConsulta) {
-                    // Si hay una consulta activa, obtener y mostrar sus archivos
-                    obtenerArchivosConsulta(idConsulta, function(archivos) {
-                        if (archivos && archivos.length > 0) {
-                            mostrarArchivosEnFormulario(archivos);
-                        }
-                    });
-                } else {
-                    // Si no hay consulta activa, mostrar los archivos recién subidos
-                    const archivosSubidos = [];
-                    response.files.forEach(file => {
-                        archivosSubidos.push({
-                            nombre_archivo: file.name,
-                            tipo_archivo: file.type,
-                            tamano_mb: (file.size / (1024 * 1024)).toFixed(2),
-                            fecha_creacion: new Date().toISOString(),
-                            ruta_archivo: file.path
-                        });
-                    });
-                    mostrarArchivosEnFormulario(archivosSubidos);
-                }
-            } else {
-                Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: "Error al subir los archivos",
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            Swal.close();
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Error al subir los archivos",
-                text: error,
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
-    });
+  });
 }
 
 /**
@@ -1679,7 +2005,7 @@ function mostrarArchivosEnFormulario(archivos) {
     // Obtener el contenedor de previsualizaciones
     const previewContainer = document.getElementById('filePreviewContainer');
     if (!previewContainer) {
-        console.error('No se encontró el contenedor de previsualización de archivos');
+               console.error('No se encontró el contenedor de previsualización de archivos');
         return;
     }
     

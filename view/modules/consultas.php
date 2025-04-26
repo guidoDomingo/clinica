@@ -117,5 +117,143 @@
     <!-- /.content -->
 </div>
 
+<!-- Modal Agregar Persona -->
+<div class="modal fade" id="modalAgregarPersonas" tabindex="-1" role="dialog"
+    aria-labelledby="modalAgregarPersonasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAgregarPersonasLabel">Registrar persona</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="personaForm" action="post">
+                    <div class="row">
+                        <!-- Columna izquierda para datos principales -->
+                        <div class="col-md-8">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="perDocument">Documento *</label>
+                                    <input type="text" class="form-control" id="perDocument" name="perDocument"
+                                        placeholder="Número de documento" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="perDate">Fecha de Nacimiento *</label>
+                                    <input type="date" class="form-control" id="perDate" name="perDate" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="perName">Nombres *</label>
+                                    <input type="text" class="form-control" id="perName" name="perName"
+                                        placeholder="Nombres" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="perLastname">Apellidos *</label>
+                                    <input type="text" class="form-control" id="perLastname" name="perLastname"
+                                        placeholder="Apellidos" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="perPhone">Teléfono</label>
+                                    <input type="text" class="form-control" id="perPhone" name="perPhone"
+                                        placeholder="Número de teléfono">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="perSex">Género *</label>
+                                    <select id="perSex" name="perSex" class="form-control" required>
+                                        <option value="" selected>Seleccionar...</option>
+                                        <option value="F">F</option>
+                                        <option value="M">M</option>
+                                        <option value="O">O</option>
+                                        <option value="U">U</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="perFicha">Ficha</label>
+                                    <input type="text" class="form-control" id="perFicha" name="perFicha"
+                                        placeholder="Número de ficha">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="perAdrress">Dirección</label>
+                                <input type="text" class="form-control" id="perAdrress" name="perAdrress"
+                                    placeholder="Dirección completa">
+                            </div>
+                            <div class="form-group">
+                                <label for="perEmail">Email</label>
+                                <input type="email" class="form-control" id="perEmail" name="perEmail"
+                                    placeholder="Correo electrónico">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="perDpto">Departamento</label>
+                                    <select id="perDpto" name="perDpto" class="form-control">
+                                        <option value="0" selected>N/A</option>
+                                        <!-- Opciones de departamentos -->
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="perCity">Ciudad</label>
+                                    <select id="perCity" name="perCity" class="form-control">
+                                        <option value="0" selected>N/A</option>
+                                        <!-- Opciones de ciudades -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="perMenor">Es menor de edad</label>
+                                    <select id="perMenor" name="perMenor" class="form-control">
+                                        <option value="false">NO</option>
+                                        <option value="true">SÍ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4" id="divTutor">
+                                    <label for="perTutor">Nombre del Tutor</label>
+                                    <input type="text" class="form-control" id="perTutor" name="perTutor"
+                                        placeholder="Nombre completo del tutor">
+                                </div>
+                                <div class="form-group col-md-4" id="divDocTutor">
+                                    <label for="perDocTutor">Documento del Tutor</label>
+                                    <input type="text" class="form-control" id="perDocTutor" name="perDocTutor"
+                                        placeholder="Documento del tutor">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Columna derecha para foto de perfil -->
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <label>Foto de Perfil</label>
+                                <div class="mt-2">
+                                    <img id="previewFotoPerfil" src="view/dist/img/user-default.jpg"
+                                        class="img-fluid rounded-circle" style="max-width: 150px; max-height: 150px;">
+                                </div>
+                                <div class="mt-3">
+                                    <input type="file" id="inputFotoPerfil" name="inputFotoPerfil" accept="image/*"
+                                        style="display: none;">
+                                    <button type="button" id="btnSubirFoto" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-camera"></i> Seleccionar foto
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="btnGuardarPersona">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Script para la funcionalidad de autocompletado de datos del paciente -->
 <script src="view/js/consultas.js"></script>

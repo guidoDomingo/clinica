@@ -13,7 +13,7 @@ $(document).ready(function () {
 
   // Cargar especialidades disponibles
   cargarEspecialidades();
-  
+
   // Cargar departamentos y ciudades
   cargarDepartamentos();
 
@@ -21,21 +21,21 @@ $(document).ready(function () {
   $("#perEspecialidades").select2({
     placeholder: "Seleccione especialidades",
     allowClear: true,
-    theme: "bootstrap4"
+    theme: "bootstrap4",
   });
 
   $("#EditperEspecialidades").select2({
     placeholder: "Seleccione especialidades",
     allowClear: true,
-    theme: "bootstrap4"
+    theme: "bootstrap4",
   });
-  
+
   // Inicializar Select2 para el modal de especialidades
   $("#modalPerEspecialidades").select2({
     placeholder: "Seleccione especialidades",
     allowClear: true,
     theme: "bootstrap4",
-    dropdownParent: $("#modalEspecialidades")
+    dropdownParent: $("#modalEspecialidades"),
   });
 
   // Configurar eventos de botones usando jQuery
@@ -61,13 +61,13 @@ $(document).ready(function () {
   // Configurar comportamiento para menores de edad
   $("#perMenor").on("change", toggleCamposTutor);
   $("#EditperMenor").on("change", toggleCamposTutorEdit);
-  
+
   // Configurar evento para cambio de departamento
-  $("#perDpto").on("change", function() {
+  $("#perDpto").on("change", function () {
     cargarCiudades($(this).val(), "#perCity");
   });
-  
-  $("#EditperDpto").on("change", function() {
+
+  $("#EditperDpto").on("change", function () {
     cargarCiudades($(this).val(), "#EditperCity");
   });
 
@@ -84,12 +84,12 @@ function inicializarTabla() {
       url: "api/persons",
       dataSrc: function (json) {
         console.log("Datos recibidos:", json);
-            if (Array.isArray(json.data)) {
-                return json.data;
-            } else if (json.data?.data) {
-                return json.data.data;
-            }
-            return [];
+        if (Array.isArray(json.data)) {
+          return json.data;
+        } else if (json.data?.data) {
+          return json.data.data;
+        }
+        return [];
       },
     },
     columns: [
@@ -142,7 +142,11 @@ function inicializarTabla() {
 
   // Configurar eventos para los botones de acción
   $("#tblPersonas").on("click", ".btn-ver", verPersona);
-  $("#tblPersonas").on("click", ".btn-especialidades", abrirModalEspecialidades);
+  $("#tblPersonas").on(
+    "click",
+    ".btn-especialidades",
+    abrirModalEspecialidades
+  );
   $("#tblPersonas").on("click", ".btn-modificar", editarPersona);
   $("#tblPersonas").on("click", ".btn-eliminar", eliminarPersona);
   $("#tblPersonas").on("click", ".btn-inactivar", cambiarEstadoPersona);
@@ -199,41 +203,41 @@ function cargarEspecialidades() {
         $("#perEspecialidades").empty();
         $("#EditperEspecialidades").empty();
         $("#modalPerEspecialidades").empty();
-        
+
         // Agregar opciones para cada especialidad
         data.data.forEach((especialidad) => {
           // Crear opciones separadas para cada selector
           const option1 = new Option(
-            especialidad.nombre, 
+            especialidad.nombre,
             especialidad.especialidad_id,
             false,
             false
           );
-          
+
           const option2 = new Option(
-            especialidad.nombre, 
+            especialidad.nombre,
             especialidad.especialidad_id,
             false,
             false
           );
-          
+
           const option3 = new Option(
-            especialidad.nombre, 
+            especialidad.nombre,
             especialidad.especialidad_id,
             false,
             false
           );
-          
+
           $("#perEspecialidades").append(option1);
           $("#EditperEspecialidades").append(option2);
           $("#modalPerEspecialidades").append(option3);
         });
-        
+
         // Refrescar Select2
         $("#perEspecialidades").trigger("change");
         $("#EditperEspecialidades").trigger("change");
         $("#modalPerEspecialidades").trigger("change");
-        
+
         console.log("Especialidades cargadas correctamente");
       } else {
         console.error("Error al cargar especialidades:", data);
@@ -257,47 +261,67 @@ function cargarDepartamentos() {
     .then((data) => {
       console.log("Datos de departamentos recibidos:", data);
       // Mostrar datos completos de departamentos en consola
-      console.log("Datos completos de departamentos:", JSON.stringify(data.data, null, 2));
-      
+      console.log(
+        "Datos completos de departamentos:",
+        JSON.stringify(data.data, null, 2)
+      );
+
       if (data.status === "success" && Array.isArray(data.data)) {
         // Limpiar opciones actuales
         $("#perDpto").empty();
         $("#EditperDpto").empty();
-        
+
         // Agregar opción por defecto para cada selector
-        const defaultOption1 = new Option("-- Seleccione un departamento --", "0", true, true);
-        const defaultOption2 = new Option("-- Seleccione un departamento --", "0", true, true);
+        const defaultOption1 = new Option(
+          "-- Seleccione un departamento --",
+          "0",
+          true,
+          true
+        );
+        const defaultOption2 = new Option(
+          "-- Seleccione un departamento --",
+          "0",
+          true,
+          true
+        );
         $("#perDpto").append(defaultOption1);
         $("#EditperDpto").append(defaultOption2);
-        
+
         // Agregar opciones para cada departamento
         data.data.forEach((departamento) => {
-          console.log("Procesando departamento:", departamento.department_id, departamento.department_description);
+          console.log(
+            "Procesando departamento:",
+            departamento.department_id,
+            departamento.department_description
+          );
           console.log("Datos completos del departamento:", departamento);
           // Crear opciones separadas para cada selector
           const option1 = new Option(
-            departamento.department_description, 
+            departamento.department_description,
             departamento.department_id,
             false,
             false
           );
-          
+
           const option2 = new Option(
-            departamento.department_description, 
+            departamento.department_description,
             departamento.department_id,
             false,
             false
           );
-          
+
           $("#perDpto").append(option1);
           $("#EditperDpto").append(option2);
         });
-        
+
         // Refrescar selects
         $("#perDpto").trigger("change");
         $("#EditperDpto").trigger("change");
-        
-        console.log("Departamentos cargados correctamente. Total:", data.data.length);
+
+        console.log(
+          "Departamentos cargados correctamente. Total:",
+          data.data.length
+        );
       } else {
         console.error("Error al cargar departamentos:", data);
       }
@@ -314,51 +338,75 @@ function cargarDepartamentos() {
  * @returns {Promise} - Promesa que se resuelve cuando se han cargado las ciudades
  */
 function cargarCiudades(departmentId, selectElement) {
-  console.log(`Iniciando carga de ciudades para departamento ${departmentId} en selector ${selectElement}`);
+  console.log(
+    `Iniciando carga de ciudades para departamento ${departmentId} en selector ${selectElement}`
+  );
   // Si no hay departamento seleccionado, limpiar ciudades
   if (!departmentId || departmentId === "0") {
     console.log("No hay departamento seleccionado, limpiando ciudades");
     $(selectElement).empty();
-    $(selectElement).append(new Option("-- Seleccione una ciudad --", "0", true, true));
+    $(selectElement).append(
+      new Option("-- Seleccione una ciudad --", "0", true, true)
+    );
     $(selectElement).trigger("change");
     return Promise.resolve();
   }
-  
+
   return fetch(`api/cities?department_id=${departmentId}`)
     .then((response) => {
-      console.log(`Respuesta recibida de API ciudades para departamento ${departmentId}:`, response.status);
+      console.log(
+        `Respuesta recibida de API ciudades para departamento ${departmentId}:`,
+        response.status
+      );
       return response.json();
     })
     .then((data) => {
-      console.log(`Datos de ciudades recibidos para departamento ${departmentId}:`, data);
+      console.log(
+        `Datos de ciudades recibidos para departamento ${departmentId}:`,
+        data
+      );
       // Mostrar datos completos de ciudades en consola
-      console.log(`Datos completos de ciudades para departamento ${departmentId}:`, JSON.stringify(data.data, null, 2));
-      
+      console.log(
+        `Datos completos de ciudades para departamento ${departmentId}:`,
+        JSON.stringify(data.data, null, 2)
+      );
+
       if (data.status === "success" && Array.isArray(data.data)) {
         // Limpiar opciones actuales
         $(selectElement).empty();
-        
+
         // Agregar opción por defecto
-        const defaultOption = new Option("-- Seleccione una ciudad --", "0", true, true);
+        const defaultOption = new Option(
+          "-- Seleccione una ciudad --",
+          "0",
+          true,
+          true
+        );
         $(selectElement).append(defaultOption);
-        
+
         // Agregar opciones para cada ciudad
         data.data.forEach((ciudad) => {
-          console.log("Procesando ciudad:", ciudad.city_id, ciudad.city_description);
+          console.log(
+            "Procesando ciudad:",
+            ciudad.city_id,
+            ciudad.city_description
+          );
           console.log("Datos completos de la ciudad:", ciudad);
           const option = new Option(
-            ciudad.city_description, 
+            ciudad.city_description,
             ciudad.city_id,
             false,
             false
           );
-          
+
           $(selectElement).append(option);
         });
-        
+
         // Refrescar select
         $(selectElement).trigger("change");
-        console.log(`Ciudades cargadas correctamente para departamento ${departmentId} en selector ${selectElement}. Total: ${data.data.length}`);
+        console.log(
+          `Ciudades cargadas correctamente para departamento ${departmentId} en selector ${selectElement}. Total: ${data.data.length}`
+        );
         return data;
       } else {
         console.error("Error al cargar ciudades:", data);
@@ -386,7 +434,7 @@ function abrirModalNuevaPersona() {
     // Ocultar campos de tutor por defecto
     $("#divTutor").hide();
     $("#divDocTutor").hide();
-    
+
     // Limpiar selección de especialidades
     $("#perEspecialidades").val([]).trigger("change");
 
@@ -448,26 +496,105 @@ function guardarPersona() {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      // Verificar la estructura de la respuesta
-      if (
-        data.status === "success" &&
-        data.data &&
-        typeof data.data === "object"
-      ) {
+      
+      // Verificar si es el error específico de documento ya registrado
+      if (data.status === "error" && data.error && data.error.message === "Document number already registered") {
+        // Buscar la persona por documento para obtener sus datos
+        fetch(`api/persons/search?document=${personaData.document_number}`)
+          .then(response => response.json())
+          .then(searchData => {
+            if (searchData.status === "success" && searchData.data && searchData.data.length > 0) {
+              const persona = searchData.data[0];
+              
+              // Verificar explícitamente si estamos en el módulo de consultas
+              // y si existen los elementos necesarios
+              const currentPath = window.location.pathname;
+              const isConsultasModule = currentPath.includes("consultas") || 
+                                      currentPath.endsWith("/consultas") || 
+                                      currentPath.endsWith("/consultas.php");
+                                      
+              const txtDocumentoElem = document.getElementById("txtdocumento");
+              const pacienteElem = document.getElementById("paciente");
+              
+              if (isConsultasModule && txtDocumentoElem && pacienteElem) {
+                console.log("En módulo consultas: completando formulario con datos de la persona");
+                txtDocumentoElem.value = personaData.document_number;
+                
+                const txtFichaElem = document.getElementById("txtficha");
+                if (txtFichaElem) txtFichaElem.value = personaData.record_number || "";
+                
+                pacienteElem.value = personaData.first_name + " " + personaData.last_name;
+                
+                // Ejecutar la búsqueda de persona solo en el módulo de consultas
+                if (typeof buscarPersona === "function") {
+                  buscarPersona();
+                }
+              } else {
+                console.log("No estamos en módulo consultas o no existen los elementos necesarios");
+              }
+              
+              // Cerrar el modal y mostrar un mensaje informativo
+              mostrarAlerta("info", "La persona ya existe en la base de datos. Se han cargado sus datos.");
+              $("#modalAgregarPersonas").modal("hide");
+            } else {
+              mostrarAlerta("warning", "La persona ya existe en la base de datos pero no se pudieron recuperar sus datos.");
+              $("#modalAgregarPersonas").modal("hide");
+            }
+          })
+          .catch(error => {
+            console.error("Error al buscar la persona:", error);
+            mostrarAlerta("warning", "La persona ya existe en la base de datos.");
+            $("#modalAgregarPersonas").modal("hide");
+          });
+        return;
+      }
+      
+      // Verificar la estructura de la respuesta para el caso exitoso
+      if (data.status === "success" && data.data && typeof data.data === "object") {
         console.log("ID de persona:", data.data.person_id);
         const personId = data.data.person_id;
         
         // Guardar especialidades seleccionadas
         const especialidadesSeleccionadas = $("#perEspecialidades").val();
-        guardarEspecialidades(personId, especialidadesSeleccionadas || []);
+        if (especialidadesSeleccionadas && especialidadesSeleccionadas.length > 0) {
+          guardarEspecialidades(personId, especialidadesSeleccionadas);
+        }
       
         // Si hay una foto para subir, hacerlo después de crear la persona
         const inputFoto = document.getElementById("inputFotoPerfil");
-        if (inputFoto.files.length > 0) {
+        if (inputFoto && inputFoto.files && inputFoto.files.length > 0) {
           subirFotoPerfil(personId, inputFoto.files[0]);
         } else {
           mostrarAlerta("success", "Persona guardada correctamente");
           $("#modalAgregarPersonas").modal("hide");
+          
+          // Verificar explícitamente si estamos en el módulo de consultas
+          // y si existen los elementos necesarios
+          const currentPath = window.location.pathname;
+          const isConsultasModule = currentPath.includes("consultas") || 
+                                  currentPath.endsWith("/consultas") || 
+                                  currentPath.endsWith("/consultas.php");
+                                  
+          const txtDocumentoElem = document.getElementById("txtdocumento");
+          const pacienteElem = document.getElementById("paciente");
+          
+          if (isConsultasModule && txtDocumentoElem && pacienteElem) {
+            console.log("En módulo consultas: completando formulario con datos de la persona recién creada");
+            txtDocumentoElem.value = personaData.document_number;
+            
+            const txtFichaElem = document.getElementById("txtficha");
+            if (txtFichaElem) txtFichaElem.value = personaData.record_number || "";
+            
+            pacienteElem.value = personaData.first_name + " " + personaData.last_name;
+            
+            // Ejecutar la búsqueda de persona solo en el módulo de consultas
+            if (typeof buscarPersona === "function") {
+              buscarPersona();
+            }
+          } else {
+            console.log("No estamos en módulo consultas o no existen los elementos necesarios");
+          }
+          
           tablaPersonas.ajax.reload();
         }
       } else {
@@ -510,7 +637,7 @@ function editarPersona() {
       document.getElementById("EditperAdrress").value = data.address;
       document.getElementById("EditperEmail").value = data.email;
       document.getElementById("EditperDpto").value = data.department_id || "0";
-      
+
       // Cargar ciudades correspondientes al departamento seleccionado
       if (data.department_id) {
         cargarCiudades(data.department_id, "#EditperCity").then(() => {
@@ -519,10 +646,14 @@ function editarPersona() {
       } else {
         document.getElementById("EditperCity").value = "0";
       }
-      
-      document.getElementById("EditperMenor").value = data.is_minor ? "true" : "false";
-      document.getElementById("EditperTutor").value = data.guardian_name || "N/A";
-      document.getElementById("EditperDocTutor").value = data.guardian_document || "";
+
+      document.getElementById("EditperMenor").value = data.is_minor
+        ? "true"
+        : "false";
+      document.getElementById("EditperTutor").value =
+        data.guardian_name || "N/A";
+      document.getElementById("EditperDocTutor").value =
+        data.guardian_document || "";
 
       // Mostrar/ocultar campos de tutor
       toggleCamposTutorEdit();
@@ -536,7 +667,7 @@ function editarPersona() {
         previewImg.src = "view/dist/img/user-default.jpg";
         previewImg.style.display = "block";
       }
-      
+
       // Cargar las especialidades de la persona
       cargarEspecialidadesPersona(data.person_id);
 
@@ -549,7 +680,6 @@ function editarPersona() {
     });
 }
 
-
 /**
  * Carga las especialidades asignadas a una persona
  * @param {number} personId - ID de la persona
@@ -560,8 +690,10 @@ function cargarEspecialidadesPersona(personId) {
     .then((data) => {
       if (data.status === "success" && Array.isArray(data.data)) {
         // Obtener IDs de especialidades asignadas
-        const especialidadesIds = data.data.map(esp => esp.especialidad_id.toString());
-        
+        const especialidadesIds = data.data.map((esp) =>
+          esp.especialidad_id.toString()
+        );
+
         // Seleccionar las especialidades en el select
         $("#EditperEspecialidades").val(especialidadesIds).trigger("change");
       } else {
@@ -585,9 +717,9 @@ function cargarEspecialidadesPersona(personId) {
 function guardarEspecialidades(personId, especialidades) {
   const data = {
     person_id: personId,
-    especialidades: especialidades
+    especialidades: especialidades,
   };
-  
+
   fetch("api/especialidades/assign", {
     method: "POST",
     headers: {
@@ -667,7 +799,7 @@ function actualizarPersona() {
         // Guardar especialidades seleccionadas
         const especialidadesSeleccionadas = $("#EditperEspecialidades").val();
         guardarEspecialidades(personId, especialidadesSeleccionadas || []);
-        
+
         // Si hay una foto para subir, hacerlo después de actualizar la persona
         const inputFoto = document.getElementById("inputEditFotoPerfil");
         if (inputFoto.files.length > 0) {
@@ -769,7 +901,7 @@ function cambiarEstadoPersona() {
         mostrarAlerta(
           "error",
           data.message ||
-            `Error al ${activar ? "activar" : "desactivar"} la persona`
+          `Error al ${activar ? "activar" : "desactivar"} la persona`
         );
       }
     })
@@ -794,11 +926,10 @@ function verPersona() {
       let html = `
             <div class="row">
                 <div class="col-md-4 text-center">
-                    <img src="${
-                      data.profile_photo
-                        ? "view/uploads/profile/" + data.profile_photo
-                        : "view/dist/img/user-default.jpg"
-                    }" 
+                    <img src="${data.profile_photo
+          ? "view/uploads/profile/" + data.profile_photo
+          : "view/dist/img/user-default.jpg"
+        }" 
                          class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
                     <h4>${data.first_name} ${data.last_name}</h4>
                     <p class="text-muted">${data.document_number}</p>
@@ -834,9 +965,8 @@ function verPersona() {
                             <td>${data.is_minor ? "Sí" : "No"}</td>
                         </tr>
                     </table>
-                    ${
-                      data.is_minor
-                        ? `
+                    ${data.is_minor
+          ? `
                     <table class="table table-bordered">
                         <tr>
                             <th colspan="2" class="bg-light">Información del tutor</th>
@@ -851,8 +981,8 @@ function verPersona() {
                         </tr>
                     </table>
                     `
-                        : ""
-                    }
+          : ""
+        }
                 </div>
             </div>
         `;
@@ -877,7 +1007,7 @@ function verPersona() {
  */
 function abrirModalEspecialidades() {
   const personId = $(this).attr("btnId");
-  
+
   // Obtener datos de la persona para mostrar el nombre
   fetch(`api/persons/show?id=${personId}`)
     .then((response) => response.json())
@@ -887,19 +1017,21 @@ function abrirModalEspecialidades() {
         mostrarAlerta("error", "Error al cargar los datos de la persona");
         return;
       }
-      
+
       // Establecer el título del modal con el nombre de la persona
-      $("#modalEspecialidadesLabel").text(`Información Profesional de ${data.first_name} ${data.last_name}`);
-      
+      $("#modalEspecialidadesLabel").text(
+        `Información Profesional de ${data.first_name} ${data.last_name}`
+      );
+
       // Guardar el ID de la persona en un campo oculto para usarlo al guardar
       $("#especialidadesPersonId").val(data.person_id);
-      
+
       // Cargar las especialidades de la persona
       cargarEspecialidadesPersonaModal(data.person_id);
-      
+
       // Cargar datos profesionales si existen
       cargarDatosProfesionales(data.person_id);
-      
+
       // Mostrar el modal
       $("#modalEspecialidades").modal("show");
     })
@@ -908,7 +1040,6 @@ function abrirModalEspecialidades() {
       mostrarAlerta("error", "Error al cargar los datos de la persona");
     });
 }
-
 
 /**
  * Carga las especialidades asignadas a una persona en el modal de especialidades
@@ -920,8 +1051,10 @@ function cargarEspecialidadesPersonaModal(personId) {
     .then((data) => {
       if (data.status === "success" && Array.isArray(data.data)) {
         // Obtener IDs de especialidades asignadas
-        const especialidadesIds = data.data.map(esp => esp.especialidad_id.toString());
-        
+        const especialidadesIds = data.data.map((esp) =>
+          esp.especialidad_id.toString()
+        );
+
         // Seleccionar las especialidades en el select
         $("#modalPerEspecialidades").val(especialidadesIds).trigger("change");
       } else {
@@ -950,7 +1083,9 @@ function cargarDatosProfesionales(personId) {
         $("#modalPerProfesion").val(data.data.profesion || "");
         $("#modalPerDireccionCorp").val(data.data.direccion_corporativa || "");
         $("#modalPerEmailProf").val(data.data.email_profesional || "");
-        $("#modalPerDenominacionCorp").val(data.data.denominacion_corporativa || "");
+        $("#modalPerDenominacionCorp").val(
+          data.data.denominacion_corporativa || ""
+        );
         $("#modalPerRuc").val(data.data.ruc || "");
         $("#modalPerWhatsapp").val(data.data.whatsapp || "");
         $("#modalPerPlan").val(data.data.plan || "");
@@ -984,13 +1119,13 @@ function cargarDatosProfesionales(personId) {
 function guardarEspecialidadesModal() {
   const personId = $("#especialidadesPersonId").val();
   const especialidadesSeleccionadas = $("#modalPerEspecialidades").val() || [];
-  
+
   // Datos de especialidades
   const especialidadesData = {
     person_id: personId,
-    especialidades: especialidadesSeleccionadas
+    especialidades: especialidadesSeleccionadas,
   };
-  
+
   // Datos profesionales
   const profesionalData = {
     person_id: personId,
@@ -1000,9 +1135,9 @@ function guardarEspecialidadesModal() {
     denominacion_corporativa: $("#modalPerDenominacionCorp").val(),
     ruc: $("#modalPerRuc").val(),
     whatsapp: $("#modalPerWhatsapp").val(),
-    plan: $("#modalPerPlan").val()
+    plan: $("#modalPerPlan").val(),
   };
-  
+
   // Guardar especialidades
   fetch("api/especialidades/assign", {
     method: "POST",
@@ -1029,12 +1164,18 @@ function guardarEspecialidadesModal() {
     .then((response) => response.json())
     .then((data) => {
       if (data.status === "success") {
-        mostrarAlerta("success", "Información profesional guardada correctamente");
+        mostrarAlerta(
+          "success",
+          "Información profesional guardada correctamente"
+        );
         $("#modalEspecialidades").modal("hide");
         // Recargar la tabla para mostrar los cambios
         tablaPersonas.ajax.reload();
       } else {
-        mostrarAlerta("error", data.message || "Error al guardar información profesional");
+        mostrarAlerta(
+          "error",
+          data.message || "Error al guardar información profesional"
+        );
       }
     })
     .catch((error) => {
@@ -1069,7 +1210,7 @@ function subirFotoPerfil(personId, file) {
         mostrarAlerta(
           "warning",
           data.message ||
-            "La persona se guardó pero hubo un error al subir la foto"
+          "La persona se guardó pero hubo un error al subir la foto"
         );
         $("#modalAgregarPersonas").modal("hide");
         $("#modalEditarPersonas").modal("hide");
