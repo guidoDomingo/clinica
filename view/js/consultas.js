@@ -310,7 +310,7 @@ function obtenerCuota(idPersona) {
         success: function(response) {
             const cuotaValorElement = document.getElementById('cuota-valor');
             if (response && response.cuota) {
-                cuotaValorElement.textContent = '0'; //response.cuota;
+                cuotaValorElement.textContent = response.cuota;
             } else {
                 cuotaValorElement.textContent = '0';
             }
@@ -1327,7 +1327,7 @@ function subirArchivos() {
 }
 
 /**
- * Inicializa la tabla de consultas para mostrar todas las consultas
+ * Función para inicializar la tabla de consultas
  */
 function inicializarTablaConsultas() {
     console.log('Iniciando proceso de inicialización de tabla de consultas...');
@@ -1660,5 +1660,189 @@ function buscarPersonaPorId(idPersona) {
             text: 'Ocurrió un error al buscar la persona',
             confirmButtonText: 'Aceptar'
         });
+    });
+}
+
+/**
+ * Función para mostrar archivos en el formulario de consulta
+ * @param {Array} archivos - Lista de archivos a mostrar
+ */
+function mostrarArchivosEnFormulario(archivos) {
+    console.log('Mostrando archivos en formulario:', archivos);
+    
+    // Verificar que tengamos archivos para mostrar
+    if (!archivos || archivos.length === 0) {
+        console.log('No hay archivos para mostrar');
+        return;
+    }
+    
+    // Obtener el contenedor de previsualizaciones
+    const previewContainer = document.getElementById('filePreviewContainer');
+    if (!previewContainer) {
+        console.error('No se encontró el contenedor de previsualización de archivos');
+        return;
+    }
+    
+    // Limpiar el contenedor antes de agregar nuevos archivos
+    previewContainer.innerHTML = '';
+    
+    // Crear una tabla para mostrar los archivos
+    const table = document.createElement('table');
+    table.className = 'table table-sm table-bordered';
+    table.innerHTML = `
+        <thead class="thead-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Tamaño</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="archivosTableBody">
+        </tbody>
+    `;
+    
+    // Agregar la tabla al contenedor
+    previewContainer.appendChild(table);
+    const tableBody = document.getElementById('archivosTableBody');
+    
+    // Agregar cada archivo a la tabla
+    archivos.forEach(archivo => {
+        // Formatear la fecha
+        const fecha = archivo.fecha_creacion ? new Date(archivo.fecha_creacion).toLocaleDateString('es-ES') : 'N/A';
+        
+        // Determinar el ícono según el tipo de archivo
+        let iconClass = 'fas ';
+        if (archivo.tipo_archivo && archivo.tipo_archivo.includes('image')) {
+            iconClass += 'fa-image';
+        } else if (archivo.tipo_archivo && archivo.tipo_archivo.includes('pdf')) {
+            iconClass += 'fa-file-pdf';
+        } else if (archivo.tipo_archivo && (archivo.tipo_archivo.includes('word') || archivo.tipo_archivo.includes('msword'))) {
+            iconClass += 'fa-file-word';
+        } else if (archivo.tipo_archivo && (archivo.tipo_archivo.includes('excel') || archivo.tipo_archivo.includes('ms-excel'))) {
+            iconClass += 'fa-file-excel';
+        } else if (archivo.tipo_archivo && (archivo.tipo_archivo.includes('powerpoint') || archivo.tipo_archivo.includes('ms-powerpoint'))) {
+            iconClass += 'fa-file-powerpoint';
+        } else {
+            iconClass += 'fa-file';
+        }
+        
+        // Crear la fila de la tabla para este archivo
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><i class="${iconClass} mr-2"></i>${archivo.nombre_archivo || 'Sin nombre'}</td>
+            <td>${archivo.tipo_archivo || 'N/A'}</td>
+            <td>${archivo.tamano_mb ? archivo.tamano_mb + ' MB' : 'N/A'}</td>
+            <td>${fecha}</td>
+            <td>
+                <a href="${archivo.ruta_archivo}" class="btn btn-sm btn-info" target="_blank" download>
+                    <i class="fas fa-download"></i>
+                </a>
+                <button class="btn btn-sm btn-danger eliminar-archivo" data-id="${archivo.id_archivo || ''}" data-nombre="${archivo.nombre_archivo || ''}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Agregar eventos a los botones de eliminar archivo
+    document.querySelectorAll('.eliminar-archivo').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idArchivo = this.getAttribute('data-id');
+            const nombreArchivo = this.getAttribute('data-nombre');
+            
+            if (idArchivo) {
+                eliminarArchivo(idArchivo);
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No se puede eliminar',
+                    text: `No se puede eliminar el archivo "${nombreArchivo}" porque no tiene ID`,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    });
+}
+
+/**
+ * Función para eliminar un archivo
+ * @param {number} idArchivo - ID del archivo a eliminar
+ */
+function eliminarArchivo(idArchivo) {
+    // Pedir confirmación antes de eliminar
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "El archivo será eliminado permanentemente",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enviar solicitud para eliminar el archivo
+            const formData = new FormData();
+            formData.append('operacion', 'eliminarArchivo');
+            formData.append('id_archivo', idArchivo);
+            
+            $.ajax({
+                type: 'POST',
+                url: 'ajax/archivos.ajax.php',
+                data: formData,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Archivo eliminado correctamente",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        
+                        // Si hay una consulta activa, actualizar la lista de archivos
+                        const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : null;
+                        
+                        if (idConsulta) {
+                            obtenerArchivosConsulta(idConsulta, function(archivos) {
+                                if (archivos && archivos.length > 0) {
+                                    mostrarArchivosEnFormulario(archivos);
+                                } else {
+                                    // Si no hay más archivos, limpiar el contenedor
+                                    document.getElementById('filePreviewContainer').innerHTML = '';
+                                }
+                            });
+                        }
+                    } else {
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "Error al eliminar el archivo",
+                            text: response.message || "Ocurrió un error inesperado",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al eliminar archivo:", error);
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "Error al eliminar el archivo",
+                        text: error,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
+        }
     });
 }
