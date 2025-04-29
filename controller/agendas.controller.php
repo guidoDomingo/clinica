@@ -320,14 +320,14 @@ class AgendasController {
         }
         
         // Verificar si la agenda tiene citas asociadas
-        $tieneCitas = AgendasModel::mdlVerificarCitasAgenda($id);
+        //$tieneCitas = AgendasModel::mdlVerificarCitasAgenda($id);
         
-        if ($tieneCitas) {
-            return array(
-                "ok" => false,
-                "mensaje" => "No se puede eliminar la agenda porque tiene citas asociadas"
-            );
-        }
+        // if ($tieneCitas) {
+        //     return array(
+        //         "ok" => false,
+        //         "mensaje" => "No se puede eliminar la agenda porque tiene citas asociadas"
+        //     );
+        // }
         
         $respuesta = AgendasModel::mdlEliminarAgenda($id);
         

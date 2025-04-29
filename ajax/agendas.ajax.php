@@ -32,7 +32,7 @@ class AgendasAjax {
                 $horario = $agendas[$i]["hora_inicio"] . " - " . $agendas[$i]["hora_fin"];
                 
                 // Formatear estado (se puede personalizar según necesidades)
-                $estado = '<span class="badge badge-success">Activo</span>';
+                $estado = '<span class="badge badge-success">'.$agendas[$i]["estado"].'</span>';
                 
                 // Formatear detalle
                 $detalle = '<strong>Días:</strong> ' . $diasSemana . '<br>' . 
@@ -173,7 +173,8 @@ class AgendasAjax {
             "hora_fin" => $_POST["hora_fin"],
             "duracion_turno" => $_POST["duracion_turno"],
             "consultorio_id" => $_POST["consultorio_id"],
-            "estado" => $_POST["estado"]
+            "estado" => $_POST["estado"],
+            "turno_id" => $_POST["turno_id"]
         );
         
         $respuesta = AgendasController::ctrActualizarAgenda($datos);

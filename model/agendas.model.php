@@ -17,7 +17,9 @@ class AgendasModel {
                     a.dia_semana, a.hora_inicio, a.hora_fin, 
                     CONCAT(p.first_name, ' ', p.last_name) as medico_nombre, 
                     o.office_name as consultorio_nombre,
-                    s.shift_name as turno_nombre
+                    s.shift_name as turno_nombre,
+                    a.intervalo,
+                    a.estado
              FROM sch_medical_hs a 
              INNER JOIN rh_doctors d ON a.doctor_id = d.doctor_id
              INNER JOIN rh_person p ON d.person_id = p.person_id 
@@ -92,6 +94,8 @@ class AgendasModel {
     public static function mdlVerificarAgendaExistente($datos, $esActualizacion = false) {
         try {
             $conexion = Conexion::conectar();
+
+            error_log("Datos recibidos: ". print_r($datos, true), 3, "c:/laragon/www/clinica/logs/database.log");
             
             // Verificar si la conexión fue exitosa
             if ($conexion === null) {
@@ -102,7 +106,7 @@ class AgendasModel {
             $condicion = "";
             
             if ($esActualizacion) {
-                $condicion = " AND id != :id";
+                $condicion = " AND id_sch_medical != :id";
             }
             
             $stmt = $conexion->prepare(
@@ -154,8 +158,8 @@ class AgendasModel {
             
             $stmt = $conexion->prepare(
                 "INSERT INTO sch_medical_hs
-                    (doctor_id, office_id, shift_id, dia_semana, hora_inicio, hora_fin) 
-                 VALUES (:doctor_id, :office_id, :shift_id, :dia_semana, :hora_inicio, :hora_fin)"
+                    (doctor_id, office_id, shift_id, dia_semana, hora_inicio, hora_fin, intervalo, estado) 
+                 VALUES (:doctor_id, :office_id, :shift_id, :dia_semana, :hora_inicio, :hora_fin, :intervalo, :estado)"
             );
             
             $stmt->bindParam(":doctor_id", $datos["medico_id"], PDO::PARAM_INT);
@@ -164,6 +168,9 @@ class AgendasModel {
             $stmt->bindParam(":dia_semana", $datos["dias"], PDO::PARAM_STR);
             $stmt->bindParam(":hora_inicio", $datos["hora_inicio"], PDO::PARAM_STR);
             $stmt->bindParam(":hora_fin", $datos["hora_fin"], PDO::PARAM_STR);
+            $stmt->bindParam(":intervalo", $datos["duracion_turno"], PDO::PARAM_INT);
+            $stmt->bindValue(":estado", $datos["estado"], PDO::PARAM_STR);
+           
             
             if ($stmt->execute()) {
                 return "ok";
@@ -200,7 +207,9 @@ class AgendasModel {
                      shift_id = :shift_id, 
                      dia_semana = :dia_semana, 
                      hora_inicio = :hora_inicio, 
-                     hora_fin = :hora_fin 
+                     hora_fin = :hora_fin,
+                     intervalo = :intervalo,    
+                     estado = :estado
                  WHERE id_sch_medical = :id"
             );
             
@@ -208,9 +217,11 @@ class AgendasModel {
             $stmt->bindParam(":doctor_id", $datos["medico_id"], PDO::PARAM_INT);
             $stmt->bindParam(":office_id", $datos["consultorio_id"], PDO::PARAM_INT);
             $stmt->bindParam(":shift_id", $datos["turno_id"], PDO::PARAM_INT);
-            $stmt->bindParam(":dia_semana", $datos["dia_semana"], PDO::PARAM_STR);
+            $stmt->bindParam(":dia_semana", $datos["dias"], PDO::PARAM_STR);
             $stmt->bindParam(":hora_inicio", $datos["hora_inicio"], PDO::PARAM_STR);
             $stmt->bindParam(":hora_fin", $datos["hora_fin"], PDO::PARAM_STR);
+            $stmt->bindParam(":intervalo", $datos["duracion_turno"], PDO::PARAM_INT);
+            $stmt->bindValue(":estado", $datos["estado"], PDO::PARAM_STR);
             
             if ($stmt->execute()) {
                 return "ok";
@@ -293,7 +304,9 @@ class AgendasModel {
                     d.doctor_id as medico_id, o.office_id as consultorio_id, s.shift_id as turno_id,
                     CONCAT(p.first_name, ' ', p.last_name) as medico_nombre,
                     o.office_name as consultorio_nombre,
-                    s.shift_name as turno_nombre
+                    s.shift_name as turno_nombre,
+                    a.intervalo,
+                    a.estado
              FROM sch_medical_hs a
              INNER JOIN rh_doctors d ON a.doctor_id = d.doctor_id
              INNER JOIN rh_person p ON d.person_id = p.person_id

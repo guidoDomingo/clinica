@@ -502,13 +502,15 @@ function editarAgenda(idAgenda) {
         success: function(respuesta) {
             if (respuesta.ok) {
                 var agenda = respuesta.datos;
+
+                console.log("Datos de la agenda a editar:", agenda);
                 
                 // Llenar formulario con datos
                 $("#idAgenda").val(agenda.id);
                 $("#medicoAgenda").val(agenda.medico_id).trigger('change');
                 
                 // Marcar días seleccionados
-                var dias = agenda.dias.split(',');
+                var dias = agenda.dia_semana.split(',');
                 $("input[name='dia_semana']").prop('checked', false);
                 dias.forEach(function(dia) {
                     $("input[name='dia_semana'][value='" + dia + "']").prop('checked', true);
@@ -516,9 +518,12 @@ function editarAgenda(idAgenda) {
                 
                 $("#horaInicio").val(agenda.hora_inicio);
                 $("#horaFin").val(agenda.hora_fin);
-                $("#intervaloAgenda").val(agenda.duracion_turno);
-                $("#consultorioAgenda").val(agenda.consultorio_id).trigger('change');
+                $("#intervaloAgenda").val(agenda.intervalo).trigger('change');
+                $("#salaAgenda").val(agenda.consultorio_id || agenda.sala_id).trigger('change');
+                $("#turnoAgenda").val(agenda.turno_id).trigger('change');
                 $("#estadoAgenda").val(agenda.estado);
+                
+                console.log("Campos actualizados: Sala=", agenda.consultorio_id, "Turno=", agenda.turno_id, "Intervalo=", agenda.duracion_turno, "Estado=", agenda.estado);
                 
                 // Desplazarse al formulario
                 $('html, body').animate({

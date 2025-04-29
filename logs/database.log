@@ -1,15 +1,4 @@
-Datos recibidos: Array
-(
-    [medico_id] => 7
-    [dias] => 1,2,3
-    [hora_inicio] => 00:25
-    [hora_fin] => 07:26
-    [duracion_turno] => 30
-    [consultorio_id] => 5
-    [estado] => Activo
-    [turno_id] => 3
-)
-[2025-04-28 21:44:27] [INFO] [Model.php:175]
+[2025-04-28 23:05:43] [INFO] [Model.php:175]
 SQL: SELECT p.*, 
                        array_agg(DISTINCT r.role_id) as role_ids,
                        array_agg(DISTINCT r.role_name) as role_names
@@ -19,37 +8,7 @@ SQL: SELECT p.*,
                 GROUP BY p.perm_id, p.perm_name, p.perm_description
                 ORDER BY p.perm_id
 ----------------------------------------
-[2025-04-28 21:52:07] [INFO] [Model.php:175]
-SQL: SELECT p.*, 
-                       array_agg(DISTINCT r.role_id) as role_ids,
-                       array_agg(DISTINCT r.role_name) as role_names
-                FROM sys_permissions p
-                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
-                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
-                GROUP BY p.perm_id, p.perm_name, p.perm_description
-                ORDER BY p.perm_id
-----------------------------------------
-[2025-04-28 21:59:09] [INFO] [Model.php:175]
-SQL: SELECT p.*, 
-                       array_agg(DISTINCT r.role_id) as role_ids,
-                       array_agg(DISTINCT r.role_name) as role_names
-                FROM sys_permissions p
-                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
-                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
-                GROUP BY p.perm_id, p.perm_name, p.perm_description
-                ORDER BY p.perm_id
-----------------------------------------
-[2025-04-28 21:59:16] [INFO] [Model.php:175]
-SQL: SELECT p.*, 
-                       array_agg(DISTINCT r.role_id) as role_ids,
-                       array_agg(DISTINCT r.role_name) as role_names
-                FROM sys_permissions p
-                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
-                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
-                GROUP BY p.perm_id, p.perm_name, p.perm_description
-                ORDER BY p.perm_id
-----------------------------------------
-[2025-04-28 22:07:11] [INFO] [Model.php:175]
+[2025-04-28 23:08:15] [INFO] [Model.php:175]
 SQL: SELECT p.*, 
                        array_agg(DISTINCT r.role_id) as role_ids,
                        array_agg(DISTINCT r.role_name) as role_names
@@ -61,12 +20,89 @@ SQL: SELECT p.*,
 ----------------------------------------
 Datos recibidos: Array
 (
+    [id] => 21
     [medico_id] => 7
     [dias] => 4,5
-    [hora_inicio] => 13:00
-    [hora_fin] => 19:30
+    [hora_inicio] => 13:00:00
+    [hora_fin] => 19:30:00
+    [duracion_turno] => 60
+    [consultorio_id] => 6
+    [estado] => Vacaciones
+    [turno_id] => 4
+)
+[2025-04-28 23:11:07] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-28 23:12:50] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+Datos recibidos: Array
+(
+    [id] => 21
+    [medico_id] => 7
+    [dias] => 4,5
+    [hora_inicio] => 13:00:00
+    [hora_fin] => 19:30:00
     [duracion_turno] => 60
     [consultorio_id] => 6
     [estado] => Activo
     [turno_id] => 4
 )
+[2025-04-28 23:17:43] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-04-28 23:17:43] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
+[2025-04-28 23:17:44] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-04-28 23:17:44] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-04-28 23:17:55] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "41"
+}
+----------------------------------------
+[2025-04-28 23:17:55] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "41"
+}
+----------------------------------------
+[2025-04-28 23:17:55] [INFO] [Model.php:175]
+SQL: SELECT e.* FROM especialidades e INNER JOIN persona_especialidad pe ON e.especialidad_id = pe.especialidad_id WHERE pe.persona_id = :persona_id AND e.activo = true
+Parameters: {
+    "persona_id": "41"
+}
+----------------------------------------
