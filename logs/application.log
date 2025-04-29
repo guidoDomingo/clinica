@@ -1,0 +1,85 @@
+[2025-04-29 11:38:48] [INFO] [user.controller.php:21] user: ronal@ronal.com
+Data: ronal@ronal.com
+----------------------------------------
+[2025-04-29 11:38:48] [INFO] [user.controller.php:22] user: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+Data: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+----------------------------------------
+[2025-04-29 11:38:48] [INFO] [user.controller.php:33] Login attempt for user: ronal@ronal.com
+Data: {
+    "user_id": 5,
+    "reg_id": 5,
+    "user_email": "ronal@ronal.com",
+    "user_pass": "$2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\\\/UNdHCW",
+    "user_expire": "2025-05-05 14:51:04.340773",
+    "user_first_login": null,
+    "user_last_login": "2025-04-27 09:14:17.055802",
+    "user_is_active": true,
+    "profile_photo": "user_5_1743885959.jpg",
+    "reg_name": "ronal",
+    "reg_lastname": "ruiz"
+}
+----------------------------------------
+[2025-04-29 07:40:03] [INFO] [SysRegisterController.php:84] New registration attempt
+Data: {
+    "reg_document": "777888",
+    "reg_name": "carlos",
+    "reg_lastname": "ruiz",
+    "reg_email": "carlos@carlos.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1996-08-02",
+    "reg_activation": "pending"
+}
+----------------------------------------
+[2025-04-29 07:40:03] [INFO] [SysRegisterController.php:119] New registration attempt
+Data: {
+    "reg_document": "777888",
+    "reg_name": "carlos",
+    "reg_lastname": "ruiz",
+    "reg_email": "carlos@carlos.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1996-08-02",
+    "reg_activation": "6cd3c4fff0d0b546fba6cc6a6e029bba"
+}
+----------------------------------------
+[2025-04-29 11:41:43] [INFO] [user.controller.php:21] user: carlos@carlos.com.py
+Data: carlos@carlos.com.py
+----------------------------------------
+[2025-04-29 11:41:43] [INFO] [user.controller.php:22] user: adc52ab7517186c5da5499b655bab3b4
+Data: adc52ab7517186c5da5499b655bab3b4
+----------------------------------------
+[2025-04-29 11:41:43] [INFO] [user.controller.php:33] Login attempt for user: carlos@carlos.com.py
+Data: {
+    "user_id": 4,
+    "reg_id": 4,
+    "user_email": "carlos@carlos.com.py",
+    "user_pass": "adc52ab7517186c5da5499b655bab3b4",
+    "user_expire": "2025-05-02 22:17:22.102525",
+    "user_first_login": null,
+    "user_last_login": "2025-04-05 14:44:41.132603",
+    "user_is_active": true,
+    "profile_photo": null,
+    "reg_name": "carlos",
+    "reg_lastname": "andres"
+}
+----------------------------------------
+[2025-04-29 11:43:09] [INFO] [user.controller.php:21] user: carlos@carlos.com
+Data: carlos@carlos.com
+----------------------------------------
+[2025-04-29 11:43:09] [INFO] [user.controller.php:22] user: c253417c750cb0584c7aed857eab548b
+Data: c253417c750cb0584c7aed857eab548b
+----------------------------------------
+[2025-04-29 11:43:09] [INFO] [user.controller.php:33] Login attempt for user: carlos@carlos.com
+Data: {
+    "user_id": 6,
+    "reg_id": 6,
+    "user_email": "carlos@carlos.com",
+    "user_pass": "c253417c750cb0584c7aed857eab548b",
+    "user_expire": "2025-05-29 07:40:03.676343",
+    "user_first_login": null,
+    "user_last_login": null,
+    "user_is_active": true,
+    "profile_photo": null,
+    "reg_name": "carlos",
+    "reg_lastname": "ruiz"
+}
+----------------------------------------

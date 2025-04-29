@@ -1,48 +1,48 @@
 <div class="login-box">
-  <!-- /.login-logo -->
-  <div class="card card-outline card-primary">
-    <div class="card-header text-center">
-      <a href="start" class="h1"><b>ThnPy</b>Solution</a>
-      <div class="logo-container">
-        <img src="view/img/thnlogo.jpg" alt="Logo de la empresa">
-      </div>
-    </div>
-    <div class="card-body">
-      <p class="login-box-msg">Iniciar sesión</p>
+    <!-- /.login-logo -->
+    <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+            <a href="start" class="h1"><b>Mi clinica</b>Solution</a>
+            <div class="logo-container">
+                <img src="view/img/thnlogo.jpg" alt="Logo de la empresa">
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="login-box-msg">Iniciar sesión</p>
 
-      <form action="" method="post">
-        <div class="input-group mb-3">
-          <input type="tel" class="form-control" name="usuario" placeholder="Usuario" required>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
-        </div>
-        <div class="input-group mb-3">
-          <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-         
-       
-          <!-- /.col -->
-          <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
-          </div>
-          <!-- /.col -->
-        </div>
-        <?php 
+            <form action="" method="post">
+                <div class="input-group mb-3">
+                    <input type="tel" class="form-control" name="usuario" placeholder="Usuario" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+
+                    <!-- /.col -->
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <?php 
            $login = new ControllerUser();
            $login -> ctrLoginUser();
          ?>
-      </form>
+            </form>
+        </div>
+        <!-- /.card-body -->
     </div>
-    <!-- /.card-body -->
-  </div>
-  <!-- /.card -->
+    <!-- /.card -->
 </div>
