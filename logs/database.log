@@ -1,0 +1,10 @@
+[2025-04-29 07:32:01] [INFO] [Model.php:175]
+SQL: SELECT p.*, 
+                       array_agg(DISTINCT r.role_id) as role_ids,
+                       array_agg(DISTINCT r.role_name) as role_names
+                FROM sys_permissions p
+                LEFT JOIN sys_role_permissions rp ON p.perm_id = rp.perm_id
+                LEFT JOIN sys_roles r ON rp.role_id = r.role_id
+                GROUP BY p.perm_id, p.perm_name, p.perm_description
+                ORDER BY p.perm_id
+----------------------------------------
