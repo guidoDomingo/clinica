@@ -1,0 +1,7 @@
+Error en agendas.ajax.php: SQLSTATE[42703]: Undefined column: 7 ERROR:  column a.medico_id does not exist
+LINE 6:              INNER JOIN rh_person p ON a.medico_id = p.perso...
+                                               ^Error en agendas.ajax.php: SQLSTATE[42703]: Undefined column: 7 ERROR:  column a.medico_id does not exist
+LINE 6:              INNER JOIN rh_person p ON a.medico_id = p.perso...
+                                               ^Error en agendas.ajax.php: SQLSTATE[42703]: Undefined column: 7 ERROR:  column "agenda_id" does not exist
+LINE 3:              WHERE agenda_id = $1
+                           ^

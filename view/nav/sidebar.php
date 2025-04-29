@@ -61,6 +61,12 @@
                         <p>Preformatos</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=agendas" class="nav-link">
+                        <i class="nav-icon fas fa-calendar-check"></i>
+                        <p>Agendas</p>
+                    </a>
+                </li>
                 <li class="nav-header">CONFIGURACIÓN</li>
                 <li class="nav-item">
                     <a href="index.php?ruta=roles" class="nav-link">

@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="view/css/consultas.css">
     <!-- Toastr -->
     <link rel="stylesheet" href="view/plugins/toastr/toastr.min.css">
+    <!-- Tempus Dominus Bootstrap 4 (DateTimePicker) -->
+    <link rel="stylesheet" href="view/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 
     <!-- jQuery -->
     <script src="view/plugins/jquery/jquery.min.js"></script>
@@ -64,6 +66,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Toastr -->
     <script src="view/plugins/toastr/toastr.min.js"></script>
+    <!-- Moment.js -->
+    <script src="view/plugins/moment/moment.min.js"></script>
+    <!-- Tempus Dominus Bootstrap 4 (DateTimePicker) -->
+    <script src="view/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 </head>
 
 <?php 
@@ -76,7 +82,7 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
     
     // Manejo de páginas con inicio de sesión
     if(isset($_GET["ruta"])){
-        if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout"|| $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas" || $_GET["ruta"] == "roles" || $_GET["ruta"] == "perfil" || $_GET["ruta"] == "rhpersonas" || $_GET["ruta"] == "preformatos") {
+        if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout"|| $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas" || $_GET["ruta"] == "roles" || $_GET["ruta"] == "perfil" || $_GET["ruta"] == "rhpersonas" || $_GET["ruta"] == "preformatos" || $_GET["ruta"] == "agendas") {
             include "modules/".$_GET["ruta"].".php";
         } else {
             include "view/modules/404.php";
@@ -136,6 +142,9 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
 <script src="view/js/personas.js"></script>
 <!-- Roles -->
 <script src="view/js/roles.js"></script>
+
+<!-- Agendas -->
+<script src="view/js/agendas.js"></script>
 
 <!-- Cargar datos (preformatos y motivos) -->
 <script src="view/js/cargar_datos.js"></script>

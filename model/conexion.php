@@ -19,10 +19,17 @@ class Conexion{
                           "\nLine: " . $e->getLine() . 
                           "\nTrace: " . $e->getTraceAsString();
             
-            error_log($errorMessage, 3, "c:/laragon/www/clinica/logs/database.log");
+            // Asegurar que exista el directorio de logs
+            $logDir = "c:/laragon/www/clinica/logs";
+            if (!file_exists($logDir)) {
+                mkdir($logDir, 0777, true);
+            }
             
-            // You can customize the user-facing error message
-            throw new Exception("Database connection error. Please try again later.");
+            error_log($errorMessage, 3, "$logDir/database.log");
+            
+            // En lugar de lanzar una excepción que podría generar HTML,
+            // devolvemos null y manejamos el error en el modelo
+            return null;
         }
     }
 }
