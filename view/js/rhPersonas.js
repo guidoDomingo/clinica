@@ -38,6 +38,12 @@ $(document).ready(function () {
     dropdownParent: $("#modalEspecialidades"),
   });
 
+  $("#validarDocumento, #validarNombre, #validarApellidos, #validarFicha, #validarSexo").on("keydown", function(e) {
+    if (e.key === "Enter" || e.keyCode === 13) {
+      filtrarPersonas();
+    }
+  });
+
   // Configurar eventos de botones usando jQuery
   $("#btnFiltrarPersonas").on("click", filtrarPersonas);
   $("#btnLimpiarPersonas").on("click", limpiarFiltros);
@@ -637,6 +643,10 @@ function editarPersona() {
       document.getElementById("EditperAdrress").value = data.address;
       document.getElementById("EditperEmail").value = data.email;
       document.getElementById("EditperDpto").value = data.department_id || "0";
+
+      const select = document.getElementById("EditperDpto");
+      select.value = data.department_id ? data.department_id : "0";
+      select.dispatchEvent(new Event("change"));
 
       // Cargar ciudades correspondientes al departamento seleccionado
       if (data.department_id) {

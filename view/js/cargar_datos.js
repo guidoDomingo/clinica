@@ -191,6 +191,7 @@ function cargarPreformatosConsulta() {
                     option.setAttribute('data-contenido', preformato.contenido);
                     selectFormatoConsulta.appendChild(option);
                 });
+
                 console.log('Preformatos de consulta agregados al selector');
             } else {
                 console.log('No se encontraron preformatos de consulta o hubo un error:', response);
