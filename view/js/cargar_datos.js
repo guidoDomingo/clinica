@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar si estamos en la página de consultas
     if (window.location.href.includes('consultas') || document.getElementById('motivoscomunes')) {
         console.log('En página de consultas, cargando datos...');
+
+        // Limpiar todas las instancias de Select2 para evitar duplicados
+        $('.select2-container').remove();
+        $('select.select2-hidden-accessible').select2('destroy').removeClass('select2-hidden-accessible');
+        $('select').each(function() {
+            if ($(this).data('select2')) {
+                $(this).select2('destroy');
+            }
+        });
         
         // Cargar los motivos comunes y preformatos
         cargarMotivosComunes();
@@ -137,6 +146,28 @@ function cargarMotivosComunes() {
                     selectMotivosComunes.appendChild(option);
                 });
                 console.log('Motivos comunes agregados al selector');
+                
+                // Inicializar Select2 si está disponible
+                if ($.fn.select2) {
+                    // Eliminar cualquier contenedor Select2 existente para este elemento
+                    $('.select2-container--bootstrap4[aria-labelledby="select2-motivoscomunes-container"]').remove();
+                    
+                    // Destruir la instancia anterior de Select2 si existe
+                    if ($('#motivoscomunes').data('select2')) {
+                        $('#motivoscomunes').select2('destroy');
+                    }
+                    
+                    // Asegurarse de que no tenga clases residuales de Select2
+                    $('#motivoscomunes').removeClass('select2-hidden-accessible');
+                    
+                    // Reinicializar Select2
+                    $('#motivoscomunes').select2({
+                        theme: 'bootstrap4',
+                        width: 'resolve',
+                        dropdownParent: $('#motivoscomunes').parent()
+                    });
+                    $('#motivoscomunes').trigger('change');
+                }
             } else {
                 console.log('No se encontraron motivos comunes o hubo un error:', response);
             }
@@ -193,6 +224,28 @@ function cargarPreformatosConsulta() {
                 });
 
                 console.log('Preformatos de consulta agregados al selector');
+
+                // Actualizar Select2 después de agregar las opciones
+                if ($.fn.select2) {
+                    // Eliminar cualquier contenedor Select2 existente para este elemento
+                    $('.select2-container--bootstrap4[aria-labelledby="select2-formatoConsulta-container"]').remove();
+                    
+                    // Destruir la instancia anterior de Select2 si existe
+                    if ($('#formatoConsulta').data('select2')) {
+                        $('#formatoConsulta').select2('destroy');
+                    }
+                    
+                    // Asegurarse de que no tenga clases residuales de Select2
+                    $('#formatoConsulta').removeClass('select2-hidden-accessible');
+                    
+                    // Reinicializar Select2
+                    $('#formatoConsulta').select2({
+                        theme: 'bootstrap4',
+                        width: 'resolve',
+                        dropdownParent: $('#formatoConsulta').parent()
+                    });
+                    $('#formatoConsulta').trigger('change');
+                }
             } else {
                 console.log('No se encontraron preformatos de consulta o hubo un error:', response);
             }
@@ -250,28 +303,49 @@ function cargarPreformatosReceta() {
                 });
                 console.log('Preformatos de receta agregados al selector');
                 
-                // Verificar si tiene ya un evento change y si no, agregarlo
-                if (!selectFormatoReceta.hasAttribute('data-event-attached')) {
-                    console.log('Agregando evento change al selector de preformatos de receta');
+                // Inicializar Select2 si está disponible
+                if ($.fn.select2) {
+                    // Eliminar cualquier contenedor Select2 existente para este elemento
+                    $('.select2-container--bootstrap4[aria-labelledby="select2-formatoreceta-container"]').remove();
                     
-                    selectFormatoReceta.addEventListener('change', function() {
-                        console.log('Selector de preformato de receta cambiado:', this.value);
-                        
-                        if (this.value !== 'Seleccionar') {
-                            const selectedOption = this.options[this.selectedIndex];
-                            const contenido = selectedOption.getAttribute('data-contenido');
-                            console.log('Preformato seleccionado:', selectedOption.text);
-                            console.log('Contenido del preformato:', contenido);
-                            
-                            // Aplicar el preformato al textarea de receta
-                            aplicarPreformato('receta', this.value);
-                        }
+                    // Destruir la instancia anterior de Select2 si existe
+                    if ($('#formatoreceta').data('select2')) {
+                        $('#formatoreceta').select2('destroy');
+                    }
+                    
+                    // Asegurarse de que no tenga clases residuales de Select2
+                    $('#formatoreceta').removeClass('select2-hidden-accessible');
+                    
+                    // Reinicializar Select2
+                    $('#formatoreceta').select2({
+                        theme: 'bootstrap4',
+                        width: 'resolve',
+                        dropdownParent: $('#formatoreceta').parent()
                     });
-                    
-                    // Marcar que ya tiene el evento adjunto
-                    selectFormatoReceta.setAttribute('data-event-attached', 'true');
-                    console.log('Evento change agregado correctamente al selector de preformatos de receta');
+                    $('#formatoreceta').trigger('change');
                 }
+                
+                // Eliminar eventos anteriores para evitar duplicación
+                if (selectFormatoReceta._eventAttached) {
+                    selectFormatoReceta.removeEventListener('change', selectFormatoReceta._changeHandler);
+                }
+                
+                // Definir el manejador de eventos
+                selectFormatoReceta._changeHandler = function() {
+                    console.log('Selector de preformato de receta cambiado:', this.value);
+                    
+                    if (this.value !== 'Seleccionar') {
+                        // Aplicar el preformato al textarea de receta
+                        aplicarPreformato('receta', this.value);
+                    }
+                };
+                
+                // Agregar el nuevo evento
+                selectFormatoReceta.addEventListener('change', selectFormatoReceta._changeHandler);
+                
+                // Marcar que ya tiene el evento adjunto
+                selectFormatoReceta._eventAttached = true;
+                console.log('Evento change agregado correctamente al selector de preformatos de receta');
             } else {
                 console.log('No se encontraron preformatos de receta o hubo un error:', response);
             }
