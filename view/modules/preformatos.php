@@ -1,4 +1,17 @@
 <div class="content-wrapper">
+    <!-- Añadir script para obtener el ID del usuario logueado al inicio de la página -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener el ID del usuario logueado de la sesión PHP
+            const usuarioId = '<?php echo isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : ""; ?>';
+            
+            // Asignar el ID del usuario como atributo de datos al body para acceso desde JavaScript
+            document.body.setAttribute('data-user-id', usuarioId);
+            
+            console.log('ID de usuario logueado:', usuarioId);
+        });
+    </script>
+    
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">

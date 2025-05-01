@@ -133,6 +133,80 @@ class PreformatosAjax {
             ]);
         }
     }
+    
+    /**
+     * Obtiene los datos de un doctor por su ID de usuario
+     * @param int $userId ID del usuario
+     */
+    public function ajaxGetDoctorByUserId($userId) {
+        try {
+            // Registrar la operación para depuración
+            error_log("Buscando doctor para el usuario ID: " . $userId);
+            
+            // Conectar a la base de datos
+            $db = Conexion::conectar();
+            
+            // Consultar los datos utilizando las relaciones más directas
+            $stmt = $db->prepare(
+                "SELECT 
+                    d.doctor_id,
+                    d.person_id,
+                    rp.first_name,
+                    rp.last_name,
+                    b.business_name,
+                    b.business_id,
+                    CONCAT(rp.last_name, ', ', rp.first_name) as nombre_completo
+                FROM person_system_user psu 
+                JOIN rh_person rp ON psu.person_id = rp.person_id
+                JOIN rh_doctors d ON rp.person_id = d.person_id
+                LEFT JOIN sys_business b ON d.business_id = b.business_id
+                WHERE psu.system_user_id = :user_id
+                LIMIT 1"
+            );
+            
+            $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($resultado) {
+                // Si se encontró el doctor, devolver sus datos
+                error_log("Doctor encontrado para usuario ID " . $userId . ": " . json_encode($resultado));
+                echo json_encode([
+                    'status' => 'success',
+                    'data' => $resultado
+                ]);
+            } else {
+                // Si no se encontró, intentar obtener directamente por id del doctor si el usuario es un doctor
+                $stmt = $db->prepare("SELECT doctor_id FROM rh_doctors WHERE doctor_id = :user_id LIMIT 1");
+                $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
+                $stmt->execute();
+                $doctorDirecto = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($doctorDirecto) {
+                    error_log("Doctor encontrado directamente con ID " . $userId);
+                    echo json_encode([
+                        'status' => 'success',
+                        'data' => [
+                            'doctor_id' => $doctorDirecto['doctor_id'],
+                            'nombre_completo' => 'Doctor ID: ' . $doctorDirecto['doctor_id']
+                        ]
+                    ]);
+                } else {
+                    error_log("No se encontró doctor para el usuario ID: " . $userId);
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'No se encontró un doctor asociado a este usuario'
+                    ]);
+                }
+            }
+        } catch (PDOException $e) {
+            error_log("Error al buscar doctor por ID de usuario: " . $e->getMessage());
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al consultar los datos del doctor: ' . $e->getMessage()
+            ]);
+        }
+    }
 }
 
 // Procesar solicitudes AJAX
@@ -173,8 +247,16 @@ if (isset($_POST['operacion'])) {
             break;
             
         case 'getAllPreformatos':
+            // Obtener el usuario_id del request si está disponible
             $filtros = isset($_POST['filtros']) ? $_POST['filtros'] : [];
-            error_log("Filtros recibidos: " . json_encode($filtros));
+            
+            // Si se envió directamente el usuario_id, añadirlo a los filtros
+            if (isset($_POST['usuario_id']) && !empty($_POST['usuario_id'])) {
+                $filtros['creado_por'] = $_POST['usuario_id'];
+                error_log("Filtrando preformatos por usuario_id: " . $_POST['usuario_id']);
+            }
+            
+            error_log("Filtros aplicados: " . json_encode($filtros));
             $preformatos->ajaxGetAllPreformatos($filtros);
             break;
             
@@ -212,6 +294,17 @@ if (isset($_POST['operacion'])) {
         case 'eliminarPreformato':
             if (isset($_POST['id_preformato'])) {
                 $preformatos->ajaxEliminarPreformato($_POST['id_preformato']);
+            }
+            break;
+            
+        case 'getDoctorByUserId':
+            if (isset($_POST['user_id'])) {
+                $preformatos->ajaxGetDoctorByUserId($_POST['user_id']);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ID de usuario no especificado'
+                ]);
             }
             break;
             

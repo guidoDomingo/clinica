@@ -49,11 +49,15 @@ class ControllerPreformatos {
      * @return array Arreglo con los preformatos filtrados
      */
     public static function ctrGetAllPreformatos($filtros = []) {
+        // Si hay filtro de usuario (creado_por), extraerlo para pasarlo a la función específica
+        $usuarioId = !empty($filtros['creado_por']) ? $filtros['creado_por'] : null;
+        
         // Si hay filtros, usamos el método con filtros, sino el ordenado simple
-        if (!empty($filtros)) {
+        if (!empty($filtros) && (isset($filtros['tipo']) || isset($filtros['titulo']))) {
             return ModelPreformatos::mdlGetAllPreformatos($filtros);
         } else {
-            return ModelPreformatos::mdlGetAllPreformatosOrdered();
+            // Pasamos el ID del usuario para filtrar, incluso cuando no hay otros filtros
+            return ModelPreformatos::mdlGetAllPreformatosOrdered($usuarioId);
         }
     }
     

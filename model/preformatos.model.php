@@ -64,9 +64,9 @@ class ModelPreformatos {
                 $parametros[':tipo'] = $filtros['tipo'];
             }
             
-            if (!empty($filtros['propietario'])) {
-                $condiciones[] = "p.creado_por = :propietario";
-                $parametros[':propietario'] = $filtros['propietario'];
+            if (!empty($filtros['creado_por'])) {
+                $condiciones[] = "p.creado_por = :creado_por";
+                $parametros[':creado_por'] = $filtros['creado_por'];
             }
             
             if (!empty($filtros['titulo'])) {
@@ -76,13 +76,27 @@ class ModelPreformatos {
             
             $condicionesSQL = implode(" AND ", $condiciones);
             
-            $sql = "SELECT p.id_preformato, p.nombre, p.tipo, p.contenido, p.fecha_creacion, 
-                           p.creado_por, COALESCE(r.reg_name || ' ' || r.reg_lastname, 'Sistema') as nombre_propietario
-                    FROM preformatos p
-                    LEFT JOIN sys_users u ON p.creado_por = u.user_id
-                    LEFT JOIN sys_register r ON u.reg_id = r.reg_id
-                    WHERE $condicionesSQL
-                    ORDER BY p.nombre ASC";
+            $sql = "SELECT 
+                    p.id_preformato,
+                    p.nombre,
+                    p.tipo,
+                    p.contenido,
+                    p.fecha_creacion,
+                    p.creado_por,
+                    rp.first_name,
+                    rp.last_name,
+                    d.doctor_id,
+                    b.business_name
+                FROM 
+                    preformatos p
+                LEFT JOIN rh_doctors d ON p.creado_por = d.doctor_id
+                LEFT JOIN rh_person rp ON d.person_id = rp.person_id
+                LEFT JOIN sys_business b ON d.business_id = b.business_id
+                WHERE $condicionesSQL
+                ORDER BY p.nombre ASC";
+            
+            error_log("SQL getAllPreformatos: " . $sql);
+            error_log("Parámetros: " . json_encode($parametros));
             
             $stmt = Conexion::conectar()->prepare($sql);
             
@@ -93,8 +107,30 @@ class ModelPreformatos {
             }
             
             $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $resultado;
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Agregar el nombre completo del doctor para cada preformato
+            $formateados = [];
+            foreach ($resultados as $preformato) {
+                // Agregar el nombre completo del doctor
+                if (!empty($preformato['first_name']) && !empty($preformato['last_name'])) {
+                    $nombreDoctor = $preformato['last_name'] . ', ' . $preformato['first_name'];
+                    
+                    // Agregar el nombre del consultorio/empresa si existe
+                    if (!empty($preformato['business_name'])) {
+                        $nombreDoctor .= ' (' . $preformato['business_name'] . ')';
+                    }
+                    
+                    $preformato['nombre_propietario'] = $nombreDoctor;
+                } else {
+                    // Si no hay información de doctor, usar ID de doctor
+                    $preformato['nombre_propietario'] = 'Doctor ID: ' . $preformato['creado_por'];
+                }
+                
+                $formateados[] = $preformato;
+            }
+            
+            return $formateados;
         } catch (PDOException $e) {
             error_log("Error al obtener preformatos con filtros: " . $e->getMessage());
             return [];
@@ -103,31 +139,82 @@ class ModelPreformatos {
     
     /**
      * Obtiene todos los preformatos ordenados por nombre
+     * @param int $userId ID del usuario logueado para filtrar los preformatos (opcional)
      * @return array Arreglo con los preformatos
      */
-    public static function mdlGetAllPreformatosOrdered() {
+    public static function mdlGetAllPreformatosOrdered($userId = null) {
         try {
-            $stmt = Conexion::conectar()->prepare(
-                "SELECT
-                    p.id_preformato,
-                    p.nombre,
-                    p.tipo,
-                    p.contenido,
-                    p.fecha_creacion,
-                    p.creado_por
-                FROM
-                    preformatos p
-                LEFT JOIN sys_users u ON
-                    p.creado_por = u.user_id 
-                WHERE
-                    p.activo = true
-                ORDER BY
-                    p.nombre ASC"
-            );
+            // Si se proporciona un ID de usuario, usar la consulta con joins adecuados para obtener preformatos por usuario
+            if ($userId) {
+                $sql = "SELECT 
+                        p.*,
+                        rp.first_name,
+                        rp.last_name,
+                        d.doctor_id,
+                        b.business_name
+                    FROM person_system_user psu 
+                    INNER JOIN rh_doctors d 
+                    ON psu.person_id = d.person_id 
+                    INNER JOIN preformatos p 
+                    ON p.creado_por = d.doctor_id 
+                    LEFT JOIN rh_person rp ON d.person_id = rp.person_id
+                    LEFT JOIN sys_business b ON d.business_id = b.business_id
+                    WHERE psu.system_user_id = :user_id
+                    AND p.activo = true
+                    ORDER BY p.nombre ASC";
+                
+                error_log("SQL para obtener preformatos de usuario específico: " . $sql);
+                
+                $stmt = Conexion::conectar()->prepare($sql);
+                $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
+            } else {
+                // Consulta para todos los preformatos si no hay filtro de usuario
+                $sql = "SELECT 
+                        p.*,
+                        rp.first_name,
+                        rp.last_name,
+                        d.doctor_id,
+                        b.business_name
+                    FROM preformatos p
+                    LEFT JOIN rh_doctors d ON p.creado_por = d.doctor_id 
+                    LEFT JOIN rh_person rp ON d.person_id = rp.person_id
+                    LEFT JOIN sys_business b ON d.business_id = b.business_id
+                    WHERE p.activo = true
+                    ORDER BY p.nombre ASC";
+                
+                error_log("SQL para obtener todos los preformatos: " . $sql);
+                
+                $stmt = Conexion::conectar()->prepare($sql);
+            }
             
             $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $resultado;
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Agregar el nombre completo del doctor para cada preformato
+            $formateados = [];
+            foreach ($resultados as $preformato) {
+                // Agregar el nombre completo del doctor
+                if (!empty($preformato['first_name']) && !empty($preformato['last_name'])) {
+                    $nombreDoctor = $preformato['last_name'] . ', ' . $preformato['first_name'];
+                    
+                    // Agregar el nombre del consultorio/empresa si existe
+                    if (!empty($preformato['business_name'])) {
+                        $nombreDoctor .= ' (' . $preformato['business_name'] . ')';
+                    }
+                    
+                    $preformato['doctor_nombre'] = $nombreDoctor;
+                } else {
+                    // Si no hay información de doctor, usar ID de doctor
+                    $preformato['doctor_nombre'] = 'Doctor ID: ' . $preformato['creado_por'];
+                }
+                
+                $formateados[] = $preformato;
+            }
+            
+            // Registrar para depuración
+            error_log("mdlGetAllPreformatosOrdered - Usuario ID: " . ($userId ? $userId : 'ninguno') . " - Total registros: " . count($formateados));
+            
+            return $formateados;
         } catch (PDOException $e) {
             error_log("Error al obtener preformatos ordenados: " . $e->getMessage());
             return [];
@@ -165,17 +252,44 @@ class ModelPreformatos {
     public static function mdlGetPreformatoById($idPreformato) {
         try {
             $stmt = Conexion::conectar()->prepare(
-                "SELECT p.id_preformato, p.nombre, p.contenido, p.tipo, p.creado_por,
-                        COALESCE(r.reg_name || ' ' || r.reg_lastname, 'Sistema') as nombre_propietario
+                "SELECT 
+                    p.id_preformato, 
+                    p.nombre, 
+                    p.contenido, 
+                    p.tipo, 
+                    p.creado_por,
+                    rp.first_name,
+                    rp.last_name,
+                    d.doctor_id,
+                    b.business_name
                 FROM preformatos p
-                LEFT JOIN sys_users u ON p.creado_por = u.user_id
-                LEFT JOIN sys_register r ON u.reg_id = r.reg_id
+                LEFT JOIN rh_doctors d ON p.creado_por = d.doctor_id
+                LEFT JOIN rh_person rp ON d.person_id = rp.person_id
+                LEFT JOIN sys_business b ON d.business_id = b.business_id
                 WHERE p.id_preformato = :id_preformato AND p.activo = true"
             );
             
             $stmt->bindParam(":id_preformato", $idPreformato, PDO::PARAM_INT);
             $stmt->execute();
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($resultado) {
+                // Agregar el nombre completo del doctor
+                if (!empty($resultado['first_name']) && !empty($resultado['last_name'])) {
+                    $nombreDoctor = $resultado['last_name'] . ', ' . $resultado['first_name'];
+                    
+                    // Agregar el nombre del consultorio/empresa si existe
+                    if (!empty($resultado['business_name'])) {
+                        $nombreDoctor .= ' (' . $resultado['business_name'] . ')';
+                    }
+                    
+                    $resultado['nombre_propietario'] = $nombreDoctor;
+                } else {
+                    // Si no hay información de doctor, usar ID del doctor directamente
+                    $resultado['nombre_propietario'] = 'Doctor ID: ' . $resultado['creado_por'];
+                }
+            }
+            
             return $resultado;
         } catch (PDOException $e) {
             error_log("Error al obtener preformato por ID: " . $e->getMessage());

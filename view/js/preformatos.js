@@ -194,19 +194,24 @@ function cargarPreformatosPorTipo(tipo) {
 
 /**
  * Carga los preformatos en la tabla al inicializar la página
+ * @param {boolean} forzarRecarga Si es true, destruye y recrea la tabla DataTable
  */
-function cargarPreformatos() {
+function cargarPreformatos(forzarRecarga = false) {
     const tbodyPreformatos = document.getElementById('tbody-preformatos');
     const tablaPreformatos = document.getElementById('tabla-preformatos');
     
     if (!tbodyPreformatos || !tablaPreformatos) return;
     
     // Mostrar indicador de carga
-    tbodyPreformatos.innerHTML = '<tr><td colspan="3" class="text-center">Cargando preformatos...</td></tr>';
+    tbodyPreformatos.innerHTML = '<tr><td colspan="4" class="text-center">Cargando preformatos...</td></tr>';
+    
+    // Obtener ID del usuario logueado del data-attribute en el body
+    const usuarioId = document.body.getAttribute('data-user-id') || '';
     
     // Crear objeto FormData para enviar los datos
     const formData = new FormData();
     formData.append('operacion', 'getAllPreformatos');
+    formData.append('usuario_id', usuarioId); // Enviar el ID del usuario logueado
     
     // Realizar petición AJAX
     $.ajax({
@@ -217,10 +222,18 @@ function cargarPreformatos() {
         processData: false,
         contentType: false,
         success: function(response) {
+            console.log('Respuesta de cargarPreformatos:', response);
+            
+            // Si es necesario, destruir la tabla para recrearla
+            if (forzarRecarga && $.fn.DataTable.isDataTable('#tabla-preformatos')) {
+                $('#tabla-preformatos').DataTable().destroy();
+                console.log('Tabla DataTable destruida para recreación');
+            }
+            
             // Limpiar tabla
             tbodyPreformatos.innerHTML = '';
             
-            if (response.status === 'success' && response.data.length > 0) {
+            if (response.status === 'success' && response.data && response.data.length > 0) {
                 console.log('Datos recibidos:', response.data);
                 // Agregar filas a la tabla
                 response.data.forEach(function(preformato, index) {
@@ -244,8 +257,9 @@ function cargarPreformatos() {
                     tbodyPreformatos.appendChild(row);
                 });
                 
-                // Inicializar DataTable si aún no se ha inicializado
+                // Inicializar DataTable o recargar los datos según corresponda
                 if (!$.fn.DataTable.isDataTable('#tabla-preformatos')) {
+                    console.log('Inicializando nueva tabla DataTable');
                     $('#tabla-preformatos').DataTable({
                         "responsive": true,
                         "lengthChange": true,
@@ -267,18 +281,28 @@ function cargarPreformatos() {
                         }
                     });
                 } else {
-                    // Si ya está inicializado, recargar los datos
-                    $('#tabla-preformatos').DataTable().clear().draw();
-                    $('#tabla-preformatos').DataTable().rows.add($(tbodyPreformatos).find('tr')).draw();
+                    // Si ya está inicializado, recargar completamente los datos
+                    const dt = $('#tabla-preformatos').DataTable();
+                    dt.clear();
+                    dt.rows.add($(tbodyPreformatos).find('tr'));
+                    dt.draw();
+                    console.log('Datos recargados en tabla DataTable existente');
                 }
             } else {
                 // Mostrar mensaje si no hay preformatos
-                tbodyPreformatos.innerHTML = '<tr><td colspan="3" class="text-center">No hay preformatos disponibles</td></tr>';
+                tbodyPreformatos.innerHTML = '<tr><td colspan="4" class="text-center">No hay preformatos disponibles</td></tr>';
+                console.log('No hay preformatos disponibles para mostrar');
+                
+                // Si hay una tabla inicializada, limpiarla
+                if ($.fn.DataTable.isDataTable('#tabla-preformatos')) {
+                    $('#tabla-preformatos').DataTable().clear().draw();
+                    console.log('Tabla DataTable limpiada');
+                }
             }
         },
         error: function(xhr, status, error) {
             console.error("Error al cargar preformatos:", error);
-            tbodyPreformatos.innerHTML = '<tr><td colspan="3" class="text-center">Error al cargar preformatos</td></tr>';
+            tbodyPreformatos.innerHTML = '<tr><td colspan="4" class="text-center">Error al cargar preformatos</td></tr>';
         }
     });
 }
@@ -353,7 +377,8 @@ function guardarPreformato() {
                     if (aplicarA) {
                         cargarPreformatosPorTipo(aplicarA);
                     } else {
-                        cargarPreformatos();
+                        // Forzar la recarga completa de la tabla para asegurar que se muestren los nuevos datos
+                        cargarPreformatos(true);
                     }
                 });
             } else {
@@ -493,102 +518,75 @@ function cargarMedicos() {
         return;
     }
     
-    console.log('Iniciando carga de médicos...');
+    // Obtener el ID del usuario logueado
+    const usuarioId = document.body.getAttribute('data-user-id') || '';
+    console.log('Cargando médico con usuario ID:', usuarioId);
     
-    // Usar la URL completa
-    const url = window.location.pathname.includes('index.php') ? 
-        'api/doctors' : 
-        window.location.origin + '/clinica/api/doctors';
-        
-    console.log('URL para cargar médicos:', url);
+    if (!usuarioId) {
+        console.error('No se pudo obtener el ID del usuario logueado');
+        return;
+    }
     
-    // Realizar petición AJAX usando fetch API con mejor manejo de errores
-    fetch(url)
-        .then(response => {
-            console.log('Respuesta status:', response.status);
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(response => {
-            console.log('Respuesta recibida:', response);
-            if (response.status === 'success' && response.data && response.data.length > 0) {
-                console.log('Médicos obtenidos:', response.data.length);
-                // Limpiar selector manteniendo la opción por defecto
-                const defaultOption = selectPropietario.querySelector('option[value=""]');
-                selectPropietario.innerHTML = '';
-                if (defaultOption) {
-                    selectPropietario.appendChild(defaultOption);
-                }
-                
-                // Agregar opciones de médicos
-                response.data.forEach(function(doctor) {
-                    const option = document.createElement('option');
-                    option.value = doctor.doctor_id;
-                    option.textContent = `${doctor.last_name}, ${doctor.first_name}`;
-                    if (doctor.business_name) {
-                        option.textContent += ` (${doctor.business_name})`;
-                    }
-                    selectPropietario.appendChild(option);
-                });
-            } else {
-                console.error('No se obtuvieron médicos o la respuesta no tiene el formato esperado');
-                // Añadir una opción por defecto indicando el error
-                selectPropietario.innerHTML = '<option value="">No se pudieron cargar los médicos</option>';
-            }
-        })
-        .catch(error => {
-            console.error("Error al cargar médicos:", error);
-            // Añadir una opción por defecto indicando el error
-            selectPropietario.innerHTML = '<option value="">Error al cargar médicos</option>';
-            
-            // Intentar con la antigua función para compatibilidad
-            cargarUsuariosLegacy();
-        });
+    // Ir directamente al método alternativo, ya que la API de doctors específica está fallando
+    cargarMedicoDesdeBackend(usuarioId);
 }
 
 /**
- * Función de respaldo para cargar usuarios (para compatibilidad con el sistema anterior)
+ * Carga el médico usando el backend PHP
+ * @param {string} usuarioId ID del usuario logueado
  */
-function cargarUsuariosLegacy() {
-    console.log('Intentando cargar usuarios con el método legacy...');
+function cargarMedicoDesdeBackend(usuarioId) {
     const selectPropietario = document.getElementById('propietario');
     if (!selectPropietario) return;
     
-    // Crear objeto FormData para enviar los datos
-    const formData = new FormData();
-    formData.append('operacion', 'getUsuarios');
+    console.log('Cargando médico desde backend PHP con ID:', usuarioId);
     
-    // Realizar petición AJAX
+    // Crear un FormData para enviar al backend
+    const formData = new FormData();
+    formData.append('operacion', 'getDoctorByUserId');
+    formData.append('user_id', usuarioId);
+    
+    // Hacer la petición AJAX
     $.ajax({
         type: 'POST',
-        url: 'ajax/usuarios.ajax.php',
+        url: 'ajax/preformatos.ajax.php',
         data: formData,
         dataType: "json",
         processData: false,
         contentType: false,
         success: function(response) {
-            console.log('Respuesta legacy recibida:', response);
-            if (response.status === 'success' && response.data && response.data.length > 0) {
-                // Limpiar selector manteniendo la opción por defecto
-                const defaultOption = selectPropietario.querySelector('option[value=""]');
+            console.log('Respuesta del backend:', response);
+            
+            if (response.status === 'success' && response.data) {
+                // Limpiar selector
                 selectPropietario.innerHTML = '';
-                if (defaultOption) {
-                    selectPropietario.appendChild(defaultOption);
-                }
                 
-                // Agregar opciones de usuarios
-                response.data.forEach(function(usuario) {
-                    const option = document.createElement('option');
-                    option.value = usuario.id_usuario;
-                    option.textContent = usuario.nombre + ' ' + usuario.apellido;
-                    selectPropietario.appendChild(option);
-                });
+                // Crear y agregar opción con el doctor
+                const option = document.createElement('option');
+                option.value = response.data.doctor_id || usuarioId;
+                option.textContent = response.data.nombre_completo || `Usuario ID: ${usuarioId}`;
+                option.selected = true;
+                selectPropietario.appendChild(option);
+            } else {
+                // Si no hay datos del doctor, usar el ID del usuario
+                selectPropietario.innerHTML = '';
+                const option = document.createElement('option');
+                option.value = usuarioId;
+                option.textContent = `Usuario ID: ${usuarioId}`;
+                option.selected = true;
+                selectPropietario.appendChild(option);
             }
         },
         error: function(xhr, status, error) {
-            console.error("Error en método legacy:", error);
+            console.error("Error al obtener doctor desde backend:", error);
+            
+            // Como último recurso, agregar directamente el ID del usuario
+            selectPropietario.innerHTML = '';
+            const option = document.createElement('option');
+            option.value = usuarioId;
+            option.textContent = `Usuario ID: ${usuarioId}`;
+            option.selected = true;
+            selectPropietario.appendChild(option);
         }
     });
 }
