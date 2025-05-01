@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['operacion']) && $_POS
     $datos = [
         'documento' => $_POST['documento'] ?? '',
         'nro_ficha' => $_POST['nro_ficha'] ?? '',
-        'nombres' => $_POST['nombres'] ?? ''
+        'nombres' => $_POST['nombre'] ?? '' // Recibir el parámetro 'nombre' y guardarlo como 'nombres' para el modelo
     ];
 
     // Sanitizar los datos (eliminar espacios en blanco y caracteres no deseados)

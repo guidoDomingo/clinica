@@ -10,12 +10,11 @@
             <input type="text" class="form-control" id="txtficha" name="txtficha" placeholder="Ficha médica">
         </div>
         <div class="col-md-6 col-md-8">
-            <label for="txtnombres">Nombres</label>
+            <label for="txtnombre">Nombres</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="paciente" placeholder="Buscar paciente..."
+                <input type="text" class="form-control" id="paciente" name="txtnombre" placeholder="Buscar por nombre..."
                     aria-label="Buscar paciente">
                 <div class="input-group-append">
-                    <!-- <button  type="button"  class="btn btn-primary" onclick="buscar(document.getElementById('txtdocumento').value, document.getElementById('txtficha').value)" aria-label="Buscar"> -->
                     <button type="button" class="btn btn-primary" id="btnBuscarPersona" aria-label="Buscar">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>

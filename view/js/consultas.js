@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnGuardarConsulta = document.getElementById('btnGuardarConsulta');
     const btnSubirArchivos = document.getElementById('btnSubirArchivos');
    
+    // Inicializar autocompletado para el campo de búsqueda de paciente
+    inicializarAutocompletado();
     
     // Inicializar editores de texto enriquecido si existen
     inicializarEditoresTexto();
@@ -187,20 +189,21 @@ function inicializarEditoresTexto() {
 }
 
 /**
- * Función para buscar una persona por documento o ficha
+ * Función para buscar una persona por documento, ficha o nombre
  * y autocompletar los campos del formulario
  */
 function buscarPersona() {
-    // Obtener los valores de documento y ficha
+    // Obtener los valores de documento, ficha y nombre
     const documento = document.getElementById('txtdocumento').value.trim();
     const ficha = document.getElementById('txtficha').value.trim();
+    const nombre = document.getElementById('paciente').value.trim();
     
     // Validar que al menos uno de los campos tenga valor
-    if (documento === '' && ficha === '') {
+    if (documento === '' && ficha === '' && nombre === '') {
         Swal.fire({
             position: "center",
             icon: "warning",
-            title: "Debe ingresar un documento o ficha para buscar",
+            title: "Debe ingresar un documento, ficha o nombre para buscar",
             showConfirmButton: false,
             timer: 1500
         });
@@ -214,7 +217,18 @@ function buscarPersona() {
     const formData = new FormData();
     formData.append('documento', documento);
     formData.append('nro_ficha', ficha);
+    formData.append('nombre', nombre);
     formData.append('operacion', 'buscarparam');
+    
+    // Mostrar indicador de carga
+    Swal.fire({
+        title: 'Buscando...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
     
     // Realizar petición AJAX
     $.ajax({
@@ -225,9 +239,17 @@ function buscarPersona() {
         processData: false,
         contentType: false,
         success: function(response) {
+            Swal.close();
+            
             if (response.status === 'success') {
+                // Si hay varios pacientes con el mismo nombre, mostrar selección
+                if (response.multiple && response.data.length > 1) {
+                    mostrarSeleccionPaciente(response.data);
+                    return;
+                }
+                
                 // Autocompletar los campos con los datos recibidos
-                const persona = response.data;
+                const persona = response.multiple ? response.data[0] : response.data;
                 document.getElementById('paciente').value = persona.nombres + ' ' + persona.apellidos;
                 document.getElementById('idPersona').value = persona.id_persona;
                 
@@ -266,6 +288,7 @@ function buscarPersona() {
             }
         },
         error: function(xhr, status, error) {
+            Swal.close();
             Swal.fire({
                 position: "center",
                 icon: "error",
@@ -275,6 +298,98 @@ function buscarPersona() {
                 timer: 1500
             });
         }
+    });
+}
+
+/**
+ * Función para mostrar un modal de selección cuando hay múltiples pacientes
+ * con el mismo nombre
+ * @param {Array} pacientes - Lista de pacientes encontrados
+ */
+function mostrarSeleccionPaciente(pacientes) {
+    // Crear el contenido del modal
+    let contenidoHTML = `
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombre</th>
+                    <th>Ficha</th>
+                    <th>Seleccionar</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    pacientes.forEach(paciente => {
+        contenidoHTML += `
+        <tr>
+            <td>${paciente.documento || 'No registrado'}</td>
+            <td>${paciente.nombres || ''} ${paciente.apellidos || ''}</td>
+            <td>${paciente.ficha || 'No registrado'}</td>
+            <td>
+                <button class="btn btn-primary btn-sm seleccionar-paciente" 
+                    data-id="${paciente.id_persona}" 
+                    data-nombre="${paciente.nombres || ''} ${paciente.apellidos || ''}" 
+                    data-documento="${paciente.documento || ''}">
+                    <i class="fas fa-check"></i>
+                </button>
+            </td>
+        </tr>
+        `;
+    });
+    
+    contenidoHTML += `
+            </tbody>
+        </table>
+    </div>
+    `;
+    
+    // Mostrar el modal con la lista de pacientes
+    Swal.fire({
+        title: 'Múltiples pacientes encontrados',
+        html: contenidoHTML,
+        showConfirmButton: false,
+        showCloseButton: true,
+        width: '800px'
+    });
+    
+    // Agregar evento a los botones de selección
+    document.querySelectorAll('.seleccionar-paciente').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const nombre = this.getAttribute('data-nombre');
+            const documento = this.getAttribute('data-documento');
+            
+            // Cerrar el modal
+            Swal.close();
+            
+            // Completar formulario con el paciente seleccionado
+            document.getElementById('paciente').value = nombre;
+            document.getElementById('idPersona').value = id;
+            
+            // Actualizar información en el panel lateral
+            document.getElementById('profile-username').textContent = nombre;
+            document.getElementById('profile-ci').textContent = 'CI: ' + documento;
+            
+            // Establecer el ID de persona para la subida de archivos
+            document.getElementById('id_persona_file').value = id;
+            
+            // Obtener información adicional del paciente
+            obtenerResumenConsulta(id);
+            obtenerCuota(id);
+            cargarUltimaConsulta(id);
+            inicializarTablaConsultas(id);
+            
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Paciente seleccionado",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
     });
 }
 
@@ -2183,4 +2298,143 @@ function eliminarArchivo(idArchivo) {
             });
         }
     });
+}
+
+/**
+ * Función para inicializar el autocompletado de nombres de pacientes
+ */
+function inicializarAutocompletado() {
+    // Verificar que jQuery UI esté disponible
+    if (typeof $.ui === 'undefined' || !$.ui.autocomplete) {
+        console.error('jQuery UI Autocomplete no está disponible');
+        return;
+    }
+    
+    // Verificar que el elemento exista
+    const pacienteInput = document.getElementById('paciente');
+    if (!pacienteInput) {
+        console.error('No se encontró el campo de búsqueda de paciente');
+        return;
+    }
+    
+    console.log('Inicializando autocompletado para el campo de búsqueda de paciente');
+    
+    // Configurar el autocompletado usando jQuery UI
+    $(pacienteInput).autocomplete({
+        minLength: 2, // Mínimo de caracteres para comenzar la búsqueda
+        delay: 300,   // Retraso antes de iniciar la búsqueda (ms)
+        source: function(request, response) {
+            // Crear objeto FormData para enviar los datos
+            const formData = new FormData();
+            formData.append('nombre', request.term);
+            formData.append('documento', '');
+            formData.append('nro_ficha', '');
+            formData.append('operacion', 'buscarparam');
+            
+            // Realizar petición AJAX
+            $.ajax({
+                type: 'POST',
+                url: 'ajax/persona.ajax.php',
+                data: formData,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if (data.status === 'success') {
+                        let personas = [];
+                        
+                        // Manejar resultados múltiples o único
+                        if (data.multiple && Array.isArray(data.data)) {
+                            // Si hay múltiples resultados, usarlos todos
+                            personas = data.data.map(function(persona) {
+                                return {
+                                    label: `${persona.nombres || ''} ${persona.apellidos || ''} - CI: ${persona.documento || 'N/A'}`,
+                                    value: `${persona.nombres || ''} ${persona.apellidos || ''}`,
+                                    id: persona.id_persona,
+                                    documento: persona.documento,
+                                    nombres: persona.nombres,
+                                    apellidos: persona.apellidos
+                                };
+                            });
+                        } else if (data.data) {
+                            // Si hay un solo resultado, crear un array con un elemento
+                            const persona = data.data;
+                            personas = [{
+                                label: `${persona.nombres || ''} ${persona.apellidos || ''} - CI: ${persona.documento || 'N/A'}`,
+                                value: `${persona.nombres || ''} ${persona.apellidos || ''}`,
+                                id: persona.id_persona,
+                                documento: persona.documento,
+                                nombres: persona.nombres,
+                                apellidos: persona.apellidos
+                            }];
+                        }
+                        
+                        response(personas);
+                    } else {
+                        // Si no hay resultados, devolver un array vacío
+                        response([]);
+                    }
+                },
+                error: function() {
+                    response([]);
+                }
+            });
+        },
+        select: function(event, ui) {
+            // Al seleccionar un paciente, completar el resto de los campos
+            document.getElementById('idPersona').value = ui.item.id;
+            
+            // Actualizar información en el panel lateral
+            document.getElementById('profile-username').textContent = ui.item.value;
+            document.getElementById('profile-ci').textContent = 'CI: ' + ui.item.documento;
+            
+            // Establecer el ID de persona para la subida de archivos
+            document.getElementById('id_persona_file').value = ui.item.id;
+            
+            // Obtener información adicional del paciente
+            obtenerResumenConsulta(ui.item.id);
+            obtenerCuota(ui.item.id);
+            
+            // Cargar la última consulta del paciente si existe
+            cargarUltimaConsulta(ui.item.id);
+            
+            // Actualizar tabla de consultas
+            inicializarTablaConsultas(ui.item.id);
+            
+            return true;
+        },
+        focus: function(event, ui) {
+            // Al enfocar un resultado, actualizar el valor del campo
+            // pero prevenir que se complete automáticamente al navegar con las flechas
+            event.preventDefault();
+        }
+    }).autocomplete("instance")._renderItem = function(ul, item) {
+        // Personalizar el renderizado de cada elemento en la lista de autocompletado
+        return $("<li>")
+            .append("<div class='autocomplete-item'>" + item.label + "</div>")
+            .appendTo(ul);
+    };
+    
+    // Agregar estilos personalizados para el autocompletado
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .ui-autocomplete {
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 9999 !important;
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+            background: #007bff !important;
+            color: #fff !important;
+            border: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    console.log('Autocompletado inicializado correctamente');
 }

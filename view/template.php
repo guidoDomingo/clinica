@@ -20,6 +20,8 @@
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="view/plugins/fontawesome-free/css/all.min.css">
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <!-- Theme style -->
     <!-- <link rel="stylesheet" href="view/dist/css/adminlte.min.css"> -->
     <link rel="stylesheet" href="view/dist/css/adminlte.css">
@@ -44,6 +46,8 @@
 
     <!-- jQuery -->
     <script src="view/plugins/jquery/jquery.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="view/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
