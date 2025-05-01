@@ -82,6 +82,46 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
     include "view/nav/navbar.php";
     include "view/nav/sidebar.php"; 
     
+    // Verificar si el usuario tiene perfil completo (excepto en la página de perfil)
+    $rutaActual = isset($_GET["ruta"]) ? $_GET["ruta"] : "home";
+    if ($rutaActual != "perfil" && $rutaActual != "logout") {
+        // Incluir el controlador de perfil si no está incluido
+        if (!class_exists('ControllerProfile')) {
+            require_once "controller/profile.controller.php";
+        }
+        
+        // Verificar si tenemos el estado del perfil en la sesión, si no, consultar la BD
+        $hasCompleteProfile = isset($_SESSION['profile_complete']) ? $_SESSION['profile_complete'] : false;
+        if (!$hasCompleteProfile) {
+            $hasCompleteProfile = ControllerProfile::ctrHasCompleteProfile($_SESSION['user_id']);
+            // Guardar el resultado en la sesión para futuras consultas
+            $_SESSION['profile_complete'] = $hasCompleteProfile;
+        }
+        
+        if (!$hasCompleteProfile) {
+            // Almacenar la ruta original a la que quería acceder el usuario
+            $_SESSION['redirect_after_profile'] = $rutaActual;
+            
+            // Redirigir a la página de perfil con un mensaje claro
+            echo '<script>
+                Swal.fire({
+                    icon: "warning",
+                    title: "Perfil incompleto",
+                    text: "Para acceder a esta sección del sistema, primero debes completar tu información personal.",
+                    confirmButtonText: "Completar perfil",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    window.location.href = "perfil";
+                });
+            </script>';
+            exit();
+        }
+    } else if ($rutaActual == "perfil") {
+        // Si estamos en la página de perfil, asegurarnos de que el estado se actualizará al salir
+        $_SESSION['check_profile_on_next_page'] = true;
+    }
+    
     // Manejo de páginas con inicio de sesión
     if(isset($_GET["ruta"])){
         if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout"|| $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas" || $_GET["ruta"] == "roles" || $_GET["ruta"] == "perfil" || $_GET["ruta"] == "rhpersonas" || $_GET["ruta"] == "preformatos" || $_GET["ruta"] == "agendas") {
@@ -132,6 +172,8 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
 
 <!-- Template JS (siempre se carga) -->
 <script src="view/js/template.js"></script>
+
+<!-- <script src="view/js/check-profile.js"></script> -->
 
 <!-- Cargar JavaScript específico según el módulo activo -->
 <?php

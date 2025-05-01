@@ -16,9 +16,10 @@ class PreformatosAjax {
     /**
      * Obtiene todos los preformatos activos de un tipo específico
      * @param string $tipo Tipo de preformato ('consulta', 'receta', etc.)
+     * @param integer $doctorId ID del médico conectado (opcional)
      */
-    public function ajaxGetPreformatos($tipo) {
-        $preformatos = ControllerPreformatos::ctrGetPreformatos($tipo);
+    public function ajaxGetPreformatos($tipo, $doctorId = null) {
+        $preformatos = ControllerPreformatos::ctrGetPreformatos($tipo, $doctorId);
         echo json_encode([
             'status' => 'success',
             'data' => $preformatos
@@ -147,23 +148,28 @@ if (isset($_POST['operacion'])) {
             break;
             
         case 'getPreformatosConsulta':
-            $preformatos->ajaxGetPreformatos('consulta');
+            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $preformatos->ajaxGetPreformatos('consulta', $doctorId);
             break;
             
         case 'getPreformatosReceta':
-            $preformatos->ajaxGetPreformatos('receta');
+            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $preformatos->ajaxGetPreformatos('receta', $doctorId);
             break;
             
         case 'getPreformatosRecetaAnteojos':
-            $preformatos->ajaxGetPreformatos('receta_anteojos');
+            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $preformatos->ajaxGetPreformatos('receta_anteojos', $doctorId);
             break;
             
         case 'getPreformatosOrdenEstudios':
-            $preformatos->ajaxGetPreformatos('orden_estudios');
+            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $preformatos->ajaxGetPreformatos('orden_estudios', $doctorId);
             break;
             
         case 'getPreformatosOrdenCirugias':
-            $preformatos->ajaxGetPreformatos('orden_cirugias');
+            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $preformatos->ajaxGetPreformatos('orden_cirugias', $doctorId);
             break;
             
         case 'getAllPreformatos':

@@ -125,6 +125,7 @@
 
     <input type="hidden" id="id_user" name="id_user" value="1">
     <input type="hidden" id="id_reserva" name="id_reserva" value="0">
+    <input type="hidden" id="medico_id" name="medico_id" value="<?php echo isset($_SESSION['doctor_id']) ? $_SESSION['doctor_id'] : (isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : '1'); ?>">
     <button type="button" class="btn btn-primary" id="btnGuardarConsulta">Guardar</button>
 </form>
 <hr>

@@ -201,6 +201,15 @@ function cargarPreformatosConsulta() {
     const formData = new FormData();
     formData.append('operacion', 'getPreformatosConsulta');
     
+    // Si estamos en la página de consultas, enviar el ID del médico conectado
+    if (window.location.href.includes('consultas')) {
+        const doctorId = obtenerIdMedicoConectado();
+        if (doctorId) {
+            formData.append('doctor_id', doctorId);
+            console.log('Enviando doctor_id:', doctorId);
+        }
+    }
+    
     console.log('Enviando petición AJAX para obtener preformatos de consulta...');
     // Realizar petición AJAX
     $.ajax({
@@ -278,6 +287,15 @@ function cargarPreformatosReceta() {
     // Crear objeto FormData para enviar los datos
     const formData = new FormData();
     formData.append('operacion', 'getPreformatosReceta');
+    
+    // Si estamos en la página de consultas, enviar el ID del médico conectado
+    if (window.location.href.includes('consultas')) {
+        const doctorId = obtenerIdMedicoConectado();
+        if (doctorId) {
+            formData.append('doctor_id', doctorId);
+            console.log('Enviando doctor_id para recetas:', doctorId);
+        }
+    }
     
     console.log('Enviando petición AJAX para obtener preformatos de receta...');
     // Realizar petición AJAX
@@ -621,4 +639,30 @@ function aplicarContenidoAlTextarea(textareaId, contenido) {
     }
     
     console.log(`==== FIN DE APLICACIÓN DE CONTENIDO A ${textareaId} ====`);
+}
+
+/**
+ * Función para obtener el ID del médico conectado
+ * @returns {number|null} El ID del doctor o null si no se puede determinar
+ */
+function obtenerIdMedicoConectado() {
+    // Intentar obtener el ID del médico de la variable global (si existe)
+    if (typeof medicoId !== 'undefined' && medicoId) {
+        return medicoId;
+    }
+    
+    // Intentar obtener el ID del médico del usuario conectado en sessionStorage
+    if (sessionStorage.getItem('usuario_id')) {
+        return sessionStorage.getItem('usuario_id');
+    }
+    
+    // Intentar obtener de un elemento oculto en la página (común para pasar datos del backend al frontend)
+    const idElement = document.getElementById('medico_id') || document.querySelector('[data-medico-id]');
+    if (idElement) {
+        return idElement.value || idElement.getAttribute('data-medico-id');
+    }
+    
+    // Si llegamos hasta aquí, no podemos determinar el ID
+    console.warn('No se pudo determinar el ID del médico conectado');
+    return null;
 }

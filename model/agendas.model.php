@@ -95,11 +95,11 @@ class AgendasModel {
         try {
             $conexion = Conexion::conectar();
 
-            error_log("Datos recibidos: ". print_r($datos, true), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Datos recibidos: ". print_r($datos, true), 3, dirname(__DIR__) . "/logs/database.log");
             
             // Verificar si la conexión fue exitosa
             if ($conexion === null) {
-                error_log("Error en mdlVerificarAgendaExistente: No se pudo conectar a la base de datos", 3, "c:/laragon/www/clinica/logs/database.log");
+                error_log("Error en mdlVerificarAgendaExistente: No se pudo conectar a la base de datos", 3, dirname(__DIR__) . "/logs/database.log");
                 return false; // Devolver false para permitir continuar el proceso
             }
             
@@ -133,11 +133,11 @@ class AgendasModel {
             return ($resultado["total"] > 0);
         } catch (PDOException $e) {
             // Registrar el error en el log
-            error_log("Error en mdlVerificarAgendaExistente: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error en mdlVerificarAgendaExistente: " . $e->getMessage(), 3, dirname(__DIR__) . "/logs/database.log");
             return false; // Devolver false para permitir continuar el proceso
         } catch (Exception $e) {
             // Capturar cualquier otra excepción
-            error_log("Excepción en mdlVerificarAgendaExistente: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Excepción en mdlVerificarAgendaExistente: " . $e->getMessage(), 3, dirname(__DIR__) . "/logs/database.log");
             return false; // Devolver false para permitir continuar el proceso
         }
     }
@@ -149,7 +149,7 @@ class AgendasModel {
         try {
             $conexion = Conexion::conectar();
 
-            error_log("Datos recibidos: " . print_r($datos, true), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Datos recibidos: " . print_r($datos, true), 3, dirname(__DIR__) . "/logs/database.log");
             
             // Verificar si la conexión fue exitosa
             if ($conexion === null) {
@@ -179,11 +179,11 @@ class AgendasModel {
             }
         } catch (PDOException $e) {
             // Registrar el error en el log pero devolver un mensaje genérico
-            error_log("Error en mdlGuardarAgenda: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error en mdlGuardarAgenda: " . $e->getMessage(), 3, dirname(__DIR__) . "/logs/database.log");
             return "error: Error al guardar en la base de datos";
         } catch (Exception $e) {
             // Capturar cualquier otra excepción
-            error_log("Excepción en mdlGuardarAgenda: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Excepción en mdlGuardarAgenda: " . $e->getMessage(), 3, dirname(__DIR__) . "/logs/database.log");
             return "error: Error inesperado al procesar la solicitud";
         }
     }
@@ -230,11 +230,11 @@ class AgendasModel {
             }
         } catch (PDOException $e) {
             // Registrar el error en el log pero devolver un mensaje genérico
-            error_log("Error en mdlActualizarAgenda: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Error en mdlActualizarAgenda: " . $e->getMessage(), 3, dirname(__DIR__) . "/logs/database.log");
             return "error: Error al actualizar en la base de datos";
         } catch (Exception $e) {
             // Capturar cualquier otra excepción
-            error_log("Excepción en mdlActualizarAgenda: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/database.log");
+            error_log("Excepción en mdlActualizarAgenda: " . $e->getMessage(), 3, dirname(__DIR__) . "/logs/database.log");
             return "error: Error inesperado al procesar la solicitud";
         }
     }

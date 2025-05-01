@@ -11,12 +11,36 @@ class ControllerPreformatos {
     }
     
     /**
-     * Obtiene todos los preformatos activos de un tipo específico
+     * Obtiene los preformatos de un tipo específico
      * @param string $tipo Tipo de preformato ('consulta', 'receta', etc.)
-     * @return array Arreglo con los preformatos
+     * @param integer $doctorId ID del doctor específico (opcional)
+     * @return array Preformatos encontrados
      */
-    public static function ctrGetPreformatos($tipo) {
-        return ModelPreformatos::mdlGetPreformatos($tipo);
+    static public function ctrGetPreformatos($tipo, $doctorId = null) {
+        $query = "SELECT p.* FROM preformatos p WHERE p.tipo = :tipo AND p.is_active = 1";
+        
+        // Si estamos en el módulo de consulta y se ha especificado un doctor_id, filtramos por ese doctor
+        if ($doctorId) {
+            $query .= " AND p.creado_por = :doctor_id";
+        }
+        
+        $query .= " ORDER BY p.nombre ASC";
+        
+        try {
+            $stmt = Conexion::conectar()->prepare($query);
+            $stmt->bindParam(":tipo", $tipo, PDO::PARAM_STR);
+            
+            // Vincular doctor_id si se especificó
+            if ($doctorId) {
+                $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
+            }
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener preformatos: " . $e->getMessage());
+            return [];
+        }
     }
     
     /**

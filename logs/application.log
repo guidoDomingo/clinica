@@ -1,10 +1,52 @@
-[2025-04-29 11:38:48] [INFO] [user.controller.php:21] user: ronal@ronal.com
+[2025-05-01 14:15:03] [INFO] [user.controller.php:21] user: antonio@antonio.com
+Data: antonio@antonio.com
+----------------------------------------
+[2025-05-01 14:15:03] [INFO] [user.controller.php:22] user: $2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu
+Data: $2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu
+----------------------------------------
+[2025-05-01 14:15:03] [INFO] [user.controller.php:33] Login attempt for user: antonio@antonio.com
+Data: {
+    "user_id": 7,
+    "reg_id": 7,
+    "user_email": "antonio@antonio.com",
+    "user_pass": "$2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu",
+    "user_expire": "2025-05-29 19:40:16.246543",
+    "user_first_login": null,
+    "user_last_login": "2025-05-01 09:52:13.047927",
+    "user_is_active": true,
+    "profile_photo": "user_7_1745970180.jpg",
+    "reg_name": "Antonio",
+    "reg_lastname": "Galeano"
+}
+----------------------------------------
+[2025-05-01 14:19:49] [INFO] [user.controller.php:21] user: antonio@antonio.com
+Data: antonio@antonio.com
+----------------------------------------
+[2025-05-01 14:19:49] [INFO] [user.controller.php:22] user: $2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu
+Data: $2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu
+----------------------------------------
+[2025-05-01 14:19:49] [INFO] [user.controller.php:33] Login attempt for user: antonio@antonio.com
+Data: {
+    "user_id": 7,
+    "reg_id": 7,
+    "user_email": "antonio@antonio.com",
+    "user_pass": "$2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu",
+    "user_expire": "2025-05-29 19:40:16.246543",
+    "user_first_login": null,
+    "user_last_login": "2025-05-01 10:15:03.890878",
+    "user_is_active": true,
+    "profile_photo": "user_7_1745970180.jpg",
+    "reg_name": "Antonio",
+    "reg_lastname": "Galeano"
+}
+----------------------------------------
+[2025-05-01 14:20:19] [INFO] [user.controller.php:21] user: ronal@ronal.com
 Data: ronal@ronal.com
 ----------------------------------------
-[2025-04-29 11:38:48] [INFO] [user.controller.php:22] user: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
+[2025-05-01 14:20:19] [INFO] [user.controller.php:22] user: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
 Data: $2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\/UNdHCW
 ----------------------------------------
-[2025-04-29 11:38:48] [INFO] [user.controller.php:33] Login attempt for user: ronal@ronal.com
+[2025-05-01 14:20:19] [INFO] [user.controller.php:33] Login attempt for user: ronal@ronal.com
 Data: {
     "user_id": 5,
     "reg_id": 5,
@@ -12,153 +54,31 @@ Data: {
     "user_pass": "$2y$10$bqCtcGHcGEpWB2jYklFe0umI2lvhi4EnJ.2QXrldhnzmAB\\\/UNdHCW",
     "user_expire": "2025-05-05 14:51:04.340773",
     "user_first_login": null,
-    "user_last_login": "2025-04-27 09:14:17.055802",
+    "user_last_login": "2025-04-29 07:38:48.236313",
     "user_is_active": true,
     "profile_photo": "user_5_1743885959.jpg",
     "reg_name": "ronal",
     "reg_lastname": "ruiz"
 }
 ----------------------------------------
-[2025-04-29 07:40:03] [INFO] [SysRegisterController.php:84] New registration attempt
-Data: {
-    "reg_document": "777888",
-    "reg_name": "carlos",
-    "reg_lastname": "ruiz",
-    "reg_email": "carlos@carlos.com",
-    "reg_phone": "0982313359",
-    "reg_bdate": "1996-08-02",
-    "reg_activation": "pending"
-}
-----------------------------------------
-[2025-04-29 07:40:03] [INFO] [SysRegisterController.php:119] New registration attempt
-Data: {
-    "reg_document": "777888",
-    "reg_name": "carlos",
-    "reg_lastname": "ruiz",
-    "reg_email": "carlos@carlos.com",
-    "reg_phone": "0982313359",
-    "reg_bdate": "1996-08-02",
-    "reg_activation": "6cd3c4fff0d0b546fba6cc6a6e029bba"
-}
-----------------------------------------
-[2025-04-29 11:41:43] [INFO] [user.controller.php:21] user: carlos@carlos.com.py
-Data: carlos@carlos.com.py
-----------------------------------------
-[2025-04-29 11:41:43] [INFO] [user.controller.php:22] user: adc52ab7517186c5da5499b655bab3b4
-Data: adc52ab7517186c5da5499b655bab3b4
-----------------------------------------
-[2025-04-29 11:41:43] [INFO] [user.controller.php:33] Login attempt for user: carlos@carlos.com.py
-Data: {
-    "user_id": 4,
-    "reg_id": 4,
-    "user_email": "carlos@carlos.com.py",
-    "user_pass": "adc52ab7517186c5da5499b655bab3b4",
-    "user_expire": "2025-05-02 22:17:22.102525",
-    "user_first_login": null,
-    "user_last_login": "2025-04-05 14:44:41.132603",
-    "user_is_active": true,
-    "profile_photo": null,
-    "reg_name": "carlos",
-    "reg_lastname": "andres"
-}
-----------------------------------------
-[2025-04-29 11:43:09] [INFO] [user.controller.php:21] user: carlos@carlos.com
-Data: carlos@carlos.com
-----------------------------------------
-[2025-04-29 11:43:09] [INFO] [user.controller.php:22] user: c253417c750cb0584c7aed857eab548b
-Data: c253417c750cb0584c7aed857eab548b
-----------------------------------------
-[2025-04-29 11:43:09] [INFO] [user.controller.php:33] Login attempt for user: carlos@carlos.com
-Data: {
-    "user_id": 6,
-    "reg_id": 6,
-    "user_email": "carlos@carlos.com",
-    "user_pass": "c253417c750cb0584c7aed857eab548b",
-    "user_expire": "2025-05-29 07:40:03.676343",
-    "user_first_login": null,
-    "user_last_login": null,
-    "user_is_active": true,
-    "profile_photo": null,
-    "reg_name": "carlos",
-    "reg_lastname": "ruiz"
-}
-----------------------------------------
-[2025-04-29 19:11:45] [INFO] [RhPersonController.php:138] {"document_number":"999999","birth_date":"1985-05-01","first_name":"Mary","last_name":"Riquelme","phone_number":"0982313358","gender":"M","record_number":"555555","address":"costa puku","email":"mary@mary.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-29 19:11:45"}
-Data: Creating person
-----------------------------------------
-[2025-04-29 19:40:16] [INFO] [SysRegisterController.php:84] New registration attempt
-Data: {
-    "reg_document": "3518733",
-    "reg_name": "Antonio",
-    "reg_lastname": "Galeano",
-    "reg_email": "antonio@antonio.com",
-    "reg_phone": "0988782145",
-    "reg_bdate": "1982-01-17",
-    "reg_activation": "pending"
-}
-----------------------------------------
-[2025-04-29 19:40:16] [INFO] [SysRegisterController.php:119] New registration attempt
-Data: {
-    "reg_document": "3518733",
-    "reg_name": "Antonio",
-    "reg_lastname": "Galeano",
-    "reg_email": "antonio@antonio.com",
-    "reg_phone": "0988782145",
-    "reg_bdate": "1982-01-17",
-    "reg_activation": "4ff1f96f31cd39372f1c06c2ab4b2e33"
-}
-----------------------------------------
-[2025-04-29 23:41:56] [INFO] [user.controller.php:21] user: antonio@antonio.com
+[2025-05-01 14:21:05] [INFO] [user.controller.php:21] user: antonio@antonio.com
 Data: antonio@antonio.com
 ----------------------------------------
-[2025-04-29 23:41:56] [INFO] [user.controller.php:22] user: 96e9f5c5aae743de1907f7647c911c1e
-Data: 96e9f5c5aae743de1907f7647c911c1e
+[2025-05-01 14:21:05] [INFO] [user.controller.php:22] user: $2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu
+Data: $2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu
 ----------------------------------------
-[2025-04-29 23:41:56] [INFO] [user.controller.php:33] Login attempt for user: antonio@antonio.com
+[2025-05-01 14:21:05] [INFO] [user.controller.php:33] Login attempt for user: antonio@antonio.com
 Data: {
     "user_id": 7,
     "reg_id": 7,
     "user_email": "antonio@antonio.com",
-    "user_pass": "96e9f5c5aae743de1907f7647c911c1e",
+    "user_pass": "$2y$10$UOSms3QSX8zd3H62bJYXuO2Fni274RIWK3L8LLdmW1gnf1Qv5zYgu",
     "user_expire": "2025-05-29 19:40:16.246543",
     "user_first_login": null,
-    "user_last_login": null,
+    "user_last_login": "2025-05-01 10:19:49.549723",
     "user_is_active": true,
-    "profile_photo": null,
+    "profile_photo": "user_7_1745970180.jpg",
     "reg_name": "Antonio",
     "reg_lastname": "Galeano"
 }
-----------------------------------------
-[2025-04-29 19:49:30] [INFO] [RhPersonController.php:138] {"document_number":"22222222","birth_date":"1995-02-01","first_name":"derlis","last_name":"gonzales","phone_number":"098231325","gender":"M","record_number":"798465","address":"asuncion","email":"derlis@derlis.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-04-29 19:49:30"}
-Data: Creating person
-----------------------------------------
-[2025-05-01 01:39:09] [INFO] [user.controller.php:21] user: carlos@carlos.com
-Data: carlos@carlos.com
-----------------------------------------
-[2025-05-01 01:39:09] [INFO] [user.controller.php:22] user: c253417c750cb0584c7aed857eab548b
-Data: c253417c750cb0584c7aed857eab548b
-----------------------------------------
-[2025-05-01 01:39:09] [INFO] [user.controller.php:33] Login attempt for user: carlos@carlos.com
-Data: {
-    "user_id": 6,
-    "reg_id": 6,
-    "user_email": "carlos@carlos.com",
-    "user_pass": "c253417c750cb0584c7aed857eab548b",
-    "user_expire": "2025-05-29 07:40:03.676343",
-    "user_first_login": null,
-    "user_last_login": "2025-04-29 07:43:09.787005",
-    "user_is_active": true,
-    "profile_photo": null,
-    "reg_name": "carlos",
-    "reg_lastname": "ruiz"
-}
-----------------------------------------
-[2025-04-30 22:10:10] [INFO] [RhPersonController.php:544] 
-Data: Added new doctor record for person ID 52
-----------------------------------------
-[2025-04-30 22:38:20] [INFO] [RhPersonController.php:558] 
-Data: Actualizada empresa del médico para la persona ID 52 con empresa ID 2
-----------------------------------------
-[2025-04-30 23:04:47] [INFO] [RhPersonController.php:558] 
-Data: Actualizada empresa del médico para la persona ID 52 con empresa ID 2
 ----------------------------------------

@@ -35,7 +35,7 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="card-body box-profile">
                             <div class="text-center">
                                 <img class="profile-user-img img-fluid img-circle" id="userProfileImage"
-                                    src="view/dist/img/default-user.png" alt="Foto de perfil del usuario">
+                                    src="view/dist/img/user-default.jpg" alt="Foto de perfil del usuario">
                             </div>
 
                             <h3 class="profile-username text-center" id="userFullName">Nombre del Usuario</h3>
@@ -80,35 +80,59 @@ if (!isset($_SESSION['user_id'])) {
                                             <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="inputName"
-                                                    placeholder="Nombre" name="reg_name">
+                                                    placeholder="Nombre" name="first_name">
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputLastName" class="col-sm-2 col-form-label">Apellido</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="inputLastName"
-                                                    placeholder="Apellido" name="reg_lastname">
+                                                    placeholder="Apellido" name="last_name">
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                                             <div class="col-sm-10">
                                                 <input type="email" class="form-control" id="inputEmail"
-                                                    placeholder="Email" name="user_email">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="inputPhone"
-                                                    placeholder="Teléfono" name="reg_phone">
+                                                    placeholder="Email" name="email">
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="inputDocument" class="col-sm-2 col-form-label">Documento</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="inputDocument"
-                                                    placeholder="Documento" name="reg_document" readonly>
+                                                    placeholder="Documento" name="document_number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="inputPhone"
+                                                    placeholder="Teléfono" name="phone_number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputAddress" class="col-sm-2 col-form-label">Dirección</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="inputAddress"
+                                                    placeholder="Dirección" name="address">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputBirthDate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                            <div class="col-sm-10">
+                                                <input type="date" class="form-control" id="inputBirthDate" name="birth_date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputGender" class="col-sm-2 col-form-label">Género</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" id="inputGender" name="gender">
+                                                    <option value="">Seleccionar...</option>
+                                                    <option value="M">Masculino</option>
+                                                    <option value="F">Femenino</option>
+                                                    <option value="O">Otro</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-group row">
