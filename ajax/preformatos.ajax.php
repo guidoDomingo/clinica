@@ -222,27 +222,27 @@ if (isset($_POST['operacion'])) {
             break;
             
         case 'getPreformatosConsulta':
-            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $doctorId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : null;
             $preformatos->ajaxGetPreformatos('consulta', $doctorId);
             break;
             
         case 'getPreformatosReceta':
-            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $doctorId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : null;
             $preformatos->ajaxGetPreformatos('receta', $doctorId);
             break;
             
         case 'getPreformatosRecetaAnteojos':
-            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $doctorId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : null;
             $preformatos->ajaxGetPreformatos('receta_anteojos', $doctorId);
             break;
             
         case 'getPreformatosOrdenEstudios':
-            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $doctorId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : null;
             $preformatos->ajaxGetPreformatos('orden_estudios', $doctorId);
             break;
             
         case 'getPreformatosOrdenCirugias':
-            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $doctorId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : null;
             $preformatos->ajaxGetPreformatos('orden_cirugias', $doctorId);
             break;
             

@@ -27,20 +27,43 @@ class ModelPreformatos {
     /**
      * Obtiene todos los preformatos activos de un tipo específico
      * @param string $tipo Tipo de preformato ('consulta' o 'receta')
+     * @param int $doctorId ID del doctor para filtrar preformatos (opcional)
      * @return array Arreglo con los preformatos
      */
-    public static function mdlGetPreformatos($tipo) {
+    public static function mdlGetPreformatos($tipo, $doctorId = null) {
         try {
-            $stmt = Conexion::conectar()->prepare(
-                "SELECT id_preformato, nombre, contenido,tipo 
-                FROM preformatos 
-                WHERE activo = true AND tipo = :tipo 
-                ORDER BY nombre ASC"
-            );
+            $sql = "SELECT 
+                    p.id_preformato, 
+                    p.nombre, 
+                    p.contenido,
+                    p.tipo,
+                    p.creado_por
+                FROM preformatos p
+                WHERE p.activo = true 
+                AND p.tipo = :tipo";
             
+            // Si se proporciona un ID de doctor, añadir filtro
+            if ($doctorId !== null) {
+                $sql .= " AND p.creado_por = :doctor_id";
+            }
+            
+            // Ordenar por nombre al final
+            $sql .= " ORDER BY p.nombre ASC";
+            
+            $stmt = Conexion::conectar()->prepare($sql);
             $stmt->bindParam(":tipo", $tipo, PDO::PARAM_STR);
+            
+            // Bind doctor_id si se proporcionó
+            if ($doctorId !== null) {
+                $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
+            }
+            
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Registrar para depuración
+            error_log("mdlGetPreformatos - Tipo: $tipo, Doctor ID: " . ($doctorId ? $doctorId : 'ninguno') . " - Total registros: " . count($resultado));
+            
             return $resultado;
         } catch (PDOException $e) {
             error_log("Error al obtener preformatos: " . $e->getMessage());

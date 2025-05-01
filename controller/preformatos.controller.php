@@ -11,34 +11,54 @@ class ControllerPreformatos {
     }
     
     /**
-     * Obtiene los preformatos de un tipo específico
-     * @param string $tipo Tipo de preformato ('consulta', 'receta', etc.)
-     * @param integer $doctorId ID del doctor específico (opcional)
-     * @return array Preformatos encontrados
+     * Obtiene todos los preformatos activos de un tipo específico
+     * @param string $tipo Tipo de preformato ('consulta' o 'receta')
+     * @param int $doctorId ID del doctor para filtrar preformatos (opcional)
+     * @return array Arreglo con los preformatos
      */
-    static public function ctrGetPreformatos($tipo, $doctorId = null) {
-        $query = "SELECT p.* FROM preformatos p WHERE p.tipo = :tipo AND p.is_active = 1";
-        
-        // Si estamos en el módulo de consulta y se ha especificado un doctor_id, filtramos por ese doctor
-        if ($doctorId) {
-            $query .= " AND p.creado_por = :doctor_id";
-        }
-        
-        $query .= " ORDER BY p.nombre ASC";
+    public static function ctrGetPreformatos($tipo, $doctorId = null) {
+        error_log("ctrGetPreformatos - Tipo: $tipo, Doctor ID: " . ($doctorId ? $doctorId : 'ninguno'));
         
         try {
-            $stmt = Conexion::conectar()->prepare($query);
-            $stmt->bindParam(":tipo", $tipo, PDO::PARAM_STR);
-            
-            // Vincular doctor_id si se especificó
             if ($doctorId) {
-                $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
+                // Primero intentamos obtener el doctor_id asociado al usuario
+                $db = Conexion::conectar();
+                $stmt = $db->prepare(
+                    "SELECT 
+                        d.doctor_id
+                    FROM person_system_user psu 
+                    JOIN rh_doctors d ON psu.person_id = d.person_id
+                    WHERE psu.system_user_id = :user_id
+                    LIMIT 1"
+                );
+                
+                $stmt->bindParam(":user_id", $doctorId, PDO::PARAM_INT);
+                $stmt->execute();
+                $doctorResult = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($doctorResult) {
+                    $doctorId = $doctorResult['doctor_id'];
+                    error_log("Doctor ID encontrado para usuario $doctorId: " . $doctorResult['doctor_id']);
+                } else {
+                    // Si no se encontró como user_id, verificar si es directamente un doctor_id
+                    $stmt = $db->prepare("SELECT doctor_id FROM rh_doctors WHERE doctor_id = :doctor_id LIMIT 1");
+                    $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $doctorDirecto = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($doctorDirecto) {
+                        error_log("Doctor ID confirmado directamente: " . $doctorId);
+                    } else {
+                        error_log("No se encontró doctor para el ID proporcionado: " . $doctorId);
+                        // No se establece a null para permitir que se intente filtrar por el ID original
+                    }
+                }
             }
             
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error al obtener preformatos: " . $e->getMessage());
+            // Ahora obtenemos los preformatos filtrando por tipo y opcionalmente por doctor_id
+            return ModelPreformatos::mdlGetPreformatos($tipo, $doctorId);
+        } catch (Exception $e) {
+            error_log("Error en ctrGetPreformatos: " . $e->getMessage());
             return [];
         }
     }
