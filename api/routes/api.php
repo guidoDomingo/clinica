@@ -67,6 +67,12 @@ $router->get('especialidades', 'Api\Controllers\EspecialidadController', 'index'
 $router->get('especialidades/person', 'Api\Controllers\EspecialidadController', 'getForPerson');
 $router->post('especialidades/assign', 'Api\Controllers\EspecialidadController', 'assignToPerson');
 
+// Rutas para empresas
+$router->get('businesses', 'Api\Controllers\SysBusinessController', 'index');
+$router->get('businesses/show', 'Api\Controllers\SysBusinessController', 'show');
+$router->get('businesses/doctor', 'Api\Controllers\SysBusinessController', 'getDoctorInfo');
+$router->get('doctors', 'Api\Controllers\SysBusinessController', 'getDoctors');
+
 // Location routes (departamentos y ciudades)
 $router->get('departments', 'Api\Controllers\LocationController', 'getDepartments');
 $router->get('cities', 'Api\Controllers\LocationController', 'getCities');

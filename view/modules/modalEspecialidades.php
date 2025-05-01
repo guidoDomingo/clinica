@@ -26,6 +26,16 @@
                         </select>
                     </div>
 
+                    <!-- Campo de empresa, solo visible para médicos -->
+                    <div class="form-group" id="divEmpresaMedico" style="display:none;">
+                        <label for="modalPerEmpresa">Empresa donde trabaja</label>
+                        <select id="modalPerEmpresa" name="modalPerEmpresa" class="form-control">
+                            <option value="">Seleccionar empresa...</option>
+                            <!-- Las opciones se cargarán dinámicamente desde JavaScript -->
+                        </select>
+                        <small class="form-text text-muted">Seleccione la empresa donde trabaja el médico (opcional)</small>
+                    </div>
+
                     <div class="form-group">
                         <label for="modalPerEspecialidades">Especialidades</label>
                         <select id="modalPerEspecialidades" name="modalPerEspecialidades[]" class="form-control select2"

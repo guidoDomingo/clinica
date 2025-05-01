@@ -38,6 +38,18 @@ $(document).ready(function () {
     dropdownParent: $("#modalEspecialidades"),
   });
 
+  // Configurar evento de cambio de profesión para mostrar/ocultar selector de empresas
+  $("#modalPerProfesion").on("change", function() {
+    if ($(this).val() === "Médico") {
+      // Si es médico, mostrar el selector de empresas y cargarlo
+      $("#divEmpresaMedico").show();
+      cargarEmpresas();
+    } else {
+      // Si no es médico, ocultar el selector
+      $("#divEmpresaMedico").hide();
+    }
+  });
+
   $("#validarDocumento, #validarNombre, #validarApellidos, #validarFicha, #validarSexo").on("keydown", function(e) {
     if (e.key === "Enter" || e.keyCode === 13) {
       filtrarPersonas();
@@ -1099,6 +1111,40 @@ function cargarDatosProfesionales(personId) {
         $("#modalPerRuc").val(data.data.ruc || "");
         $("#modalPerWhatsapp").val(data.data.whatsapp || "");
         $("#modalPerPlan").val(data.data.plan || "");
+        
+        // Si es médico, mostrar el selector de empresas y cargar la empresa asignada
+        if (data.data.profesion === "Médico") {
+          $("#divEmpresaMedico").show();
+          cargarEmpresas();
+          
+          // Obtener la empresa asignada al médico
+          fetch(`api/persons/show?id=${personId}`)
+            .then(response => response.json())
+            .then(personData => {
+              if (personData.status === "success" && personData.data) {
+                const personID = personData.data.person_id;
+                
+                // Consultar la tabla rh_doctors para obtener la empresa asignada
+                return fetch(`api/businesses/doctor?person_id=${personID}`)
+                  .then(response => response.json())
+                  .then(doctorData => {
+                    if (doctorData.status === "success" && doctorData.data && doctorData.data.business_id) {
+                      // Seleccionar la empresa en el dropdown
+                      $("#modalPerEmpresa").val(doctorData.data.business_id);
+                      console.log("Business ID cargado:", doctorData.data.business_id);
+                    }
+                  })
+                  .catch(error => {
+                    console.error("Error al cargar datos del doctor:", error);
+                  });
+              }
+            })
+            .catch(error => {
+              console.error("Error al cargar datos de la persona:", error);
+            });
+        } else {
+          $("#divEmpresaMedico").hide();
+        }
       } else {
         // Limpiar los campos si no hay datos
         $("#modalPerProfesion").val("");
@@ -1108,6 +1154,7 @@ function cargarDatosProfesionales(personId) {
         $("#modalPerRuc").val("");
         $("#modalPerWhatsapp").val("");
         $("#modalPerPlan").val("");
+        $("#divEmpresaMedico").hide();
       }
     })
     .catch((error) => {
@@ -1120,6 +1167,7 @@ function cargarDatosProfesionales(personId) {
       $("#modalPerRuc").val("");
       $("#modalPerWhatsapp").val("");
       $("#modalPerPlan").val("");
+      $("#divEmpresaMedico").hide();
     });
 }
 
@@ -1147,6 +1195,14 @@ function guardarEspecialidadesModal() {
     whatsapp: $("#modalPerWhatsapp").val(),
     plan: $("#modalPerPlan").val(),
   };
+  
+  // Añadir business_id si la profesión es médico y se ha seleccionado una empresa
+  if ($("#modalPerProfesion").val() === "Médico") {
+    const empresaId = $("#modalPerEmpresa").val();
+    if (empresaId) {
+      profesionalData.business_id = empresaId;
+    }
+  }
 
   // Guardar especialidades
   fetch("api/especialidades/assign", {
@@ -1394,4 +1450,195 @@ function mostrarAlerta(tipo, mensaje) {
     showConfirmButton: false,
     timer: 1500,
   });
+}
+
+/**
+ * Carga las empresas disponibles desde el servidor
+ */
+function cargarEmpresas() {
+  fetch("api/businesses")
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success" && Array.isArray(data.data)) {
+        // Limpiar opciones actuales excepto la primera (vacía)
+        const emptyOption = $("#modalPerEmpresa option:first");
+        $("#modalPerEmpresa").empty().append(emptyOption);
+
+        // Agregar opciones para cada empresa
+        data.data.forEach((empresa) => {
+          const option = new Option(
+            empresa.business_name,
+            empresa.business_id,
+            false,
+            false
+          );
+          $("#modalPerEmpresa").append(option);
+        });
+
+        console.log("Empresas cargadas correctamente");
+      } else {
+        console.error("Error al cargar empresas:", data);
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar empresas:", error);
+    });
+}
+
+/**
+ * Carga los datos profesionales de una persona
+ * @param {number} personId - ID de la persona
+ */
+function cargarDatosProfesionales(personId) {
+  fetch(`api/persons/professional?person_id=${personId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success" && data.data) {
+        // Llenar los campos con los datos profesionales
+        $("#modalPerProfesion").val(data.data.profesion || "");
+        $("#modalPerDireccionCorp").val(data.data.direccion_corporativa || "");
+        $("#modalPerEmailProf").val(data.data.email_profesional || "");
+        $("#modalPerDenominacionCorp").val(
+          data.data.denominacion_corporativa || ""
+        );
+        $("#modalPerRuc").val(data.data.ruc || "");
+        $("#modalPerWhatsapp").val(data.data.whatsapp || "");
+        $("#modalPerPlan").val(data.data.plan || "");
+        
+        // Si es médico, mostrar el selector de empresas y cargar la empresa asignada
+        if (data.data.profesion === "Médico") {
+          $("#divEmpresaMedico").show();
+          cargarEmpresas();
+          
+          // Obtener la empresa asignada al médico
+          fetch(`api/persons/show?id=${personId}`)
+            .then(response => response.json())
+            .then(personData => {
+              if (personData.status === "success" && personData.data) {
+                const personID = personData.data.person_id;
+                
+                // Consultar la tabla rh_doctors para obtener la empresa asignada
+                return fetch(`api/businesses/doctor?person_id=${personID}`)
+                  .then(response => response.json())
+                  .then(doctorData => {
+                    if (doctorData.status === "success" && doctorData.data && doctorData.data.business_id) {
+                      // Seleccionar la empresa en el dropdown
+                      $("#modalPerEmpresa").val(doctorData.data.business_id);
+                      console.log("Business ID cargado:", doctorData.data.business_id);
+                    }
+                  })
+                  .catch(error => {
+                    console.error("Error al cargar datos del doctor:", error);
+                  });
+              }
+            })
+            .catch(error => {
+              console.error("Error al cargar datos de la persona:", error);
+            });
+        } else {
+          $("#divEmpresaMedico").hide();
+        }
+      } else {
+        // Limpiar los campos si no hay datos
+        $("#modalPerProfesion").val("");
+        $("#modalPerDireccionCorp").val("");
+        $("#modalPerEmailProf").val("");
+        $("#modalPerDenominacionCorp").val("");
+        $("#modalPerRuc").val("");
+        $("#modalPerWhatsapp").val("");
+        $("#modalPerPlan").val("");
+        $("#divEmpresaMedico").hide();
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar datos profesionales:", error);
+      // Limpiar los campos en caso de error
+      $("#modalPerProfesion").val("");
+      $("#modalPerDireccionCorp").val("");
+      $("#modalPerEmailProf").val("");
+      $("#modalPerDenominacionCorp").val("");
+      $("#modalPerRuc").val("");
+      $("#modalPerWhatsapp").val("");
+      $("#modalPerPlan").val("");
+      $("#divEmpresaMedico").hide();
+    });
+}
+
+/**
+ * Guarda las especialidades y datos profesionales desde el modal
+ */
+function guardarEspecialidadesModal() {
+  const personId = $("#especialidadesPersonId").val();
+  const especialidadesSeleccionadas = $("#modalPerEspecialidades").val() || [];
+
+  // Datos de especialidades
+  const especialidadesData = {
+    person_id: personId,
+    especialidades: especialidadesSeleccionadas,
+  };
+
+  // Datos profesionales
+  const profesionalData = {
+    person_id: personId,
+    profesion: $("#modalPerProfesion").val(),
+    direccion_corporativa: $("#modalPerDireccionCorp").val(),
+    email_profesional: $("#modalPerEmailProf").val(),
+    denominacion_corporativa: $("#modalPerDenominacionCorp").val(),
+    ruc: $("#modalPerRuc").val(),
+    whatsapp: $("#modalPerWhatsapp").val(),
+    plan: $("#modalPerPlan").val(),
+  };
+  
+  // Añadir business_id si la profesión es médico y se ha seleccionado una empresa
+  if ($("#modalPerProfesion").val() === "Médico") {
+    const empresaId = $("#modalPerEmpresa").val();
+    if (empresaId) {
+      profesionalData.business_id = empresaId;
+    }
+  }
+
+  // Guardar especialidades
+  fetch("api/especialidades/assign", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(especialidadesData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success") {
+        // Guardar datos profesionales
+        return fetch("api/persons/professional", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(profesionalData),
+        });
+      } else {
+        throw new Error("Error al guardar especialidades");
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success") {
+        mostrarAlerta(
+          "success",
+          "Información profesional guardada correctamente"
+        );
+        $("#modalEspecialidades").modal("hide");
+        // Recargar la tabla para mostrar los cambios
+        tablaPersonas.ajax.reload();
+      } else {
+        mostrarAlerta(
+          "error",
+          data.message || "Error al guardar información profesional"
+        );
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      mostrarAlerta("error", "Error al procesar la solicitud");
+    });
 }

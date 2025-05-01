@@ -148,6 +148,9 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
 <!-- Agendas -->
 <script src="view/js/agendas.js"></script>
 
+<!-- Preformatos -->
+<script src="view/js/preformatos.js"></script>
+
 <!-- Cargar datos (preformatos y motivos) -->
 <script src="view/js/cargar_datos.js"></script>
 </body>

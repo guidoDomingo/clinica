@@ -60,8 +60,8 @@ function inicializarComponentes() {
         });
     }
     
-    // Cargar usuarios para el selector de propietario
-    cargarUsuarios();
+    // Cargar médicos para el selector de propietario
+    cargarMedicos();
     
     // Inicializar selectores
     const selectAplicarA = document.getElementById('aplicar-a');
@@ -484,16 +484,77 @@ function limpiarFormulario() {
 }
 
 /**
- * Carga los usuarios para el selector de propietario
+ * Carga los médicos para el selector de propietario
  */
-function cargarUsuarios() {
+function cargarMedicos() {
     const selectPropietario = document.getElementById('propietario');
     if (!selectPropietario) {
         console.error('No se encontró el elemento select de propietario');
         return;
     }
     
-    console.log('Iniciando carga de usuarios...');
+    console.log('Iniciando carga de médicos...');
+    
+    // Usar la URL completa
+    const url = window.location.pathname.includes('index.php') ? 
+        'api/doctors' : 
+        window.location.origin + '/clinica/api/doctors';
+        
+    console.log('URL para cargar médicos:', url);
+    
+    // Realizar petición AJAX usando fetch API con mejor manejo de errores
+    fetch(url)
+        .then(response => {
+            console.log('Respuesta status:', response.status);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(response => {
+            console.log('Respuesta recibida:', response);
+            if (response.status === 'success' && response.data && response.data.length > 0) {
+                console.log('Médicos obtenidos:', response.data.length);
+                // Limpiar selector manteniendo la opción por defecto
+                const defaultOption = selectPropietario.querySelector('option[value=""]');
+                selectPropietario.innerHTML = '';
+                if (defaultOption) {
+                    selectPropietario.appendChild(defaultOption);
+                }
+                
+                // Agregar opciones de médicos
+                response.data.forEach(function(doctor) {
+                    const option = document.createElement('option');
+                    option.value = doctor.doctor_id;
+                    option.textContent = `${doctor.last_name}, ${doctor.first_name}`;
+                    if (doctor.business_name) {
+                        option.textContent += ` (${doctor.business_name})`;
+                    }
+                    selectPropietario.appendChild(option);
+                });
+            } else {
+                console.error('No se obtuvieron médicos o la respuesta no tiene el formato esperado');
+                // Añadir una opción por defecto indicando el error
+                selectPropietario.innerHTML = '<option value="">No se pudieron cargar los médicos</option>';
+            }
+        })
+        .catch(error => {
+            console.error("Error al cargar médicos:", error);
+            // Añadir una opción por defecto indicando el error
+            selectPropietario.innerHTML = '<option value="">Error al cargar médicos</option>';
+            
+            // Intentar con la antigua función para compatibilidad
+            cargarUsuariosLegacy();
+        });
+}
+
+/**
+ * Función de respaldo para cargar usuarios (para compatibilidad con el sistema anterior)
+ */
+function cargarUsuariosLegacy() {
+    console.log('Intentando cargar usuarios con el método legacy...');
+    const selectPropietario = document.getElementById('propietario');
+    if (!selectPropietario) return;
     
     // Crear objeto FormData para enviar los datos
     const formData = new FormData();
@@ -508,9 +569,8 @@ function cargarUsuarios() {
         processData: false,
         contentType: false,
         success: function(response) {
-            console.log('Respuesta recibida:', response);
+            console.log('Respuesta legacy recibida:', response);
             if (response.status === 'success' && response.data && response.data.length > 0) {
-                console.log('Usuarios obtenidos:', response.data.length);
                 // Limpiar selector manteniendo la opción por defecto
                 const defaultOption = selectPropietario.querySelector('option[value=""]');
                 selectPropietario.innerHTML = '';
@@ -525,14 +585,10 @@ function cargarUsuarios() {
                     option.textContent = usuario.nombre + ' ' + usuario.apellido;
                     selectPropietario.appendChild(option);
                 });
-            } else {
-                console.error('No se obtuvieron usuarios o la respuesta no tiene el formato esperado');
             }
         },
         error: function(xhr, status, error) {
-            console.error("Error al cargar usuarios:", error);
-            console.error("Estado:", status);
-            console.error("Respuesta:", xhr.responseText);
+            console.error("Error en método legacy:", error);
         }
     });
 }

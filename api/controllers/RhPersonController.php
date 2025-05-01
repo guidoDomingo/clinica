@@ -240,7 +240,16 @@ class RhPersonController
         }
         
         try {
+            // Primero eliminar el registro de médico si existe
+            $db = \Api\Core\Database::getConnection();
+            $deleteDoctorQuery = "DELETE FROM rh_doctors WHERE person_id = :person_id";
+            $deleteDoctorStmt = $db->prepare($deleteDoctorQuery);
+            $deleteDoctorStmt->bindParam(':person_id', $id);
+            $deleteDoctorStmt->execute();
+            
+            // Luego eliminar la persona
             $this->personModel->delete($id);
+            
             Response::success(['message' => 'Person deleted successfully']);
         } catch (\Exception $e) {
             Response::error(['message' => 'Failed to delete person', 'error' => $e->getMessage()], 500);
@@ -490,6 +499,20 @@ class RhPersonController
             
             $existingRecord = $checkStmt->fetch(\PDO::FETCH_ASSOC);
             
+            // Check if person was previously a doctor, to know if we need to update or delete
+            $checkDoctorQuery = "SELECT doctor_id FROM rh_doctors WHERE person_id = :person_id";
+            $checkDoctorStmt = $db->prepare($checkDoctorQuery);
+            $checkDoctorStmt->bindParam(':person_id', $personId);
+            $checkDoctorStmt->execute();
+            
+            $existingDoctor = $checkDoctorStmt->fetch(\PDO::FETCH_ASSOC);
+            $wasDoctor = $existingDoctor ? true : false;
+            $isDoctor = isset($data['profesion']) && $data['profesion'] === 'Médico';
+            
+            // Get business_id if provided
+            $businessId = isset($data['business_id']) && !empty($data['business_id']) ? 
+                          (int)$data['business_id'] : null;
+            
             if ($existingRecord) {
                 // Update existing record
                 $updateQuery = "UPDATE person_professional SET 
@@ -515,6 +538,34 @@ class RhPersonController
                 
                 $updateStmt->execute();
                 
+                // Handle doctor record based on profession
+                if ($isDoctor) {
+                    if (!$wasDoctor) {
+                        // New doctor: create record in rh_doctors
+                        $insertDoctorQuery = "INSERT INTO rh_doctors (person_id, business_id) VALUES (:person_id, :business_id)";
+                        $insertDoctorStmt = $db->prepare($insertDoctorQuery);
+                        $insertDoctorStmt->bindParam(':person_id', $personId);
+                        $insertDoctorStmt->bindParam(':business_id', $businessId, \PDO::PARAM_INT);
+                        $insertDoctorStmt->execute();
+                        Logger::info("Agregado nuevo registro de médico para la persona ID $personId" . ($businessId ? " con empresa ID $businessId" : ""));
+                    } else {
+                        // Update existing doctor record
+                        $updateDoctorQuery = "UPDATE rh_doctors SET business_id = :business_id WHERE person_id = :person_id";
+                        $updateDoctorStmt = $db->prepare($updateDoctorQuery);
+                        $updateDoctorStmt->bindParam(':person_id', $personId);
+                        $updateDoctorStmt->bindParam(':business_id', $businessId, \PDO::PARAM_INT);
+                        $updateDoctorStmt->execute();
+                        Logger::info("Actualizada empresa del médico para la persona ID $personId" . ($businessId ? " con empresa ID $businessId" : ""));
+                    }
+                } else if (!$isDoctor && $wasDoctor) {
+                    // No longer a doctor: remove from rh_doctors
+                    $deleteDoctorQuery = "DELETE FROM rh_doctors WHERE person_id = :person_id";
+                    $deleteDoctorStmt = $db->prepare($deleteDoctorQuery);
+                    $deleteDoctorStmt->bindParam(':person_id', $personId);
+                    $deleteDoctorStmt->execute();
+                    Logger::info("Eliminado registro de médico para la persona ID $personId");
+                }
+                
                 Response::success(['message' => 'Professional information updated successfully']);
             } else {
                 // Insert new record
@@ -537,6 +588,16 @@ class RhPersonController
                 $insertStmt->bindParam(':plan', $data['plan']);
                 
                 $insertStmt->execute();
+                
+                // If new record is a doctor, create entry in rh_doctors
+                if ($isDoctor) {
+                    $insertDoctorQuery = "INSERT INTO rh_doctors (person_id, business_id) VALUES (:person_id, :business_id)";
+                    $insertDoctorStmt = $db->prepare($insertDoctorQuery);
+                    $insertDoctorStmt->bindParam(':person_id', $personId);
+                    $insertDoctorStmt->bindParam(':business_id', $businessId, \PDO::PARAM_INT);
+                    $insertDoctorStmt->execute();
+                    Logger::info("Creado nuevo registro de médico para la persona ID $personId" . ($businessId ? " con empresa ID $businessId" : ""));
+                }
                 
                 Response::success(['message' => 'Professional information saved successfully']);
             }
