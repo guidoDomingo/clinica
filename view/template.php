@@ -130,29 +130,53 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
 }
 ?>
 
-<!-- Template -->
+<!-- Template JS (siempre se carga) -->
 <script src="view/js/template.js"></script>
-<!-- Consulta -->
-<script src="view/js/consultas.js"></script>
-<!-- Citas -->
-<script src="view/js/citas.js"></script>
-<!-- Archivos -->
-<script src="view/js/archivos.js"></script>
-<!-- Register -->
-<script src="view/js/register.js"></script>
-<!-- Personas -->
-<script src="view/js/personas.js"></script>
-<!-- Roles -->
-<script src="view/js/roles.js"></script>
 
-<!-- Agendas -->
-<script src="view/js/agendas.js"></script>
+<!-- Cargar JavaScript específico según el módulo activo -->
+<?php
+// Definir la ruta actual (home por defecto)
+$ruta = isset($_GET["ruta"]) ? $_GET["ruta"] : "home";
 
-<!-- Preformatos -->
-<script src="view/js/preformatos.js"></script>
-
-<!-- Cargar datos (preformatos y motivos) -->
-<script src="view/js/cargar_datos.js"></script>
+// Cargar scripts según la página activa
+switch ($ruta) {
+    case "consultas":
+        echo '<script src="view/js/consultas.js"></script>';
+        echo '<script src="view/js/cargar_datos.js"></script>';
+        break;
+        
+    case "preformatos":
+        // No es necesario incluir el script aquí ya que se incluye directamente en el archivo del módulo
+        break;
+        
+    case "citas":
+    case "agendas":
+        echo '<script src="view/js/citas.js"></script>';
+        echo '<script src="view/js/agendas.js"></script>';
+        break;
+        
+    case "archivos":
+        echo '<script src="view/js/archivos.js"></script>';
+        break;
+        
+    case "register":
+        echo '<script src="view/js/register.js"></script>';
+        break;
+        
+    case "personas":
+    case "rhpersonas":
+        echo '<script src="view/js/personas.js"></script>';
+        break;
+        
+    case "roles":
+        echo '<script src="view/js/roles.js"></script>';
+        break;
+        
+    // Caso por defecto para el home o páginas que no requieren JS específico
+    default:
+        break;
+}
+?>
 </body>
 
 </html>

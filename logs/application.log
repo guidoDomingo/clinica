@@ -159,3 +159,6 @@ Data: Added new doctor record for person ID 52
 [2025-04-30 22:38:20] [INFO] [RhPersonController.php:558] 
 Data: Actualizada empresa del médico para la persona ID 52 con empresa ID 2
 ----------------------------------------
+[2025-04-30 23:04:47] [INFO] [RhPersonController.php:558] 
+Data: Actualizada empresa del médico para la persona ID 52 con empresa ID 2
+----------------------------------------
