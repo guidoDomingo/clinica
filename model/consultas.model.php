@@ -225,5 +225,57 @@ class ModelConsulta {
             return ['error' => $e->getMessage()];
         }
     }
+
+    /**
+     * Método para obtener las consultas de un paciente específico con datos básicos
+     * 
+     * @param int $idPersona ID de la persona/paciente
+     * @return array Arreglo con las consultas y datos básicos del paciente
+     */
+    public static function mdlGetConsultasByPaciente($idPersona) {
+        try {
+            // Logging para depuración
+            $startTime = microtime(true);
+            error_log("Iniciando consulta mdlGetConsultasByPaciente para ID: " . $idPersona);
+            
+            $stmt = Conexion::conectar()->prepare("
+                SELECT 
+                    c.id_consulta,
+                    c.id_persona,
+                    rh.document_number AS documento,
+                    rh.first_name AS nombre,
+                    rh.last_name AS apellido,
+                    c.motivoscomunes,
+                    c.consulta_textarea,
+                    c.fecha_registro
+                FROM public.consultas c
+                JOIN public.rh_person rh ON c.id_persona = rh.person_id
+                WHERE c.id_persona = :id_persona
+                ORDER BY c.fecha_registro DESC
+            ");
+            
+            $stmt->bindParam(":id_persona", $idPersona, PDO::PARAM_INT);
+            $stmt->execute();
+            $consultas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000; // convertir a milisegundos
+            error_log("Consulta mdlGetConsultasByPaciente completada en {$executionTime}ms. Registros encontrados: " . count($consultas));
+            
+            // Si no hay datos, loguear para depuración
+            if (empty($consultas)) {
+                error_log("No se encontraron consultas para el paciente con ID: " . $idPersona);
+            } else {
+                // Mostrar un ejemplo del primer registro para verificación
+                error_log("Muestra del primer registro: " . print_r($consultas[0], true));
+            }
+            
+            return $consultas;
+        } catch (PDOException $e) {
+            error_log("Error en mdlGetConsultasByPaciente: " . $e->getMessage() . " - SQL: " . $e->getCode());
+            // Devolver error en formato consistente
+            return ['error' => $e->getMessage()];
+        }
+    }
 }
 ?>

@@ -245,6 +245,9 @@ function buscarPersona() {
                 // Cargar la última consulta del paciente si existe
                 cargarUltimaConsulta(persona.id_persona);
                 
+                // Actualizar tabla de consultas con solo las del paciente seleccionado
+                inicializarTablaConsultas(persona.id_persona);
+                
                 Swal.fire({
                     position: "center",
                     icon: "success",
@@ -1654,9 +1657,10 @@ function subirArchivos() {
 
 /**
  * Función para inicializar la tabla de consultas
+ * @param {number} idPaciente - ID del paciente seleccionado (opcional)
  */
-function inicializarTablaConsultas() {
-    console.log('Iniciando proceso de inicialización de tabla de consultas...');
+function inicializarTablaConsultas(idPaciente) {
+    console.log('Iniciando proceso de inicialización de tabla de consultas para paciente ID:', idPaciente);
     
     // Asegurarnos de que jQuery y DataTables estén completamente cargados
     if (typeof $ !== 'function' || typeof $.fn.DataTable !== 'function') {
@@ -1665,10 +1669,11 @@ function inicializarTablaConsultas() {
     }
 
     // Definir una variable global para almacenar la instancia de DataTable
-    // Si ya existe una instancia global, no necesitamos reinicializar
+    // Si ya existe una instancia global, la destruimos para reinicializarla con los nuevos datos
     if (window.tablaConsultasInstance) {
-        console.log('Ya existe una instancia de tablaConsultas, no reinicializando.');
-        return window.tablaConsultasInstance;
+        console.log('Destruyendo instancia existente de tablaConsultas');
+        window.tablaConsultasInstance.destroy();
+        window.tablaConsultasInstance = null;
     }
 
     // Verificar si estamos en la página correcta que contiene la tabla
@@ -1686,15 +1691,8 @@ function inicializarTablaConsultas() {
         try {            
             // Verificar si la tabla ya está inicializada como DataTable
             if ($.fn.DataTable.isDataTable('#tabla-consultas')) {
-                console.log('La tabla ya está inicializada como DataTable');
-                // Capturar la instancia existente en vez de reinicializar
-                window.tablaConsultasInstance = $('#tabla-consultas').DataTable();
-                
-                // Recargar los datos si es necesario
-                window.tablaConsultasInstance.ajax.reload();
-                
-                console.log('Se reutilizó la instancia existente de DataTable');
-                return window.tablaConsultasInstance;
+                console.log('La tabla ya está inicializada como DataTable, destruyéndola para reinicializar');
+                $('#tabla-consultas').DataTable().destroy();
             }
             
             // Verificar que la tabla tenga estructura básica (thead y tbody)
@@ -1703,64 +1701,79 @@ function inicializarTablaConsultas() {
                 return null;
             }
             
-            console.log('Inicializando DataTable por primera vez...');
+            console.log('Inicializando DataTable por primera vez para paciente ID:', idPaciente);
             
             let ajaxUrl = 'ajax/consultas.ajax.php';
             console.log('URL para petición AJAX:', ajaxUrl);
             
-            // Hacer una prueba de la llamada AJAX para verificar que devuelve datos
-            $.ajax({
-                url: ajaxUrl,
-                type: 'POST',
-                data: {
-                    operacion: 'getAllConsultas'
-                },
-                success: function(preCheck) {
-                    console.log('Pre-verificación de datos recibidos:', preCheck);
-                    try {
-                        // Intentar parsear el resultado si viene como string
-                        if (typeof preCheck === 'string') {
-                            preCheck = JSON.parse(preCheck);
-                        }
-                        console.log('Datos parseados para pre-verificación:', preCheck);
-                        console.log('Se encontraron ' + (Array.isArray(preCheck) ? preCheck.length : 'desconocido') + ' registros.');
-                        
-                        // Proceder con la inicialización de la tabla
-                        initializeDataTableWithData();
-                    } catch (parseError) {
-                        console.error('Error al parsear respuesta de pre-verificación:', parseError);
-                        console.log('Respuesta original de pre-verificación:', preCheck);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error en pre-verificación AJAX:', error);
-                    console.error('Estado HTTP:', xhr.status);
-                    console.error('Respuesta:', xhr.responseText);
-                }
-            });
+            // Crear datos de consulta según si hay paciente seleccionado o no
+            let ajaxData = {
+                operacion: idPaciente ? 'getConsultasByPaciente' : 'getAllConsultas',
+            };
             
-            function initializeDataTableWithData() {
-                console.log('Iniciando DataTable con configuración...');
+            // Si hay un paciente seleccionado, agregar su ID a la petición
+            if (idPaciente) {
+                ajaxData.id_persona = idPaciente;
+                console.log('ID de paciente agregado a la petición AJAX:', idPaciente);
+                // Hacer una prueba de la llamada AJAX para verificar que devuelve datos
+                $.ajax({
+                    url: ajaxUrl,
+                    type: 'POST',
+                    data: ajaxData,
+                    success: function(preCheck) {
+                        console.log('Pre-verificación de datos recibidos:', preCheck);
+                        try {
+                            // Intentar parsear el resultado si viene como string
+                            if (typeof preCheck === 'string') {
+                                preCheck = JSON.parse(preCheck);
+                            }
+                            console.log('Datos parseados para pre-verificación:', preCheck);
+                            console.log('Se encontraron ' + (Array.isArray(preCheck) ? preCheck.length : 'desconocido') + ' registros.');
+                            
+                            // Proceder con la inicialización de la tabla
+                            initializeDataTableWithData(idPaciente);
+                        } catch (parseError) {
+                            console.error('Error al parsear respuesta de pre-verificación:', parseError);
+                            console.log('Respuesta original de pre-verificación:', preCheck);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en pre-verificación AJAX:', error);
+                        console.error('Estado HTTP:', xhr.status);
+                        console.error('Respuesta:', xhr.responseText);
+                    }
+                });
+            }
+            
+            
+            function initializeDataTableWithData(idPaciente) {
+                console.log('Iniciando DataTable con configuración para paciente ID:', idPaciente);
                 
                 // Asegurarse nuevamente de que la tabla no esté ya inicializada
                 if ($.fn.DataTable.isDataTable('#tabla-consultas')) {
-                    console.log('La tabla ya está inicializada como DataTable (verificación secundaria)');
-                    window.tablaConsultasInstance = $('#tabla-consultas').DataTable();
-                    return window.tablaConsultasInstance;
+                    console.log('La tabla ya está inicializada como DataTable (verificación secundaria), destruyéndola');
+                    $('#tabla-consultas').DataTable().destroy();
                 }
                 
                 // Guardar la instancia de DataTable en una variable global para referencia futura
                 try {
                     window.tablaConsultasInstance = $('#tabla-consultas').DataTable({
                         // No reinicializar si ya existe (prevenir advertencia)
-                        retrieve: true,
+                        retrieve: false,
+                        destroy: true,
                         processing: true, // Mostrar indicador de procesamiento
                         serverSide: false, // No usar procesamiento del lado del servidor
                         ajax: {
                             url: ajaxUrl,
                             type: 'POST',
                             data: function(d) {
-                                return {
+                                // Agregar el ID del paciente si está disponible
+                                return idPaciente ? 
+                                {
+                                    operacion: 'getConsultasByPaciente',
+                                    id_persona: idPaciente
+                                } : 
+                                {
                                     operacion: 'getAllConsultas'
                                 };
                             },
@@ -1771,10 +1784,8 @@ function inicializarTablaConsultas() {
                                 if (typeof json === 'string') {
                                     try {
                                         json = JSON.parse(json);
-                                        console.log('Datos convertidos de string a objeto:', json);
                                     } catch (e) {
-                                        console.error('Error al parsear JSON:', e);
-                                        console.log('Contenido del string recibido:', json);
+                                        console.error('Error al parsear respuesta JSON:', e);
                                         return [];
                                     }
                                 }
@@ -1799,8 +1810,9 @@ function inicializarTablaConsultas() {
                                     if (data) {
                                         try {
                                             const fecha = new Date(data);
-                                            return fecha.toLocaleDateString();
+                                            return fecha.toLocaleDateString('es-ES');
                                         } catch (e) {
+                                            console.error('Error al formatear fecha:', e);
                                             return data;
                                         }
                                     }

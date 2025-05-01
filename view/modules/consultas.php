@@ -269,4 +269,4 @@
 </div>
 
 <!-- Script para la funcionalidad de autocompletado de datos del paciente -->
-<script src="view/js/consultas.js"></script>
+<!-- <script src="view/js/consultas.js"></script> -->

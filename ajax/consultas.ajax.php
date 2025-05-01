@@ -40,6 +40,19 @@ class ConsultaAjax {
         // Asegurar que la respuesta sea JSON válido
         echo json_encode($response);
     }
+    
+    public function ajaxGetConsultasByPaciente($idPersona) {
+        $response = ModelConsulta::mdlGetConsultasByPaciente($idPersona);
+        
+        // Verificar si hay error y devolverlo como JSON válido
+        if(isset($response['error'])) {
+            echo json_encode(['error' => $response['error']]);
+            return;
+        }
+        
+        // Asegurar que la respuesta sea JSON válido
+        echo json_encode($response);
+    }
 }
 // Procesar la eliminación de una consulta
 if (isset($_POST["id_persona"]) && isset($_POST["operacion"]) && $_POST["operacion"] === "buscarConsultaPersona") {
@@ -74,4 +87,10 @@ if (isset($_POST["id_consulta"]) && isset($_POST["operacion"]) && $_POST["operac
 if (isset($_POST["operacion"]) && $_POST["operacion"] === "getAllConsultas") {
     $allConsultas = new ConsultaAjax();
     $allConsultas->ajaxGetAllConsultas();
+}
+
+// Procesar consultas por paciente
+if (isset($_POST["id_persona"]) && isset($_POST["operacion"]) && $_POST["operacion"] === "getConsultasByPaciente") {
+    $consultasPaciente = new ConsultaAjax();
+    $consultasPaciente->ajaxGetConsultasByPaciente($_POST["id_persona"]);
 }

@@ -321,3 +321,47 @@ Parameters: {
     "name": "%antonio%"
 }
 ----------------------------------------
+[2025-05-01 16:19:44] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-05-01 16:19:44] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-05-01 16:19:45] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-05-01 16:19:48] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
+[2025-05-01 16:28:14] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-05-01 16:28:14] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-05-01 16:28:14] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-05-01 16:28:17] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%messi%"
+}
+----------------------------------------
