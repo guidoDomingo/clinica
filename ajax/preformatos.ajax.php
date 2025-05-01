@@ -16,10 +16,60 @@ class PreformatosAjax {
     /**
      * Obtiene todos los preformatos activos de un tipo específico
      * @param string $tipo Tipo de preformato ('consulta', 'receta', etc.)
-     * @param integer $doctorId ID del médico conectado (opcional)
+     * @param integer $userId ID del usuario conectado (opcional)
      */
-    public function ajaxGetPreformatos($tipo, $doctorId = null) {
-        $preformatos = ControllerPreformatos::ctrGetPreformatos($tipo, $doctorId);
+    public function ajaxGetPreformatos($tipo, $userId = null) {
+        // Registrar información para depuración
+        error_log("ajaxGetPreformatos - Tipo: " . $tipo . ", User ID: " . ($userId ? $userId : 'ninguno'));
+        
+        // Si se proporciona un ID de usuario, buscar sus preformatos usando la relación correcta
+        if ($userId) {
+            try {
+                // Conectar a la base de datos
+                $db = Conexion::conectar();
+                
+                // Consulta para obtener los preformatos del doctor asociado al usuario
+                $sql = "SELECT 
+                            p.*
+                        FROM person_system_user psu 
+                        INNER JOIN rh_doctors rd 
+                        ON psu.person_id = rd.person_id 
+                        INNER JOIN preformatos p 
+                        ON p.creado_por = rd.doctor_id 
+                        WHERE psu.system_user_id = :user_id 
+                        AND p.tipo = :tipo
+                        AND p.activo = true
+                        ORDER BY p.nombre ASC";
+                
+                error_log("SQL para obtener preformatos: " . $sql);
+                
+                $stmt = $db->prepare($sql);
+                $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
+                $stmt->bindParam(":tipo", $tipo, PDO::PARAM_STR);
+                $stmt->execute();
+                
+                $preformatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Registrar información de depuración
+                error_log("Preformatos encontrados: " . count($preformatos));
+                
+                echo json_encode([
+                    'status' => 'success',
+                    'data' => $preformatos
+                ]);
+                return;
+            } catch (PDOException $e) {
+                error_log("Error al obtener preformatos por usuario: " . $e->getMessage());
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Error al obtener preformatos: ' . $e->getMessage()
+                ]);
+                return;
+            }
+        }
+        
+        // Si no se proporciona usuario_id, usar el método estándar para obtener todos los preformatos del tipo
+        $preformatos = ControllerPreformatos::ctrGetPreformatos($tipo);
         echo json_encode([
             'status' => 'success',
             'data' => $preformatos

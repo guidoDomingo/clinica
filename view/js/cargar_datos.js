@@ -201,13 +201,13 @@ function cargarPreformatosConsulta() {
     const formData = new FormData();
     formData.append('operacion', 'getPreformatosConsulta');
     
-    // Si estamos en la página de consultas, enviar el ID del médico conectado
-    if (window.location.href.includes('consultas')) {
-        const doctorId = obtenerIdMedicoConectado();
-        if (doctorId) {
-            formData.append('doctor_id', doctorId);
-            console.log('Enviando doctor_id:', doctorId);
-        }
+    // Obtener el ID del usuario logueado del atributo data-user-id del body
+    const usuarioId = document.body.getAttribute('data-user-id') || '';
+    if (usuarioId) {
+        formData.append('usuario_id', usuarioId);
+        console.log('Enviando usuario_id para preformatos de consulta:', usuarioId);
+    } else {
+        console.log('No se encontró el ID de usuario logueado');
     }
     
     console.log('Enviando petición AJAX para obtener preformatos de consulta...');
@@ -288,13 +288,13 @@ function cargarPreformatosReceta() {
     const formData = new FormData();
     formData.append('operacion', 'getPreformatosReceta');
     
-    // Si estamos en la página de consultas, enviar el ID del médico conectado
-    if (window.location.href.includes('consultas')) {
-        const doctorId = obtenerIdMedicoConectado();
-        if (doctorId) {
-            formData.append('doctor_id', doctorId);
-            console.log('Enviando doctor_id para recetas:', doctorId);
-        }
+    // Obtener el ID del usuario logueado del atributo data-user-id del body
+    const usuarioId = document.body.getAttribute('data-user-id') || '';
+    if (usuarioId) {
+        formData.append('usuario_id', usuarioId);
+        console.log('Enviando usuario_id para preformatos de receta:', usuarioId);
+    } else {
+        console.log('No se encontró el ID de usuario logueado');
     }
     
     console.log('Enviando petición AJAX para obtener preformatos de receta...');
