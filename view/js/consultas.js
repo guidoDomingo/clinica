@@ -250,7 +250,12 @@ function buscarPersona() {
                 
                 // Autocompletar los campos con los datos recibidos
                 const persona = response.multiple ? response.data[0] : response.data;
+                console.log('Datos de persona buscada recibidos:', persona);
+                
+                // Completar TODOS los campos independientemente de cuál se usó para buscar
                 document.getElementById('paciente').value = persona.nombres + ' ' + persona.apellidos;
+                document.getElementById('txtdocumento').value = persona.documento || '';
+                document.getElementById('txtficha').value = persona.nro_ficha || '';
                 document.getElementById('idPersona').value = persona.id_persona;
                 
                 // Actualizar información en el panel lateral
@@ -1203,13 +1208,11 @@ function cargarConsultaEnFormulario(consulta, archivos) {
  */
 function limpiarFormularioConsulta() {
     // Limpiar campos del formulario de consulta
-    const formConsulta = document.getElementById('tblConsulta');
     
-    // Limpiar campos de texto y selects, excepto los de búsqueda de paciente
+    // Limpiar campos de texto normales, excepto los de búsqueda de paciente
     const camposALimpiar = [
         'txtmotivo', 'visionod', 'visionoi', 'tensionod', 'tensionoi',
-        'consulta-textarea', 'receta-textarea', 'txtnota', 'proximaconsulta',
-        'whatsapptxt', 'email'
+        'txtnota', 'proximaconsulta', 'whatsapptxt', 'email'
     ];
     
     camposALimpiar.forEach(campo => {
@@ -1218,6 +1221,29 @@ function limpiarFormularioConsulta() {
             elemento.value = '';
         }
     });
+    
+    // Limpiar los editores Summernote
+    if ($('#consulta-textarea').length > 0) {
+        if ($('#consulta-textarea').data('summernote')) {
+            // Si está inicializado con Summernote, usar el método de la API de Summernote
+            $('#consulta-textarea').summernote('code', '');
+            console.log('Editor de diagnóstico (consulta-textarea) limpiado');
+        } else {
+            // Si no está inicializado con Summernote, limpiar como textarea normal
+            document.getElementById('consulta-textarea').value = '';
+        }
+    }
+    
+    if ($('#receta-textarea').length > 0) {
+        if ($('#receta-textarea').data('summernote')) {
+            // Si está inicializado con Summernote, usar el método de la API de Summernote
+            $('#receta-textarea').summernote('code', '');
+            console.log('Editor de receta (receta-textarea) limpiado');
+        } else {
+            // Si no está inicializado con Summernote, limpiar como textarea normal
+            document.getElementById('receta-textarea').value = '';
+        }
+    }
     
     // Resetear selects a su primera opción
     const selects = ['motivoscomunes', 'formatoConsulta', 'formatoreceta'];
@@ -1683,6 +1709,7 @@ function mostrarAlerta(tipo, mensaje) {
  * Función para subir archivos asociados a una consulta
  */
 function subirArchivos() {
+  // Obtener el ID de persona del campo oculto correcto
   const idPersona = document.getElementById('id_persona_file').value;
   const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : '';
   
@@ -1691,24 +1718,45 @@ function subirArchivos() {
     return;
   }
   
-  const fileInput = document.getElementById('archivo');
-  if (!fileInput.files.length) {
-    mostrarAlerta('warning', 'Debe seleccionar un archivo para subir');
+  // Usar el ID correcto 'files' en lugar de 'archivo'
+  const fileInput = document.getElementById('files');
+  
+  // Verificar que el elemento exista antes de intentar acceder a sus propiedades
+  if (!fileInput) {
+    console.error('No se encontró el elemento de entrada de archivos con ID "files"');
+    mostrarAlerta('error', 'Error en la configuración del formulario de archivos');
     return;
   }
   
+  if (!fileInput.files.length) {
+    mostrarAlerta('warning', 'Debe seleccionar o arrastrar un archivo para subir');
+    return;
+  }
+  
+  // Crear un FormData con los archivos seleccionados
   const formData = new FormData();
-  formData.append('id_persona', idPersona);
+  
+  // Usar el nombre de campo correcto 'id_persona_file' en lugar de 'id_persona'
+  formData.append('id_persona_file', idPersona);
+  
   if (idConsulta) {
     formData.append('id_consulta', idConsulta);
   }
-  formData.append('file', fileInput.files[0]);
-  formData.append('descripcion', document.getElementById('descripcion_archivo').value || '');
-  formData.append('operacion', 'upload');
+  
+  // Obtener el ID del usuario desde el atributo de datos del body
+  const usuarioId = document.body.getAttribute('data-user-id') || '1';
+  formData.append('id_usuario', usuarioId);
+  
+  console.log('Subiendo archivos para paciente ID:', idPersona, 'consulta ID:', idConsulta, 'usuario ID:', usuarioId);
+  
+  // Añadir todos los archivos seleccionados
+  for (let i = 0; i < fileInput.files.length; i++) {
+    formData.append('files[]', fileInput.files[i]);
+  }
   
   // Mostrar indicador de carga
   Swal.fire({
-    title: 'Subiendo archivo...',
+    title: 'Subiendo archivo(s)...',
     text: 'Por favor espere',
     allowOutsideClick: false,
     didOpen: () => {
@@ -1725,47 +1773,64 @@ function subirArchivos() {
     processData: false,
     success: function(response) {
       try {
-        const result = JSON.parse(response);
+        // Verificar si la respuesta ya es un objeto (no necesita parsing)
+        let result;
+        if (typeof response === 'object') {
+          result = response;
+        } else {
+          // Intentar parsear la respuesta si es una cadena JSON
+          result = JSON.parse(response);
+        }
+        
         if (result.status === 'success') {
           Swal.fire({
             icon: 'success',
             title: 'Éxito!',
-            text: 'Archivo subido correctamente',
+            text: 'Archivo(s) subido(s) correctamente',
             timer: 1500,
             showConfirmButton: false
           });
           
-          // Limpiar campo de archivo
+          // Limpiar el área de previsualización
           fileInput.value = '';
-          document.getElementById('descripcion_archivo').value = '';
-          
-          // Actualizar lista de archivos si existe
-          if (typeof actualizarListaArchivos === 'function') {
-            actualizarListaArchivos(idPersona);
+          const previewContainer = document.getElementById('filePreviewContainer');
+          if (previewContainer) {
+            previewContainer.innerHTML = '';
           }
+          
+          // Si hay una consulta activa, actualizar la lista de archivos
+          if (idConsulta) {
+            obtenerArchivosConsulta(idConsulta, function(archivos) {
+              if (archivos && archivos.length > 0) {
+                mostrarArchivosEnFormulario(archivos);
+              }
+            });
+          }
+          
         } else {
           Swal.fire({
             icon: 'error',
             title: 'Error!',
             text: result.message || 'Error al subir el archivo'
           });
+          console.error('Error en la respuesta:', result);
         }
       } catch (e) {
+        console.error('Error al analizar la respuesta:', e, response);
         Swal.fire({
           icon: 'error',
           title: 'Error!',
-          text: 'Error en la respuesta del servidor'
+          text: 'Error al procesar la respuesta del servidor'
         });
-        console.error('Error al analizar la respuesta:', e, response);
       }
     },
     error: function(xhr, status, error) {
+      console.error('Error en la solicitud:', error, xhr.responseText);
       Swal.fire({
         icon: 'error',
         title: 'Error!',
         text: 'Error al comunicarse con el servidor'
       });
-      console.error('Error en la solicitud:', error);
     }
   });
 }
@@ -2351,7 +2416,8 @@ function inicializarAutocompletado() {
                                     label: `${persona.nombres || ''} ${persona.apellidos || ''} - CI: ${persona.documento || 'N/A'}`,
                                     value: `${persona.nombres || ''} ${persona.apellidos || ''}`,
                                     id: persona.id_persona,
-                                    documento: persona.documento,
+                                    documento: persona.documento || '',
+                                    nro_ficha: persona.nro_ficha || '',
                                     nombres: persona.nombres,
                                     apellidos: persona.apellidos
                                 };
@@ -2363,7 +2429,8 @@ function inicializarAutocompletado() {
                                 label: `${persona.nombres || ''} ${persona.apellidos || ''} - CI: ${persona.documento || 'N/A'}`,
                                 value: `${persona.nombres || ''} ${persona.apellidos || ''}`,
                                 id: persona.id_persona,
-                                documento: persona.documento,
+                                documento: persona.documento || '',
+                                nro_ficha: persona.nro_ficha || '',
                                 nombres: persona.nombres,
                                 apellidos: persona.apellidos
                             }];
@@ -2381,8 +2448,15 @@ function inicializarAutocompletado() {
             });
         },
         select: function(event, ui) {
-            // Al seleccionar un paciente, completar el resto de los campos
+            // Al seleccionar un paciente, completar todos los campos
             document.getElementById('idPersona').value = ui.item.id;
+            
+            // Completar los campos de documento y ficha
+            const documentoInput = document.getElementById('txtdocumento');
+            const fichaInput = document.getElementById('txtficha');
+            
+            if (documentoInput) documentoInput.value = ui.item.documento || '';
+            if (fichaInput) fichaInput.value = ui.item.nro_ficha || '';
             
             // Actualizar información en el panel lateral
             document.getElementById('profile-username').textContent = ui.item.value;
