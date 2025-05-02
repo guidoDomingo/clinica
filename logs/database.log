@@ -381,3 +381,25 @@ Parameters: {
 [2025-05-01 16:46:33] [INFO] [Model.php:175]
 SQL: SELECT COUNT(*) as total FROM rh_person
 ----------------------------------------
+Datos recibidos: Array
+(
+    [medico_id] => 13
+    [dias] => 1,2,3
+    [hora_inicio] => 00:36
+    [hora_fin] => 17:40
+    [duracion_turno] => 30
+    [consultorio_id] => 5
+    [estado] => Activo
+    [turno_id] => 3
+)
+Datos recibidos: Array
+(
+    [medico_id] => 13
+    [dias] => 1,2,3
+    [hora_inicio] => 00:36
+    [hora_fin] => 17:40
+    [duracion_turno] => 30
+    [consultorio_id] => 5
+    [estado] => Activo
+    [turno_id] => 3
+)

@@ -639,6 +639,11 @@ function mostrarHistorialConsultas(idPersona) {
                     console.log('Consulta recibida:', consulta);
                     const fecha = new Date(consulta.fecha_registro);
                     const fechaFormateada = fecha.toLocaleDateString('es-ES');
+
+    
+                      
+                    const html = `<strong>Doctor/a:</strong> ${consulta.nombre_doctor || ''} ${consulta.apellido_doctor || ''} - ${consulta.documento_doctor || 'No especificado'}<br>`;
+                      
                     
                     timelineHTML += `
                     <div class="time-label">
@@ -650,6 +655,7 @@ function mostrarHistorialConsultas(idPersona) {
                             <span class="time"><i class="far fa-clock"></i> ${fecha.toLocaleTimeString('es-ES')}</span>
                             <h3 class="timeline-header"><a href="#">Consulta médica</a></h3>
                             <div class="timeline-body">
+                                ${html}
                                 <strong>Motivo:</strong> ${consulta.txtmotivo || 'No especificado'}<br>
                                 <strong>Diagnóstico:</strong> ${consulta.consulta_textarea || 'No especificado'}
                             </div>

@@ -123,8 +123,26 @@ class ModelConsulta {
     }
     public static function mdlGetConsultaPersona($persona) {
         try {
-            $stmt = Conexion::conectar()->prepare("SELECT id_consulta, motivoscomunes, txtmotivo, visionod, visionoi, tensionod, tensionoi, consulta_textarea, receta_textarea, txtnota, proximaconsulta, whatsapptxt, email, id_user, id_reserva, fecha_registro, ultima_modificacion, id_persona 
-                FROM public.consultas WHERE id_persona = :id_persona ");
+            $stmt = Conexion::conectar()->prepare("
+                SELECT 
+                    c.id_consulta, c.motivoscomunes, c.txtmotivo, c.visionod, 
+                    c.visionoi, c.tensionod, c.tensionoi, c.consulta_textarea, 
+                    c.receta_textarea, c.txtnota, c.proximaconsulta, c.whatsapptxt, 
+                    c.email, c.id_user, c.id_reserva, c.fecha_registro, 
+                    c.ultima_modificacion, c.id_persona,
+                    -- Información del doctor
+                    -- rd.specialty AS especialidad_doctor,
+                    rp.first_name AS nombre_doctor,
+                    rp.last_name AS apellido_doctor,
+                    rp.document_number AS documento_doctor
+                FROM public.consultas c
+                -- Unión con tablas para obtener información del doctor
+                LEFT JOIN person_system_user psu ON c.id_user = psu.system_user_id
+                LEFT JOIN rh_doctors rd ON psu.person_id = rd.person_id
+                LEFT JOIN rh_person rp ON rp.person_id = rd.person_id
+                WHERE c.id_persona = :id_persona
+                ORDER BY c.fecha_registro DESC
+            ");
             $stmt->bindParam(":id_persona", $persona, PDO::PARAM_INT);
             $stmt->execute();
     
