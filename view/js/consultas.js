@@ -532,6 +532,14 @@ function guardarConsulta() {
     // Enviar el formulario
     const formData = new FormData(document.getElementById('tblConsulta'));
     
+    // Obtener el ID del usuario logueado desde el atributo de datos del body
+    const usuarioId = document.body.getAttribute('data-user-id') || '';
+    
+    // Añadir el ID del usuario al FormData
+    formData.append('id_user', usuarioId);
+    
+    console.log('Guardando consulta con usuario ID:', usuarioId);
+    
     // Verificar si es una actualización o una nueva consulta
     const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : '';
     const esActualizacion = idConsulta !== '';
@@ -628,6 +636,7 @@ function mostrarHistorialConsultas(idPersona) {
                 let timelineHTML = '<div class="timeline timeline-inverse">';
                 
                 response.forEach(consulta => {
+                    console.log('Consulta recibida:', consulta);
                     const fecha = new Date(consulta.fecha_registro);
                     const fechaFormateada = fecha.toLocaleDateString('es-ES');
                     
@@ -641,8 +650,8 @@ function mostrarHistorialConsultas(idPersona) {
                             <span class="time"><i class="far fa-clock"></i> ${fecha.toLocaleTimeString('es-ES')}</span>
                             <h3 class="timeline-header"><a href="#">Consulta médica</a></h3>
                             <div class="timeline-body">
-                                <strong>Motivo:</strong> ${consulta.motivo || 'No especificado'}<br>
-                                <strong>Diagnóstico:</strong> ${consulta.diagnostico || 'No especificado'}
+                                <strong>Motivo:</strong> ${consulta.txtmotivo || 'No especificado'}<br>
+                                <strong>Diagnóstico:</strong> ${consulta.consulta_textarea || 'No especificado'}
                             </div>
                             <div class="timeline-footer">
                                 <button class="btn btn-info btn-sm ver-detalle-consulta" data-id="${consulta.id_consulta}">Ver detalles</button>
