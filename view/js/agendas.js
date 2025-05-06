@@ -1,680 +1,683 @@
 /**
  * Archivo: agendas.js
- * Descripción: Maneja la interacción del usuario con el módulo de agendas médicas
+ * Descripción: Gestión de agendas médicas y horarios
  */
-
-// Verificación de carga del script
-console.log("✅ El archivo agendas.js se ha cargado correctamente");
 
 $(document).ready(function() {
-    // Alerta de verificación
-
-    // Cargar médicos al iniciar
+    // Variables globales
+    let medicoSeleccionado = 0;
+    let agendaSeleccionada = 0;
+    let detalleSeleccionado = 0;
+    let calendar = null;
+    
+    // Inicialización
     cargarMedicos();
-
-    // Cargar consultorios al iniciar
-    cargarConsultorios();
+    cargarAgendas();
+    inicializarEventos();
     
-    // Cargar turnos al iniciar
-    cargarTurnos();
-    
-    // Cargar salas al iniciar
-    cargarSalas();
-   
-    console.log("✅ El módulo de agendas se ha inicializado - Document Ready");
-    // Inicialización de componentes
-    $('.select2').select2();
-    
-    try {
-        // Inicializar DateTimePicker para los campos de hora
-        $('#horaInicio, #horaFin').datetimepicker({
-            format: 'HH:mm',
-            stepping: 15,
-            icons: {
-                up: 'fas fa-chevron-up',
-                down: 'fas fa-chevron-down',
-                previous: 'fas fa-chevron-left',
-                next: 'fas fa-chevron-right'
+    /**
+     * Inicializa los eventos de la interfaz
+     */
+    function inicializarEventos() {
+        // Evento para seleccionar médico
+        $(document).on('change', '#selectMedico', function() {
+            medicoSeleccionado = $(this).val();
+            if (medicoSeleccionado > 0) {
+                cargarAgendasPorMedico(medicoSeleccionado);
+            } else {
+                cargarAgendas();
             }
         });
-
-        // Inicializar DatePicker para fechas
-        $('#fechaInicio, #fechaFin').datetimepicker({
-            format: 'YYYY-MM-DD',
-            icons: {
-                up: 'fas fa-chevron-up',
-                down: 'fas fa-chevron-down',
-                previous: 'fas fa-chevron-left',
-                next: 'fas fa-chevron-right'
+        
+        // Evento para abrir modal de nueva agenda
+        $(document).on('click', '#btnNuevaAgenda', function() {
+            limpiarFormularioAgenda();
+            $('#modalAgenda').modal('show');
+        });
+        
+        // Evento para editar agenda
+        $(document).on('click', '.btnEditarAgenda', function() {
+            const agendaId = $(this).data('id');
+            cargarDatosAgenda(agendaId);
+        });
+        
+        // Evento para eliminar agenda
+        $(document).on('click', '.btnEliminarAgenda', function() {
+            const agendaId = $(this).data('id');
+            confirmarEliminarAgenda(agendaId);
+        });
+        
+        // Evento para guardar agenda
+        $(document).on('submit', '#formAgenda', function(e) {
+            e.preventDefault();
+            guardarAgenda();
+        });
+        
+        // Evento para ver detalles de agenda
+        $(document).on('click', '.btnVerDetalles', function() {
+            agendaSeleccionada = $(this).data('id');
+            cargarDetallesAgenda(agendaSeleccionada);
+            $('#tabDetalles').tab('show');
+        });
+        
+        // Evento para abrir modal de nuevo detalle
+        $(document).on('click', '#btnNuevoDetalle', function() {
+            if (agendaSeleccionada > 0) {
+                limpiarFormularioDetalle();
+                cargarTurnos();
+                cargarSalas();
+                $('#modalDetalle').modal('show');
+            } else {
+                Swal.fire('Atención', 'Debe seleccionar una agenda primero', 'warning');
             }
         });
-    } catch (e) {
-        console.error("Error al inicializar datetimepicker:", e);
-        toastr.warning("No se pudo inicializar el selector de fecha/hora. Verifique que la biblioteca esté incluida correctamente.", "Advertencia");
+        
+        // Evento para editar detalle
+        $(document).on('click', '.btnEditarDetalle', function() {
+            const detalleId = $(this).data('id');
+            cargarDatosDetalle(detalleId);
+        });
+        
+        // Evento para eliminar detalle
+        $(document).on('click', '.btnEliminarDetalle', function() {
+            const detalleId = $(this).data('id');
+            confirmarEliminarDetalle(detalleId);
+        });
+        
+        // Evento para guardar detalle
+        $(document).on('submit', '#formDetalle', function(e) {
+            e.preventDefault();
+            guardarDetalleAgenda();
+        });
+        
+        // Evento para cambiar entre pestañas
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            const target = $(e.target).attr("href");
+            if (target === "#tabCalendario" && agendaSeleccionada > 0) {
+                inicializarCalendario();
+            }
+        });
     }
-
-    // Inicializar DataTable para agendas
-    var tablaAgendas = $('#tablaAgendas').DataTable({
-        "ajax": {
-            "url": "../ajax/agendas.ajax.php",
-            "type": "POST",
-            "data": {"accion": "listar"}
-        },
-        "columns": [
-            {"data": "id"},
-            {"data": "estado"},
-            {"data": "medico"},
-            {"data": "detalle"},
-            {"data": "sala"},
-            {"data": "acciones"}
-        ],
-        "responsive": true, 
-        "lengthChange": false, 
-        "autoWidth": false,
-        "language": {
-            "sProcessing":     "Procesando...",
-            "sLengthMenu":     "Mostrar _MENU_ registros",
-            "sZeroRecords":    "No se encontraron resultados",
-            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix":    "",
-            "sSearch":         "Buscar:",
-            "sUrl":            "",
-            "sInfoThousands":  ",",
-            "sLoadingRecords": "Cargando...",
-            "oPaginate": {
-                "sFirst":    "Primero",
-                "sLast":     "Último",
-                "sNext":     "Siguiente",
-                "sPrevious": "Anterior"
-            }
-        }
-    });
-
-    // Inicializar DataTable para bloqueos
-    var tablaBloqueos = $('#tablaBloqueos').DataTable({
-        "ajax": {
-            "url": "../ajax/agendas.ajax.php",
-            "type": "POST",
-            "data": {"accion": "listarBloqueos"}
-        },
-        "columns": [
-            {"data": "id"},
-            {"data": "medico"},
-            {"data": "fecha_inicio"},
-            {"data": "fecha_fin"},
-            {"data": "motivo"},
-            {"data": "acciones"}
-        ],
-        "responsive": true, 
-        "lengthChange": false, 
-        "autoWidth": false,
-        "language": {
-            "sProcessing":     "Procesando...",
-            "sLengthMenu":     "Mostrar _MENU_ registros",
-            "sZeroRecords":    "No se encontraron resultados",
-            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix":    "",
-            "sSearch":         "Buscar:",
-            "sUrl":            "",
-            "sInfoThousands":  ",",
-            "sLoadingRecords": "Cargando...",
-            "oPaginate": {
-                "sFirst":    "Primero",
-                "sLast":     "Último",
-                "sNext":     "Siguiente",
-                "sPrevious": "Anterior"
-            }
-        }
-    });
-
-
-
-    // Evento para el botón Nueva Agenda
-    $("#btnNuevaAgenda").click(function() {
-        limpiarFormularioAgenda();
-    });
-
-    // Evento para el botón Nuevo Bloqueo
-    $("#btnNuevoBloqueo").click(function() {
-        limpiarFormularioBloqueo();
-    });
-
-    // Evento para guardar agenda
-    $("#formAgenda").submit(function(e) {
-        e.preventDefault();
-        guardarAgenda();
-    });
     
-    // Evento para el botón guardar agenda
-    $("#btnGuardarAgenda").click(function() {
-        $("#formAgenda").submit();
-    });
-
-    // Evento para guardar bloqueo
-    $("#formBloqueo").submit(function(e) {
-        e.preventDefault();
-        guardarBloqueo();
-    });
-
-    // Evento para checkbox "todos los días"
-    $("#checkboxTodos").change(function() {
-        if($(this).is(':checked')) {
-            $("input[name='dia_semana'][value='1']").prop('checked', true);
-            $("input[name='dia_semana'][value='2']").prop('checked', true);
-            $("input[name='dia_semana'][value='3']").prop('checked', true);
-            $("input[name='dia_semana'][value='4']").prop('checked', true);
-            $("input[name='dia_semana'][value='5']").prop('checked', true);
-            $("input[name='dia_semana'][value='6']").prop('checked', false);
-            $("input[name='dia_semana'][value='7']").prop('checked', false);
+    /**
+     * Carga la lista de médicos disponibles
+     */
+    function cargarMedicos() {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { action: "obtenerMedicos" },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    let options = '<option value="0">Seleccione un médico</option>';
+                    respuesta.data.forEach(medico => {
+                        options += `<option value="${medico.doctor_id}">${medico.nombre_completo}</option>`;
+                    });
+                    $('#selectMedico').html(options);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar médicos:", xhr.responseText);
+                Swal.fire('Error', 'No se pudieron cargar los médicos', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Carga todas las agendas médicas
+     */
+    function cargarAgendas() {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { action: "obtenerAgendas" },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    mostrarTablaAgendas(respuesta.data);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar agendas:", xhr.responseText);
+                Swal.fire('Error', 'No se pudieron cargar las agendas', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Carga agendas por médico seleccionado
+     */
+    function cargarAgendasPorMedico(medicoId) {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "obtenerAgendasPorMedico",
+                medico_id: medicoId 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    mostrarTablaAgendas(respuesta.data);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar agendas por médico:", xhr.responseText);
+                Swal.fire('Error', 'No se pudieron cargar las agendas del médico', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Muestra la tabla de agendas con los datos recibidos
+     */
+    function mostrarTablaAgendas(agendas) {
+        let html = '';
+        
+        if (agendas.length === 0) {
+            html = `<tr><td colspan="5" class="text-center">No hay agendas registradas</td></tr>`;
         } else {
-            $("input[name='dia_semana']").prop('checked', false);
-        }
-    });
-
-    // Delegación de eventos para botones de editar y eliminar
-    $("#tablaAgendas").on("click", ".btnEditarAgenda", function() {
-        var idAgenda = $(this).attr("idAgenda");
-        editarAgenda(idAgenda);
-    });
-
-    $("#tablaAgendas").on("click", ".btnEliminarAgenda", function() {
-        var idAgenda = $(this).attr("idAgenda");
-        eliminarAgenda(idAgenda);
-    });
-
-    $("#tablaBloqueos").on("click", ".btnEditarBloqueo", function() {
-        var idBloqueo = $(this).attr("idBloqueo");
-        editarBloqueo(idBloqueo);
-    });
-
-    $("#tablaBloqueos").on("click", ".btnEliminarBloqueo", function() {
-        var idBloqueo = $(this).attr("idBloqueo");
-        eliminarBloqueo(idBloqueo);
-    });
-});
-
-/**
- * Función para cargar los médicos en el select
- */
-function cargarMedicos() {
-    console.log("🔍 Iniciando carga de médicos...");
-    $.ajax({
-        url: "ajax/agendas.ajax.php",
-        method: "POST",
-        data: {"accion": "cargarMedicos"},
-        dataType: "json",
-        success: function(respuesta) {
-            console.log("✅ Respuesta recibida para médicos:", respuesta);
-            
-            // Verificar si la respuesta es un array y tiene elementos
-            if (!Array.isArray(respuesta) || respuesta.length === 0) {
-                console.warn("⚠️ La respuesta no es un array o está vacía", respuesta);
-                toastr.warning("No se encontraron médicos para cargar", "Advertencia");
-                return;
-            }
-            
-            // Limpiar select
-            $("#medicoAgenda").empty();
-            $("#medicoAgenda").append('<option value="">-- Seleccione --</option>');
-            
-            // Agregar opciones
-            respuesta.forEach(function(medico) {
-                $("#medicoAgenda").append('<option value="' + medico.id + '">' + medico.nombre + ' - ' + medico.especialidad + '</option>');
-                console.log("➕ Médico agregado:", medico.id, medico.nombre);
+            agendas.forEach(agenda => {
+                const estado = agenda.agenda_estado == 1 ? 
+                    '<span class="badge badge-success">Activa</span>' : 
+                    '<span class="badge badge-danger">Inactiva</span>';
+                
+                html += `
+                <tr>
+                    <td>${agenda.agenda_id}</td>
+                    <td>${agenda.nombre_medico}</td>
+                    <td>${agenda.agenda_descripcion}</td>
+                    <td>${estado}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-info btn-sm btnVerDetalles" data-id="${agenda.agenda_id}" title="Ver detalles">
+                                <i class="fas fa-calendar-alt"></i>
+                            </button>
+                            <button class="btn btn-warning btn-sm btnEditarAgenda" data-id="${agenda.agenda_id}" title="Editar agenda">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btnEliminarAgenda" data-id="${agenda.agenda_id}" title="Eliminar agenda">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
             });
-
-            // Hacer lo mismo para el select de bloqueos
-            $("#medicoBloqueo").empty();
-            $("#medicoBloqueo").append('<option value="">-- Seleccione --</option>');
-            
-            respuesta.forEach(function(medico) {
-                $("#medicoBloqueo").append('<option value="' + medico.id + '">' + medico.nombre + '</option>');
-            });
-            
-            console.log("✅ Médicos cargados correctamente en los selectores");
-        },
-        error: function(xhr, status, error) {
-            console.error("❌ Error al cargar médicos:", error);
-            console.error("Detalles del error:", xhr.responseText);
-            toastr.error("Error al cargar médicos", "Error");
         }
-    });
-}
-
-/**
- * Función para cargar los consultorios en el select
- */
-function cargarConsultorios() {
-    console.log("🔍 Iniciando carga de consultorios...");
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: {"accion": "cargarConsultorios"},
-        dataType: "json",
-        success: function(respuesta) {
-            console.log("✅ Respuesta recibida para consultorios:", respuesta);
-            
-            // Verificar si la respuesta es un array y tiene elementos
-            if (!Array.isArray(respuesta) || respuesta.length === 0) {
-                console.warn("⚠️ La respuesta no es un array o está vacía", respuesta);
-                toastr.warning("No se encontraron consultorios para cargar", "Advertencia");
-                return;
-            }
-            
-            // Limpiar select
-            $("#consultorioAgenda").empty();
-            $("#consultorioAgenda").append('<option value="">-- Seleccione --</option>');
-            
-            // Agregar opciones
-            respuesta.forEach(function(consultorio) {
-                $("#consultorioAgenda").append('<option value="' + consultorio.id + '">' + consultorio.nombre + '</option>');
-                console.log("➕ Consultorio agregado:", consultorio.id, consultorio.nombre);
-            });
-            
-            console.log("✅ Consultorios cargados correctamente en el selector");
-        },
-        error: function(xhr, status, error) {
-            console.error("❌ Error al cargar consultorios:", error);
-            console.error("Detalles del error:", xhr.responseText);
-            toastr.error("Error al cargar consultorios", "Error");
-        }
-    });
-}
-
-/**
- * Función para cargar los turnos en el select
- */
-function cargarTurnos() {
-    console.log("🔍 Iniciando carga de turnos...");
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: {"accion": "cargarTurnos"},
-        dataType: "json",
-        success: function(respuesta) {
-            console.log("✅ Respuesta recibida para turnos:", respuesta);
-            
-            // Verificar si la respuesta es un array y tiene elementos
-            if (!Array.isArray(respuesta) || respuesta.length === 0) {
-                console.warn("⚠️ La respuesta no es un array o está vacía", respuesta);
-                toastr.warning("No se encontraron turnos para cargar", "Advertencia");
-                return;
-            }
-            
-            // Limpiar select
-            $("#turnoAgenda").empty();
-            $("#turnoAgenda").append('<option value="">-- Seleccione --</option>');
-            
-            // Agregar opciones
-            respuesta.forEach(function(turno) {
-                // Priorizar el nombre del turno si existe
-                if (turno.nombre) {
-                    $("#turnoAgenda").append('<option value="' + turno.id + '">' + turno.nombre + '</option>');
-                    console.log("➕ Turno agregado por nombre:", turno.id, turno.nombre);
-                } else {
-                    // Intentar usar fecha y hora si están disponibles
-                    let fecha = turno.fecha || "";
-                    let hora = turno.hora_inicio || "";
-                    
-                    if (fecha && hora) {
-                        // Formatear fecha y hora para mostrar
-                        let turnoTexto = fecha + ' ' + hora;
-                        $("#turnoAgenda").append('<option value="' + turno.id + '">' + turnoTexto + '</option>');
-                        console.log("➕ Turno agregado por fecha/hora:", turno.id, turnoTexto);
-                    } else {
-                        // Si no hay datos suficientes, mostrar un texto genérico con el ID
-                        $("#turnoAgenda").append('<option value="' + turno.id + '">Turno ' + turno.id + '</option>');
-                        console.log("➕ Turno agregado con ID genérico:", turno.id);
-                    }
-                }
-            });
-            
-            console.log("✅ Turnos cargados correctamente en el selector");
-        },
-        error: function(xhr, status, error) {
-            console.error("❌ Error al cargar turnos:", error);
-            console.error("Detalles del error:", xhr.responseText);
-            toastr.error("Error al cargar turnos", "Error");
-        }
-    });
-}
-
-/**
- * Función para cargar los consultorios como salas en el select
- */
-function cargarSalas() {
-    console.log("🔍 Iniciando carga de consultorios como salas...");
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: {"accion": "cargarSalas"},
-        dataType: "json",
-        success: function(respuesta) {
-            console.log("✅ Respuesta recibida para consultorios/salas:", respuesta);
-            
-            // Verificar si la respuesta es un array y tiene elementos
-            if (!Array.isArray(respuesta) || respuesta.length === 0) {
-                console.warn("⚠️ La respuesta no es un array o está vacía", respuesta);
-                toastr.warning("No se encontraron consultorios/salas para cargar", "Advertencia");
-                return;
-            }
-            
-            // Limpiar select
-            $("#salaAgenda").empty();
-            $("#salaAgenda").append('<option value="">-- Seleccione --</option>');
-            
-            // Agregar opciones
-            respuesta.forEach(function(sala) {
-                $("#salaAgenda").append('<option value="' + sala.id + '">' + sala.nombre + '</option>');
-                console.log("➕ Consultorio/Sala agregada:", sala.id, sala.nombre);
-            });
-            
-            console.log("✅ Consultorios/Salas cargados correctamente en el selector");
-        },
-        error: function(xhr, status, error) {
-            console.error("❌ Error al cargar consultorios/salas:", error);
-            console.error("Detalles del error:", xhr.responseText);
-            toastr.error("Error al cargar consultorios/salas", "Error");
-        }
-    });
-}
-
-/**
- * Función para guardar una agenda
- */
-function guardarAgenda() {
-    // Obtener los días seleccionados
-    var diasSeleccionados = [];
-    $("input[name='dia_semana']:checked").each(function() {
-        diasSeleccionados.push($(this).val());
-    });
-
-    // Validar que al menos un día esté seleccionado
-    if (diasSeleccionados.length === 0) {
-        toastr.warning("Debe seleccionar al menos un día de la semana", "Advertencia");
-        return;
+        
+        $('#tablaAgendas tbody').html(html);
     }
-
-    // Crear objeto con los datos del formulario
-    var datosAgenda = {
-        "accion": $("#idAgenda").val() ? "actualizar" : "guardar",
-        "id": $("#idAgenda").val(),
-        "medico_id": $("#medicoAgenda").val(),
-        "dias": diasSeleccionados.join(','),
-        "hora_inicio": $("#horaInicio").val(),
-        "hora_fin": $("#horaFin").val(),
-        "duracion_turno": $("#intervaloAgenda").val(),
-        "consultorio_id": $("#salaAgenda").val(),
-        "turno_id": $("#turnoAgenda").val(),
-        "estado": $("#estadoAgenda").val()
-    };
-
-    console.log("Datos de la agenda a guardar:", datosAgenda);
-
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: datosAgenda,
-        dataType: "json",
-        success: function(respuesta) {
-            if (respuesta.ok) {
-                toastr.success(respuesta.mensaje, "Éxito");
-                $("#tablaAgendas").DataTable().ajax.reload();
-                limpiarFormularioAgenda();
-            } else {
-                toastr.error(respuesta.mensaje, "Error");
+    
+    /**
+     * Carga los datos de una agenda para edición
+     */
+    function cargarDatosAgenda(agendaId) {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "obtenerAgendaPorId",
+                agenda_id: agendaId 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    const agenda = respuesta.data;
+                    $('#agendaId').val(agenda.agenda_id);
+                    $('#medicoId').val(agenda.medico_id);
+                    $('#descripcionAgenda').val(agenda.agenda_descripcion);
+                    $('#estadoAgenda').prop('checked', agenda.agenda_estado == 1);
+                    $('#modalAgenda').modal('show');
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar datos de agenda:", xhr.responseText);
+                Swal.fire('Error', 'No se pudieron cargar los datos de la agenda', 'error');
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al guardar agenda:", error);
-            console.error("Detalles del error:", xhr.responseText);
-            
-            // Intentar parsear la respuesta como JSON
-            try {
-                var respuestaError = JSON.parse(xhr.responseText);
-                if (respuestaError && respuestaError.mensaje) {
-                    toastr.error(respuestaError.mensaje, "Error");
+        });
+    }
+    
+    /**
+     * Guarda una agenda (crear o actualizar)
+     */
+    function guardarAgenda() {
+        const datos = {
+            action: "guardarAgenda",
+            agenda_id: $('#agendaId').val(),
+            medico_id: $('#medicoId').val(),
+            agenda_descripcion: $('#descripcionAgenda').val(),
+            agenda_estado: $('#estadoAgenda').is(':checked')
+        };
+        
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: datos,
+            dataType: "json",
+            success: function(respuesta) {
+                if (!respuesta.error) {
+                    Swal.fire('Éxito', respuesta.mensaje, 'success');
+                    $('#modalAgenda').modal('hide');
+                    if (medicoSeleccionado > 0) {
+                        cargarAgendasPorMedico(medicoSeleccionado);
+                    } else {
+                        cargarAgendas();
+                    }
                 } else {
-                    toastr.error("Error al guardar agenda: " + error, "Error");
+                    Swal.fire('Error', respuesta.mensaje, 'error');
                 }
-            } catch (e) {
-                // Si no es JSON, mostrar un mensaje genérico
-                toastr.error("Error al guardar agenda. Por favor, contacte al administrador.", "Error");
-                console.error("Error al parsear respuesta:", e);
+            },
+            error: function(xhr) {
+                console.error("Error al guardar agenda:", xhr.responseText);
+                Swal.fire('Error', 'No se pudo guardar la agenda', 'error');
             }
-        }
-    });
-}
-
-/**
- * Función para guardar un bloqueo
- */
-function guardarBloqueo() {
-    // Crear objeto con los datos del formulario
-    var datosBloqueo = {
-        "accion": $("#idBloqueo").val() ? "actualizarBloqueo" : "guardarBloqueo",
-        "id": $("#idBloqueo").val(),
-        "medico_id": $("#medicoBloqueo").val(),
-        "fecha_inicio": $("#fechaInicio").val(),
-        "fecha_fin": $("#fechaFin").val(),
-        "motivo": $("#motivoBloqueo").val()
-    };
-
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: datosBloqueo,
-        dataType: "json",
-        success: function(respuesta) {
-            if (respuesta.ok) {
-                toastr.success(respuesta.mensaje, "Éxito");
-                $("#tablaBloqueos").DataTable().ajax.reload();
-                limpiarFormularioBloqueo();
-            } else {
-                toastr.error(respuesta.mensaje, "Error");
+        });
+    }
+    
+    /**
+     * Confirma la eliminación de una agenda
+     */
+    function confirmarEliminarAgenda(agendaId) {
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Esta acción eliminará la agenda y todos sus horarios asociados",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarAgenda(agendaId);
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al guardar bloqueo:", error);
-            toastr.error("Error al guardar bloqueo", "Error");
+        });
+    }
+    
+    /**
+     * Elimina una agenda
+     */
+    function eliminarAgenda(agendaId) {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "eliminarAgenda",
+                agenda_id: agendaId 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (!respuesta.error) {
+                    Swal.fire('Eliminada', respuesta.mensaje, 'success');
+                    if (medicoSeleccionado > 0) {
+                        cargarAgendasPorMedico(medicoSeleccionado);
+                    } else {
+                        cargarAgendas();
+                    }
+                } else {
+                    Swal.fire('Error', respuesta.mensaje, 'error');
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al eliminar agenda:", xhr.responseText);
+                Swal.fire('Error', 'No se pudo eliminar la agenda', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Limpia el formulario de agenda
+     */
+    function limpiarFormularioAgenda() {
+        $('#agendaId').val('');
+        $('#medicoId').val(medicoSeleccionado);
+        $('#descripcionAgenda').val('');
+        $('#estadoAgenda').prop('checked', true);
+    }
+    
+    /**
+     * Carga los detalles de horarios de una agenda
+     */
+    function cargarDetallesAgenda(agendaId) {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "obtenerDetallesAgenda",
+                agenda_id: agendaId 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    mostrarTablaDetalles(respuesta.data);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar detalles de agenda:", xhr.responseText);
+                Swal.fire('Error', 'No se pudieron cargar los detalles de la agenda', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Muestra la tabla de detalles de horarios
+     */
+    function mostrarTablaDetalles(detalles) {
+        let html = '';
+        
+        if (detalles.length === 0) {
+            html = `<tr><td colspan="7" class="text-center">No hay horarios registrados para esta agenda</td></tr>`;
+        } else {
+            const diasSemana = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+            
+            detalles.forEach(detalle => {
+                const estado = detalle.detalle_estado == 1 ? 
+                    '<span class="badge badge-success">Activo</span>' : 
+                    '<span class="badge badge-danger">Inactivo</span>';
+                
+                html += `
+                <tr>
+                    <td>${detalle.dia_semana}</td>
+                    <td>${detalle.nombre_turno}</td>
+                    <td>${detalle.nombre_sala}</td>
+                    <td>${detalle.hora_inicio}</td>
+                    <td>${detalle.hora_fin}</td>
+                    <td>${estado}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-warning btn-sm btnEditarDetalle" data-id="${detalle.detalle_id}" title="Editar horario">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btnEliminarDetalle" data-id="${detalle.detalle_id}" title="Eliminar horario">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
         }
-    });
-}
-
-/**
- * Función para editar una agenda
- */
-function editarAgenda(idAgenda) {
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: {
-            "accion": "obtener",
-            "id": idAgenda
-        },
-        dataType: "json",
-        success: function(respuesta) {
-            if (respuesta.ok) {
-                var agenda = respuesta.datos;
-
-                console.log("Datos de la agenda a editar:", agenda);
+        
+        $('#tablaDetalles tbody').html(html);
+    }
+    
+    /**
+     * Carga la lista de turnos disponibles
+     */
+    function cargarTurnos() {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { action: "obtenerTurnos" },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    let options = '<option value="">Seleccione un turno</option>';
+                    respuesta.data.forEach(turno => {
+                        options += `<option value="${turno.turno_id}">${turno.turno_nombre}</option>`;
+                    });
+                    $('#turnoId').html(options);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar turnos:", xhr.responseText);
+            }
+        });
+    }
+    
+    /**
+     * Carga la lista de salas disponibles
+     */
+    function cargarSalas() {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { action: "obtenerSalas" },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    let options = '<option value="">Seleccione una sala</option>';
+                    respuesta.data.forEach(sala => {
+                        options += `<option value="${sala.sala_id}">${sala.sala_nombre}</option>`;
+                    });
+                    $('#salaId').html(options);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar salas:", xhr.responseText);
+            }
+        });
+    }
+    
+    /**
+     * Carga los datos de un detalle para edición
+     */
+    function cargarDatosDetalle(detalleId) {
+        detalleSeleccionado = detalleId;
+        
+        // Primero cargar turnos y salas
+        cargarTurnos();
+        cargarSalas();
+        
+        // Luego cargar los datos del detalle
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "obtenerDetalleAgenda",
+                detalle_id: detalleId 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    const detalle = respuesta.data;
+                    $('#detalleId').val(detalle.detalle_id);
+                    $('#agendaIdDetalle').val(detalle.agenda_id);
+                    $('#diaSemana').val(detalle.dia_semana);
+                    $('#turnoId').val(detalle.turno_id);
+                    $('#salaId').val(detalle.sala_id);
+                    $('#horaInicio').val(detalle.hora_inicio);
+                    $('#horaFin').val(detalle.hora_fin);
+                    $('#intervaloMinutos').val(detalle.intervalo_minutos);
+                    $('#cupoMaximo').val(detalle.cupo_maximo);
+                    $('#estadoDetalle').prop('checked', detalle.detalle_estado == 1);
+                    $('#modalDetalle').modal('show');
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar datos del detalle:", xhr.responseText);
+                Swal.fire('Error', 'No se pudieron cargar los datos del horario', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Guarda un detalle de horario (crear o actualizar)
+     */
+    function guardarDetalleAgenda() {
+        const datos = {
+            action: "guardarDetalleAgenda",
+            detalle_id: $('#detalleId').val(),
+            agenda_id: agendaSeleccionada,
+            dia_semana: $('#diaSemana').val(),
+            turno_id: $('#turnoId').val(),
+            sala_id: $('#salaId').val(),
+            hora_inicio: $('#horaInicio').val(),
+            hora_fin: $('#horaFin').val(),
+            intervalo_minutos: $('#intervaloMinutos').val(),
+            cupo_maximo: $('#cupoMaximo').val(),
+            detalle_estado: $('#estadoDetalle').is(':checked')
+        };
+        
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: datos,
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status == "success") {
+                    Swal.fire('Éxito', "Se creo de forma exitosa", 'success');
+                    $('#modalDetalle').modal('hide');
+                    cargarDetallesAgenda(agendaSeleccionada);
+                } else {
+                    Swal.fire('Error', "error al crear el detallees", 'error al crear el detallee');
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al guardar detalle:", xhr.responseText);
+                Swal.fire('Error', 'No se pudo guardar el horario', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Confirma la eliminación de un detalle
+     */
+    function confirmarEliminarDetalle(detalleId) {
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Esta acción eliminará el horario seleccionado",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarDetalleAgenda(detalleId);
+            }
+        });
+    }
+    
+    /**
+     * Elimina un detalle de horario
+     */
+    function eliminarDetalleAgenda(detalleId) {
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "eliminarDetalleAgenda",
+                detalle_id: detalleId 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (!respuesta.error) {
+                    Swal.fire('Eliminado', respuesta.mensaje, 'success');
+                    cargarDetallesAgenda(agendaSeleccionada);
+                } else {
+                    Swal.fire('Error', respuesta.mensaje, 'error');
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al eliminar detalle:", xhr.responseText);
+                Swal.fire('Error', 'No se pudo eliminar el horario', 'error');
+            }
+        });
+    }
+    
+    /**
+     * Limpia el formulario de detalle
+     */
+    function limpiarFormularioDetalle() {
+        $('#detalleId').val('');
+        $('#agendaIdDetalle').val(agendaSeleccionada);
+        $('#diaSemana').val('1'); // Lunes por defecto
+        $('#turnoId').val('');
+        $('#salaId').val('');
+        $('#horaInicio').val('08:00');
+        $('#horaFin').val('12:00');
+        $('#intervaloMinutos').val('15');
+        $('#cupoMaximo').val('1');
+        $('#estadoDetalle').prop('checked', true);
+    }
+    
+    /**
+     * Inicializa el calendario con los horarios de la agenda
+     */
+    function inicializarCalendario() {
+        if (calendar) {
+            calendar.destroy();
+        }
+        
+        const calendarEl = document.getElementById('calendar');
+        
+        // Obtener los detalles de la agenda para mostrar en el calendario
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "obtenerDetallesAgenda",
+                agenda_id: agendaSeleccionada 
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                if (respuesta.status === "success") {
+                    const eventos = generarEventosCalendario(respuesta.data);
+                    
+                    calendar = new FullCalendar.Calendar(calendarEl, {
+                        locale: 'es',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        initialView: 'timeGridWeek',
+                        slotMinTime: '07:00:00',
+                        slotMaxTime: '20:00:00',
+                        events: eventos,
+                        eventTimeFormat: {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        }
+                    });
+                    
+                    calendar.render();
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar detalles para calendario:", xhr.responseText);
+            }
+        });
+    }
+    
+    /**
+     * Genera los eventos para el calendario a partir de los detalles de la agenda
+     */
+    function generarEventosCalendario(detalles) {
+        const eventos = [];
+        const colores = [
+            '#3788d8', '#28a745', '#dc3545', '#ffc107', '#17a2b8',
+            '#6610f2', '#fd7e14', '#20c997', '#e83e8c', '#6f42c1'
+        ];
+        
+        detalles.forEach((detalle, index) => {
+            if (detalle.detalle_estado == 1) {
+                // Obtener el color según el turno o sala
+                const colorIndex = (detalle.turno_id % colores.length);
+                const color = colores[colorIndex];
                 
-                // Llenar formulario con datos
-                $("#idAgenda").val(agenda.id);
-                $("#medicoAgenda").val(agenda.medico_id).trigger('change');
-                
-                // Marcar días seleccionados
-                var dias = agenda.dia_semana.split(',');
-                $("input[name='dia_semana']").prop('checked', false);
-                dias.forEach(function(dia) {
-                    $("input[name='dia_semana'][value='" + dia + "']").prop('checked', true);
+                // Crear evento recurrente para cada día de la semana
+                eventos.push({
+                    title: `${detalle.nombre_turno} - ${detalle.nombre_sala}`,
+                    startTime: detalle.hora_inicio,
+                    endTime: detalle.hora_fin,
+                    daysOfWeek: [detalle.dia_semana],
+                    backgroundColor: color,
+                    borderColor: color,
+                    extendedProps: {
+                        detalle_id: detalle.detalle_id,
+                        intervalo_minutos: detalle.intervalo_minutos,
+                        cupo_maximo: detalle.cupo_maximo
+                    }
                 });
-                
-                $("#horaInicio").val(agenda.hora_inicio);
-                $("#horaFin").val(agenda.hora_fin);
-                $("#intervaloAgenda").val(agenda.intervalo).trigger('change');
-                $("#salaAgenda").val(agenda.consultorio_id || agenda.sala_id).trigger('change');
-                $("#turnoAgenda").val(agenda.turno_id).trigger('change');
-                $("#estadoAgenda").val(agenda.estado);
-                
-                console.log("Campos actualizados: Sala=", agenda.consultorio_id, "Turno=", agenda.turno_id, "Intervalo=", agenda.duracion_turno, "Estado=", agenda.estado);
-                
-                // Desplazarse al formulario
-                $('html, body').animate({
-                    scrollTop: $("#formAgenda").offset().top - 70
-                }, 500);
-            } else {
-                toastr.error(respuesta.mensaje, "Error");
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al obtener agenda:", error);
-            toastr.error("Error al obtener agenda", "Error");
-        }
-    });
-}
-
-/**
- * Función para editar un bloqueo
- */
-function editarBloqueo(idBloqueo) {
-    $.ajax({
-        url: "../ajax/agendas.ajax.php",
-        method: "POST",
-        data: {
-            "accion": "obtenerBloqueo",
-            "id": idBloqueo
-        },
-        dataType: "json",
-        success: function(respuesta) {
-            if (respuesta.ok) {
-                var bloqueo = respuesta.datos;
-                
-                // Llenar formulario con datos
-                $("#idBloqueo").val(bloqueo.id);
-                $("#medicoBloqueo").val(bloqueo.medico_id).trigger('change');
-                $("#fechaInicio").val(bloqueo.fecha_inicio);
-                $("#fechaFin").val(bloqueo.fecha_fin);
-                $("#motivoBloqueo").val(bloqueo.motivo);
-                
-                // Desplazarse al formulario
-                $('html, body').animate({
-                    scrollTop: $("#formBloqueo").offset().top - 70
-                }, 500);
-            } else {
-                toastr.error(respuesta.mensaje, "Error");
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al obtener bloqueo:", error);
-            toastr.error("Error al obtener bloqueo", "Error");
-        }
-    });
-}
-
-/**
- * Función para eliminar una agenda
- */
-function eliminarAgenda(idAgenda) {
-    Swal.fire({
-        title: '¿Está seguro?',
-        text: "Esta acción no se puede revertir",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: "../ajax/agendas.ajax.php",
-                method: "POST",
-                data: {
-                    "accion": "eliminar",
-                    "id": idAgenda
-                },
-                dataType: "json",
-                success: function(respuesta) {
-                    if (respuesta.ok) {
-                        toastr.success(respuesta.mensaje, "Éxito");
-                        $("#tablaAgendas").DataTable().ajax.reload();
-                    } else {
-                        toastr.error(respuesta.mensaje, "Error");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al eliminar agenda:", error);
-                    toastr.error("Error al eliminar agenda", "Error");
-                }
-            });
-        }
-    });
-}
-
-/**
- * Función para eliminar un bloqueo
- */
-function eliminarBloqueo(idBloqueo) {
-    Swal.fire({
-        title: '¿Está seguro?',
-        text: "Esta acción no se puede revertir",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: "../ajax/agendas.ajax.php",
-                method: "POST",
-                data: {
-                    "accion": "eliminarBloqueo",
-                    "id": idBloqueo
-                },
-                dataType: "json",
-                success: function(respuesta) {
-                    if (respuesta.ok) {
-                        toastr.success(respuesta.mensaje, "Éxito");
-                        $("#tablaBloqueos").DataTable().ajax.reload();
-                    } else {
-                        toastr.error(respuesta.mensaje, "Error");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al eliminar bloqueo:", error);
-                    toastr.error("Error al eliminar bloqueo", "Error");
-                }
-            });
-        }
-    });
-}
-
-/**
- * Función para limpiar el formulario de agenda
- */
-function limpiarFormularioAgenda() {
-    $("#formAgenda")[0].reset();
-    $("#idAgenda").val("");
-    $("#medicoAgenda").val("").trigger('change');
-    $("#salaAgenda").val("").trigger('change');
-    $("#intervaloAgenda").val("15");
-    $("#estadoAgenda").val("1");
-}
-
-/**
- * Función para limpiar el formulario de bloqueo
- */
-function limpiarFormularioBloqueo() {
-    $("#formBloqueo")[0].reset();
-    $("#idBloqueo").val("");
-    $("#medicoBloqueo").val("").trigger('change');
-}
+        });
+        
+        return eventos;
+    }
+});

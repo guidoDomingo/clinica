@@ -1,372 +1,212 @@
 <?php
-/**
- * Archivo: agendas.controller.php
- * Descripción: Controlador para el módulo de agendas médicas
- */
+require_once "../model/agendas.model.php";
 
-class AgendasController {
-    
+class ControllerAgendas {
     /**
-     * Método para listar todas las agendas
+     * Obtiene todas las agendas médicas
+     * @return array Listado de agendas
      */
-    public static function ctrListarAgendas() {
-        $respuesta = AgendasModel::mdlListarAgendas();
-        return $respuesta;
+    static public function ctrObtenerAgendas() {
+        return ModelAgendas::mdlObtenerAgendas();
     }
-    
+
     /**
-     * Método para listar todos los bloqueos
+     * Obtiene una agenda específica por ID
+     * @param int $agendaId ID de la agenda
+     * @return array Datos de la agenda
      */
-    public static function ctrListarBloqueos() {
-        $respuesta = AgendasModel::mdlListarBloqueos();
-        return $respuesta;
+    static public function ctrObtenerAgendaPorId($agendaId) {
+        return ModelAgendas::mdlObtenerAgendaPorId($agendaId);
     }
-    
+
     /**
-     * Método para cargar médicos
+     * Obtiene agendas por médico
+     * @param int $medicoId ID del médico
+     * @return array Listado de agendas del médico
      */
-    public static function ctrCargarMedicos() {
-        $respuesta = AgendasModel::mdlCargarMedicos();
-        return $respuesta;
+    static public function ctrObtenerAgendasPorMedico($medicoId) {
+        return ModelAgendas::mdlObtenerAgendasPorMedico($medicoId);
     }
-    
+
     /**
-     * Método para cargar consultorios
+     * Crea o actualiza una agenda
+     * @param array $datos Datos de la agenda
+     * @return mixed ID de la agenda o false en caso de error
      */
-    public static function ctrCargarConsultorios() {
-        $respuesta = AgendasModel::mdlCargarConsultorios();
-        return $respuesta;
-    }
-    
-    /**
-     * Método para cargar turnos
-     */
-    public static function ctrCargarTurnos() {
-        $respuesta = AgendasModel::mdlCargarTurnos();
-        return $respuesta;
-    }
-    
-    /**
-     * Método para cargar salas
-     */
-    public static function ctrCargarSalas() {
-        $respuesta = AgendasModel::mdlCargarSalas();
-        return $respuesta;
-    }
-    
-    /**
-     * Método para guardar una agenda
-     */
-    public static function ctrGuardarAgenda($datos) {
-        // Validar datos
-        if (empty($datos["medico_id"]) || empty($datos["dias"]) || 
-            empty($datos["hora_inicio"]) || empty($datos["hora_fin"]) || 
-            empty($datos["duracion_turno"]) || empty($datos["consultorio_id"])) {
+    static public function ctrGuardarAgenda($datos) {
+        // Validar datos obligatorios
+        if (empty($datos["medico_id"])) {
+            return ["error" => true, "mensaje" => "El médico es obligatorio"];
+        }
+
+        // Preparar datos para guardar
+        $datosAgenda = [
+            "medico_id" => $datos["medico_id"],
+            "agenda_descripcion" => $datos["agenda_descripcion"] ?? "",
+            "agenda_estado" => isset($datos["agenda_estado"]) ? $datos["agenda_estado"] : true
+        ];
+
+        // Si tiene ID, actualizar, sino crear
+        if (!empty($datos["agenda_id"])) {
+            $datosAgenda["agenda_id"] = $datos["agenda_id"];
+            $resultado = ModelAgendas::mdlActualizarAgenda($datosAgenda);
             
-            return array(
-                "ok" => false,
-                "mensaje" => "Todos los campos son obligatorios"
-            );
-        }
-        
-        // Validar que la hora de inicio sea menor a la hora de fin
-        if (strtotime($datos["hora_inicio"]) >= strtotime($datos["hora_fin"])) {
-            return array(
-                "ok" => false,
-                "mensaje" => "La hora de inicio debe ser menor a la hora de fin"
-            );
-        }
-        
-        // Validar que la duración del turno sea mayor a 0
-        if (intval($datos["duracion_turno"]) <= 0) {
-            return array(
-                "ok" => false,
-                "mensaje" => "La duración del turno debe ser mayor a 0"
-            );
-        }
-        
-        // Verificar si ya existe una agenda para el médico en los mismos días y horario
-        $verificar = AgendasModel::mdlVerificarAgendaExistente($datos);
-        
-        if ($verificar) {
-            return array(
-                "ok" => false,
-                "mensaje" => "Ya existe una agenda para este médico en los mismos días y horario"
-            );
-        }
-        
-        // Guardar agenda
-        $respuesta = AgendasModel::mdlGuardarAgenda($datos);
-        
-        if ($respuesta == "ok") {
-            return array(
-                "ok" => true,
-                "mensaje" => "Agenda guardada correctamente"
-            );
-        } else {
-            // Extraer el mensaje de error si existe
-            $mensaje = "Error al guardar agenda";
-            if (strpos($respuesta, "error:") === 0) {
-                $mensaje = substr($respuesta, 7); // Eliminar "error: " del inicio
+            if ($resultado) {
+                return ["error" => false, "agenda_id" => $datos["agenda_id"], "mensaje" => "Agenda actualizada correctamente"];
+            } else {
+                return ["error" => true, "mensaje" => "Error al actualizar la agenda"];
             }
-            
-            return array(
-                "ok" => false,
-                "mensaje" => $mensaje
-            );
-        }
-    }
-    
-    /**
-     * Método para actualizar una agenda
-     */
-    public static function ctrActualizarAgenda($datos) {
-        // Validar datos
-        if (empty($datos["id"]) || empty($datos["medico_id"]) || empty($datos["dias"]) || 
-            empty($datos["hora_inicio"]) || empty($datos["hora_fin"]) || 
-            empty($datos["duracion_turno"]) || empty($datos["consultorio_id"])) {
-            
-            return array(
-                "ok" => false,
-                "mensaje" => "Todos los campos son obligatorios"
-            );
-        }
-        
-        // Validar que la hora de inicio sea menor a la hora de fin
-        if (strtotime($datos["hora_inicio"]) >= strtotime($datos["hora_fin"])) {
-            return array(
-                "ok" => false,
-                "mensaje" => "La hora de inicio debe ser menor a la hora de fin"
-            );
-        }
-        
-        // Validar que la duración del turno sea mayor a 0
-        if (intval($datos["duracion_turno"]) <= 0) {
-            return array(
-                "ok" => false,
-                "mensaje" => "La duración del turno debe ser mayor a 0"
-            );
-        }
-        
-        // Verificar si ya existe una agenda para el médico en los mismos días y horario (excluyendo la agenda actual)
-        $verificar = AgendasModel::mdlVerificarAgendaExistente($datos, true);
-        
-        if ($verificar) {
-            return array(
-                "ok" => false,
-                "mensaje" => "Ya existe una agenda para este médico en los mismos días y horario"
-            );
-        }
-        
-        // Actualizar agenda
-        $respuesta = AgendasModel::mdlActualizarAgenda($datos);
-        
-        if ($respuesta == "ok") {
-            return array(
-                "ok" => true,
-                "mensaje" => "Agenda actualizada correctamente"
-            );
         } else {
-            // Extraer el mensaje de error si existe
-            $mensaje = "Error al actualizar agenda";
-            if (strpos($respuesta, "error:") === 0) {
-                $mensaje = substr($respuesta, 7); // Eliminar "error: " del inicio
+            $agendaId = ModelAgendas::mdlCrearAgenda($datosAgenda);
+            
+            if ($agendaId) {
+                return ["error" => false, "agenda_id" => $agendaId, "mensaje" => "Agenda creada correctamente"];
+            } else {
+                return ["error" => true, "mensaje" => "Error al crear la agenda"];
             }
+        }
+    }
+
+    /**
+     * Elimina una agenda
+     * @param int $agendaId ID de la agenda
+     * @return array Resultado de la operación
+     */
+    static public function ctrEliminarAgenda($agendaId) {
+        $resultado = ModelAgendas::mdlEliminarAgenda($agendaId);
+        
+        if ($resultado) {
+            return ["error" => false, "mensaje" => "Agenda eliminada correctamente"];
+        } else {
+            return ["error" => true, "mensaje" => "Error al eliminar la agenda"];
+        }
+    }
+
+    /**
+     * Obtiene los detalles de horarios de una agenda
+     * @param int $agendaId ID de la agenda
+     * @return array Listado de horarios
+     */
+    static public function ctrObtenerDetallesAgenda($agendaId) {
+        return ModelAgendas::mdlObtenerDetallesAgenda($agendaId);
+    }
+    
+    /**
+     * Obtiene un detalle específico de agenda por ID
+     * @param int $detalleId ID del detalle
+     * @return array Datos del detalle
+     */
+    static public function ctrObtenerDetalleAgenda($detalleId) {
+        return ModelAgendas::mdlObtenerDetalleAgenda($detalleId);
+    }
+
+    public static function obtenerDiaSemana($numeroDia) {
+        $dias = [
+            1 => 'LUNES',
+            2 => 'MARTES',
+            3 => 'MIERCOLES',
+            4 => 'JUEVES',
+            5 => 'VIERNES',
+            6 => 'SABADO',
+            7 => 'DOMINGO',
+        ];
+    
+        return $dias[$numeroDia] ?? 'DIA INVALIDO';
+    }
+    
+
+    /**
+     * Crea o actualiza un detalle de horario
+     * @param array $datos Datos del horario
+     * @return array Resultado de la operación
+     */
+    static public function ctrGuardarDetalleAgenda($datos) {
+        // Validar datos obligatorios
+        if (empty($datos["agenda_id"]) || empty($datos["turno_id"]) || 
+            empty($datos["sala_id"]) || empty($datos["dia_semana"]) || 
+            empty($datos["hora_inicio"]) || empty($datos["hora_fin"])) {
+            return ["error" => true, "mensaje" => "Todos los campos marcados con * son obligatorios"];
+        }
+
+        // Validar que hora fin sea mayor a hora inicio
+        if ($datos["hora_inicio"] >= $datos["hora_fin"]) {
+            return ["error" => true, "mensaje" => "La hora de fin debe ser posterior a la hora de inicio"];
+        }
+
+        $dia_semana = ControllerAgendas::obtenerDiaSemana($datos["dia_semana"]);
+
+        // Preparar datos para guardar
+        $datosDetalle = [
+            "agenda_id" => $datos["agenda_id"],
+            "turno_id" => $datos["turno_id"],
+            "sala_id" => $datos["sala_id"],
+            "dia_semana" => $dia_semana,
+            "hora_inicio" => $datos["hora_inicio"],
+            "hora_fin" => $datos["hora_fin"],
+            "intervalo_minutos" => isset($datos["intervalo_minutos"]) ? $datos["intervalo_minutos"] : 15,
+            "cupo_maximo" => isset($datos["cupo_maximo"]) ? $datos["cupo_maximo"] : 1,
+            "detalle_estado" => isset($datos["detalle_estado"]) ? $datos["detalle_estado"] : true
+        ];
+
+        error_log(json_encode($datosDetalle), 3, "c:/laragon/www/clinica/logs/database.log");
+
+        // Si tiene ID, actualizar, sino crear
+        if (!empty($datos["detalle_id"])) {
+            $datosDetalle["detalle_id"] = $datos["detalle_id"];
+            $resultado = ModelAgendas::mdlActualizarDetalleAgenda($datosDetalle);
             
-            return array(
-                "ok" => false,
-                "mensaje" => $mensaje
-            );
-        }
-    }
-    
-    /**
-     * Método para guardar un bloqueo
-     */
-    public static function ctrGuardarBloqueo($datos) {
-        // Validar datos
-        if (empty($datos["medico_id"]) || empty($datos["fecha_inicio"]) || 
-            empty($datos["fecha_fin"]) || empty($datos["motivo"])) {
+            if ($resultado) {
+                return ["error" => false, "detalle_id" => $datos["detalle_id"], "mensaje" => "Horario actualizado correctamente"];
+            } else {
+                return ["error" => true, "mensaje" => "Error al actualizar el horario"];
+            }
+        } else {
+            $detalleId = ModelAgendas::mdlCrearDetalleAgenda($datosDetalle);
             
-            return array(
-                "ok" => false,
-                "mensaje" => "Todos los campos son obligatorios"
-            );
-        }
-        
-        // Validar que la fecha de inicio sea menor o igual a la fecha de fin
-        if (strtotime($datos["fecha_inicio"]) > strtotime($datos["fecha_fin"])) {
-            return array(
-                "ok" => false,
-                "mensaje" => "La fecha de inicio debe ser menor o igual a la fecha de fin"
-            );
-        }
-        
-        // Guardar bloqueo
-        $respuesta = AgendasModel::mdlGuardarBloqueo($datos);
-        
-        if ($respuesta == "ok") {
-            return array(
-                "ok" => true,
-                "mensaje" => "Bloqueo guardado correctamente"
-            );
-        } else {
-            return array(
-                "ok" => false,
-                "mensaje" => "Error al guardar bloqueo"
-            );
+            if ($detalleId) {
+                return ["error" => false, "detalle_id" => $detalleId, "mensaje" => "Horario creado correctamente"];
+            } else {
+                return ["error" => true, "mensaje" => "Error al crear el horario"];
+            }
         }
     }
-    
+
     /**
-     * Método para actualizar un bloqueo
+     * Elimina un detalle de horario
+     * @param int $detalleId ID del detalle
+     * @return array Resultado de la operación
      */
-    public static function ctrActualizarBloqueo($datos) {
-        // Validar datos
-        if (empty($datos["id"]) || empty($datos["medico_id"]) || empty($datos["fecha_inicio"]) || 
-            empty($datos["fecha_fin"]) || empty($datos["motivo"])) {
-            
-            return array(
-                "ok" => false,
-                "mensaje" => "Todos los campos son obligatorios"
-            );
-        }
+    static public function ctrEliminarDetalleAgenda($detalleId) {
+        $resultado = ModelAgendas::mdlEliminarDetalleAgenda($detalleId);
         
-        // Validar que la fecha de inicio sea menor o igual a la fecha de fin
-        if (strtotime($datos["fecha_inicio"]) > strtotime($datos["fecha_fin"])) {
-            return array(
-                "ok" => false,
-                "mensaje" => "La fecha de inicio debe ser menor o igual a la fecha de fin"
-            );
-        }
-        
-        // Actualizar bloqueo
-        $respuesta = AgendasModel::mdlActualizarBloqueo($datos);
-        
-        if ($respuesta == "ok") {
-            return array(
-                "ok" => true,
-                "mensaje" => "Bloqueo actualizado correctamente"
-            );
+        if ($resultado) {
+            return ["error" => false, "mensaje" => "Horario eliminado correctamente"];
         } else {
-            return array(
-                "ok" => false,
-                "mensaje" => "Error al actualizar bloqueo"
-            );
+            return ["error" => true, "mensaje" => "Error al eliminar el horario"];
         }
     }
-    
+
     /**
-     * Método para obtener una agenda
+     * Obtiene todos los médicos disponibles
+     * @return array Listado de médicos
      */
-    public static function ctrObtenerAgenda($id) {
-        if (empty($id)) {
-            return array(
-                "ok" => false,
-                "mensaje" => "ID no válido"
-            );
-        }
-        
-        $respuesta = AgendasModel::mdlObtenerAgenda($id);
-        
-        if ($respuesta) {
-            return array(
-                "ok" => true,
-                "datos" => $respuesta
-            );
-        } else {
-            return array(
-                "ok" => false,
-                "mensaje" => "Agenda no encontrada"
-            );
-        }
+    static public function ctrObtenerMedicos() {
+        return ModelAgendas::mdlObtenerMedicos();
     }
-    
+
     /**
-     * Método para obtener un bloqueo
+     * Obtiene todos los turnos disponibles
+     * @return array Listado de turnos
      */
-    public static function ctrObtenerBloqueo($id) {
-        if (empty($id)) {
-            return array(
-                "ok" => false,
-                "mensaje" => "ID no válido"
-            );
-        }
-        
-        $respuesta = AgendasModel::mdlObtenerBloqueo($id);
-        
-        if ($respuesta) {
-            return array(
-                "ok" => true,
-                "datos" => $respuesta
-            );
-        } else {
-            return array(
-                "ok" => false,
-                "mensaje" => "Bloqueo no encontrado"
-            );
-        }
+    static public function ctrObtenerTurnos() {
+        return ModelAgendas::mdlObtenerTurnos();
     }
-    
+
     /**
-     * Método para eliminar una agenda
+     * Obtiene todas las salas disponibles
+     * @return array Listado de salas
      */
-    public static function ctrEliminarAgenda($id) {
-        if (empty($id)) {
-            return array(
-                "ok" => false,
-                "mensaje" => "ID no válido"
-            );
-        }
-        
-        // Verificar si la agenda tiene citas asociadas
-        //$tieneCitas = AgendasModel::mdlVerificarCitasAgenda($id);
-        
-        // if ($tieneCitas) {
-        //     return array(
-        //         "ok" => false,
-        //         "mensaje" => "No se puede eliminar la agenda porque tiene citas asociadas"
-        //     );
-        // }
-        
-        $respuesta = AgendasModel::mdlEliminarAgenda($id);
-        
-        if ($respuesta == "ok") {
-            return array(
-                "ok" => true,
-                "mensaje" => "Agenda eliminada correctamente"
-            );
-        } else {
-            return array(
-                "ok" => false,
-                "mensaje" => "Error al eliminar agenda"
-            );
-        }
-    }
-    
-    /**
-     * Método para eliminar un bloqueo
-     */
-    public static function ctrEliminarBloqueo($id) {
-        if (empty($id)) {
-            return array(
-                "ok" => false,
-                "mensaje" => "ID no válido"
-            );
-        }
-        
-        $respuesta = AgendasModel::mdlEliminarBloqueo($id);
-        
-        if ($respuesta == "ok") {
-            return array(
-                "ok" => true,
-                "mensaje" => "Bloqueo eliminado correctamente"
-            );
-        } else {
-            return array(
-                "ok" => false,
-                "mensaje" => "Error al eliminar bloqueo"
-            );
-        }
+    static public function ctrObtenerSalas() {
+        return ModelAgendas::mdlObtenerSalas();
     }
 }
