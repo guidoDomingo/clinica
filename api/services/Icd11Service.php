@@ -61,12 +61,12 @@ class Icd11Service
                     $result = array_merge($result, $fallbackData);
                     $result['source'] = 'fallback';
                     return $result;
-                } else {
-                    // Si no hay datos de respaldo para este código específico, usar datos genéricos
+                } else {                    // Si no hay datos de respaldo para este código específico, usar datos genéricos
                     return [
                         'code' => $code,
                         'title' => 'Código ICD-11: ' . $code,
                         'definition' => 'No se encontró información detallada para este código.',
+                        'description' => 'No se encontró una descripción detallada para este código en la base de datos local. Consulte la documentación oficial de la CIE-11 para más información.',
                         'source' => 'fallback_generic'
                     ];
                 }
@@ -108,19 +108,19 @@ class Icd11Service
                 return null;
             }
         }
-        
-        // Datos de respaldo para algunos códigos comunes
+          // Datos de respaldo para algunos códigos comunes
         $fallbackData = [
             'MD12' => [
                 'title' => 'Tos',
                 'definition' => 'Expulsión súbita y audible de aire desde los pulmones',
+                'description' => 'La tos es un mecanismo de defensa natural y un reflejo protector importante que despeja las vías respiratorias altas y bajas por eliminación de las secreciones excesivas, como el moco y las partículas inhaladas. La tos es un síntoma frecuente de la mayoría de los trastornos respiratorios y puede apuntar a la presencia de una afección de las vías respiratorias o del pulmón que puede ser o insignificante o sumamente grave.',
                 'inclusion_terms' => ['Tos seca', 'Tos húmeda', 'Tos persistente'],
                 'exclusion_terms' => ['Tos con sangre (hemoptisis)'],
                 'source' => 'fallback'
-            ],
-            'BA00' => [
+            ],            'BA00' => [
                 'title' => 'Hipertensión esencial',
                 'definition' => 'Presión arterial alta sin causa secundaria identificable',
+                'description' => 'Trastorno hipertensivo caracterizado por presión arterial alta persistente sin causa orgánica identificable. La hipertensión esencial es un factor de riesgo importante para enfermedades cerebrovasculares, cardíacas y renales. La presión arterial suele estar por encima de 140/90 mmHg, aunque los criterios diagnósticos específicos pueden variar según las guías clínicas vigentes.',
                 'inclusion_terms' => ['Hipertensión arterial', 'Presión arterial alta'],
                 'exclusion_terms' => ['Hipertensión secundaria'],
                 'source' => 'fallback'
@@ -128,6 +128,7 @@ class Icd11Service
             '5A11' => [
                 'title' => 'Diabetes mellitus tipo 2',
                 'definition' => 'Trastorno metabólico caracterizado por resistencia a la insulina',
+                'description' => 'La diabetes mellitus tipo 2 es un trastorno metabólico caracterizado por hiperglucemia crónica con alteraciones en el metabolismo de carbohidratos, grasas y proteínas. Es causada principalmente por una combinación de resistencia a la acción de la insulina y una respuesta secretora inadecuada de insulina compensatoria. Suele asociarse con obesidad, especialmente abdominal, y estilo de vida sedentario. Puede permanecer sin diagnosticar durante muchos años hasta que se manifiestan complicaciones.',
                 'inclusion_terms' => ['Diabetes del adulto', 'Diabetes no insulinodependiente'],
                 'exclusion_terms' => ['Diabetes mellitus tipo 1'],
                 'source' => 'fallback'
@@ -135,6 +136,7 @@ class Icd11Service
             'XN678' => [
                 'title' => 'COVID-19',
                 'definition' => 'Enfermedad infecciosa causada por el coronavirus SARS-CoV-2',
+                'description' => 'Enfermedad causada por el virus SARS-CoV-2, caracterizada por síntomas respiratorios que varían desde leves (similares a un resfriado común) hasta neumonía severa y síndrome de dificultad respiratoria aguda. También puede presentarse con síntomas gastrointestinales, neurológicos y cardiovasculares. La enfermedad puede ser asintomática en algunos casos, mientras que en otros puede progresar rápidamente a fallo multiorgánico y muerte. Los factores de riesgo para enfermedad grave incluyen edad avanzada y comorbilidades como hipertensión, diabetes y enfermedades cardiovasculares.',
                 'inclusion_terms' => ['Infección por SARS-CoV-2', 'Enfermedad por coronavirus 2019'],
                 'exclusion_terms' => ['Síndrome respiratorio agudo severo', 'Resfriado común'],
                 'source' => 'fallback'
