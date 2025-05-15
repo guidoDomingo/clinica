@@ -1,0 +1,247 @@
+<?php
+
+namespace Api\Services;
+
+class Icd11Service
+{
+    protected $baseUrl = 'https://icdaccessmanagement.who.int';
+    protected $apiBaseUrl = 'https://id.who.int/icd/entity';
+    protected $apiVersion = 'v2';
+    protected $releaseId = 'release/11/2024';
+    protected $linearization = 'mms';
+    protected $clientId;
+    protected $clientSecret;
+    protected $token;
+    protected $tokenExpiration;
+
+    /**
+     * Constructor del servicio ICD-11
+     */
+    public function __construct()
+    {
+        $this->clientId = "97bc4e27-44a4-4a37-9e56-b65708f709a5_874d810b-8f96-4c9e-9c13-e66a78e8051f";
+        $this->clientSecret = "0EPvwLIAEFBdQgnaxbJAT2IaoPu4V9kvkATe9JlbCo4=";
+        $this->token = null;
+        $this->tokenExpiration = null;
+    }
+
+    /**
+     * Obtiene un token de autenticación
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        try {
+            // Verificar si el token actual es válido
+            if ($this->token && $this->tokenExpiration && $this->tokenExpiration > time()) {
+                return $this->token;
+            }
+
+            if (empty($this->clientId) || empty($this->clientSecret)) {
+                throw new \Exception('Las credenciales de ICD-11 no están configuradas correctamente');
+            }
+
+            // Obtener un nuevo token usando cURL
+            $ch = curl_init();
+            
+            // Configurar la solicitud
+            $url = $this->baseUrl . '/connect/token';
+            $postFields = http_build_query([
+                'grant_type' => 'client_credentials',
+                'scope' => 'icdapi_access'
+            ]);
+            
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Accept: application/json',
+                'Content-Type: application/x-www-form-urlencoded'
+            ]);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->clientId . ':' . $this->clientSecret);
+            
+            // Ejecutar la solicitud
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            // Procesar la respuesta
+            if ($httpCode === 200 && $response) {
+                $data = json_decode($response, true);
+                
+                if (!isset($data['access_token'])) {
+                    throw new \Exception('Respuesta de autenticación inválida');
+                }
+                
+                $this->token = $data['access_token'];
+                $this->tokenExpiration = time() + ($data['expires_in'] ?? 3600);
+                  
+                return $this->token;
+            }
+
+            throw new \Exception('Error en la respuesta del servidor: ' . $httpCode);
+        } catch (\Exception $e) {
+            // Limpiar token y caché en caso de error
+            $this->token = null;
+            $this->tokenExpiration = null;
+
+            throw new \Exception('Error al obtener el token de autenticación: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtiene información detallada de una enfermedad directamente de la API oficial de la OMS por su código
+     *
+     * @param string $code Código ICD-11 (por ejemplo, MD12)
+     * @return array Información detallada de la enfermedad
+     * @throws \Exception si hay un error al obtener los datos
+     */
+    public function getDetailedDiseaseByCode($code)
+    {
+        try {
+            // Verificar que el código no esté vacío
+            if (empty($code)) {
+                throw new \Exception('El código ICD-11 es requerido');
+            }
+
+            // Obtener token de autenticación
+            $token = $this->getToken();
+
+            // Inicializar el resultado con información básica
+            $result = [
+                'code' => $code,
+                'title' => '',
+            ];
+            
+            // Probar múltiples versiones de la API para garantizar compatibilidad
+            $apiVersions = [
+                'https://id.who.int/icd/release/11/2024/mms/codeinfo/' . urlencode($code),
+                'https://id.who.int/icd/release/11/2022-02/mms/codeinfo/' . urlencode($code),
+                'https://id.who.int/icd/entity/' . urlencode($code)
+            ];
+
+            $responseData = null;
+
+            foreach ($apiVersions as $url) {
+                try {
+                    // Configurar la solicitud cURL
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'Authorization: Bearer ' . $token,
+                        'Accept: application/json',
+                        'Content-Type: application/json',
+                        'Accept-Language: es',
+                        'API-Version: v2'
+                    ]);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                    
+                    // Ejecutar la solicitud
+                    $response = curl_exec($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+                    
+                    // Si la solicitud fue exitosa, procesar los datos
+                    if ($httpCode === 200 && $response) {
+                        $data = json_decode($response, true);
+                        if (!empty($data) && (!isset($data['error']) || !$data['error'])) {
+                            $responseData = $data;
+                            break; // Salir del bucle si obtenemos datos válidos
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Continuar con el siguiente URL
+                    continue;
+                }
+            }
+            
+            // Usar los datos de la respuesta si los obtuvimos
+            if ($responseData) {
+                // Si tenemos un título, actualizar el resultado
+                if (isset($responseData['title'])) {
+                    $result['title'] = $responseData['title'];
+                }
+                
+                // Si tenemos una definición, añadirla
+                if (isset($responseData['definition'])) {
+                    $result['definition'] = $responseData['definition'];
+                }
+                
+                // Si tenemos términos de inclusión, añadirlos
+                if (isset($responseData['inclusionTerm'])) {
+                    $result['inclusion_terms'] = $responseData['inclusionTerm'];
+                }
+                
+                // Si tenemos términos de exclusión, añadirlos
+                if (isset($responseData['exclusion'])) {
+                    $result['exclusion_terms'] = $responseData['exclusion'];
+                }
+                
+                // Añadir URIs de referencia si existen
+                if (isset($responseData['browserUrl'])) {
+                    $result['browser_url'] = $responseData['browserUrl'];
+                }
+                
+                // Añadir detalles de diagnóstico si existen
+                if (isset($responseData['diagnosticCriteria'])) {
+                    $result['diagnostic_criteria'] = $responseData['diagnosticCriteria'];
+                }
+            } else {
+                // Si no encontramos datos en la API, usar datos de respaldo
+                $fallbackData = $this->getFallbackData($code);
+                if ($fallbackData) {
+                    $result = array_merge($result, $fallbackData);
+                    $result['source'] = 'fallback';
+                } else {
+                    // Si no hay fallback, informar que no se encontró
+                    throw new \Exception('No se encontró información para el código ' . $code);
+                }
+            }
+            
+            return $result;
+            
+        } catch (\Exception $e) {
+            // En caso de error, devolver un array con la información del error
+            throw new \Exception('Error al obtener detalles de la enfermedad: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Obtiene datos de respaldo para códigos comunes
+     * 
+     * @param string $code El código ICD-11
+     * @return array|null Datos del código o null si no se encuentra en la lista de respaldo
+     */
+    private function getFallbackData($code)
+    {
+        // Datos de respaldo para algunos códigos comunes
+        $fallbackData = [
+            'MD12' => [
+                'title' => 'Tos',
+                'definition' => 'Expulsión súbita y audible de aire desde los pulmones',
+                'inclusion_terms' => ['Tos seca', 'Tos húmeda', 'Tos persistente'],
+                'exclusion_terms' => ['Tos con sangre (hemoptisis)'],
+                'source' => 'fallback'
+            ],
+            'BA00' => [
+                'title' => 'Hipertensión esencial',
+                'definition' => 'Presión arterial alta sin causa secundaria identificable',
+                'inclusion_terms' => ['Hipertensión arterial', 'Presión arterial alta'],
+                'exclusion_terms' => ['Hipertensión secundaria'],
+                'source' => 'fallback'
+            ],
+            '5A11' => [
+                'title' => 'Diabetes mellitus tipo 2',
+                'definition' => 'Trastorno metabólico caracterizado por resistencia a la insulina',
+                'inclusion_terms' => ['Diabetes del adulto', 'Diabetes no insulinodependiente'],
+                'exclusion_terms' => ['Diabetes mellitus tipo 1'],
+                'source' => 'fallback'
+            ]
+        ];
+        
+        return isset($fallbackData[$code]) ? $fallbackData[$code] : null;
+    }
+}

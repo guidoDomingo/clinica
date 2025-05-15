@@ -76,3 +76,6 @@ $router->get('doctors', 'Api\Controllers\SysBusinessController', 'getDoctors');
 // Location routes (departamentos y ciudades)
 $router->get('departments', 'Api\Controllers\LocationController', 'getDepartments');
 $router->get('cities', 'Api\Controllers\LocationController', 'getCities');
+
+// ICD
+$router->get('disease/{code}', 'Api\Controllers\ICD11Controller', 'getDetailedDiseaseByCode');

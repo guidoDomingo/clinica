@@ -39,6 +39,17 @@ class Response
     }
 
     /**
+     * Send a JSON response
+     * 
+     * @param array $data The response data
+     * @param int $statusCode The HTTP status code
+     * @return array The response data (for testing)
+     */
+    public static function json($data, $statusCode = 200)
+    {
+        self::send($data, $statusCode);
+        return $data;
+    }    /**
      * Send a response
      * 
      * @param mixed $data The response data
@@ -47,11 +58,22 @@ class Response
      */
     private static function send($data, $statusCode = 200)
     {
+        // Check if this is a test environment
+        $isTestEnv = defined('TESTING_MODE') && TESTING_MODE === true;
+        
+        // If in test mode or headers already sent, just return the data without exiting
+        if ($isTestEnv || headers_sent()) {
+            echo "\nAPI RESPONSE (HTTP $statusCode):\n";
+            echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            return;
+        }
+        
         // Set the HTTP status code
         http_response_code($statusCode);
         
         // Output the response as JSON
-        echo json_encode($data, JSON_PRETTY_PRINT);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         exit;
     }
 }

@@ -112,10 +112,16 @@ class Router
     public function dispatch($uri, $method)
     {
         // Iterate through registered routes to find a match
-        foreach ($this->routes[$method] as $route => $handler) {
-            $pattern = '#^' . $route . '$#';
+        foreach ($this->routes[$method] as $route => $handler) {            // Convert route parameters like {code} to regex capture groups
+            $routeRegex = preg_replace('/{([a-zA-Z0-9_]+)}/', '(?P<$1>[^/]+)', $route);
+            $pattern = '#^' . $routeRegex . '$#';
+            
             if (preg_match($pattern, $uri, $matches)) {
-                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                // Filter out numeric keys (full matches) and keep only named parameters
+                $params = array_filter($matches, function($key) {
+                    return !is_numeric($key);
+                }, ARRAY_FILTER_USE_KEY);
+                
                 $controller = $handler['controller'];
                 $action = $handler['action'];
 
@@ -128,9 +134,12 @@ class Router
                 // Check method exists
                 if (!method_exists($controllerInstance, $action)) {
                     throw new \Exception("Method {$action} not found in controller {$controller}", 500);
+                }                // Call controller method with parameters
+                // If we have a parameter with key 'code', extract it and pass it directly
+                if (isset($params['code'])) {
+                    return $controllerInstance->$action($params['code']);
                 }
-
-                // Call controller method with parameters
+                // Otherwise pass the parameters as before
                 return empty($params) ? $controllerInstance->$action() : $controllerInstance->$action($params);
             }
         }
