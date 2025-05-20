@@ -542,36 +542,146 @@ $(document).ready(function() {
      * Guarda un detalle de horario (crear o actualizar)
      */
     function guardarDetalleAgenda() {
+        // Obtener valores
+        const detalleId = $('#detalleId').val() || '0';
+        const diaSemana = $('#diaSemana').val() || '0';
+        const turnoId = $('#turnoId').val() || '0';
+        const salaId = $('#salaId').val() || '0';
+        const horaInicio = $('#horaInicio').val() || '';
+        const horaFin = $('#horaFin').val() || '';
+        
+        // Validaciones de campos requeridos
+        if (!diaSemana || diaSemana === '0') {
+            Swal.fire('Error', 'Debe seleccionar un día de la semana', 'error');
+            return;
+        }
+        
+        if (!turnoId || turnoId === '0') {
+            Swal.fire('Error', 'Debe seleccionar un turno', 'error');
+            return;
+        }
+        
+        if (!salaId || salaId === '0') {
+            Swal.fire('Error', 'Debe seleccionar una sala', 'error');
+            return;
+        }
+        
+        if (!horaInicio) {
+            Swal.fire('Error', 'Debe ingresar una hora de inicio', 'error');
+            return;
+        }
+        
+        if (!horaFin) {
+            Swal.fire('Error', 'Debe ingresar una hora de fin', 'error');
+            return;
+        }
+        
         const datos = {
             action: "guardarDetalleAgenda",
-            detalle_id: $('#detalleId').val(),
+            detalle_id: detalleId,
             agenda_id: agendaSeleccionada,
-            dia_semana: $('#diaSemana').val(),
-            turno_id: $('#turnoId').val(),
-            sala_id: $('#salaId').val(),
-            hora_inicio: $('#horaInicio').val(),
-            hora_fin: $('#horaFin').val(),
-            intervalo_minutos: $('#intervaloMinutos').val(),
-            cupo_maximo: $('#cupoMaximo').val(),
+            dia_semana: diaSemana,
+            turno_id: turnoId,
+            sala_id: salaId,
+            hora_inicio: horaInicio,
+            hora_fin: horaFin,
+            intervalo_minutos: $('#intervaloMinutos').val() || '15',
+            cupo_maximo: $('#cupoMaximo').val() || '1',
             detalle_estado: $('#estadoDetalle').is(':checked')
         };
-        
+
+        // Primero verificar si ya existe un horario con la misma combinación
+        $.ajax({
+            url: "ajax/agendas.ajax.php",
+            method: "POST",
+            data: { 
+                action: "verificarHorarioDuplicado",
+                detalle_id: detalleId,
+                dia_semana: diaSemana,
+                turno_id: turnoId,
+                sala_id: salaId,
+                hora_inicio: horaInicio,
+                hora_fin: horaFin
+            },
+            dataType: "json",
+            success: function(respuesta) {
+                console.log("Respuesta de verificación:", respuesta);
+                
+                if (respuesta.error) {
+                    // Si hay un error en la verificación, mostrar alerta y preguntar si continuar
+                    Swal.fire({
+                        title: 'Error en la verificación',
+                        text: respuesta.mensaje || 'Ocurrió un error al verificar duplicados',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Continuar de todas formas',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            guardarDetalleAgendaConfirmado(datos);
+                        }
+                    });
+                } else if (respuesta.duplicado) {
+                    // Si hay duplicado, mostrar alerta y no continuar
+                    Swal.fire({
+                        title: 'Horario duplicado',
+                        html: `Ya existe un horario con características similares:<br>
+                               <strong>Médico:</strong> ${respuesta.doctor_nombre}<br>
+                               <strong>Día:</strong> ${respuesta.dia_semana}<br>
+                               <strong>Turno:</strong> ${respuesta.turno_nombre}<br>
+                               <strong>Sala:</strong> ${respuesta.sala_nombre}<br>
+                               <strong>Horario:</strong> ${respuesta.hora_inicio} - ${respuesta.hora_fin}`,
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido'
+                    });
+                } else {
+                    // Si no hay duplicado, proceder con el guardado
+                    guardarDetalleAgendaConfirmado(datos);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al verificar duplicados:", xhr.responseText);
+                // En caso de error en la verificación, preguntar si desea continuar
+                Swal.fire({
+                    title: '¿Desea continuar?',
+                    text: "No se pudo verificar si hay horarios duplicados. ¿Desea continuar de todas formas?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        guardarDetalleAgendaConfirmado(datos);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Guarda un detalle de agenda después de validar duplicados
+     */
+    function guardarDetalleAgendaConfirmado(datos) {
         $.ajax({
             url: "ajax/agendas.ajax.php",
             method: "POST",
             data: datos,
             dataType: "json",
             success: function(respuesta) {
-                if (respuesta.error == false) {
-                    Swal.fire('Éxito', "Se creo de forma exitosa", 'success');
+                if (respuesta.error === false) {
+                    Swal.fire('Éxito', respuesta.mensaje, 'success');
                     $('#modalDetalle').modal('hide');
                     cargarDetallesAgenda(agendaSeleccionada);
                 } else {
-                    Swal.fire('Error', "error al crear el detallees", 'error al crear el detallee');
+                    Swal.fire('Error', respuesta.mensaje || 'Ha ocurrido un error al guardar el horario', 'error');
                 }
             },
             error: function(xhr) {
-                console.error("Error al guardar detalle:", xhr.responseText);
+                console.error("Error al guardar detalle de agenda:", xhr.responseText);
                 Swal.fire('Error', 'No se pudo guardar el horario', 'error');
             }
         });

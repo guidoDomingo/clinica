@@ -331,4 +331,118 @@ class ModelAgendas {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Verifica si existe un horario duplicado
+     * @param int $detalleId ID del detalle actual (para excluirlo de la verificación)
+     * @param string $diaSemana Día de la semana (número del 0 al 6)
+     * @param int $turnoId ID del turno
+     * @param int $salaId ID de la sala
+     * @param string $horaInicio Hora de inicio
+     * @param string $horaFin Hora de fin
+     * @return array|bool Información del duplicado o false si no existe
+     */
+    static public function mdlVerificarHorarioDuplicado($detalleId, $diaSemana, $turnoId, $salaId, $horaInicio, $horaFin) {
+        try {
+            // Convertir el día numérico a texto
+            $diasSemana = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+            $diaSemanaTexto = $diasSemana[$diaSemana];
+            
+            // Asegurarnos de que detalleId sea un entero válido
+            $detalleId = !empty($detalleId) ? intval($detalleId) : 0;
+            
+            // Asegurarnos de que turnoId y salaId sean enteros válidos
+            $turnoId = !empty($turnoId) ? intval($turnoId) : 0;
+            $salaId = !empty($salaId) ? intval($salaId) : 0;
+            
+            $stmt = Conexion::conectar()->prepare("
+                SELECT 
+                    ad.detalle_id, 
+                    ad.agenda_id,
+                    ad.dia_semana, 
+                    ad.turno_id,
+                    ad.sala_id,
+                    ad.hora_inicio,
+                    ad.hora_fin,
+                    ac.medico_id,
+                    rp.first_name || ' ' || rp.last_name AS doctor_nombre,
+                    t.turno_descripcion AS turno_nombre,
+                    s.sala_descripcion AS sala_nombre
+                FROM 
+                    agendas_detalle ad
+                INNER JOIN 
+                    agendas_cabecera ac ON ad.agenda_id = ac.agenda_id
+                INNER JOIN 
+                    rh_doctors rd ON ac.medico_id = rd.doctor_id
+                INNER JOIN 
+                    rh_person rp ON rd.person_id = rp.person_id
+                LEFT JOIN
+                    turnos t ON ad.turno_id = t.turno_id
+                LEFT JOIN
+                    salas s ON ad.sala_id = s.sala_id
+                WHERE 
+                    ad.detalle_id != :detalle_id
+                AND
+                    ad.dia_semana = :dia_semana
+                AND (
+                    -- Verifica superposición de horarios
+                    (ad.hora_inicio <= :hora_inicio AND ad.hora_fin > :hora_inicio)
+                    OR
+                    (ad.hora_inicio < :hora_fin AND ad.hora_fin >= :hora_fin)
+                    OR 
+                    (:hora_inicio <= ad.hora_inicio AND :hora_fin >= ad.hora_fin)
+                )
+                AND (
+                    -- Coincidencia exacta de turno y sala
+                    (ad.turno_id = :turno_id AND ad.sala_id = :sala_id)
+                    OR
+                    -- O mismo turno (aunque la sala sea diferente)
+                    (ad.turno_id = :turno_id)
+                    OR
+                    -- O misma sala (aunque el turno sea diferente)
+                    (ad.sala_id = :sala_id)
+                )
+            ");
+
+            $stmt->bindParam(":detalle_id", $detalleId, PDO::PARAM_INT);
+            $stmt->bindParam(":dia_semana", $diaSemanaTexto, PDO::PARAM_STR);
+            $stmt->bindParam(":turno_id", $turnoId, PDO::PARAM_INT);
+            $stmt->bindParam(":sala_id", $salaId, PDO::PARAM_INT);
+            $stmt->bindParam(":hora_inicio", $horaInicio, PDO::PARAM_STR);
+            $stmt->bindParam(":hora_fin", $horaFin, PDO::PARAM_STR);
+
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($resultado) {
+                // Si encontró un conflicto, devuelve los datos del horario duplicado
+                return [
+                    'duplicado' => true,
+                    'detalle_id' => $resultado['detalle_id'],
+                    'agenda_id' => $resultado['agenda_id'],
+                    'doctor_id' => $resultado['medico_id'],
+                    'doctor_nombre' => $resultado['doctor_nombre'],
+                    'dia_semana' => $resultado['dia_semana'],
+                    'turno_id' => $resultado['turno_id'],
+                    'turno_nombre' => $resultado['turno_nombre'],
+                    'sala_id' => $resultado['sala_id'],
+                    'sala_nombre' => $resultado['sala_nombre'],
+                    'hora_inicio' => $resultado['hora_inicio'],
+                    'hora_fin' => $resultado['hora_fin'],
+                    'mensaje' => 'Ya existe un horario con características similares.'
+                ];
+            }
+
+            // Si no hay duplicados, devuelve false
+            return ['duplicado' => false];
+        } catch (PDOException $e) {
+            // En caso de error, registrar y devolver false
+            error_log("Error al verificar horario duplicado: " . $e->getMessage());
+            return [
+                'duplicado' => false,
+                'error' => true, 
+                'mensaje' => 'Error al verificar duplicados: ' . $e->getMessage()
+            ];
+        }
+    }
 }

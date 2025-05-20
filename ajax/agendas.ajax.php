@@ -152,6 +152,29 @@ class AjaxAgendas {
         $salas = ControllerAgendas::ctrObtenerSalas();
         echo json_encode(["status" => "success", "data" => $salas]);
     }
+
+    /**
+     * Verifica si existe un horario duplicado
+     */
+    public function ajaxVerificarHorarioDuplicado() {
+        $detalle_id = isset($_POST["detalle_id"]) ? $_POST["detalle_id"] : 0;
+        $dia_semana = $_POST["dia_semana"];
+        $turno_id = $_POST["turno_id"];
+        $sala_id = $_POST["sala_id"];
+        $hora_inicio = $_POST["hora_inicio"];
+        $hora_fin = $_POST["hora_fin"];
+        
+        $duplicado = ControllerAgendas::ctrVerificarHorarioDuplicado(
+            $detalle_id,
+            $dia_semana, 
+            $turno_id, 
+            $sala_id, 
+            $hora_inicio, 
+            $hora_fin
+        );
+        
+        echo json_encode($duplicado);
+    }
 }
 
 // Procesar las solicitudes AJAX
@@ -194,6 +217,9 @@ if (isset($_POST["action"])) {
             break;
         case "obtenerSalas":
             $ajax->ajaxObtenerSalas();
+            break;
+        case "verificarHorarioDuplicado":
+            $ajax->ajaxVerificarHorarioDuplicado();
             break;
     }
 }

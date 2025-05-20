@@ -209,4 +209,18 @@ class ControllerAgendas {
     static public function ctrObtenerSalas() {
         return ModelAgendas::mdlObtenerSalas();
     }
+
+    /**
+     * Verifica si existe un horario duplicado
+     * @param int $detalleId ID del detalle actual (para excluirlo de la verificación)
+     * @param string $diaSemana Día de la semana
+     * @param int $turnoId ID del turno
+     * @param int $salaId ID de la sala
+     * @param string $horaInicio Hora de inicio
+     * @param string $horaFin Hora de fin
+     * @return array Información del duplicado o false si no existe
+     */
+    static public function ctrVerificarHorarioDuplicado($detalleId, $diaSemana, $turnoId, $salaId, $horaInicio, $horaFin) {
+        return ModelAgendas::mdlVerificarHorarioDuplicado($detalleId, $diaSemana, $turnoId, $salaId, $horaInicio, $horaFin);
+    }
 }
