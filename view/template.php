@@ -197,7 +197,6 @@ switch ($ruta) {
         
     case "citas":
     case "agendas":
-        echo '<script src="view/js/citas.js"></script>';
         echo '<script src="view/js/agendas.js"></script>';
         break;
         

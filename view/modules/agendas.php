@@ -109,6 +109,7 @@ if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
                                                 <th>Sala</th>
                                                 <th>Hora Inicio</th>
                                                 <th>Hora Fin</th>
+                                                <th>Intervalo</th>
                                                 <th>Estado</th>
                                                 <th>Acciones</th>
                                             </tr>
@@ -150,7 +151,7 @@ if (!isset($_SESSION["iniciarSesion"]) || $_SESSION["iniciarSesion"] !== "ok") {
 
                     <div class="form-group">
                         <label for="medicoId">Médico:</label>
-                        <select class="form-control" id="medicoId" name="medicoId" required>
+                        <select class="form-control" id="medicoIdModal" name="medicoId" required>
                             <!-- Opciones cargadas dinámicamente -->
                         </select>
                     </div>

@@ -19,6 +19,20 @@ $(document).ready(function() {
      * Inicializa los eventos de la interfaz
      */
     function inicializarEventos() {
+
+        // Remover eventos primero para prevenir duplicación
+        $(document).off('change', '#selectMedico');
+        $(document).off('click', '#btnNuevaAgenda');
+        $(document).off('click', '.btnEditarAgenda');
+        $(document).off('click', '.btnEliminarAgenda');
+        $(document).off('submit', '#formAgenda');
+        $(document).off('click', '.btnVerDetalles');
+        $(document).off('click', '#btnNuevoDetalle');
+        $(document).off('click', '.btnEditarDetalle');
+        $(document).off('click', '.btnEliminarDetalle');
+        $(document).off('submit', '#formDetalle');
+        $('a[data-toggle="tab"]').off('shown.bs.tab');
+        
         // Evento para seleccionar médico
         $(document).on('change', '#selectMedico', function() {
             medicoSeleccionado = $(this).val();
@@ -33,6 +47,7 @@ $(document).ready(function() {
         $(document).on('click', '#btnNuevaAgenda', function() {
             limpiarFormularioAgenda();
             $('#modalAgenda').modal('show');
+            cargarMedicos();
         });
         
         // Evento para editar agenda
@@ -110,11 +125,13 @@ $(document).ready(function() {
             dataType: "json",
             success: function(respuesta) {
                 if (respuesta.status === "success") {
+                    console.log("medicos",respuesta.data);
                     let options = '<option value="0">Seleccione un médico</option>';
                     respuesta.data.forEach(medico => {
                         options += `<option value="${medico.doctor_id}">${medico.nombre_completo}</option>`;
                     });
                     $('#selectMedico').html(options);
+                    $('#medicoIdModal').html(options);
                 }
             },
             error: function(xhr) {
@@ -225,8 +242,9 @@ $(document).ready(function() {
             success: function(respuesta) {
                 if (respuesta.status === "success") {
                     const agenda = respuesta.data;
+                    console.log("agenda",agenda);
                     $('#agendaId').val(agenda.agenda_id);
-                    $('#medicoId').val(agenda.medico_id);
+                    $('#medicoIdModal').val(agenda.medico_id);
                     $('#descripcionAgenda').val(agenda.agenda_descripcion);
                     $('#estadoAgenda').prop('checked', agenda.agenda_estado == 1);
                     $('#modalAgenda').modal('show');
@@ -246,7 +264,7 @@ $(document).ready(function() {
         const datos = {
             action: "guardarAgenda",
             agenda_id: $('#agendaId').val(),
-            medico_id: $('#medicoId').val(),
+            medico_id: $('#medicoIdModal').val(),
             agenda_descripcion: $('#descripcionAgenda').val(),
             agenda_estado: $('#estadoAgenda').is(':checked')
         };
@@ -384,6 +402,7 @@ $(document).ready(function() {
                     <td>${detalle.nombre_sala}</td>
                     <td>${detalle.hora_inicio}</td>
                     <td>${detalle.hora_fin}</td>
+                    <td>${detalle.intervalo_minutos}</td>
                     <td>${estado}</td>
                     <td>
                         <div class="btn-group">
@@ -413,6 +432,7 @@ $(document).ready(function() {
             data: { action: "obtenerTurnos" },
             dataType: "json",
             success: function(respuesta) {
+                console.log("turnos",respuesta.data);
                 if (respuesta.status === "success") {
                     let options = '<option value="">Seleccione un turno</option>';
                     respuesta.data.forEach(turno => {
@@ -473,9 +493,11 @@ $(document).ready(function() {
             success: function(respuesta) {
                 if (respuesta.status === "success") {
                     const detalle = respuesta.data;
+                    // Convertir el día de texto a número
+                    const numeroDia = convertirDiaSemanaANumero(detalle.dia_semana);
                     $('#detalleId').val(detalle.detalle_id);
                     $('#agendaIdDetalle').val(detalle.agenda_id);
-                    $('#diaSemana').val(detalle.dia_semana);
+                    $('#diaSemana').val(numeroDia);
                     $('#turnoId').val(detalle.turno_id);
                     $('#salaId').val(detalle.sala_id);
                     $('#horaInicio').val(detalle.hora_inicio);
@@ -491,6 +513,29 @@ $(document).ready(function() {
                 Swal.fire('Error', 'No se pudieron cargar los datos del horario', 'error');
             }
         });
+    }
+
+
+
+    function convertirDiaSemanaANumero(diaSemana) {
+        const dias = {
+            'DOMINGO': 0,
+            'LUNES': 1,
+            'MARTES': 2,
+            'MIERCOLES': 3,
+            'MIÉRCOLES': 3,
+            'JUEVES': 4,
+            'VIERNES': 5,
+            'SABADO': 6,
+            'SÁBADO': 6
+        };
+        
+        // Convertir a mayúsculas y eliminar acentos para hacer la comparación más robusta
+        const diaFormateado = diaSemana.toUpperCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+        
+        return dias[diaFormateado] !== undefined ? dias[diaFormateado] : -1;
     }
     
     /**
@@ -517,7 +562,7 @@ $(document).ready(function() {
             data: datos,
             dataType: "json",
             success: function(respuesta) {
-                if (respuesta.status == "success") {
+                if (respuesta.error == false) {
                     Swal.fire('Éxito', "Se creo de forma exitosa", 'success');
                     $('#modalDetalle').modal('hide');
                     cargarDetallesAgenda(agendaSeleccionada);
