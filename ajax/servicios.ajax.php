@@ -181,11 +181,14 @@ if (isset($_POST['action'])) {
                 ]);
             }
             break;
-            
-        case 'buscarPaciente':
+              case 'buscarPaciente':
             if (isset($_POST['termino'])) {
                 $termino = $_POST['termino'];
                 $pacientes = ControladorServicios::ctrBuscarPaciente($termino);
+                
+                // Debug info
+                error_log("Búsqueda de paciente: " . $termino . " - Resultados: " . count($pacientes));
+                
                 echo json_encode([
                     "status" => "success",
                     "data" => $pacientes

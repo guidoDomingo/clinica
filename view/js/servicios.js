@@ -43,6 +43,8 @@ function inicializarEventos() {
     $(document).off('click', '#btnContinuarDoctor');
     $(document).off('click', '#btnContinuarServicio');
     $(document).off('click', '.btn-volver-paso');
+    $(document).off('click', '#btnBuscarPaciente');
+    $(document).off('keypress', '#buscarPaciente');
 
     // Evento para botón de búsqueda de disponibilidad (Paso 1)
     $(document).on('click', '#btnBuscarDisponibilidad', function() {
@@ -120,6 +122,136 @@ function inicializarEventos() {
     $(document).on('click', '.btn-volver-paso', function() {
         const pasoAnterior = $(this).data('paso-anterior');
         mostrarPasoReserva(pasoAnterior);
+    });
+
+    // Evento para buscar pacientes (Paso 5)
+    $(document).on('click', '#btnBuscarPaciente', function() {
+        buscarPacientes();
+    });
+    
+    // También buscar cuando se presiona Enter en el input
+    $(document).on('keypress', '#buscarPaciente', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            buscarPacientes();
+        }
+    });
+      // Evento para seleccionar un paciente
+    $(document).on('click', '.btn-seleccionar-paciente', function() {
+        let pacienteId = $(this).data('id');
+        let pacienteNombre = $(this).data('nombre');
+        
+        // Guardar paciente seleccionado
+        $('#pacienteSeleccionado').val(pacienteId);
+        
+        // Añadir información del paciente a la sección de resultados
+        $('#resultadosPacientes').html(`<div class="alert alert-success">
+            <i class="fas fa-user-check"></i> Paciente seleccionado: <strong>${pacienteNombre}</strong>
+            <p>ID: ${pacienteId}</p>
+        </div>`);
+        
+        // Habilitar botón de guardar reserva
+        $('#formReserva button[type="submit"]').prop('disabled', false);
+    });
+    
+    // Evento para confirmar horario y avanzar a la selección de paciente (Paso 5)
+    $(document).on('click', '#btnConfirmarReserva', function() {
+        if (!horarioSeleccionado) {
+            mostrarAlerta('warning', 'Por favor, seleccione un horario para continuar.');
+            return;
+        }
+        
+        // Mostrar la información del horario seleccionado
+        const horaInicio = horarioSeleccionado.inicio.substring(0, 5);
+        const horaFin = horarioSeleccionado.fin.substring(0, 5);
+        
+        $('#resumenReserva').html(`
+            <div class="alert alert-info">
+                <h5>Resumen de la reserva:</h5>
+                <p><strong>Fecha:</strong> ${formatearFechaParaMostrar(fechaSeleccionada)}</p>
+                <p><strong>Médico:</strong> ${$('#selectProveedor option:selected').text()}</p>
+                <p><strong>Servicio:</strong> ${$('#selectServicio option:selected').text()}</p>
+                <p><strong>Horario:</strong> ${horaInicio} - ${horaFin}</p>
+            </div>
+        `);
+        
+        // Avanzar al paso 5 (selección de paciente)
+        mostrarPasoReserva(5);
+    });
+    
+    // Evento para enviar el formulario de reserva
+    $(document).on('submit', '#formReserva', function(e) {
+        e.preventDefault();
+        
+        const pacienteId = $('#pacienteSeleccionado').val();
+        
+        if (!pacienteId) {
+            mostrarAlerta('warning', 'Por favor, seleccione un paciente para continuar.');
+            return;
+        }
+        
+        // Obtener todos los datos para la reserva
+        const datos = {
+            action: "guardarReserva",
+            doctor_id: proveedorSeleccionado,
+            servicio_id: servicioSeleccionado, 
+            paciente_id: pacienteId,
+            fecha: fechaSeleccionada,
+            hora_inicio: horarioSeleccionado.inicio,
+            hora_fin: horarioSeleccionado.fin,
+            observaciones: $('#observaciones').val()
+        };
+        
+        // Mostrar spinner de carga
+        Swal.fire({
+            title: 'Guardando reserva...',
+            text: 'Por favor espere un momento',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Enviar datos al servidor
+        $.ajax({
+            url: "ajax/servicios.ajax.php",
+            method: "POST",
+            data: datos,
+            dataType: "json",
+            success: function(respuesta) {
+                Swal.close();
+                
+                if (respuesta.status === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Reserva guardada!',
+                        text: 'La reserva ha sido guardada exitosamente',
+                        confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                        // Redirigir a la página de reservas o recargar
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: respuesta.message || 'No se pudo guardar la reserva',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.close();
+                console.error("Error al guardar reserva:", xhr.responseText);
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al intentar guardar la reserva',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
     });
 }
 
@@ -423,4 +555,116 @@ function mostrarAlerta(tipo, mensaje) {
         // Como última opción, usar alert
         alert(mensaje);
     }
+}
+
+/**
+ * Busca un paciente por su DNI y muestra sus datos en el formulario
+ * @param {string} dni DNI del paciente a buscar
+ */
+function buscarPacientePorDNI(dni) {
+    $.ajax({
+        url: "ajax/pacientes.ajax.php",
+        method: "POST",
+        data: { 
+            action: "buscarPacientePorDNI",
+            dni: dni
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Limpiar datos anteriores
+            $('#nombrePaciente').val('');
+            $('#telefonoPaciente').val('');
+            $('#emailPaciente').val('');
+            $('#direccionPaciente').val('');
+            
+            $('#resultadoBusquedaPaciente').html('<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Buscando paciente...</p>');
+        },
+        success: function(respuesta) {
+            if (respuesta.status === "success") {
+                // Llenar campos con datos del paciente
+                $('#nombrePaciente').val(respuesta.data.nombre);
+                $('#telefonoPaciente').val(respuesta.data.telefono);
+                $('#emailPaciente').val(respuesta.data.email);
+                $('#direccionPaciente').val(respuesta.data.direccion);
+                
+                $('#resultadoBusquedaPaciente').html('<p class="text-success">Paciente encontrado.</p>');
+            } else {
+                $('#resultadoBusquedaPaciente').html(`<p class="text-danger">${respuesta.message}</p>`);
+            }
+        },
+        error: function(xhr) {
+            console.error("Error al buscar paciente:", xhr.responseText);
+            $('#resultadoBusquedaPaciente').html('<p class="text-danger">Error al buscar paciente.</p>');
+        }
+    });
+}
+
+/**
+ * Busca pacientes según los criterios ingresados en el formulario
+ */
+function buscarPacientes() {
+    const termino = $('#buscarPaciente').val().trim();
+    
+    if (termino.length < 3) {
+        mostrarAlerta('warning', 'Por favor, ingrese al menos 3 caracteres para buscar (nombre o documento).');
+        return;
+    }
+    
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "buscarPaciente",
+            termino: termino
+        },
+        dataType: "json",
+        beforeSend: function() {
+            $('#resultadosPacientes').html('<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Buscando pacientes...</p>');
+        },
+        success: function(respuesta) {
+            // Debug output
+            console.log("Respuesta de búsqueda de pacientes:", respuesta);
+            
+            if (respuesta.status === "success") {
+                let html = '';
+                
+                if (respuesta.data && respuesta.data.length > 0) {
+                    html = '<div class="row">';
+                    respuesta.data.forEach(paciente => {
+                        const nombreCompleto = `${paciente.first_name} ${paciente.last_name}`;
+                        html += `
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${nombreCompleto}</h5>
+                                        <p class="card-text">
+                                            <strong>Documento:</strong> ${paciente.document_number || 'No registrado'}<br>
+                                            <strong>Teléfono:</strong> ${paciente.phone_number || 'No registrado'}<br>
+                                            <strong>Email:</strong> ${paciente.email || 'No registrado'}
+                                        </p>
+                                        <button class="btn btn-primary btn-seleccionar-paciente" 
+                                                data-id="${paciente.person_id}" 
+                                                data-nombre="${nombreCompleto}">
+                                            <i class="fas fa-check"></i> Seleccionar paciente
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>'; // Close the row div
+                } else {
+                    html = '<div class="alert alert-info">No se encontraron pacientes con ese criterio de búsqueda.</div>';
+                }
+                
+                $('#resultadosPacientes').html(html);
+            } else {
+                $('#resultadosPacientes').html(`<div class="alert alert-danger">${respuesta.message || 'Error en la búsqueda de pacientes'}</div>`);
+            }
+        },
+        error: function(xhr) {
+            console.error("Error al buscar pacientes:", xhr.responseText);
+            $('#resultadosPacientes').html('<div class="alert alert-danger">Error al buscar pacientes.</div>');
+        }
+    });
 }

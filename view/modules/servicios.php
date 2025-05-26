@@ -44,11 +44,11 @@ if (!isset($_SESSION['perfil'])) {
                     <div class="card card-primary card-outline card-outline-tabs">
                         <div class="card-header p-0 border-bottom-0">
                             <ul class="nav nav-tabs" id="custom-tabs" role="tablist">
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link active" id="tab-servicios-tab" data-toggle="pill" href="#tabServicios" role="tab" aria-controls="tabServicios" aria-selected="true">
                                         <i class="fas fa-clipboard-list mr-1"></i>Servicios
                                     </a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
                                     <a class="nav-link" id="tab-reserva-tab" data-toggle="pill" href="#tabReserva" role="tab" aria-controls="tabReserva" aria-selected="false">
                                         <i class="fas fa-calendar-plus mr-1"></i>Nueva Reserva
@@ -78,7 +78,7 @@ if (!isset($_SESSION['perfil'])) {
                             <div class="tab-content" id="custom-tabs-content">
                             
                                 <!-- PESTAÑA: LISTA DE SERVICIOS -->
-                                <div class="tab-pane fade show active" id="tabServicios" role="tabpanel" aria-labelledby="tab-servicios-tab">
+                                <div class="tab-pane fade show " id="tabServicios" role="tabpanel" aria-labelledby="tab-servicios-tab">
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -117,7 +117,7 @@ if (!isset($_SESSION['perfil'])) {
                                 </div>
                                 
                                 <!-- PESTAÑA: CREAR NUEVA RESERVA -->
-                                <div class="tab-pane fade" id="tabReserva" role="tabpanel" aria-labelledby="tab-reserva-tab">
+                                <div class="tab-pane fade active" id="tabReserva" role="tabpanel" aria-labelledby="tab-reserva-tab">
                                     <div class="row">
                                         <div class="col-12">
                                             <!-- Barra de progreso -->
