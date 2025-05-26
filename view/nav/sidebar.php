@@ -60,11 +60,16 @@
                         <i class="nav-icon fas fa-file-alt"></i>
                         <p>Preformatos</p>
                     </a>
-                </li>
-                <li class="nav-item">
+                </li>                <li class="nav-item">
                     <a href="index.php?ruta=agendas" class="nav-link">
                         <i class="nav-icon fas fa-calendar-check"></i>
                         <p>Agendas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=servicios" class="nav-link">
+                        <i class="nav-icon fas fa-notes-medical"></i>
+                        <p>Servicios</p>
                     </a>
                 </li>
                 <li class="nav-header">CONFIGURACIÓN</li>

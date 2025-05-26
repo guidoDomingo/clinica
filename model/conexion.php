@@ -9,6 +9,13 @@ class Conexion{
         $puerto = "5432";
 
         try {
+            // Check if PostgreSQL extension is available
+            if (!extension_loaded('pdo_pgsql')) {
+                error_log("[" . date('Y-m-d H:i:s') . "] Error: PDO PostgreSQL extension not loaded", 
+                          3, "c:/laragon/www/clinica/logs/database.log");
+                return null;
+            }
+            
             $link = new PDO("pgsql:host=$rutaServidor;port=$puerto;dbname=$nombreBaseDeDatos", $usuario, $contrasena);
             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $link;

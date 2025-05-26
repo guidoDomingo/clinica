@@ -175,3 +175,24 @@ Data: {
     "reg_lastname": "Galeano"
 }
 ----------------------------------------
+[2025-05-26 22:03:18] [INFO] [user.controller.php:21] user: antonio@antonio.com
+Data: antonio@antonio.com
+----------------------------------------
+[2025-05-26 22:03:18] [INFO] [user.controller.php:22] user: $2y$10$GFi6G6tauIsFDzTH.sxLDuO9Dbfa.eYQecLGL04Ej31zdTxdxYiCi
+Data: $2y$10$GFi6G6tauIsFDzTH.sxLDuO9Dbfa.eYQecLGL04Ej31zdTxdxYiCi
+----------------------------------------
+[2025-05-26 22:03:18] [INFO] [user.controller.php:33] Login attempt for user: antonio@antonio.com
+Data: {
+    "user_id": 7,
+    "reg_id": 7,
+    "user_email": "antonio@antonio.com",
+    "user_pass": "$2y$10$GFi6G6tauIsFDzTH.sxLDuO9Dbfa.eYQecLGL04Ej31zdTxdxYiCi",
+    "user_expire": "2025-05-29 19:40:16.246543",
+    "user_first_login": null,
+    "user_last_login": "2025-05-22 18:20:45.670551",
+    "user_is_active": true,
+    "profile_photo": "user_7_1745970180.jpg",
+    "reg_name": "Antonio",
+    "reg_lastname": "Galeano"
+}
+----------------------------------------

@@ -124,12 +124,10 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
     } else if ($rutaActual == "perfil") {
         // Si estamos en la página de perfil, asegurarnos de que el estado se actualizará al salir
         $_SESSION['check_profile_on_next_page'] = true;
-    }
-    
-    // Manejo de páginas con inicio de sesión
+    }      // Manejo de páginas con inicio de sesión
     if(isset($_GET["ruta"])){
-        if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout"|| $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas" || $_GET["ruta"] == "roles" || $_GET["ruta"] == "perfil" || $_GET["ruta"] == "rhpersonas" || $_GET["ruta"] == "preformatos" || $_GET["ruta"] == "agendas") {
-            include "modules/".$_GET["ruta"].".php";
+        if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout"|| $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas" || $_GET["ruta"] == "roles" || $_GET["ruta"] == "perfil" || $_GET["ruta"] == "rhpersonas" || $_GET["ruta"] == "preformatos" || $_GET["ruta"] == "agendas" || $_GET["ruta"] == "servicios") {
+            include "view/modules/".$_GET["ruta"].".php";
         } else {
             include "view/modules/404.php";
         }
@@ -207,14 +205,16 @@ switch ($ruta) {
     case "register":
         echo '<script src="view/js/register.js"></script>';
         break;
-        
-    case "personas":
+          case "personas":
     case "rhpersonas":
         echo '<script src="view/js/personas.js"></script>';
         break;
-        
-    case "roles":
+          case "roles":
         echo '<script src="view/js/roles.js"></script>';
+        break;
+        
+    case "servicios":
+        // Removed servicios.js inclusion since it's already included in the module file
         break;
         
     // Caso por defecto para el home o páginas que no requieren JS específico
