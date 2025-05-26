@@ -305,37 +305,39 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
         success: function(respuesta) {
             console.log("Respuesta de slots:", respuesta);
             
-            if (respuesta.status === "success") {
-                let contenidoHorarios = '';
+            // La respuesta puede tener status='success' o tener directamente la data (para mantener compatibilidad)
+            let contenidoHorarios = '';
+            
+            if ((respuesta.status === "success" && respuesta.data && respuesta.data.length > 0) || 
+                (respuesta.data && respuesta.data.length > 0)) {
+                // Si hay slots disponibles
+                contenidoHorarios = `
+                    <div class="alert alert-success">
+                        Se encontraron ${respuesta.data.length} horarios disponibles.
+                    </div>
+                    <div class="row">
+                `;
                 
-                if (respuesta.data && respuesta.data.length > 0) {
-                    contenidoHorarios = `
-                        <div class="alert alert-success">
-                            Se encontraron ${respuesta.data.length} horarios disponibles.
-                        </div>
-                        <div class="row">
-                    `;
+                respuesta.data.forEach(slot => {
+                    // Formatear la hora para mostrar solo HH:MM
+                    const horaInicio = slot.hora_inicio.substring(0, 5);
+                    const horaFin = slot.hora_fin.substring(0, 5);
                     
-                    respuesta.data.forEach(slot => {
-                        // Formatear la hora para mostrar solo HH:MM
-                        const horaInicio = slot.hora_inicio.substring(0, 5);
-                        const horaFin = slot.hora_fin.substring(0, 5);
-                        
-                        contenidoHorarios += `
-                            <div class="col-md-3 col-6 mb-3">
-                                <button class="btn btn-outline-primary btn-block btn-horario" 
-                                        data-hora-inicio="${slot.hora_inicio}" 
-                                        data-hora-fin="${slot.hora_fin}">
-                                    ${horaInicio} - ${horaFin}
-                                </button>
-                            </div>
-                        `;
-                    });
-                    contenidoHorarios += '</div>';
-                } else {
-                    contenidoHorarios = '<div class="alert alert-warning">No hay horarios disponibles para esta combinación de médico, servicio y fecha.</div>';
-                }
-                  $('#contenedorHorarios').html(contenidoHorarios);
+                    contenidoHorarios += `
+                        <div class="col-md-3 col-6 mb-3">
+                            <button class="btn btn-outline-primary btn-block btn-horario" 
+                                    data-hora-inicio="${slot.hora_inicio}" 
+                                    data-hora-fin="${slot.hora_fin}">
+                                ${horaInicio} - ${horaFin}
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                contenidoHorarios += '</div>';
+                
+                // Actualizar el contenido HTML
+                $('#contenedorHorarios').html(contenidoHorarios);
                 
                 // Agregar información detallada de depuración
                 $('#debugInfoContainer').remove(); // Eliminar información de debug previa
@@ -371,6 +373,13 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                     // Habilitar botón para confirmar reserva
                     $('#btnConfirmarReserva').prop('disabled', false);
                 });
+            } else {
+                // Si no hay datos o hay un error, mostrar un mensaje
+                let mensaje = '<div class="alert alert-warning">No hay horarios disponibles para esta combinación de médico, servicio y fecha.</div>';
+                if (respuesta.status === "error") {
+                    mensaje = `<div class="alert alert-danger">Error: ${respuesta.message || 'No se pudieron cargar los horarios'}</div>`;
+                }
+                $('#contenedorHorarios').html(mensaje);
             }
         },
         error: function(xhr) {

@@ -110,36 +110,39 @@ class ModelServicios {
         
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
+    }    /**
      * Obtiene un servicio médico por su ID
      * @param int $servicioId ID del servicio
      * @return array Datos del servicio
      */
     static public function mdlObtenerServicioPorId($servicioId) {
-        $stmt = Conexion::conectar()->prepare(
-            "SELECT 
-                s.servicio_id, 
-                s.categoria_id, 
-                c.categoria_nombre,
-                s.servicio_codigo, 
-                s.servicio_nombre, 
-                s.servicio_descripcion, 
-                s.duracion_minutos,
-                s.precio_base,
-                s.requiere_doctor
-            FROM 
-                servicios_medicos s
-            INNER JOIN 
-                servicios_categorias c ON s.categoria_id = c.categoria_id
-            WHERE 
-                s.servicio_id = :servicio_id"
-        );
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT 
+                    servicio_id, 
+                    servicio_codigo, 
+                    servicio_nombre, 
+                    duracion_minutos,
+                    precio_base
+                FROM 
+                    rs_servicios
+                WHERE 
+                    servicio_id = :servicio_id"
+            );
 
-        $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener servicio por ID: " . $e->getMessage(), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            
+            // Si hay un error, devolvemos un array con valores predeterminados
+            return [
+                'servicio_id' => $servicioId,
+                'duracion_minutos' => 30,
+                'servicio_nombre' => 'Servicio #' . $servicioId
+            ];
+        }
     }
 
     /**

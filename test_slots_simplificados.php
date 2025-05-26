@@ -123,13 +123,12 @@ $fecha = isset($_GET['fecha']) ? $_GET['fecha'] : date('Y-m-d', strtotime('+1 da
                                     <h3 class="card-title">Información del Doctor</h3>
                                 </div>
                                 <div class="card-body">
-                                    <?php
-                                    try {
+                                    <?php                                    try {
                                         $stmt = Conexion::conectar()->prepare(
                                             "SELECT 
                                                 d.doctor_id,
                                                 p.first_name || ' ' || p.last_name AS nombre_completo,
-                                                d.especialidad
+                                                COALESCE(d.especialidad, 'No especificada') AS especialidad
                                             FROM 
                                                 rh_doctors d
                                             INNER JOIN 
