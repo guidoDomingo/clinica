@@ -180,8 +180,7 @@ if (isset($_POST['action'])) {
                     "mensaje" => "Faltan parámetros requeridos"
                 ]);
             }
-            break;
-              case 'buscarPaciente':
+            break;        case 'buscarPaciente':
             if (isset($_POST['termino'])) {
                 $termino = $_POST['termino'];
                 $pacientes = ControladorServicios::ctrBuscarPaciente($termino);
@@ -197,6 +196,52 @@ if (isset($_POST['action'])) {
                 echo json_encode([
                     "status" => "error",
                     "message" => "Término de búsqueda no proporcionado"
+                ]);
+            }
+            break;
+            
+        case 'guardarReserva':
+            if (isset($_POST['doctor_id']) && isset($_POST['servicio_id']) && isset($_POST['paciente_id']) && 
+                isset($_POST['fecha']) && isset($_POST['hora_inicio']) && isset($_POST['hora_fin'])) {
+                
+                // Capturar datos de la reserva
+                $datos = [
+                    'doctor_id' => intval($_POST['doctor_id']),
+                    'servicio_id' => intval($_POST['servicio_id']),
+                    'paciente_id' => intval($_POST['paciente_id']),
+                    'fecha' => $_POST['fecha'],
+                    'hora_inicio' => $_POST['hora_inicio'],
+                    'hora_fin' => $_POST['hora_fin'],
+                    'observaciones' => isset($_POST['observaciones']) ? $_POST['observaciones'] : ''
+                ];
+                
+                try {
+                    // Guardar la reserva
+                    $resultado = ControladorServicios::ctrGuardarReserva($datos);
+                    
+                    if ($resultado) {
+                        echo json_encode([
+                            "status" => "success",
+                            "message" => "Reserva guardada exitosamente",
+                            "reserva_id" => $resultado
+                        ]);
+                    } else {
+                        echo json_encode([
+                            "status" => "error",
+                            "message" => "No se pudo guardar la reserva"
+                        ]);
+                    }
+                } catch (Exception $e) {
+                    error_log("Error al guardar reserva: " . $e->getMessage());
+                    echo json_encode([
+                        "status" => "error",
+                        "message" => "Error al guardar la reserva: " . $e->getMessage()
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "Faltan datos requeridos para guardar la reserva"
                 ]);
             }
             break;

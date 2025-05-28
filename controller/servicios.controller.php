@@ -243,4 +243,39 @@ class ControladorServicios {
             return [];
         }
     }
+    
+    /**
+     * Guarda una nueva reserva médica
+     * @param array $datos Datos de la reserva
+     * @return mixed ID de la reserva creada o false en caso de error
+     */
+    static public function ctrGuardarReserva($datos) {
+        // Validar datos requeridos
+        if (
+            empty($datos['doctor_id']) || 
+            empty($datos['servicio_id']) || 
+            empty($datos['paciente_id']) || 
+            empty($datos['fecha']) || 
+            empty($datos['hora_inicio']) || 
+            empty($datos['hora_fin'])
+        ) {
+            return false;
+        }
+
+        // Preparar datos para el modelo
+        $datosReserva = [
+            'servicio_id' => $datos['servicio_id'],
+            'doctor_id' => $datos['doctor_id'],
+            'paciente_id' => $datos['paciente_id'],
+            'fecha_reserva' => $datos['fecha'],
+            'hora_inicio' => $datos['hora_inicio'],
+            'hora_fin' => $datos['hora_fin'],
+            'observaciones' => $datos['observaciones'] ?? '',
+            'reserva_estado' => 'PENDIENTE',
+            'business_id' => isset($_SESSION['business_id']) ? $_SESSION['business_id'] : 1,
+            'created_by' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1
+        ];
+
+        return ModelServicios::mdlGuardarReserva($datosReserva);
+    }
 }

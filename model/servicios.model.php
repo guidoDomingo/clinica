@@ -1394,4 +1394,71 @@ class ModelServicios {
             return false;
         }
     }
+    
+    /**
+     * Guarda una nueva reserva en la base de datos
+     * @param array $datos Datos de la reserva
+     * @return mixed ID de la reserva creada o false en caso de error
+     */
+    static public function mdlGuardarReserva($datos) {
+        try {
+            // Verificar si ya existe una reserva en el mismo horario para el mismo doctor
+            $stmtVerificar = Conexion::conectar()->prepare(
+                "SELECT COUNT(*) AS coincidencias
+                FROM servicios_reservas
+                WHERE doctor_id = :doctor_id 
+                AND fecha_reserva = :fecha_reserva
+                AND ((hora_inicio BETWEEN :hora_inicio AND :hora_fin)
+                OR (hora_fin BETWEEN :hora_inicio AND :hora_fin)
+                OR (hora_inicio <= :hora_inicio AND hora_fin >= :hora_fin))
+                AND reserva_estado IN ('PENDIENTE', 'CONFIRMADA')"
+            );
+            
+            $stmtVerificar->bindParam(":doctor_id", $datos['doctor_id'], PDO::PARAM_INT);
+            $stmtVerificar->bindParam(":fecha_reserva", $datos['fecha_reserva'], PDO::PARAM_STR);
+            $stmtVerificar->bindParam(":hora_inicio", $datos['hora_inicio'], PDO::PARAM_STR);
+            $stmtVerificar->bindParam(":hora_fin", $datos['hora_fin'], PDO::PARAM_STR);
+            $stmtVerificar->execute();
+            
+            if ($stmtVerificar->fetchColumn() > 0) {
+                return false;
+            }
+
+            // Insertar la nueva reserva
+            $stmt = Conexion::conectar()->prepare(
+                "INSERT INTO servicios_reservas (
+                    servicio_id, doctor_id, paciente_id, fecha_reserva,
+                    hora_inicio, hora_fin, observaciones, reserva_estado,
+                    business_id, created_by, created_at
+                ) VALUES (
+                    :servicio_id, :doctor_id, :paciente_id, :fecha_reserva,
+                    :hora_inicio, :hora_fin, :observaciones, :reserva_estado,
+                    :business_id, :created_by, CURRENT_TIMESTAMP
+                ) RETURNING reserva_id"
+            );
+
+            // Bindear los parámetros
+            $stmt->bindParam(":servicio_id", $datos['servicio_id'], PDO::PARAM_INT);
+            $stmt->bindParam(":doctor_id", $datos['doctor_id'], PDO::PARAM_INT);
+            $stmt->bindParam(":paciente_id", $datos['paciente_id'], PDO::PARAM_INT);
+            $stmt->bindParam(":fecha_reserva", $datos['fecha_reserva'], PDO::PARAM_STR);
+            $stmt->bindParam(":hora_inicio", $datos['hora_inicio'], PDO::PARAM_STR);
+            $stmt->bindParam(":hora_fin", $datos['hora_fin'], PDO::PARAM_STR);
+            $stmt->bindParam(":observaciones", $datos['observaciones'], PDO::PARAM_STR);
+            $stmt->bindParam(":reserva_estado", $datos['reserva_estado'], PDO::PARAM_STR);
+            $stmt->bindParam(":business_id", $datos['business_id'], PDO::PARAM_INT);
+            $stmt->bindParam(":created_by", $datos['created_by'], PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                $resultado = $stmt->fetch();
+                return $resultado['reserva_id'];
+            } else {
+                error_log("Error al insertar reserva: " . implode(", ", $stmt->errorInfo()));
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("Error al guardar reserva: " . $e->getMessage());
+            return false;
+        }
+    }
 }
