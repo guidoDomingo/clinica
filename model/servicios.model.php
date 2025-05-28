@@ -1026,53 +1026,43 @@ class ModelServicios {
      * @param int $doctorId ID del doctor (opcional)
      * @param string $estado Estado de la reserva (opcional)
      * @return array Lista de reservas
-     */
-    static public function mdlObtenerReservasPorFecha($fecha, $doctorId = null, $estado = null) {
+     */    static public function mdlObtenerReservasPorFecha($fecha, $doctorId = null, $estado = null) {
         try {
+            error_log("mdlObtenerReservasPorFecha: Fecha=$fecha, DoctorID=" . ($doctorId ?? "null") . ", Estado=" . ($estado ?? "null"), 3, "c:/laragon/www/clinica/logs/reservas.log");
+            
             // Verificar si existe la tabla de reservas
             $stmtCheck = Conexion::conectar()->prepare("SELECT to_regclass('public.servicios_reservas')");
             $stmtCheck->execute();
             $tablaReservasExiste = $stmtCheck->fetchColumn();
             
             if (!$tablaReservasExiste) {
+                error_log("mdlObtenerReservasPorFecha: La tabla servicios_reservas no existe", 3, "c:/laragon/www/clinica/logs/reservas.log");
                 return [];
             }
             
-            // Construir la consulta base
-            $sql = "
-                SELECT 
-                    r.reserva_id,
-                    r.servicio_id,
-                    r.doctor_id,
-                    r.paciente_id,
-                    r.fecha_reserva,
-                    r.hora_inicio,
-                    r.hora_fin,
-                    r.observaciones,
-                    r.reserva_estado,
-                    r.sala_id,
-                    COALESCE(sm.servicio_nombre, rs.serv_descripcion, 'Servicio no especificado') as servicio_nombre,
-                    COALESCE(p_paciente.first_name, '') || ' ' || COALESCE(p_paciente.last_name, '') as nombre_paciente,
-                    COALESCE(p_doctor.first_name, '') || ' ' || COALESCE(p_doctor.last_name, '') as nombre_doctor,
-                    COALESCE(s.sala_nombre, 'Sin sala') as sala_nombre
-                FROM 
-                    servicios_reservas r
-                LEFT JOIN 
-                    servicios_medicos sm ON r.servicio_id = sm.servicio_id
-                LEFT JOIN 
-                    rs_servicios rs ON r.servicio_id = rs.serv_id                LEFT JOIN 
-                    rh_doctors d ON r.doctor_id = d.doctor_id
-                LEFT JOIN 
-                    rh_person p_doctor ON d.person_id = p_doctor.person_id
-                LEFT JOIN 
-                    rh_person p_paciente ON r.paciente_id = p_paciente.person_id
-                LEFT JOIN 
-                    salas s ON r.sala_id = s.sala_id
-                WHERE 
-                    r.fecha_reserva = :fecha
-            ";
+            // Consulta básica sin joins complejos
+            $sql = "SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.reserva_estado as estado,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                'Doctor ' || r.doctor_id as doctor_nombre,
+                'Paciente ' || r.paciente_id as paciente_nombre,
+                'Servicio ' || r.servicio_id as servicio_nombre
+            FROM servicios_reservas r
+            WHERE r.fecha_reserva = :fecha";
             
-            // Agregar filtros opcionales
             if ($doctorId !== null) {
                 $sql .= " AND r.doctor_id = :doctor_id";
             }
@@ -1081,8 +1071,9 @@ class ModelServicios {
                 $sql .= " AND r.reserva_estado = :estado";
             }
             
-            // Ordenar por hora
             $sql .= " ORDER BY r.hora_inicio ASC";
+            
+            error_log("mdlObtenerReservasPorFecha: SQL=$sql", 3, "c:/laragon/www/clinica/logs/reservas.log");
             
             $stmt = Conexion::conectar()->prepare($sql);
             $stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
@@ -1096,10 +1087,16 @@ class ModelServicios {
             }
             
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
+            error_log("mdlObtenerReservasPorFecha: Se encontraron " . count($reservas) . " reservas", 3, "c:/laragon/www/clinica/logs/reservas.log");
+            if (count($reservas) > 0) {
+                error_log("mdlObtenerReservasPorFecha: Primera reserva: " . json_encode($reservas[0]), 3, "c:/laragon/www/clinica/logs/reservas.log");
+            }
+            
+            return $reservas;
         } catch (PDOException $e) {
-            error_log("Error al obtener reservas por fecha: " . $e->getMessage(), 0);
+            error_log("Error al obtener reservas por fecha: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/reservas.log");
             return [];
         }
     }
@@ -1402,6 +1399,8 @@ class ModelServicios {
      */
     static public function mdlGuardarReserva($datos) {
         try {
+            error_log("Intentando guardar reserva: " . json_encode($datos), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            
             // Verificar si ya existe una reserva en el mismo horario para el mismo doctor
             $stmtVerificar = Conexion::conectar()->prepare(
                 "SELECT COUNT(*) AS coincidencias
@@ -1421,43 +1420,80 @@ class ModelServicios {
             $stmtVerificar->execute();
             
             if ($stmtVerificar->fetchColumn() > 0) {
+                error_log("Reserva rechazada: Ya existe una reserva en este horario para este médico", 3, 'c:/laragon/www/clinica/logs/reservas.log');
                 return false;
             }
 
-            // Insertar la nueva reserva
+            // Insertar la nueva reserva - adaptado al esquema actual de la base de datos
             $stmt = Conexion::conectar()->prepare(
                 "INSERT INTO servicios_reservas (
-                    servicio_id, doctor_id, paciente_id, fecha_reserva,
-                    hora_inicio, hora_fin, observaciones, reserva_estado,
-                    business_id, created_by, created_at
+                    servicio_id, doctor_id, paciente_id, fecha_reserva, 
+                    hora_inicio, hora_fin, observaciones, reserva_estado, 
+                    business_id, created_by, agenda_id, tarifa_id
                 ) VALUES (
-                    :servicio_id, :doctor_id, :paciente_id, :fecha_reserva,
-                    :hora_inicio, :hora_fin, :observaciones, :reserva_estado,
-                    :business_id, :created_by, CURRENT_TIMESTAMP
+                    :servicio_id, :doctor_id, :paciente_id, :fecha_reserva, 
+                    :hora_inicio, :hora_fin, :observaciones, :reserva_estado, 
+                    :business_id, :created_by, :agenda_id, :tarifa_id
                 ) RETURNING reserva_id"
             );
 
-            // Bindear los parámetros
+            // Bindear los parámetros obligatorios
             $stmt->bindParam(":servicio_id", $datos['servicio_id'], PDO::PARAM_INT);
             $stmt->bindParam(":doctor_id", $datos['doctor_id'], PDO::PARAM_INT);
             $stmt->bindParam(":paciente_id", $datos['paciente_id'], PDO::PARAM_INT);
             $stmt->bindParam(":fecha_reserva", $datos['fecha_reserva'], PDO::PARAM_STR);
             $stmt->bindParam(":hora_inicio", $datos['hora_inicio'], PDO::PARAM_STR);
             $stmt->bindParam(":hora_fin", $datos['hora_fin'], PDO::PARAM_STR);
-            $stmt->bindParam(":observaciones", $datos['observaciones'], PDO::PARAM_STR);
             $stmt->bindParam(":reserva_estado", $datos['reserva_estado'], PDO::PARAM_STR);
-            $stmt->bindParam(":business_id", $datos['business_id'], PDO::PARAM_INT);
-            $stmt->bindParam(":created_by", $datos['created_by'], PDO::PARAM_INT);
-
+            
+            // Bindear los parámetros opcionales
+            $observaciones = isset($datos['observaciones']) ? $datos['observaciones'] : '';
+            $stmt->bindParam(":observaciones", $observaciones, PDO::PARAM_STR);
+            
+            $businessId = isset($datos['business_id']) ? $datos['business_id'] : 1;
+            $stmt->bindParam(":business_id", $businessId, PDO::PARAM_INT);
+            
+            $createdBy = isset($datos['created_by']) ? $datos['created_by'] : 1;
+            $stmt->bindParam(":created_by", $createdBy, PDO::PARAM_INT);
+            
+            // Estos campos no estaban en la consulta original pero sí están en la estructura de la tabla
+            $agendaId = isset($datos['agenda_id']) ? $datos['agenda_id'] : null;
+            $stmt->bindParam(":agenda_id", $agendaId, $agendaId ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            
+            $tarifaId = isset($datos['tarifa_id']) ? $datos['tarifa_id'] : null;
+            $stmt->bindParam(":tarifa_id", $tarifaId, $tarifaId ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            
+            error_log("SQL a ejecutar: INSERT INTO servicios_reservas...", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            error_log("Parámetros: " . json_encode([
+                'servicio_id' => $datos['servicio_id'],
+                'doctor_id' => $datos['doctor_id'],
+                'paciente_id' => $datos['paciente_id'],
+                'fecha_reserva' => $datos['fecha_reserva'],
+                'hora_inicio' => $datos['hora_inicio'],
+                'hora_fin' => $datos['hora_fin'],
+                'agenda_id' => $agendaId,
+                'tarifa_id' => $tarifaId
+            ]), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            
             if ($stmt->execute()) {
-                $resultado = $stmt->fetch();
-                return $resultado['reserva_id'];
+                $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($resultado && isset($resultado['reserva_id'])) {
+                    error_log("Reserva creada con ID: " . $resultado['reserva_id'], 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                    return $resultado['reserva_id'];
+                } else {
+                    error_log("Error: La consulta se ejecutó pero no se obtuvo un ID de reserva", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                    return false;
+                }
             } else {
-                error_log("Error al insertar reserva: " . implode(", ", $stmt->errorInfo()));
+                $errorInfo = $stmt->errorInfo();
+                error_log("Error al insertar reserva: SQLSTATE=" . $errorInfo[0] . ", Driver-specific code=" . $errorInfo[1] . ", Message=" . $errorInfo[2], 3, 'c:/laragon/www/clinica/logs/reservas.log');
                 return false;
             }
         } catch (PDOException $e) {
-            error_log("Error al guardar reserva: " . $e->getMessage());
+            error_log("Excepción PDO al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            return false;
+        } catch (Exception $e) {
+            error_log("Excepción general al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
             return false;
         }
     }

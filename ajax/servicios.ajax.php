@@ -127,14 +127,33 @@ if (isset($_POST['action'])) {
             
         case 'obtenerReservas':
             $fecha = isset($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
-            $doctorId = isset($_POST['doctor_id']) ? $_POST['doctor_id'] : null;
+            $doctorId = isset($_POST['doctor_id']) ? intval($_POST['doctor_id']) : null;
             $estado = isset($_POST['estado']) ? $_POST['estado'] : null;
             
-            $reservas = ControladorServicios::ctrObtenerReservasPorFecha($fecha, $doctorId, $estado);
-            echo json_encode([
-                "status" => "success",
-                "data" => $reservas
-            ]);
+            error_log("AJAX obtenerReservas: Fecha=$fecha, DoctorID=" . ($doctorId ?? "null") . ", Estado=" . ($estado ?? "null"), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            
+            try {
+                $reservas = ControladorServicios::ctrObtenerReservasPorFecha($fecha, $doctorId, $estado);
+                
+                error_log("AJAX obtenerReservas: Se encontraron " . count($reservas) . " reservas", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                if (count($reservas) > 0) {
+                    error_log("AJAX obtenerReservas: Primera reserva: " . json_encode($reservas[0]), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                } else {
+                    error_log("AJAX obtenerReservas: No se encontraron reservas para esta fecha", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                }
+                
+                echo json_encode([
+                    "status" => "success",
+                    "data" => $reservas
+                ]);
+            } catch (Exception $e) {
+                error_log("AJAX obtenerReservas ERROR: " . $e->getMessage(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "Error al obtener reservas: " . $e->getMessage(),
+                    "data" => []
+                ]);
+            }
             break;
             
         case 'crearReserva':
@@ -215,6 +234,22 @@ if (isset($_POST['action'])) {
                     'observaciones' => isset($_POST['observaciones']) ? $_POST['observaciones'] : ''
                 ];
                 
+                // Agregar campos opcionales
+                if (isset($_POST['agenda_id']) && !empty($_POST['agenda_id'])) {
+                    $datos['agenda_id'] = intval($_POST['agenda_id']);
+                }
+                
+                if (isset($_POST['tarifa_id']) && !empty($_POST['tarifa_id'])) {
+                    $datos['tarifa_id'] = intval($_POST['tarifa_id']);
+                }
+                
+                if (isset($_POST['sala_id']) && !empty($_POST['sala_id'])) {
+                    $datos['sala_id'] = intval($_POST['sala_id']);
+                }
+                
+                // Registrar intento de guardar reserva
+                error_log("AJAX guardarReserva: Datos recibidos = " . json_encode($datos), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                
                 try {
                     // Guardar la reserva
                     $resultado = ControladorServicios::ctrGuardarReserva($datos);
@@ -225,23 +260,38 @@ if (isset($_POST['action'])) {
                             "message" => "Reserva guardada exitosamente",
                             "reserva_id" => $resultado
                         ]);
+                        error_log("AJAX guardarReserva: Reserva creada con ID " . $resultado, 3, 'c:/laragon/www/clinica/logs/reservas.log');
                     } else {
                         echo json_encode([
                             "status" => "error",
-                            "message" => "No se pudo guardar la reserva"
+                            "message" => "No se pudo guardar la reserva. Verifique que no haya conflictos de horarios."
                         ]);
+                        error_log("AJAX guardarReserva: No se pudo guardar la reserva (resultado=false)", 3, 'c:/laragon/www/clinica/logs/reservas.log');
                     }
                 } catch (Exception $e) {
-                    error_log("Error al guardar reserva: " . $e->getMessage());
+                    error_log("AJAX guardarReserva: Excepción - " . $e->getMessage(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
                     echo json_encode([
                         "status" => "error",
                         "message" => "Error al guardar la reserva: " . $e->getMessage()
                     ]);
                 }
             } else {
+                $camposFaltantes = [];
+                $camposRequeridos = ['doctor_id', 'servicio_id', 'paciente_id', 'fecha_reserva', 'hora_inicio', 'hora_fin'];
+                
+                foreach ($camposRequeridos as $campo) {
+                    if (!isset($_POST[$campo]) || empty($_POST[$campo])) {
+                        $camposFaltantes[] = $campo;
+                    }
+                }
+                
+                $mensaje = "Faltan datos requeridos para guardar la reserva: " . implode(", ", $camposFaltantes);
+                error_log("AJAX guardarReserva: " . $mensaje, 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                
                 echo json_encode([
                     "status" => "error",
-                    "message" => "Faltan datos requeridos para guardar la reserva"
+                    "message" => $mensaje,
+                    "campos_faltantes" => $camposFaltantes
                 ]);
             }
             break;

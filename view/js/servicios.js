@@ -398,6 +398,8 @@ function cargarServiciosPorFechaMedico(fecha, doctorId) {
  * @param {string} fecha Fecha en formato YYYY-MM-DD
  */
 function cargarReservasDelDia(fecha) {
+    console.log("Cargando reservas para la fecha: " + fecha); // Debug log
+    
     $.ajax({
         url: "ajax/servicios.ajax.php",
         method: "POST",
@@ -410,13 +412,23 @@ function cargarReservasDelDia(fecha) {
             $('#tablaReservasExistentes tbody').html('<tr><td colspan="5" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando reservas...</td></tr>');
         },
         success: function(respuesta) {
-            if (respuesta.data && respuesta.data.length > 0) {
+            console.log("Respuesta de reservas:", respuesta); // Debug log
+            
+            if (respuesta.status === "success" && respuesta.data && respuesta.data.length > 0) {
                 let filas = '';
                 
                 respuesta.data.forEach(function(reserva) {
-                    // Determinar color según estado
+                    console.log("Procesando reserva:", reserva); // Debug log para cada reserva
+                    
+                    // Formatear la hora para mostrar (HH:MM)
+                    const horaInicio = reserva.hora_inicio ? reserva.hora_inicio.substring(0, 5) : '';
+                    const horaFin = reserva.hora_fin ? reserva.hora_fin.substring(0, 5) : '';
+                    
+                    // Determinar color según estado (maneja diferentes nombres de propiedad)
                     let claseEstado = '';
-                    switch (reserva.estado.toUpperCase()) {
+                    const estado = (reserva.estado || reserva.reserva_estado || 'PENDIENTE').toUpperCase();
+                    
+                    switch (estado) {
                         case 'PENDIENTE': claseEstado = 'badge-warning'; break;
                         case 'CONFIRMADA': claseEstado = 'badge-success'; break;
                         case 'CANCELADA': claseEstado = 'badge-danger'; break;
@@ -424,25 +436,31 @@ function cargarReservasDelDia(fecha) {
                         default: claseEstado = 'badge-secondary';
                     }
                     
+                    // Maneja diferentes nombres de propiedades para cada campo
+                    const doctorNombre = reserva.doctor_nombre || reserva.nombre_doctor || 'Sin doctor';
+                    const pacienteNombre = reserva.paciente_nombre || reserva.nombre_paciente || 'Sin paciente';
+                    const servicioNombre = reserva.servicio_nombre || 'Sin servicio';
+                    
                     filas += `
                         <tr>
-                            <td>${reserva.hora_inicio} - ${reserva.hora_fin}</td>
-                            <td>${reserva.doctor_nombre}</td>
-                            <td>${reserva.paciente_nombre}</td>
-                            <td>${reserva.servicio_nombre}</td>
-                            <td><span class="badge ${claseEstado}">${reserva.estado}</span></td>
+                            <td>${horaInicio} - ${horaFin}</td>
+                            <td>${doctorNombre}</td>
+                            <td>${pacienteNombre}</td>
+                            <td>${servicioNombre}</td>
+                            <td><span class="badge ${claseEstado}">${estado}</span></td>
                         </tr>
                     `;
                 });
                 
                 $('#tablaReservasExistentes tbody').html(filas);
             } else {
+                console.log("No hay reservas o error en la respuesta:", respuesta);
                 $('#tablaReservasExistentes tbody').html('<tr><td colspan="5" class="text-center">No hay reservas para esta fecha</td></tr>');
             }
         },
-        error: function(xhr) {
-            console.error(xhr);
-            $('#tablaReservasExistentes tbody').html('<tr><td colspan="5" class="text-center text-danger">Error al cargar reservas</td></tr>');
+        error: function(xhr, status, error) {
+            console.error("Error al cargar reservas:", xhr, status, error);
+            $('#tablaReservasExistentes tbody').html('<tr><td colspan="5" class="text-center text-danger">Error al cargar reservas: ' + error + '</td></tr>');
         }
     });
 }

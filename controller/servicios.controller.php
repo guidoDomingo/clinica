@@ -259,6 +259,7 @@ class ControladorServicios {
             empty($datos['hora_inicio']) || 
             empty($datos['hora_fin'])
         ) {
+            error_log("Error en ctrGuardarReserva: Faltan datos requeridos.", 3, 'c:/laragon/www/clinica/logs/reservas.log');
             return false;
         }
 
@@ -275,7 +276,21 @@ class ControladorServicios {
             'business_id' => isset($_SESSION['business_id']) ? $_SESSION['business_id'] : 1,
             'created_by' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1
         ];
-
+        
+        // Incluir campos opcionales si están presentes en la petición
+        if (!empty($datos['agenda_id'])) {
+            $datosReserva['agenda_id'] = $datos['agenda_id'];
+        }
+        
+        if (!empty($datos['tarifa_id'])) {
+            $datosReserva['tarifa_id'] = $datos['tarifa_id'];
+        }
+        
+        if (!empty($datos['sala_id'])) {
+            $datosReserva['sala_id'] = $datos['sala_id'];
+        }
+        
+        error_log("ctrGuardarReserva: Enviando datos al modelo: " . json_encode($datosReserva), 3, 'c:/laragon/www/clinica/logs/reservas.log');
         return ModelServicios::mdlGuardarReserva($datosReserva);
     }
 }
