@@ -575,14 +575,14 @@ function buscarPacientes(termino) {
                 respuesta.data.forEach(function(paciente) {
                     html += `
                         <a href="#" class="list-group-item list-group-item-action btn-seleccionar-paciente" 
-                           data-id="${paciente.id}" 
-                           data-nombre="${paciente.nombre}">
+                           data-id="${paciente.person_id}" 
+                           data-nombre="${paciente.last_name}">
                             <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">${paciente.nombre}</h5>
-                                <small>${paciente.documento}</small>
+                                <h5 class="mb-1">${paciente.last_name}</h5>
+                                <small>${paciente.document_number}</small>
                             </div>
                             <p class="mb-1">${paciente.email || 'Sin email'}</p>
-                            <small>${paciente.telefono || 'Sin teléfono'}</small>
+                            <small>${paciente.phone_number || 'Sin teléfono'}</small>
                         </a>
                     `;
                 });

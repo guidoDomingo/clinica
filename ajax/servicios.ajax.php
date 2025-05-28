@@ -202,14 +202,14 @@ if (isset($_POST['action'])) {
             
         case 'guardarReserva':
             if (isset($_POST['doctor_id']) && isset($_POST['servicio_id']) && isset($_POST['paciente_id']) && 
-                isset($_POST['fecha']) && isset($_POST['hora_inicio']) && isset($_POST['hora_fin'])) {
+                isset($_POST['fecha_reserva']) && isset($_POST['hora_inicio']) && isset($_POST['hora_fin'])) {
                 
                 // Capturar datos de la reserva
                 $datos = [
                     'doctor_id' => intval($_POST['doctor_id']),
                     'servicio_id' => intval($_POST['servicio_id']),
                     'paciente_id' => intval($_POST['paciente_id']),
-                    'fecha' => $_POST['fecha'],
+                    'fecha_reserva' => $_POST['fecha_reserva'],
                     'hora_inicio' => $_POST['hora_inicio'],
                     'hora_fin' => $_POST['hora_fin'],
                     'observaciones' => isset($_POST['observaciones']) ? $_POST['observaciones'] : ''

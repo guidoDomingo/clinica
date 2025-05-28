@@ -255,7 +255,7 @@ class ControladorServicios {
             empty($datos['doctor_id']) || 
             empty($datos['servicio_id']) || 
             empty($datos['paciente_id']) || 
-            empty($datos['fecha']) || 
+            empty($datos['fecha_reserva']) || 
             empty($datos['hora_inicio']) || 
             empty($datos['hora_fin'])
         ) {
@@ -267,7 +267,7 @@ class ControladorServicios {
             'servicio_id' => $datos['servicio_id'],
             'doctor_id' => $datos['doctor_id'],
             'paciente_id' => $datos['paciente_id'],
-            'fecha_reserva' => $datos['fecha'],
+            'fecha_reserva' => $datos['fecha_reserva'],
             'hora_inicio' => $datos['hora_inicio'],
             'hora_fin' => $datos['hora_fin'],
             'observaciones' => $datos['observaciones'] ?? '',
