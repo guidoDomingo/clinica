@@ -119,188 +119,178 @@ if (!isset($_SESSION['perfil'])) {
                                 <!-- PESTAÑA: CREAR NUEVA RESERVA -->
                                 <div class="tab-pane fade active" id="tabReserva" role="tabpanel" aria-labelledby="tab-reserva-tab">
                                     <div class="row">
-                                        <div class="col-12">
-                                            <!-- Barra de progreso -->
-                                            <div class="progress mb-4">
-                                                <div id="progresoReserva" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>                                            <!-- Paso 1: Selección de fecha -->
-                                            <div class="paso-reserva" id="paso1">
-                                                <h4 class="mb-3">Paso 1: Seleccione una fecha para la consulta</h4>
-                                                <div class="form-group">
-                                                    <label for="fechaReserva"><i class="fas fa-calendar-alt"></i> Fecha para la consulta:</label>
-                                                    <input type="date" class="form-control" id="fechaReserva" min="<?php echo date('Y-m-d'); ?>">
-                                                    <small class="form-text text-muted">Seleccione una fecha para ver los doctores disponibles.</small>
+                                        <!-- Panel izquierdo: Selección de fecha y Médico -->
+                                        <div class="col-md-4">
+                                            <!-- Selección de fecha (Paso 1) -->
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-calendar-alt"></i> Paso 1: Seleccione una fecha</h3>
                                                 </div>
-                                                <div class="text-right">
-                                                    <button type="button" class="btn btn-primary" id="btnBuscarDisponibilidad">Buscar disponibilidad <i class="fas fa-search"></i></button>
-                                                </div>
-                                                
-                                                <!-- Tabla de reservas existentes para la fecha seleccionada -->
-                                                <div class="card mt-4">
-                                                    <div class="card-header">
-                                                        <h5 class="mb-0">Reservas existentes para la fecha seleccionada</h5>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-bordered table-striped" id="tablaReservasExistentes">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Horario</th>
-                                                                        <th>Doctor</th>
-                                                                        <th>Paciente</th>
-                                                                        <th>Servicio</th>
-                                                                        <th>Estado</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="5" class="text-center">Seleccione una fecha para ver las reservas existentes</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                              <!-- Paso 2: Selección de doctor -->
-                                            <div class="paso-reserva" id="paso2" style="display: none;">
-                                                <h4 class="mb-3">Paso 2: Seleccione un doctor disponible</h4>
-                                                
-                                                <div class="alert alert-info">
-                                                    <i class="fas fa-info-circle"></i> Doctores disponibles para la fecha: <strong><span id="fechaSeleccionadaTexto"></span></strong>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label for="selectProveedor"><i class="fas fa-user-md"></i> Doctor:</label>
-                                                    <select class="form-control" id="selectProveedor">
-                                                        <option value="">Seleccione un doctor</option>
-                                                        <!-- Las opciones se cargan con JavaScript -->
-                                                    </select>
-                                                </div>
-                                                
-                                                <div class="text-right">
-                                                    <button type="button" class="btn btn-secondary mr-2" onclick="mostrarPasoReserva(1)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                                                    <button type="button" class="btn btn-primary" id="btnContinuarDoctor">Siguiente <i class="fas fa-arrow-right"></i></button>
-                                                </div>
-                                            </div>                                            <!-- Paso 3: Selección de servicio -->
-                                            <div class="paso-reserva" id="paso3" style="display: none;">
-                                                <h4 class="mb-3">Paso 3: Seleccione un servicio disponible</h4>
-                                                
-                                                <div class="alert alert-info">
-                                                    <i class="fas fa-info-circle"></i> Servicios disponibles para el doctor <strong><span id="doctorSeleccionadoTexto"></span></strong> en la fecha: <strong><span id="fechaSeleccionadaDoctorTexto"></span></strong>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label for="selectServicio"><i class="fas fa-stethoscope"></i> Servicio:</label>
-                                                    <select class="form-control" id="selectServicio">
-                                                        <option value="">Seleccione un servicio</option>
-                                                        <!-- Las opciones se cargan con JavaScript -->
-                                                    </select>
-                                                </div>
-                                                
-                                                <div class="text-right">
-                                                    <button type="button" class="btn btn-secondary mr-2" onclick="mostrarPasoReserva(2)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                                                    <button type="button" class="btn btn-primary" id="btnContinuarServicio">Siguiente <i class="fas fa-arrow-right"></i></button>
-                                                </div>
-                                            </div>
-                                              <!-- Paso 4: Selección de horario -->
-                                            <div class="paso-reserva" id="paso4" style="display: none;">
-                                                <h4 class="mb-3">Paso 4: Seleccione un horario disponible</h4>
-                                                
-                                                <div class="alert alert-info">
-                                                    <i class="fas fa-info-circle"></i> Seleccione un horario disponible para la fecha elegida. Los horarios en gris no están disponibles por reservas existentes.
-                                                </div>
-                                                  <div id="contenedorHorarios" class="mb-3">
-                                                    <!-- Los horarios disponibles se cargan con JavaScript -->
-                                                </div>
-                                                
-                                                <!-- Contenedor para slots paginados -->
-                                                <div id="slotsPaginados" class="row mb-3">
-                                                    <!-- Los slots paginados se cargan con JavaScript -->
-                                                </div>
-                                                
-                                                <!-- Paginación de slots -->
-                                                <div id="slotsPagination" class="mb-3" style="display: none;">
-                                                    <!-- La paginación se carga dinámicamente -->
-                                                </div>
-                                                
-                                                <!-- Resumen de selección -->
-                                                <div class="card mt-3" id="resumenSeleccion" style="display: none;">
-                                                    <div class="card-header bg-success text-white">
-                                                        <h5 class="mb-0"><i class="fas fa-check-circle"></i> Horario seleccionado</h5>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <p><strong><i class="fas fa-stethoscope"></i> Servicio:</strong> <span id="resumenServicio"></span></p>
-                                                                <p><strong><i class="fas fa-user-md"></i> Doctor:</strong> <span id="resumenMedico"></span></p>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <p><strong><i class="fas fa-calendar-day"></i> Fecha:</strong> <span id="resumenFecha"></span></p>
-                                                                <p><strong><i class="fas fa-clock"></i> Hora:</strong> <span id="resumenHora"></span></p>
-                                                                <p><strong><i class="fas fa-door-open"></i> Sala:</strong> <span id="resumenSala"></span></p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <!-- Campos ocultos para almacenar hora seleccionada -->
-                                                <input type="hidden" id="horaInicio">
-                                                <input type="hidden" id="horaFin">
-                                                
-                                                <div class="text-right mt-3">
-                                                    <button type="button" class="btn btn-secondary mr-2" onclick="mostrarPasoReserva(3)">
-                                                        <i class="fas fa-arrow-left"></i> Anterior
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" onclick="mostrarPasoReserva(5)" id="btnConfirmarReserva" disabled>
-                                                        Siguiente <i class="fas fa-arrow-right"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Paso 5: Selección de paciente y confirmación -->
-                                            <div class="paso-reserva" id="paso5" style="display: none;">
-                                                <h4 class="mb-3">Paso 5: Seleccione un paciente y confirme</h4>
-                                                
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="buscarPaciente" placeholder="Buscar paciente por nombre o documento">
-                                                        <div class="input-group-append">
-                                                            <button class="btn btn-primary" type="button" id="btnBuscarPaciente">
-                                                                <i class="fas fa-search"></i> Buscar
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <small class="form-text text-muted">Ingrese al menos 3 caracteres para buscar</small>
-                                                </div>
-                                                
-                                                <div id="resultadosPacientes" class="mb-3">
-                                                    <!-- Los resultados de búsqueda se cargan con JavaScript -->
-                                                </div>
-                                                
-                                                <!-- Formulario final de reserva -->
-                                                <form id="formReserva">
-                                                    <input type="hidden" id="pacienteSeleccionado" class="form-control" readonly>
-                                                    
+                                                <div class="card-body">
                                                     <div class="form-group">
-                                                        <label for="observaciones">Observaciones:</label>
-                                                        <textarea class="form-control" id="observaciones" rows="3" placeholder="Observaciones adicionales para la reserva"></textarea>
+                                                        <label for="fechaReserva">Fecha para la consulta:</label>
+                                                        <input type="date" class="form-control" id="fechaReserva" min="<?php echo date('Y-m-d'); ?>">
+                                                        <small class="form-text text-muted">Seleccione una fecha para ver los médicos disponibles.</small>
                                                     </div>
-                                                    
-                                                    <!-- Campos ocultos para agenda y tarifa (si aplica) -->
-                                                    <input type="hidden" id="agendaId">
-                                                    <input type="hidden" id="tarifaId">
-                                                    
-                                                    <div class="text-right">
-                                                        <button type="button" class="btn btn-secondary mr-2" onclick="mostrarPasoReserva(4)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                                                        <button type="submit" class="btn btn-success">
-                                                            <i class="fas fa-save"></i> Guardar Reserva
-                                                        </button>
+                                                    <button type="button" class="btn btn-primary btn-block" id="btnBuscarDisponibilidad">
+                                                        <i class="fas fa-search"></i> Buscar disponibilidad
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Selección de médico (Paso 2) -->
+                                            <div class="card card-info">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-user-md"></i> Paso 2: Seleccione un médico</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <select class="form-control" id="selectProveedor">
+                                                            <option value="">Seleccione un médico disponible</option>
+                                                            <!-- Se carga dinámicamente -->
+                                                        </select>
                                                     </div>
-                                                </form>
+                                                    <button type="button" class="btn btn-info btn-block" id="btnCargarServicios">
+                                                        <i class="fas fa-stethoscope"></i> Cargar servicios
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Selección de servicio (Paso 3) -->
+                                            <div class="card card-success">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-stethoscope"></i> Paso 3: Seleccione un servicio</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <select class="form-control" id="selectServicio">
+                                                            <option value="">Seleccione un servicio</option>
+                                                            <!-- Se carga dinámicamente -->
+                                                        </select>
+                                                    </div>
+                                                    <button type="button" class="btn btn-success btn-block" id="btnCargarHorarios">
+                                                        <i class="fas fa-clock"></i> Cargar horarios
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        <!-- Panel central: Horarios disponibles y Reservas existentes -->
+                                        <div class="col-md-5">
+                                            <!-- Horarios disponibles (Paso 4) -->
+                                            <div class="card card-warning">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-clock"></i> Paso 4: Seleccione un horario</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="contenedorHorarios" class="mb-3">
+                                                        <p class="text-center text-muted">Seleccione fecha, médico y servicio para ver horarios disponibles</p>
+                                                    </div>
+                                                    
+                                                    <!-- Contenedor para slots paginados -->
+                                                    <div id="slotsPaginados" class="row">
+                                                        <!-- Se carga dinámicamente -->
+                                                    </div>
+                                                    
+                                                    <!-- Paginación de slots -->
+                                                    <div id="slotsPagination" class="mt-3" style="display: none;">
+                                                        <!-- Se carga dinámicamente -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Panel derecho: Resumen y datos de paciente -->
+                                        <div class="col-md-3">
+                                            <!-- Resumen de la selección -->
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Resumen de reserva</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="resumenSeleccion">
+                                                        <p><strong><i class="fas fa-calendar-day"></i> Fecha:</strong> <span id="resumenFecha">-</span></p>
+                                                        <p><strong><i class="fas fa-user-md"></i> Médico:</strong> <span id="resumenMedico">-</span></p>
+                                                        <p><strong><i class="fas fa-stethoscope"></i> Servicio:</strong> <span id="resumenServicio">-</span></p>
+                                                        <p><strong><i class="fas fa-clock"></i> Hora:</strong> <span id="resumenHora">-</span></p>
+                                                        <p><strong><i class="fas fa-door-open"></i> Sala:</strong> <span id="resumenSala">-</span></p>
+                                                    </div>
+                                                    
+                                                    <!-- Campos ocultos para hora seleccionada -->
+                                                    <input type="hidden" id="horaInicio">
+                                                    <input type="hidden" id="horaFin">
+                                                </div>                                            </div>
+
+                                            <!-- Selección de paciente (Paso 5) -->
+                                            <div class="card card-success">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-user"></i> Paso 5: Paciente</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="buscarPaciente" placeholder="Buscar paciente">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-primary" type="button" id="btnBuscarPaciente">
+                                                                    <i class="fas fa-search"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div id="resultadosPacientes" class="mb-3">
+                                                        <!-- Se carga dinámicamente -->
+                                                    </div>
+                                                    
+                                                    <!-- Formulario final de reserva -->
+                                                    <form id="formReserva">
+                                                        <input type="hidden" id="pacienteSeleccionado">
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="observaciones">Observaciones:</label>
+                                                            <textarea class="form-control" id="observaciones" rows="2"></textarea>
+                                                        </div>
+                                                        
+                                                        <button type="submit" class="btn btn-success btn-block" id="btnGuardarReserva">
+                                                            <i class="fas fa-save"></i> Guardar Reserva
+                                                        </button>
+                                                    </form>
+                                                </div>                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Reservas existentes para la fecha seleccionada -->
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header bg-light">
+                                                    <h5 class="mb-0"><i class="fas fa-list"></i> Reservas existentes para la fecha seleccionada</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-striped" id="tablaReservasExistentes">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Horario</th>
+                                                                    <th>Doctor</th>
+                                                                    <th>Paciente</th>
+                                                                    <th>Servicio</th>
+                                                                    <th>Estado</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td colspan="5" class="text-center">No hay reservas para esta fecha</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>                                    </div>
+                                                <!-- Fin de la tabla de reservas -->                                <!-- Campos ocultos adicionales -->
+                                <input type="hidden" id="agendaId">
+                                <input type="hidden" id="tarifaId">
                                 </div>
                                 
                                 <!-- PESTAÑA: RESERVAS ACTUALES -->
