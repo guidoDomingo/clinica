@@ -60,7 +60,11 @@ function inicializarEventosCompactos() {
     $(document).off('click', '#btnCargarHorarios');
     $(document).off('click', '#btnBuscarPaciente');
     $(document).off('click', '.slot-horario');
-    $(document).off('submit', '#formReserva');    // Evento para botón de búsqueda de disponibilidad (Paso 1)
+    $(document).off('submit', '#formReserva');
+    $(document).off('change', '#selectProveedor');
+    $(document).off('change', '#selectServicio');
+
+    // Evento para botón de búsqueda de disponibilidad (Paso 1)
     $(document).on('click', '#btnBuscarDisponibilidad', function() {
         fechaSeleccionada = $('#fechaReserva').val();
         
@@ -128,7 +132,41 @@ function inicializarEventosCompactos() {
         cargarMedicosDisponiblesPorFecha(fechaSeleccionada);
     });
 
-    // Evento para cargar servicios cuando se selecciona un médico (Paso 2)
+    // Evento automático para cargar servicios cuando cambia la selección de médico
+    $(document).on('change', '#selectProveedor', function() {
+        proveedorSeleccionado = $(this).val();
+        
+        if (!proveedorSeleccionado) {
+            mostrarAlerta('warning', 'Por favor, seleccione un médico para continuar.');
+            return;
+        }
+        
+        // Actualizar texto del médico seleccionado en el resumen
+        const doctorTexto = $('#selectProveedor option:selected').text();
+        $('#resumenMedico').text(doctorTexto);
+        
+        // Cargar servicios disponibles para este médico y fecha
+        cargarServiciosPorFechaMedico(fechaSeleccionada, proveedorSeleccionado);
+    });
+
+    // Evento automático para cargar horarios cuando cambia la selección de servicio
+    $(document).on('change', '#selectServicio', function() {
+        servicioSeleccionado = $(this).val();
+        
+        if (!servicioSeleccionado) {
+            mostrarAlerta('warning', 'Por favor, seleccione un servicio para continuar.');
+            return;
+        }
+        
+        // Actualizar texto del servicio seleccionado en el resumen
+        const servicioTexto = $('#selectServicio option:selected').text();
+        $('#resumenServicio').text(servicioTexto);
+        
+        // Cargar horarios disponibles para este servicio, médico y fecha
+        cargarHorariosDisponibles(servicioSeleccionado, proveedorSeleccionado, fechaSeleccionada);
+    });
+
+    // Evento para cargar servicios cuando se selecciona un médico (Paso 2) - Mantener por compatibilidad
     $(document).on('click', '#btnCargarServicios', function() {
         proveedorSeleccionado = $('#selectProveedor').val();
         
@@ -145,7 +183,7 @@ function inicializarEventosCompactos() {
         cargarServiciosPorFechaMedico(fechaSeleccionada, proveedorSeleccionado);
     });
 
-    // Evento para cargar horarios cuando se selecciona un servicio (Paso 3)
+    // Evento para cargar horarios cuando se selecciona un servicio (Paso 3) - Mantener por compatibilidad
     $(document).on('click', '#btnCargarHorarios', function() {
         servicioSeleccionado = $('#selectServicio').val();
         
@@ -563,14 +601,25 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                     <p>Cargando horarios disponibles...</p>
                 </div>
             `);
-        },
-        success: function(respuesta) {
+        },        success: function(respuesta) {
             console.log("Respuesta de slots:", respuesta); // Log para depuración
             
-            if (respuesta.data && respuesta.data.length > 0) {
+            // Debug para slots
+            if (respuesta.data) {
+                console.log(`Número de slots obtenidos: ${respuesta.data.length}`);
+                if (respuesta.data.length === 1) {
+                    console.log("Se ha detectado un único slot - aplicando estilo especial");
+                    console.log("Datos del slot único:", respuesta.data[0]);
+                }
+            }
+              if (respuesta.data && respuesta.data.length > 0) {
                 // Construir la rejilla de slots horarios
                 const slots = respuesta.data;
-                let htmlSlots = '<div class="row">';
+                const isSingleSlot = slots.length === 1; // Verificar si solo hay un slot
+                
+                // Aplicar clase especial si solo hay un slot
+                let containerClass = isSingleSlot ? 'slot-container-single' : 'row';
+                let htmlSlots = `<div class="${containerClass}">`;
                 
                 slots.forEach(function(slot) {
                     // Determinar si el slot está disponible
@@ -600,20 +649,43 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                     
                     // Nombre de la sala
                     const nombreSala = slot.sala_nombre || 'Sin sala asignada';
+                      // Si solo hay un slot, aplicamos una clase especial
+                    const colClass = isSingleSlot ? 'col-md-6 col-sm-10 mx-auto' : 'col-md-4 col-sm-6';
                     
-                    htmlSlots += `
-                        <div class="col-md-4 col-sm-6 mb-3">
-                            <div class="slot-horario ${claseDisponibilidad}" 
-                                 data-id="${slot.horario_id || slot.id || ''}"
-                                 data-inicio="${slot.hora_inicio || slot.inicio || slot.start_time || ''}"
-                                 data-fin="${slot.hora_fin || slot.fin || slot.end_time || ''}"
-                                 data-texto="${horaInicio} - ${horaFin}"
-                                 data-sala="${nombreSala}">
-                                <p class="mb-1 text-center"><strong>${horaInicio} - ${horaFin}</strong></p>
-                                <p class="mb-0 text-center"><small>${nombreSala}</small></p>
+                    // Si es un solo slot, usamos un formato especial
+                    if (isSingleSlot) {
+                        htmlSlots += `
+                            <div class="${colClass} mb-3">
+                                <div class="slot-horario single-slot ${claseDisponibilidad}" 
+                                     data-id="${slot.horario_id || slot.id || ''}"
+                                     data-inicio="${slot.hora_inicio || slot.inicio || slot.start_time || ''}"
+                                     data-fin="${slot.hora_fin || slot.fin || slot.end_time || ''}"
+                                     data-texto="${horaInicio} - ${horaFin}"
+                                     data-sala="${nombreSala}">
+                                    <div class="slot-content">
+                                        <h5 class="slot-time text-center">${horaInicio} - ${horaFin}</h5>
+                                        <div class="slot-location text-center">${nombreSala}</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        htmlSlots += `
+                            <div class="${colClass} mb-3">
+                                <div class="slot-horario ${claseDisponibilidad}" 
+                                     data-id="${slot.horario_id || slot.id || ''}"
+                                     data-inicio="${slot.hora_inicio || slot.inicio || slot.start_time || ''}"
+                                     data-fin="${slot.hora_fin || slot.fin || slot.end_time || ''}"
+                                     data-texto="${horaInicio} - ${horaFin}"
+                                     data-sala="${nombreSala}">
+                                    <div class="slot-content">
+                                        <div class="slot-time text-center"><strong>${horaInicio} - ${horaFin}</strong></div>
+                                        <div class="slot-location text-center"><small>${nombreSala}</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
                 
                 htmlSlots += '</div>';

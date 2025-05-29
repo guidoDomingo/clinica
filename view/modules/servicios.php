@@ -643,7 +643,7 @@ if (!isset($_SESSION['perfil'])) {
 
 <!-- Incluir estilos -->
 <link href="view/css/servicios.css" rel="stylesheet">
-<link href="view/css/slots_horario.css" rel="stylesheet">
+<link href="view/css/slots_horario.css?v=1.3" rel="stylesheet">
 
 <!-- Incluir JavaScript personalizado -->
 <script src="view/js/servicios.js"></script>

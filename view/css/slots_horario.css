@@ -10,6 +10,22 @@
     background-color: #f8f9fa;
     transition: all 0.2s ease;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.slot-content {
+    display: block;
+    width: 100%;
+}
+
+.slot-time, .slot-location {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .slot-horario:hover {
@@ -43,6 +59,74 @@
     box-shadow: none;
 }
 
+/* Estilos específicos para cuando solo hay un slot */
+.slot-container-single {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    width: 100%;
+}
+
+.slot-container-single .slot-horario {
+    height: auto;
+    min-height: 80px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    border: 2px solid #ddd;
+    background-color: #f9f9f9;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.slot-container-single .slot-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.slot-container-single .slot-time {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.slot-container-single .slot-location {
+    font-size: 1em;
+}
+
+.slot-horario.single-slot {
+    padding: 15px;
+    border: 2px solid #28a745;
+    background-color: #f9fff9;
+    text-align: center;
+}
+
+.slot-horario.single-slot .slot-time {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    display: block;
+    width: 100%;
+}
+
+.slot-horario.single-slot .slot-location {
+    font-size: 14px;
+    color: #666;
+    display: block;
+    width: 100%;
+}
+
+/* Asegurarnos de que el texto esté horizontal incluso en casos extremos */
+.slot-horario.single-slot .slot-content * {
+    display: block !important;
+    white-space: normal !important;
+}
+
 /* Estilos para la paginación de slots */
 #slotsPagination .page-item.active .page-link {
     background-color: #007bff;
@@ -57,5 +141,43 @@
 @media (max-width: 768px) {
     .slot-horario {
         margin-bottom: 10px;
+        min-height: 60px;
     }
+    
+    .slot-time, .slot-location {
+        text-align: center;
+        font-size: 14px;
+    }
+}
+
+/* Asegurar que el contenido se muestre horizontal incluso en pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .slot-horario {
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 50px;
+    }
+    
+    .slot-content {
+        width: 100%;
+    }
+    
+    .slot-time {
+        font-size: 13px;
+    }
+    
+    .slot-location {
+        font-size: 12px;
+    }
+}
+
+/* Asegurar que la fila ocupe todo el ancho disponible */
+.row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -7.5px;
+    margin-left: -7.5px;
 }
