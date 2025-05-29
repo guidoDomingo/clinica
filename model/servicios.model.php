@@ -1040,43 +1040,59 @@ class ModelServicios {
                 return [];
             }
             
-            // Consulta básica sin joins complejos
+            // Asegurarse de que la fecha esté en formato YYYY-MM-DD
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+                $fechaFormateada = date('Y-m-d', strtotime($fecha));
+                error_log("mdlObtenerReservasPorFecha: Formato de fecha incorrecto ($fecha), reformateando a $fechaFormateada", 3, "c:/laragon/www/clinica/logs/reservas.log");
+                $fecha = $fechaFormateada;
+            }
+            
+            // Construir rango de fechas para la consulta
+            $fechaInicio = $fecha . " 00:00:00";
+            $fechaFin = $fecha . " 23:59:59";
+            
+            // Consulta optimizada basada en el esquema correcto de la base de datos
             $sql = "SELECT 
-                r.reserva_id,
-                r.servicio_id,
-                r.doctor_id,
-                r.paciente_id,
-                r.fecha_reserva,
-                r.hora_inicio,
-                r.hora_fin,
-                r.reserva_estado as estado,
-                r.observaciones,
-                r.business_id,
-                r.created_at,
-                r.updated_at,
-                r.agenda_id,
-                r.sala_id,
-                r.tarifa_id,
-                'Doctor ' || r.doctor_id as doctor_nombre,
-                'Paciente ' || r.paciente_id as paciente_nombre,
-                'Servicio ' || r.servicio_id as servicio_nombre
-            FROM servicios_reservas r
-            WHERE r.fecha_reserva = :fecha";
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin";
             
             if ($doctorId !== null) {
-                $sql .= " AND r.doctor_id = :doctor_id";
+                $sql .= " AND sr.doctor_id = :doctor_id";
             }
             
             if ($estado !== null) {
-                $sql .= " AND r.reserva_estado = :estado";
+                $sql .= " AND sr.reserva_estado = :estado";
             }
             
-            $sql .= " ORDER BY r.hora_inicio ASC";
+            $sql .= " ORDER BY sr.hora_inicio ASC";
             
             error_log("mdlObtenerReservasPorFecha: SQL=$sql", 3, "c:/laragon/www/clinica/logs/reservas.log");
             
             $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->bindParam(":fecha", $fecha, PDO::PARAM_STR);
+            $stmt->bindParam(":fecha_inicio", $fechaInicio, PDO::PARAM_STR);
+            $stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
             
             if ($doctorId !== null) {
                 $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);

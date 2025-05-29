@@ -853,4 +853,254 @@ LINE 20:                 LEFT JOIN pacientes p ON r.paciente_id = p.p...
                 'Paciente ' || r.paciente_id as paciente_nombre,
                 'Servicio ' || r.servicio_id as servicio_nombre
             FROM servicios_reservas r
-            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 2 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor_nombre":"Doctor 14","paciente_nombre":"Paciente 11","servicio_nombre":"Servicio 2"}AJAX obtenerReservas: Se encontraron 2 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor_nombre":"Doctor 14","paciente_nombre":"Paciente 11","servicio_nombre":"Servicio 2"}
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 2 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor_nombre":"Doctor 14","paciente_nombre":"Paciente 11","servicio_nombre":"Servicio 2"}AJAX obtenerReservas: Se encontraron 2 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor_nombre":"Doctor 14","paciente_nombre":"Paciente 11","servicio_nombre":"Servicio 2"}AJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.reserva_estado as estado,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                -- Información del doctor usando person_id de la tabla rh_doctors
+                COALESCE(doc_person.first_name || ' ' || doc_person.last_name, 'Doctor ' || r.doctor_id) as doctor_nombre,
+                -- Información del paciente directamente de rh_person
+                COALESCE(pac_person.first_name || ' ' || pac_person.last_name, 'Paciente ' || r.paciente_id) as paciente_nombre,
+                -- Información del servicio desde rs_servicios si existe
+                COALESCE(s.nombre, 'Servicio ' || r.servicio_id) as servicio_nombre
+            FROM servicios_reservas r
+            -- Join para obtener información del doctor
+            LEFT JOIN rh_doctors d ON r.doctor_id = d.doctor_id
+            LEFT JOIN rh_person doc_person ON d.person_id = doc_person.person_id
+            -- Join para obtener información del paciente directamente de rh_person
+            LEFT JOIN rh_person pac_person ON r.paciente_id = pac_person.person_id
+            -- Join para obtener información del servicio (usando rs_servicios en lugar de servicios_medicos)
+            LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio_id
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCError al obtener reservas por fecha: SQLSTATE[42703]: Undefined column: 7 ERROR:  column s.servicio_id does not exist
+LINE 30: ...      LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio...
+                                                              ^
+HINT:  Perhaps you meant to reference the column "r.servicio_id".AJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Verificación directa - Hay 2 reservas para la fecha 2025-05-29mdlObtenerReservasPorFecha: SQL=SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.reserva_estado as estado,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                -- Información del doctor usando person_id de la tabla rh_doctors
+                COALESCE(doc_person.first_name || ' ' || doc_person.last_name, 'Doctor ' || r.doctor_id) as doctor_nombre,
+                -- Información del paciente directamente de rh_person
+                COALESCE(pac_person.first_name || ' ' || pac_person.last_name, 'Paciente ' || r.paciente_id) as paciente_nombre,
+                -- Información del servicio desde rs_servicios si existe
+                COALESCE(s.nombre, 'Servicio ' || r.servicio_id) as servicio_nombre
+            FROM servicios_reservas r
+            -- Join para obtener información del doctor
+            LEFT JOIN rh_doctors d ON r.doctor_id = d.doctor_id
+            LEFT JOIN rh_person doc_person ON d.person_id = doc_person.person_id
+            -- Join para obtener información del paciente directamente de rh_person
+            LEFT JOIN rh_person pac_person ON r.paciente_id = pac_person.person_id
+            -- Join para obtener información del servicio (usando rs_servicios en lugar de servicios_medicos)
+            LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio_id
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCError al obtener reservas por fecha: SQLSTATE[42703]: Undefined column: 7 ERROR:  column s.servicio_id does not exist
+LINE 30: ...      LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio...
+                                                              ^
+HINT:  Perhaps you meant to reference the column "r.servicio_id".AJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechamdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullAJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Verificación directa - Hay 2 reservas para la fecha 2025-05-29mdlObtenerReservasPorFecha: SQL=SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.reserva_estado as estado,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                -- Información del doctor usando person_id de la tabla rh_doctors
+                COALESCE(doc_person.first_name || ' ' || doc_person.last_name, 'Doctor ' || r.doctor_id) as doctor_nombre,
+                -- Información del paciente directamente de rh_person
+                COALESCE(pac_person.first_name || ' ' || pac_person.last_name, 'Paciente ' || r.paciente_id) as paciente_nombre,
+                -- Información del servicio desde rs_servicios si existe
+                COALESCE(s.nombre, 'Servicio ' || r.servicio_id) as servicio_nombre
+            FROM servicios_reservas r
+            -- Join para obtener información del doctor
+            LEFT JOIN rh_doctors d ON r.doctor_id = d.doctor_id
+            LEFT JOIN rh_person doc_person ON d.person_id = doc_person.person_id
+            -- Join para obtener información del paciente directamente de rh_person
+            LEFT JOIN rh_person pac_person ON r.paciente_id = pac_person.person_id
+            -- Join para obtener información del servicio (usando rs_servicios en lugar de servicios_medicos)
+            LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio_id
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCError al obtener reservas por fecha: SQLSTATE[42703]: Undefined column: 7 ERROR:  column s.servicio_id does not exist
+LINE 30: ...      LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio...
+                                                              ^
+HINT:  Perhaps you meant to reference the column "r.servicio_id".AJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Verificación directa - Hay 2 reservas para la fecha 2025-05-29mdlObtenerReservasPorFecha: SQL=SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.estado_reserva,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                COALESCE(doc_person.first_name || ' ' || doc_person.last_name, 'Doctor ' || r.doctor_id) as doctor_nombre,
+                COALESCE(pac_person.first_name || ' ' || pac_person.last_name, 'Paciente ' || r.paciente_id) as paciente_nombre,
+                COALESCE(s.nombre, 'Servicio ' || r.servicio_id) as servicio_nombre
+            FROM servicios_reservas r
+            LEFT JOIN rh_doctors d ON r.doctor_id = d.doctor_id
+            LEFT JOIN rh_person doc_person ON d.person_id = doc_person.person_id
+            LEFT JOIN rh_person pac_person ON r.paciente_id = pac_person.person_id
+            LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio_id
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCError al obtener reservas por fecha: SQLSTATE[42703]: Undefined column: 7 ERROR:  column s.servicio_id does not exist
+LINE 24: ...      LEFT JOIN rs_servicios s ON r.servicio_id = s.servicio...
+                                                              ^
+HINT:  Perhaps you meant to reference the column "r.servicio_id".AJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Verificación directa - Hay 2 reservas para la fecha 2025-05-29mdlObtenerReservasPorFecha: SQL=SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.estado_reserva,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                COALESCE(doc_person.first_name || ' ' || doc_person.last_name, 'Doctor ' || r.doctor_id) as doctor_nombre,
+                COALESCE(pac_person.first_name || ' ' || pac_person.last_name, 'Paciente ' || r.paciente_id) as paciente_nombre,
+                COALESCE(s.nombre, 'Servicio ' || r.servicio_id) as servicio_nombre
+            FROM servicios_reservas r
+            LEFT JOIN rh_doctors d ON r.doctor_id = d.doctor_id
+            LEFT JOIN rh_person doc_person ON d.person_id = doc_person.person_id
+            LEFT JOIN rh_person pac_person ON r.paciente_id = pac_person.person_id
+            LEFT JOIN rs_servicios s ON r.servicio_id = s.id
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCError al obtener reservas por fecha: SQLSTATE[42703]: Undefined column: 7 ERROR:  column s.id does not exist
+LINE 24:             LEFT JOIN rs_servicios s ON r.servicio_id = s.id
+                                                                 ^AJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX guardarReserva: Datos recibidos = {"doctor_id":14,"servicio_id":2,"paciente_id":51,"fecha_reserva":"2025-05-29","hora_inicio":"08:45:00","hora_fin":"09:15:00","observaciones":""}ctrGuardarReserva: Enviando datos al modelo: {"servicio_id":2,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-29","hora_inicio":"08:45:00","hora_fin":"09:15:00","observaciones":"","reserva_estado":"PENDIENTE","business_id":1,"created_by":7}Intentando guardar reserva: {"servicio_id":2,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-29","hora_inicio":"08:45:00","hora_fin":"09:15:00","observaciones":"","reserva_estado":"PENDIENTE","business_id":1,"created_by":7}SQL a ejecutar: INSERT INTO servicios_reservas...Parámetros: {"servicio_id":2,"doctor_id":"14","paciente_id":51,"fecha_reserva":"2025-05-29","hora_inicio":"08:45:00","hora_fin":"09:15:00","agenda_id":null,"tarifa_id":null}Reserva creada con ID: 6AJAX guardarReserva: Reserva creada con ID 6AJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Verificación directa - Hay 3 reservas para la fecha 2025-05-29mdlObtenerReservasPorFecha: SQL=SELECT 
+                r.reserva_id,
+                r.servicio_id,
+                r.doctor_id,
+                r.paciente_id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.estado_reserva,
+                r.observaciones,
+                r.business_id,
+                r.created_at,
+                r.updated_at,
+                r.agenda_id,
+                r.sala_id,
+                r.tarifa_id,
+                COALESCE(doc_person.first_name || ' ' || doc_person.last_name, 'Doctor ' || r.doctor_id) as doctor_nombre,
+                COALESCE(pac_person.first_name || ' ' || pac_person.last_name, 'Paciente ' || r.paciente_id) as paciente_nombre,
+                COALESCE(s.nombre, 'Servicio ' || r.servicio_id) as servicio_nombre
+            FROM servicios_reservas r
+            LEFT JOIN rh_doctors d ON r.doctor_id = d.doctor_id
+            LEFT JOIN rh_person doc_person ON d.person_id = doc_person.person_id
+            LEFT JOIN rh_person pac_person ON r.paciente_id = pac_person.person_id
+            LEFT JOIN rs_servicios s ON r.servicio_id = s.id
+            WHERE r.fecha_reserva = :fecha ORDER BY r.hora_inicio ASCError al obtener reservas por fecha: SQLSTATE[42703]: Undefined column: 7 ERROR:  column s.id does not exist
+LINE 24:             LEFT JOIN rs_servicios s ON r.servicio_id = s.id
+                                                                 ^AJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX obtenerReservas: Se encontraron 3 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX obtenerReservas: Se encontraron 3 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX guardarReserva: Datos recibidos = {"doctor_id":14,"servicio_id":1,"paciente_id":14,"fecha_reserva":"2025-05-29","hora_inicio":"10:15:00","hora_fin":"10:45:00","observaciones":""}ctrGuardarReserva: Enviando datos al modelo: {"servicio_id":1,"doctor_id":14,"paciente_id":14,"fecha_reserva":"2025-05-29","hora_inicio":"10:15:00","hora_fin":"10:45:00","observaciones":"","reserva_estado":"PENDIENTE","business_id":1,"created_by":7}Intentando guardar reserva: {"servicio_id":1,"doctor_id":14,"paciente_id":14,"fecha_reserva":"2025-05-29","hora_inicio":"10:15:00","hora_fin":"10:45:00","observaciones":"","reserva_estado":"PENDIENTE","business_id":1,"created_by":7}SQL a ejecutar: INSERT INTO servicios_reservas...Parámetros: {"servicio_id":1,"doctor_id":"14","paciente_id":14,"fecha_reserva":"2025-05-29","hora_inicio":"10:15:00","hora_fin":"10:45:00","agenda_id":null,"tarifa_id":null}Reserva creada con ID: 7AJAX guardarReserva: Reserva creada con ID 7AJAX obtenerReservas: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 4 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX obtenerReservas: Se encontraron 4 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}

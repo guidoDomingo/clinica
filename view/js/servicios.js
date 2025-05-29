@@ -422,11 +422,9 @@ function cargarReservasDelDia(fecha) {
                     
                     // Formatear la hora para mostrar (HH:MM)
                     const horaInicio = reserva.hora_inicio ? reserva.hora_inicio.substring(0, 5) : '';
-                    const horaFin = reserva.hora_fin ? reserva.hora_fin.substring(0, 5) : '';
-                    
-                    // Determinar color según estado (maneja diferentes nombres de propiedad)
+                    const horaFin = reserva.hora_fin ? reserva.hora_fin.substring(0, 5) : '';                    // Determinar color según estado (usar el campo correcto reserva_estado)
                     let claseEstado = '';
-                    const estado = (reserva.estado || reserva.reserva_estado || 'PENDIENTE').toUpperCase();
+                    const estado = (reserva.reserva_estado || reserva.estado || reserva.estado_reserva || 'PENDIENTE').toUpperCase();
                     
                     switch (estado) {
                         case 'PENDIENTE': claseEstado = 'badge-warning'; break;
@@ -435,11 +433,35 @@ function cargarReservasDelDia(fecha) {
                         case 'COMPLETADA': claseEstado = 'badge-info'; break;
                         default: claseEstado = 'badge-secondary';
                     }
+                      // Maneja diferentes nombres de propiedades para cada campo                    // Obtener nombres con mejor manejo de posibles valores nulos o indefinidos
+                    // Adaptado a la estructura real de la BD (usando rh_person y rs_servicios)
+                    let doctorNombre = '';
+                    if (reserva.doctor && reserva.doctor.trim() !== '' && !reserva.doctor.startsWith('Doctor ')) {
+                        doctorNombre = reserva.doctor;
+                    } else if (reserva.doctor && reserva.doctor.trim() !== '') {
+                        doctorNombre = reserva.doctor;
+                    } else {
+                        doctorNombre = 'Dr. ' + (reserva.doctor_id || '?');
+                    }
                     
-                    // Maneja diferentes nombres de propiedades para cada campo
-                    const doctorNombre = reserva.doctor_nombre || reserva.nombre_doctor || 'Sin doctor';
-                    const pacienteNombre = reserva.paciente_nombre || reserva.nombre_paciente || 'Sin paciente';
-                    const servicioNombre = reserva.servicio_nombre || 'Sin servicio';
+                    let pacienteNombre = '';
+                    if (reserva.paciente && reserva.paciente.trim() !== '' && !reserva.paciente.startsWith('Paciente ')) {
+                        pacienteNombre = reserva.paciente;
+                    } else if (reserva.paciente && reserva.paciente.trim() !== '') {
+                        pacienteNombre = reserva.paciente;
+                    } else {
+                        pacienteNombre = 'Paciente ' + (reserva.paciente_id || '?');
+                    }
+                    
+                    let servicioNombre = '';
+                    if (reserva.serv_descripcion && reserva.serv_descripcion.trim() !== '' && !reserva.serv_descripcion.startsWith('Servicio ')) {
+                        servicioNombre = reserva.serv_descripcion;
+                    } else if (reserva.serv_descripcion && reserva.serv_descripcion.trim() !== '') {
+                        // Campo nombre de rs_servicios
+                        servicioNombre = reserva.serv_descripcion;
+                    } else {
+                        servicioNombre = 'Servicio ' + (reserva.servicio_id || '?');
+                    }
                     
                     filas += `
                         <tr>
