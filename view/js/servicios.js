@@ -16,6 +16,16 @@ let horarioSeleccionado = '';
 $(document).ready(function() {
     inicializarFechas();
     inicializarEventosCompactos();
+    manejarSeleccionFechaDirecta();
+    
+    // Debug: Mostrar información de fecha/hora en la consola para ayudar con la depuración
+    console.log("Información de fecha/hora del sistema:");
+    const ahora = new Date();
+    console.log("- Date.now():", Date.now());
+    console.log("- new Date():", ahora);
+    console.log("- Fecha ISO:", ahora.toISOString());
+    console.log("- Fecha local:", ahora.toLocaleString());
+    console.log("- Timezone offset (minutos):", ahora.getTimezoneOffset());
 });
 
 /**
@@ -30,7 +40,13 @@ function inicializarFechas() {
         showOtherMonths: true,
         selectOtherMonths: true,
         changeMonth: true,
-        changeYear: true
+        changeYear: true,
+        onSelect: function(dateText) {
+            // Asegurar formato correcto cuando se selecciona una fecha
+            console.log("Fecha seleccionada desde datepicker:", dateText);
+            // Trigger cambio para que se ejecuten los validadores
+            $(this).change();
+        }
     });
 }
 
@@ -44,9 +60,7 @@ function inicializarEventosCompactos() {
     $(document).off('click', '#btnCargarHorarios');
     $(document).off('click', '#btnBuscarPaciente');
     $(document).off('click', '.slot-horario');
-    $(document).off('submit', '#formReserva');
-
-    // Evento para botón de búsqueda de disponibilidad (Paso 1)
+    $(document).off('submit', '#formReserva');    // Evento para botón de búsqueda de disponibilidad (Paso 1)
     $(document).on('click', '#btnBuscarDisponibilidad', function() {
         fechaSeleccionada = $('#fechaReserva').val();
         
@@ -55,16 +69,52 @@ function inicializarEventosCompactos() {
             return;
         }
         
-        // Validar que la fecha no sea anterior a hoy
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
-        const fechaSeleccionadaObj = new Date(fechaSeleccionada);
-        fechaSeleccionadaObj.setHours(0, 0, 0, 0);
+        console.log("Validando fecha seleccionada:", fechaSeleccionada);
         
-        if (fechaSeleccionadaObj < hoy) {
-            mostrarAlerta('error', 'No puede seleccionar una fecha en el pasado.');
-            $('#fechaReserva').val('');
-            fechaSeleccionada = '';
+        try {
+            // Usar la fecha actual al inicio del día (00:00:00)
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            
+            // Obtener año, mes y día de hoy
+            const anioHoy = hoy.getFullYear();
+            const mesHoy = hoy.getMonth();
+            const diaHoy = hoy.getDate();
+            
+            // Parsear la fecha seleccionada
+            // El formato datepicker es 'yy-mm-dd' (ej: 2025-05-29)
+            const partesFecha = fechaSeleccionada.split('-');
+            if (partesFecha.length !== 3) {
+                console.error("Formato de fecha incorrecto:", fechaSeleccionada);
+                mostrarAlerta('error', 'El formato de fecha no es válido (debe ser YYYY-MM-DD).');
+                return;
+            }
+            
+            const anioSeleccionado = parseInt(partesFecha[0], 10);
+            const mesSeleccionado = parseInt(partesFecha[1], 10) - 1; // Meses en JS son 0-11
+            const diaSeleccionado = parseInt(partesFecha[2], 10);
+            
+            console.log("Fecha actual:", anioHoy, mesHoy, diaHoy);
+            console.log("Fecha seleccionada:", anioSeleccionado, mesSeleccionado, diaSeleccionado);
+            
+            // Verificar si la fecha es anterior a hoy
+            if (anioSeleccionado < anioHoy || 
+                (anioSeleccionado === anioHoy && mesSeleccionado < mesHoy) || 
+                (anioSeleccionado === anioHoy && mesSeleccionado === mesHoy && diaSeleccionado < diaHoy)) {
+                
+                console.log("La fecha seleccionada es anterior a hoy");
+                mostrarAlerta('error', 'No puede seleccionar una fecha en el pasado.');
+                $('#fechaReserva').val('');
+                fechaSeleccionada = '';
+                return;
+            }
+            
+            console.log("La fecha seleccionada es hoy o posterior");
+            
+            // Si llegamos aquí, la fecha es válida (es hoy o posterior)
+        } catch (error) {
+            console.error("Error al validar fecha:", error);
+            mostrarAlerta('error', 'Error al validar la fecha seleccionada.');
             return;
         }
         
@@ -696,4 +746,154 @@ function mostrarAlerta(tipo, mensaje) {
     
     // Fallback a alert básico
     alert(mensaje);
+}
+
+/**
+ * Valida si una fecha es anterior a otra fecha, comparando solo año, mes y día
+ * Evita problemas con la hora, minutos, segundos y milisegundos
+ * @param {Date|string} fechaA Primera fecha a comparar
+ * @param {Date|string} fechaB Segunda fecha a comparar
+ * @returns {boolean} true si fechaA es anterior a fechaB, false en caso contrario
+ */
+function esAnterior(fechaA, fechaB) {
+    // Convertir a objetos Date si son strings
+    const dateA = fechaA instanceof Date ? fechaA : new Date(fechaA);
+    const dateB = fechaB instanceof Date ? fechaB : new Date(fechaB);
+    
+    // Extraer solo año, mes y día
+    const yearA = dateA.getFullYear();
+    const monthA = dateA.getMonth();
+    const dayA = dateA.getDate();
+    
+    const yearB = dateB.getFullYear();
+    const monthB = dateB.getMonth();
+    const dayB = dateB.getDate();
+    
+    // Comparar por componentes
+    if (yearA < yearB) return true;
+    if (yearA > yearB) return false;
+    // Si llegamos aquí, los años son iguales
+    if (monthA < monthB) return true;
+    if (monthA > monthB) return false;
+    // Si llegamos aquí, los meses son iguales
+    return dayA < dayB;
+}
+
+/**
+ * Verifica si dos fechas son iguales (mismo día), ignorando la hora
+ * @param {Date|string} fechaA Primera fecha
+ * @param {Date|string} fechaB Segunda fecha
+ * @returns {boolean} true si las fechas representan el mismo día
+ */
+function sonMismoDia(fechaA, fechaB) {
+    // Convertir a objetos Date si son strings
+    const dateA = fechaA instanceof Date ? fechaA : new Date(fechaA);
+    const dateB = fechaB instanceof Date ? fechaB : new Date(fechaB);
+    
+    // Comparar año, mes y día
+    return dateA.getFullYear() === dateB.getFullYear() &&
+           dateA.getMonth() === dateB.getMonth() &&
+           dateA.getDate() === dateB.getDate();
+}
+
+/**
+ * Función de depuración para mostrar un mensaje detallado sobre validación de fechas
+ * Ayuda a identificar problemas con la validación de fechas en producción
+ * @param {string} titulo Título del mensaje
+ * @param {string} resultado Resultado de la validación
+ * @param {Date|string} fechaA Primera fecha (usualmente la seleccionada)
+ * @param {Date|string} fechaB Segunda fecha (usualmente la actual)
+ */
+function debugFechas(titulo, resultado, fechaA, fechaB) {
+    // Solo mostrar si estamos en modo desarrollo o hay un parámetro debug en la URL
+    if (window.location.search.includes('debug=1') || window.location.hostname === 'localhost') {
+        console.group('Debug Validación Fechas: ' + titulo);
+        
+        // Convertir a Date si son strings
+        const dateA = fechaA instanceof Date ? fechaA : new Date(fechaA);
+        const dateB = fechaB instanceof Date ? fechaB : new Date(fechaB);
+        
+        console.log('Resultado:', resultado);
+        
+        console.log('Fecha A (seleccionada):', dateA);
+        console.log('- ISO:', dateA.toISOString());
+        console.log('- Local:', dateA.toLocaleString());
+        console.log('- Año/Mes/Día:', dateA.getFullYear() + '-' + (dateA.getMonth()+1) + '-' + dateA.getDate());
+        
+        console.log('Fecha B (actual):', dateB);
+        console.log('- ISO:', dateB.toISOString());
+        console.log('- Local:', dateB.toLocaleString());
+        console.log('- Año/Mes/Día:', dateB.getFullYear() + '-' + (dateB.getMonth()+1) + '-' + dateB.getDate());
+        
+        console.log('Comparaciones:');
+        console.log('- Son mismo día:', sonMismoDia(dateA, dateB));
+        console.log('- A es anterior a B:', esAnterior(dateA, dateB));
+        console.log('- B es anterior a A:', esAnterior(dateB, dateA));
+        
+        console.groupEnd();
+    }
+}
+
+/**
+ * Maneja la fecha con compatibilidad para diferentes tipos de selectores
+ * Esta función adicional maneja los selectores de fecha nativos y los campos de entrada de fecha
+ * que pueden ser utilizados en diferentes partes de la aplicación
+ */
+function manejarSeleccionFechaDirecta() {
+    // 1. Agregar manejador para input type="date" (selector nativo)
+    $(document).on('change', 'input[type="date"]', function() {
+        const fechaSeleccionada = $(this).val();
+        console.log("Fecha seleccionada (input nativo):", fechaSeleccionada);
+        
+        if (!fechaSeleccionada) return;
+        
+        // Obtener fecha actual
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        
+        // Convertir la fecha seleccionada en objeto Date
+        // El formato estándar de input[type="date"] es yyyy-mm-dd
+        const fechaSeleccionadaObj = new Date(fechaSeleccionada + 'T00:00:00');
+        
+        console.log("Validación fecha:", {
+            fechaHoy: hoy.toISOString().split('T')[0],
+            fechaSeleccionada: fechaSeleccionada,
+            fechaSeleccionadaObj: fechaSeleccionadaObj.toISOString(),
+            esAnterior: fechaSeleccionadaObj < hoy && !sonMismoDia(fechaSeleccionadaObj, hoy)
+        });
+        
+        // Verificar si la fecha es anterior a hoy (pero no es hoy)
+        if (fechaSeleccionadaObj < hoy && !sonMismoDia(fechaSeleccionadaObj, hoy)) {
+            mostrarAlerta('error', 'No puede seleccionar una fecha en el pasado.');
+            $(this).val(''); // Limpiar valor
+        }
+    });
+    
+    // 2. Verificar selección de fechas en click de botones que procesan fechas
+    // Esto captura casos donde hay botones de confirmación de fecha después de seleccionar
+    $(document).on('click', 'button[data-action="confirmar-fecha"], #btnConfirmarFecha', function() {
+        // Buscar el input de fecha más cercano
+        const $inputFecha = $(this).closest('.form-group, .date-container, .card-body').find('input[type="date"], #fechaReserva');
+        
+        if ($inputFecha.length > 0) {
+            const fechaSeleccionada = $inputFecha.val();
+            
+            if (!fechaSeleccionada) {
+                mostrarAlerta('warning', 'Por favor, seleccione una fecha para continuar.');
+                return false;
+            }
+            
+            // Revalidar la fecha
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            
+            const fechaSeleccionadaObj = new Date(fechaSeleccionada + 'T00:00:00');
+            
+            if (fechaSeleccionadaObj < hoy && !sonMismoDia(fechaSeleccionadaObj, hoy)) {
+                mostrarAlerta('error', 'No puede seleccionar una fecha en el pasado.');
+                $inputFecha.val('');
+                return false;
+            }
+        }
+    });
 }
