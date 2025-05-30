@@ -231,6 +231,7 @@ if (isset($_POST['action'])) {
                     'fecha_reserva' => $_POST['fecha_reserva'],
                     'hora_inicio' => $_POST['hora_inicio'],
                     'hora_fin' => $_POST['hora_fin'],
+                    'seguro_id' => $_POST['seguro_id'],
                     'observaciones' => isset($_POST['observaciones']) ? $_POST['observaciones'] : ''
                 ];
                 
@@ -292,6 +293,21 @@ if (isset($_POST['action'])) {
                     "status" => "error",
                     "message" => $mensaje,
                     "campos_faltantes" => $camposFaltantes
+                ]);
+            }
+            break;
+            
+        case 'obtenerProveedoresSeguro':
+            try {
+                $proveedores = ControladorServicios::ctrObtenerProveedoresSeguro();
+                echo json_encode([
+                    "status" => "success",
+                    "data" => $proveedores
+                ]);
+            } catch (Exception $e) {
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "Error al obtener proveedores de seguro: " . $e->getMessage()
                 ]);
             }
             break;

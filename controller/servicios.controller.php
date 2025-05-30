@@ -276,8 +276,7 @@ class ControladorServicios {
             'business_id' => isset($_SESSION['business_id']) ? $_SESSION['business_id'] : 1,
             'created_by' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1
         ];
-        
-        // Incluir campos opcionales si están presentes en la petición
+          // Incluir campos opcionales si están presentes en la petición
         if (!empty($datos['agenda_id'])) {
             $datosReserva['agenda_id'] = $datos['agenda_id'];
         }
@@ -290,7 +289,19 @@ class ControladorServicios {
             $datosReserva['sala_id'] = $datos['sala_id'];
         }
         
+        if (!empty($datos['seguro_id'])) {
+            $datosReserva['seguro_id'] = $datos['seguro_id'];
+        }
+        
         error_log("ctrGuardarReserva: Enviando datos al modelo: " . json_encode($datosReserva), 3, 'c:/laragon/www/clinica/logs/reservas.log');
         return ModelServicios::mdlGuardarReserva($datosReserva);
+    }
+    
+    /**
+     * Obtiene los proveedores de seguro médico
+     * @return array Lista de proveedores de seguro médico
+     */
+    static public function ctrObtenerProveedoresSeguro() {
+        return ModelServicios::mdlObtenerProveedoresSeguro();
     }
 }

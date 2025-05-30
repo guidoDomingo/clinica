@@ -60,6 +60,8 @@ function inicializarEventosCompactos() {
     $(document).off('click', '#btnCargarHorarios');
     $(document).off('click', '#btnBuscarPaciente');
     $(document).off('click', '.slot-horario');
+    $(document).off('click', '#btnConfirmarSeguro');
+    $(document).off('change', '#tieneSeguro');
     $(document).off('submit', '#formReserva');
     $(document).off('change', '#selectProveedor');
     $(document).off('change', '#selectServicio');
@@ -198,9 +200,7 @@ function inicializarEventosCompactos() {
         
         // Cargar horarios disponibles para este servicio, médico y fecha
         cargarHorariosDisponibles(servicioSeleccionado, proveedorSeleccionado, fechaSeleccionada);
-    });
-
-    // Evento para seleccionar un slot horario (Paso 4)
+    });    // Evento para seleccionar un slot horario (Paso 4)
     $(document).on('click', '.slot-horario', function() {
         // Verificar si el slot está disponible
         if ($(this).hasClass('no-disponible')) {
@@ -233,6 +233,65 @@ function inicializarEventosCompactos() {
         
         // Habilitar el botón de búsqueda de paciente
         $('#btnBuscarPaciente').removeAttr('disabled');
+    });
+    
+    // Evento para mostrar/ocultar selector de seguro médico
+    $(document).on('change', '#tieneSeguro', function() {
+        const tieneSeguro = $(this).val();
+          if (tieneSeguro === 'si') {
+            $('#selectSeguroContainer').slideDown();
+            // Cargar la lista de proveedores de seguro médico
+            cargarProveedoresSeguro();
+            // Limpiar el resumen
+            $('#resumenSeguro').text('-');
+        } else {
+            $('#selectSeguroContainer').slideUp();
+            // Limpiar selección de seguro
+            $('#seguroSeleccionado').val('');
+            $('#selectSeguro').val('');
+            // Actualizar el resumen
+            $('#resumenSeguro').text('No aplica');
+            
+            // Mostrar confirmación
+            $('#selectSeguroContainer').hide();
+            if (!$('#noSeguroMessage').length) {
+                $('#tieneSeguro').after(
+                    `<div id="noSeguroMessage" class="alert alert-info mt-2">
+                        <i class="fas fa-info-circle"></i> El paciente no utilizará seguro médico.
+                    </div>`
+                );
+            }
+            
+            // Desactivar el selector para evitar cambios
+            $('#tieneSeguro').attr('disabled', true);
+        }
+    });
+      // Evento para confirmar el seguro seleccionado
+    $(document).on('click', '#btnConfirmarSeguro', function() {
+        const seguroId = $('#selectSeguro').val();
+        
+        if (seguroId) {
+            $('#seguroSeleccionado').val(seguroId);
+            const seguroTexto = $('#selectSeguro option:selected').text();
+            
+            // Mostrar confirmación
+            $('#selectSeguroContainer').append(
+                `<div class="alert alert-success mt-2">
+                    <i class="fas fa-check-circle"></i> Seguro médico seleccionado: <strong>${seguroTexto}</strong>
+                </div>`
+            );
+            
+            // Actualizar el resumen
+            $('#resumenSeguro').text(seguroTexto);
+            
+            // Desactivar el selector y el botón para evitar cambios
+            $('#tieneSeguro').attr('disabled', true);
+            $('#selectSeguro').attr('disabled', true);
+            $(this).attr('disabled', true);
+            
+        } else {
+            mostrarAlerta('warning', 'Por favor, seleccione un seguro médico.');
+        }
     });
 
     // Evento para buscar pacientes
@@ -278,8 +337,7 @@ function inicializarEventosCompactos() {
             mostrarAlerta('error', 'Por favor, complete todos los pasos antes de guardar la reserva.');
             return;
         }
-        
-        // Recopilar los datos para la reserva
+          // Recopilar los datos para la reserva
         const datos = {
             doctor_id: proveedorSeleccionado,
             servicio_id: servicioSeleccionado,
@@ -289,8 +347,11 @@ function inicializarEventosCompactos() {
             hora_fin: $('#horaFin').val(),
             observaciones: $('#observaciones').val(),
             agenda_id: $('#agendaId').val() || null,
-            tarifa_id: $('#tarifaId').val() || null
+            tarifa_id: $('#tarifaId').val() || null,
+            seguro_id: $('#seguroSeleccionado').val() || null
         };
+
+        console.log("Datos de reserva a enviar:", datos); // Log para depuración
         
         // Enviar la solicitud para guardar la reserva
         $.ajax({
@@ -337,26 +398,30 @@ function resetearFormularioReserva() {
     proveedorSeleccionado = '';
     servicioSeleccionado = '';
     horarioSeleccionado = '';
-    
-    // Limpiar campos
+      // Limpiar campos
     $('#fechaReserva').val('');
     $('#selectProveedor').html('<option value="">Seleccione un médico disponible</option>');
     $('#selectServicio').html('<option value="">Seleccione un servicio</option>');
     $('#contenedorHorarios').html('<p class="text-center text-muted">Seleccione fecha, médico y servicio para ver horarios disponibles</p>');
     $('#buscarPaciente').val('');
     $('#pacienteSeleccionado').val('');
+    $('#seguroSeleccionado').val('');
+    $('#tieneSeguro').val('no').removeAttr('disabled');
+    $('#selectSeguro').html('<option value="">Seleccione un seguro médico</option>').removeAttr('disabled');
+    $('#selectSeguroContainer').hide().find('.alert').remove();
+    $('#btnConfirmarSeguro').removeAttr('disabled');
     $('#observaciones').val('');
     $('#horaInicio').val('');
     $('#horaFin').val('');
     $('#agendaId').val('');
     $('#tarifaId').val('');
-    
-    // Resetear resumen
+      // Resetear resumen
     $('#resumenFecha').text('-');
     $('#resumenMedico').text('-');
     $('#resumenServicio').text('-');
     $('#resumenHora').text('-');
     $('#resumenSala').text('-');
+    $('#resumenSeguro').text('-');
     
     // Limpiar resultados de pacientes
     $('#resultadosPacientes').html('');
@@ -766,6 +831,42 @@ function buscarPacientes(termino) {
                     <i class="fas fa-exclamation-circle"></i> Error al buscar pacientes. Por favor, intente nuevamente.
                 </div>
             `);
+        }
+    });
+}
+
+/**
+ * Carga los proveedores de seguro médico
+ */
+function cargarProveedoresSeguro() {
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "obtenerProveedoresSeguro",
+        },
+        dataType: "json",
+        beforeSend: function() {
+            $('#selectSeguro').html('<option value="">Cargando seguros médicos...</option>');
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de proveedores de seguro:", respuesta); // Log para depuración
+            
+            if (respuesta.data && respuesta.data.length > 0) {
+                let options = '<option value="">Seleccione un seguro médico</option>';
+                
+                respuesta.data.forEach(function(proveedor) {
+                    options += `<option value="${proveedor.prov_id}">${proveedor.prov_razon || proveedor.prov_name + ' ' + proveedor.prov_lastname}</option>`;
+                });
+                
+                $('#selectSeguro').html(options);
+            } else {
+                $('#selectSeguro').html('<option value="">No se encontraron seguros médicos</option>');
+            }
+        },
+        error: function(xhr) {
+            console.error("Error al cargar proveedores de seguro:", xhr);
+            $('#selectSeguro').html('<option value="">Error al cargar seguros</option>');
         }
     });
 }

@@ -207,13 +207,13 @@ if (!isset($_SESSION['perfil'])) {
                                                 <div class="card-header">
                                                     <h3 class="card-title"><i class="fas fa-info-circle"></i> Resumen de reserva</h3>
                                                 </div>
-                                                <div class="card-body">
-                                                    <div id="resumenSeleccion">
+                                                <div class="card-body">                                                    <div id="resumenSeleccion">
                                                         <p><strong><i class="fas fa-calendar-day"></i> Fecha:</strong> <span id="resumenFecha">-</span></p>
                                                         <p><strong><i class="fas fa-user-md"></i> Médico:</strong> <span id="resumenMedico">-</span></p>
                                                         <p><strong><i class="fas fa-stethoscope"></i> Servicio:</strong> <span id="resumenServicio">-</span></p>
                                                         <p><strong><i class="fas fa-clock"></i> Hora:</strong> <span id="resumenHora">-</span></p>
                                                         <p><strong><i class="fas fa-door-open"></i> Sala:</strong> <span id="resumenSala">-</span></p>
+                                                        <p><strong><i class="fas fa-shield-alt"></i> Seguro médico:</strong> <span id="resumenSeguro">-</span></p>
                                                     </div>
                                                     
                                                     <!-- Campos ocultos para hora seleccionada -->
@@ -226,25 +226,64 @@ if (!isset($_SESSION['perfil'])) {
                                                 <div class="card-header">
                                                     <h3 class="card-title"><i class="fas fa-user"></i> Paso 5: Paciente</h3>
                                                 </div>
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" id="buscarPaciente" placeholder="Buscar paciente">
-                                                            <div class="input-group-append">
-                                                                <button class="btn btn-primary" type="button" id="btnBuscarPaciente">
-                                                                    <i class="fas fa-search"></i>
-                                                                </button>
+                                                <div class="card-body">                                                    <!-- Paso: Selección de seguro médico (proveedor) -->
+                                                    <div class="card mb-4 mt-4">
+                                                        <div class="card-header bg-warning">
+                                                            <h5 class="mb-0"><i class="fas fa-shield-alt"></i> Paso 4: ¿El paciente tiene seguro médico?</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                <label for="tieneSeguro">¿Tiene seguro médico?</label>
+                                                                <select class="form-control" id="tieneSeguro">
+                                                                    <option value="no">No</option>
+                                                                    <option value="si">Sí</option>
+                                                                </select>
+                                                            </div>
+                                                            
+                                                            <div id="selectSeguroContainer" style="display: none;">
+                                                                <div class="form-group">
+                                                                    <label for="selectSeguro">Seleccione el seguro:</label>
+                                                                    <select class="form-control" id="selectSeguro">
+                                                                        <option value="">Seleccione un seguro médico</option>
+                                                                        <!-- Se cargará dinámicamente -->
+                                                                    </select>
+                                                                </div>
+                                                                <div class="text-right mb-3">
+                                                                    <button type="button" class="btn btn-success" id="btnConfirmarSeguro">
+                                                                        <i class="fas fa-check"></i> Confirmar Seguro
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    <div id="resultadosPacientes" class="mb-3">
-                                                        <!-- Se carga dinámicamente -->
+
+                                                    <!-- Paso: Búsqueda y selección de paciente -->
+                                                    <div class="card mb-4">
+                                                        <div class="card-header bg-info">
+                                                            <h5 class="mb-0"><i class="fas fa-user-plus"></i> Paso 5: Seleccione el paciente</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" id="buscarPaciente" placeholder="Buscar paciente">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-primary" type="button" id="btnBuscarPaciente">
+                                                                            <i class="fas fa-search"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div id="resultadosPacientes" class="mb-3">
+                                                                <!-- Se carga dinámicamente -->
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     
                                                     <!-- Formulario final de reserva -->
                                                     <form id="formReserva">
                                                         <input type="hidden" id="pacienteSeleccionado">
+                                                        <input type="hidden" id="seguroSeleccionado">
                                                         
                                                         <div class="form-group">
                                                             <label for="observaciones">Observaciones:</label>
@@ -519,6 +558,21 @@ if (!isset($_SESSION['perfil'])) {
     border-color: #f5c6cb;
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+/* Estilos para la selección de seguro médico */
+#selectSeguroContainer {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.seguro-confirmado {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-top: 10px;
 }
 </style>
 

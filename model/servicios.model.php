@@ -1438,18 +1438,16 @@ class ModelServicios {
             if ($stmtVerificar->fetchColumn() > 0) {
                 error_log("Reserva rechazada: Ya existe una reserva en este horario para este médico", 3, 'c:/laragon/www/clinica/logs/reservas.log');
                 return false;
-            }
-
-            // Insertar la nueva reserva - adaptado al esquema actual de la base de datos
+            }            // Insertar la nueva reserva - adaptado al esquema actual de la base de datos
             $stmt = Conexion::conectar()->prepare(
                 "INSERT INTO servicios_reservas (
                     servicio_id, doctor_id, paciente_id, fecha_reserva, 
                     hora_inicio, hora_fin, observaciones, reserva_estado, 
-                    business_id, created_by, agenda_id, tarifa_id
+                    business_id, created_by, agenda_id, tarifa_id, seguro_id
                 ) VALUES (
                     :servicio_id, :doctor_id, :paciente_id, :fecha_reserva, 
                     :hora_inicio, :hora_fin, :observaciones, :reserva_estado, 
-                    :business_id, :created_by, :agenda_id, :tarifa_id
+                    :business_id, :created_by, :agenda_id, :tarifa_id, :seguro_id
                 ) RETURNING reserva_id"
             );
 
@@ -1475,9 +1473,11 @@ class ModelServicios {
             // Estos campos no estaban en la consulta original pero sí están en la estructura de la tabla
             $agendaId = isset($datos['agenda_id']) ? $datos['agenda_id'] : null;
             $stmt->bindParam(":agenda_id", $agendaId, $agendaId ? PDO::PARAM_INT : PDO::PARAM_NULL);
-            
-            $tarifaId = isset($datos['tarifa_id']) ? $datos['tarifa_id'] : null;
+              $tarifaId = isset($datos['tarifa_id']) ? $datos['tarifa_id'] : null;
             $stmt->bindParam(":tarifa_id", $tarifaId, $tarifaId ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            
+            $seguroId = isset($datos['seguro_id']) ? $datos['seguro_id'] : null;
+            $stmt->bindParam(":seguro_id", $seguroId, $seguroId ? PDO::PARAM_INT : PDO::PARAM_NULL);
             
             error_log("SQL a ejecutar: INSERT INTO servicios_reservas...", 3, 'c:/laragon/www/clinica/logs/reservas.log');
             error_log("Parámetros: " . json_encode([
@@ -1488,7 +1488,8 @@ class ModelServicios {
                 'hora_inicio' => $datos['hora_inicio'],
                 'hora_fin' => $datos['hora_fin'],
                 'agenda_id' => $agendaId,
-                'tarifa_id' => $tarifaId
+                'tarifa_id' => $tarifaId,
+                'seguro_id' => $seguroId
             ]), 3, 'c:/laragon/www/clinica/logs/reservas.log');
             
             if ($stmt->execute()) {
@@ -1511,6 +1512,40 @@ class ModelServicios {
         } catch (Exception $e) {
             error_log("Excepción general al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
             return false;
+        }
+    }
+
+    /**
+     * Obtiene los proveedores de seguro médico
+     * @return array Listado de proveedores de seguro médico
+     */
+    static public function mdlObtenerProveedoresSeguro() {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT 
+                    pa.prov_id,
+                    pa.prov_name,
+                    pa.prov_lastname,
+                    pa.prov_razon,
+                    pa.prov_ruc,
+                    tp.tipo_nombre
+                FROM 
+                    cm_proveedores_acreedores pa
+                INNER JOIN 
+                    cm_tipos_proveedores tp ON pa.tipo_cod = tp.tipo_cod
+                WHERE 
+                    tp.tipo_nombre = 'SEGURO MÉDICO' 
+                    AND pa.prov_is_active = true
+                ORDER BY 
+                    pa.prov_razon, pa.prov_name"
+            );
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            error_log("Error en mdlObtenerProveedoresSeguro: " . $e->getMessage());
+            return [];
         }
     }
 }
