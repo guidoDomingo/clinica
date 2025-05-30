@@ -215,17 +215,31 @@ function inicializarEventosCompactos() {
         $(this).addClass('selected');
         
         // Guardar los datos del horario seleccionado
-        const slotId = $(this).data('id');
-        const horaInicio = $(this).data('inicio');
-        const horaFin = $(this).data('fin');
-        const textoHorario = $(this).data('texto');
-        const nombreSala = $(this).data('sala') || 'Sin sala asignada';
+        const slotId = $(this).attr('data-id');
+        const horaInicio = $(this).attr('data-inicio');
+        const horaFin = $(this).attr('data-fin');
+        const textoHorario = $(this).attr('data-texto');
+        const nombreSala = $(this).attr('data-sala') || 'Sin sala asignada';
         
-        console.log("Slot seleccionado - ID:", slotId, "Inicio:", horaInicio, "Fin:", horaFin); // Debug log
+        // El data-id es en realidad el agenda_id, según lo indicado por el usuario
+        const agendaId = slotId;
+        
+        console.log("=== DATOS DEL SLOT SELECCIONADO ===");
+        console.log("Slot ID:", slotId);
+        console.log("Hora inicio:", horaInicio);
+        console.log("Hora fin:", horaFin);
+        console.log("Texto horario:", textoHorario);
+        console.log("Sala:", nombreSala);
+        console.log("Agenda ID (usando slotId como agenda_id):", agendaId);
+        console.log("Elemento HTML:", $(this)[0].outerHTML);
+        console.log("================================");
         
         horarioSeleccionado = slotId;
         $('#horaInicio').val(horaInicio);
         $('#horaFin').val(horaFin);
+        $('#agendaId').val(agendaId); // Asignar el mismo valor de slotId a agendaId
+        
+        console.log("Valor asignado al campo #agendaId:", $('#agendaId').val());
         
         // Actualizar el resumen
         $('#resumenHora').text(textoHorario);
@@ -337,7 +351,14 @@ function inicializarEventosCompactos() {
             mostrarAlerta('error', 'Por favor, complete todos los pasos antes de guardar la reserva.');
             return;
         }
-          // Recopilar los datos para la reserva
+        
+        // Verificar el valor de agendaId antes de crear el objeto de datos
+        console.log("=== VALORES DE CAMPOS OCULTOS ANTES DE ENVIAR ===");
+        console.log("agendaId field value:", $('#agendaId').val());
+        console.log("tarifaId field value:", $('#tarifaId').val());
+        console.log("==================================");
+        
+        // Recopilar los datos para la reserva
         const datos = {
             doctor_id: proveedorSeleccionado,
             servicio_id: servicioSeleccionado,
@@ -666,8 +687,13 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                     <p>Cargando horarios disponibles...</p>
                 </div>
             `);
-        },        success: function(respuesta) {
+        },
+        success: function(respuesta) {
             console.log("Respuesta de slots:", respuesta); // Log para depuración
+            console.log("Respuesta de slots RAW:", JSON.stringify(respuesta)); // Log completo
+            
+            // Almacenar datos de slots globalmente para uso en el evento de clic
+            window.slotsData = respuesta.data || [];
             
             // Debug para slots
             if (respuesta.data) {
@@ -675,6 +701,14 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                 if (respuesta.data.length === 1) {
                     console.log("Se ha detectado un único slot - aplicando estilo especial");
                     console.log("Datos del slot único:", respuesta.data[0]);
+                }
+                
+                // Verificar si hay agenda_id en los slots
+                if (respuesta.data.length > 0) {
+                    const primerSlot = respuesta.data[0];
+                    console.log("Primer slot datos:", primerSlot);
+                    console.log("¿Tiene agenda_id?", primerSlot.hasOwnProperty('agenda_id'));
+                    console.log("Valor de agenda_id:", primerSlot.agenda_id);
                 }
             }
               if (respuesta.data && respuesta.data.length > 0) {
@@ -719,6 +753,7 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                     
                     // Si es un solo slot, usamos un formato especial
                     if (isSingleSlot) {
+                        console.log("Generando un solo slot con agenda_id:", slot.agenda_id);
                         htmlSlots += `
                             <div class="${colClass} mb-3">
                                 <div class="slot-horario single-slot ${claseDisponibilidad}" 
@@ -726,15 +761,18 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                                      data-inicio="${slot.hora_inicio || slot.inicio || slot.start_time || ''}"
                                      data-fin="${slot.hora_fin || slot.fin || slot.end_time || ''}"
                                      data-texto="${horaInicio} - ${horaFin}"
-                                     data-sala="${nombreSala}">
+                                     data-sala="${nombreSala}"
+                                     data-agenda-id="${slot.agenda_id || ''}">
                                     <div class="slot-content">
                                         <h5 class="slot-time text-center">${horaInicio} - ${horaFin}</h5>
                                         <div class="slot-location text-center">${nombreSala}</div>
+                                        <input type="hidden" class="agenda-id-value" value="${slot.agenda_id || ''}">
                                     </div>
                                 </div>
                             </div>
                         `;
                     } else {
+                        console.log("Generando un slot regular con agenda_id:", slot.agenda_id);
                         htmlSlots += `
                             <div class="${colClass} mb-3">
                                 <div class="slot-horario ${claseDisponibilidad}" 
@@ -742,10 +780,12 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                                      data-inicio="${slot.hora_inicio || slot.inicio || slot.start_time || ''}"
                                      data-fin="${slot.hora_fin || slot.fin || slot.end_time || ''}"
                                      data-texto="${horaInicio} - ${horaFin}"
-                                     data-sala="${nombreSala}">
+                                     data-sala="${nombreSala}"
+                                     data-agenda-id="${slot.agenda_id || ''}">
                                     <div class="slot-content">
                                         <div class="slot-time text-center"><strong>${horaInicio} - ${horaFin}</strong></div>
                                         <div class="slot-location text-center"><small>${nombreSala}</small></div>
+                                        <input type="hidden" class="agenda-id-value" value="${slot.agenda_id || ''}">
                                     </div>
                                 </div>
                             </div>
@@ -755,6 +795,27 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                 
                 htmlSlots += '</div>';
                 $('#contenedorHorarios').html(htmlSlots);
+                
+                // Debug: Extraer todos los data-attributes del primer slot
+                console.log("=== INSPECCIÓN DE SLOTS GENERADOS ===");
+                const $slots = $('.slot-horario');
+                console.log(`Slots generados: ${$slots.length}`);
+                
+                if ($slots.length > 0) {
+                    const $primerSlot = $slots.first();
+                    console.log("Primer slot HTML:", $primerSlot[0].outerHTML);
+                    console.log("Data attributes del primer slot:", $primerSlot.data());
+                    
+                    // Extraer todos los data attributes manualmente
+                    console.log("Data attributes extraídos manualmente:");
+                    console.log("- data-id:", $primerSlot.attr('data-id'));
+                    console.log("- data-inicio:", $primerSlot.attr('data-inicio'));
+                    console.log("- data-fin:", $primerSlot.attr('data-fin'));
+                    console.log("- data-texto:", $primerSlot.attr('data-texto'));
+                    console.log("- data-sala:", $primerSlot.attr('data-sala'));
+                    console.log("- data-agenda:", $primerSlot.attr('data-agenda'));
+                }
+                console.log("=====================================");
             } else {
                 $('#contenedorHorarios').html(`
                     <div class="alert alert-warning">

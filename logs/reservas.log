@@ -1727,4 +1727,148 @@ LINE 24:             LEFT JOIN rs_servicios s ON r.servicio_id = s.id
             INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
             INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
             INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
-            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 4 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 4 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 4 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 4 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 4 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 4 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX guardarReserva: Datos recibidos = {"doctor_id":14,"servicio_id":1,"paciente_id":11,"fecha_reserva":"2025-05-30","hora_inicio":"13:35:00","hora_fin":"14:05:00","seguro_id":"","observaciones":""}ctrGuardarReserva: Enviando datos al modelo: {"servicio_id":1,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-30","hora_inicio":"13:35:00","hora_fin":"14:05:00","observaciones":"","reserva_estado":"PENDIENTE","business_id":1,"created_by":7}Intentando guardar reserva: {"servicio_id":1,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-30","hora_inicio":"13:35:00","hora_fin":"14:05:00","observaciones":"","reserva_estado":"PENDIENTE","business_id":1,"created_by":7}SQL a ejecutar: INSERT INTO servicios_reservas...Parámetros: {"servicio_id":1,"doctor_id":"14","paciente_id":11,"fecha_reserva":"2025-05-30","hora_inicio":"13:35:00","hora_fin":"14:05:00","agenda_id":null,"tarifa_id":null,"seguro_id":null}Reserva creada con ID: 12AJAX guardarReserva: Reserva creada con ID 12AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 5 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 5 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 5 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 5 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":11,"servicio_id":1,"doctor_id":14,"paciente_id":13,"fecha_reserva":"2025-05-30","hora_inicio":"13:00:00","hora_fin":"13:30:00","reserva_estado":"PENDIENTE","observaciones":"paciente necesita urgente ","business_id":1,"created_at":"2025-05-29 21:25:18.742097","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"drogba - meli","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX guardarReserva: Datos recibidos = {"doctor_id":14,"servicio_id":3,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","seguro_id":"2","observaciones":"prueba dsfsdfsdfsdfdsf"}ctrGuardarReserva: Enviando datos al modelo: {"servicio_id":3,"doctor_id":14,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","observaciones":"prueba dsfsdfsdfsdfdsf","reserva_estado":"PENDIENTE","business_id":1,"created_by":7,"seguro_id":"2"}Intentando guardar reserva: {"servicio_id":3,"doctor_id":14,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","observaciones":"prueba dsfsdfsdfsdfdsf","reserva_estado":"PENDIENTE","business_id":1,"created_by":7,"seguro_id":"2"}SQL a ejecutar: INSERT INTO servicios_reservas...Parámetros: {"servicio_id":3,"doctor_id":"14","paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","agenda_id":null,"tarifa_id":null,"seguro_id":"2"}Reserva creada con ID: 13AJAX guardarReserva: Reserva creada con ID 13AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 6 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":13,"servicio_id":3,"doctor_id":14,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","reserva_estado":"PENDIENTE","observaciones":"prueba dsfsdfsdfsdfdsf","business_id":1,"created_at":"2025-05-29 22:21:38.211175","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Carlos - Rodr\u00edguez","serv_descripcion":"Tomograf\u00eda ocular OCT"}AJAX obtenerReservas: Se encontraron 6 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":13,"servicio_id":3,"doctor_id":14,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","reserva_estado":"PENDIENTE","observaciones":"prueba dsfsdfsdfsdfdsf","business_id":1,"created_at":"2025-05-29 22:21:38.211175","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Carlos - Rodr\u00edguez","serv_descripcion":"Tomograf\u00eda ocular OCT"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 6 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":13,"servicio_id":3,"doctor_id":14,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","reserva_estado":"PENDIENTE","observaciones":"prueba dsfsdfsdfsdfdsf","business_id":1,"created_at":"2025-05-29 22:21:38.211175","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Carlos - Rodr\u00edguez","serv_descripcion":"Tomograf\u00eda ocular OCT"}AJAX obtenerReservas: Se encontraron 6 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":13,"servicio_id":3,"doctor_id":14,"paciente_id":22,"fecha_reserva":"2025-05-30","hora_inicio":"09:30:00","hora_fin":"10:00:00","reserva_estado":"PENDIENTE","observaciones":"prueba dsfsdfsdfsdfdsf","business_id":1,"created_at":"2025-05-29 22:21:38.211175","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Carlos - Rodr\u00edguez","serv_descripcion":"Tomograf\u00eda ocular OCT"}AJAX guardarReserva: Datos recibidos = {"doctor_id":14,"servicio_id":1,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","seguro_id":"2","observaciones":"dfsdfsdfsdfdsfdsfds","agenda_id":24}ctrGuardarReserva: Enviando datos al modelo: {"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","observaciones":"dfsdfsdfsdfdsfdsfds","reserva_estado":"PENDIENTE","business_id":1,"created_by":7,"agenda_id":24,"seguro_id":"2"}Intentando guardar reserva: {"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","observaciones":"dfsdfsdfsdfdsfdsfds","reserva_estado":"PENDIENTE","business_id":1,"created_by":7,"agenda_id":24,"seguro_id":"2"}SQL a ejecutar: INSERT INTO servicios_reservas...Parámetros: {"servicio_id":1,"doctor_id":"14","paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","agenda_id":24,"tarifa_id":null,"seguro_id":"2"}Reserva creada con ID: 14AJAX guardarReserva: Reserva creada con ID 14AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 7 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 7 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}

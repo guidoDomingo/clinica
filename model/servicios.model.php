@@ -491,6 +491,10 @@ class ModelServicios {
           // Generar slots disponibles para cada horario base
         $slotsDisponibles = [];
         foreach ($horarios as $horario) {
+            // Registrar el horario base completo
+            error_log("Horario base: " . json_encode($horario), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            error_log("Agenda ID del horario base: " . ($horario['agenda_id'] ?? 'NULL'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            
             // Convertir las cadenas de hora a objetos DateTime para manipulación
             $horaInicio = new DateTime($horario['hora_inicio']);
             $horaFin = new DateTime($horario['hora_fin']);
@@ -551,6 +555,9 @@ class ModelServicios {
                 
                 // Si el slot está disponible y termina antes o igual que el fin del horario, agregarlo a la lista
                 if ($slotDisponible && $slotFin <= $horaFin) {
+                    // Log detallado para agenda_id antes de construir el slot
+                    error_log("Construyendo slot - Usando agenda_id: " . ($horario['agenda_id'] ?? 'NULL'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                    
                     $slotsDisponibles[] = [
                         'agenda_id' => $horario['agenda_id'],
                         'horario_id' => $horario['horario_id'],
@@ -1510,7 +1517,7 @@ class ModelServicios {
             error_log("Excepción PDO al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
             return false;
         } catch (Exception $e) {
-            error_log("Excepción general al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            error_log("Excepción general al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(),  3, 'c:/laragon/www/clinica/logs/reservas.log');
             return false;
         }
     }
