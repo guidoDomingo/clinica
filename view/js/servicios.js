@@ -943,13 +943,19 @@ function formatearFechaParaMostrar(fecha) {
     const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
     
-    const fechaObj = new Date(fecha);
-    const diaSemana = diasSemana[fechaObj.getDay()];
-    const dia = fechaObj.getDate();
-    const mes = meses[fechaObj.getMonth()];
-    const anio = fechaObj.getFullYear();
+    // Dividir la fecha en componentes para evitar problemas de zona horaria
+    const [anio, mes, dia] = fecha.split('-').map(num => parseInt(num, 10));
     
-    return `${diaSemana} ${dia} de ${mes} de ${anio}`;
+    // Crear la fecha usando UTC para evitar ajustes de zona horaria
+    // Restamos 1 del mes porque en JavaScript los meses van de 0 a 11
+    const fechaObj = new Date(Date.UTC(anio, mes - 1, dia));
+    
+    const diaSemana = diasSemana[fechaObj.getUTCDay()];
+    const diaNum = fechaObj.getUTCDate();
+    const mesNombre = meses[fechaObj.getUTCMonth()];
+    const anioNum = fechaObj.getUTCFullYear();
+    
+    return `${diaSemana} ${diaNum} de ${mesNombre} de ${anioNum}`;
 }
 
 /**
