@@ -314,6 +314,14 @@ class ControladorServicios {
      * @return array Lista de reservas que coinciden con los filtros
      */
     static public function ctrBuscarReservas($fecha = null, $doctorId = null, $estado = null, $paciente = null) {
+        // Si se está filtrando por doctor, usamos la consulta optimizada
+        if ($doctorId !== null) {
+            error_log("ctrBuscarReservas: Usando consulta específica para doctor_id=$doctorId", 
+                     3, "c:/laragon/www/clinica/logs/reservas.log");
+            return ModelServicios::mdlBuscarReservasPorDoctor($doctorId, $fecha);
+        }
+        
+        // En caso contrario, usamos la consulta general
         return ModelServicios::mdlBuscarReservas($fecha, $doctorId, $estado, $paciente);
     }
     

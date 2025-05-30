@@ -331,46 +331,35 @@ if (!isset($_SESSION['perfil'])) {
                                 <input type="hidden" id="agendaId">
                                 <input type="hidden" id="tarifaId">
                                 </div>
-                                
-                                <!-- PESTAÑA: RESERVAS ACTUALES -->                                <div class="tab-pane fade" id="tabReservas" role="tabpanel" aria-labelledby="tab-reservas-tab">
-                                    <!-- Filtros de búsqueda -->
+                                  <!-- PESTAÑA: RESERVAS ACTUALES -->                                <div class="tab-pane fade" id="tabReservas" role="tabpanel" aria-labelledby="tab-reservas-tab">
                                     <div class="row mb-3">
                                         <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="fechaReservas">Fecha:</label>
-                                                <input type="date" class="form-control" id="fechaReservas" value="<?php echo date('Y-m-d'); ?>">
-                                            </div>
+                                            <label for="fechaReservas">Fecha:</label>
+                                            <input type="date" class="form-control" id="fechaReservas" value="<?php echo date('Y-m-d'); ?>">
                                         </div>
                                         <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="selectMedicoReservas">Médico:</label>
-                                                <select class="form-control" id="selectMedicoReservas">
-                                                    <option value="0">Todos los médicos</option>
-                                                    <!-- Las opciones se cargan con JavaScript -->
-                                                </select>
-                                            </div>
+                                            <label for="selectMedicoReservas">Médico:</label>
+                                            <select class="form-control" id="selectMedicoReservas">
+                                                <option value="0">Todos los médicos</option>
+                                                <!-- Las opciones se cargan con JavaScript -->
+                                            </select>
                                         </div>
                                         <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="selectEstadoReserva">Estado:</label>
-                                                <select class="form-control" id="selectEstadoReserva">
-                                                    <option value="0">Todos los estados</option>
-                                                    <option value="PENDIENTE">Pendientes</option>
-                                                    <option value="CONFIRMADA">Confirmadas</option>
-                                                    <option value="COMPLETADA">Completadas</option>
-                                                    <option value="CANCELADA">Canceladas</option>
-                                                </select>
-                                            </div>
+                                            <label for="selectEstadoReserva">Estado:</label>
+                                            <select class="form-control" id="selectEstadoReserva">
+                                                <option value="0">Todos los estados</option>
+                                                <option value="PENDIENTE">Pendientes</option>
+                                                <option value="CONFIRMADA">Confirmadas</option>
+                                                <option value="COMPLETADA">Completadas</option>
+                                                <option value="CANCELADA">Canceladas</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="buscarPacienteReserva">Buscar Paciente:</label>
-                                                <input type="text" class="form-control" id="buscarPacienteReserva" placeholder="Nombre del paciente...">
-                                            </div>
+                                            <label for="buscarPacienteReserva">Buscar Paciente:</label>
+                                            <input type="text" class="form-control" id="buscarPacienteReserva" placeholder="Nombre del paciente...">
                                         </div>
                                     </div>
-                                    
-                                    <!-- Botón de búsqueda -->
+
                                     <div class="row mb-3">
                                         <div class="col-12">
                                             <button id="btnBuscarReservas" class="btn btn-primary">

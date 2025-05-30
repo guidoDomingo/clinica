@@ -14,10 +14,22 @@ let horarioSeleccionado = '';
 
 // Inicializar cuando el documento esté listo
 $(document).ready(function() {
+    console.log("Inicializando servicios.js");
     inicializarFechas();
     inicializarEventosCompactos();
     manejarSeleccionFechaDirecta();
-    inicializarTabReservas(); // Inicializar la pestaña de Reservas
+      // Inicializar la pestaña de Reservas con un pequeño retraso para asegurar que el DOM esté listo
+    setTimeout(function() {
+        console.log("Inicializando tab Reservas");
+        inicializarTabReservas();
+        
+        // Verificar si estamos en la pestaña de reservas
+        if (window.location.hash === '#tabReservas' || $('.nav-link.active').attr('href') === '#tabReservas') {
+            console.log("Estamos en la pestaña de reservas - inicializando inmediatamente");
+            cargarMedicosParaFiltroReservas();
+            buscarReservas();
+        }
+    }, 500);
     
     // Inicializar filtros si ya hay una fecha seleccionada
     if ($('#fechaReserva').val()) {
@@ -25,11 +37,47 @@ $(document).ready(function() {
         cargarDoctoresParaFiltro(fechaActual);
         cargarReservasDelDia(fechaActual);
     }
-    
-    // Manejar cambio de pestaña para cargar datos cuando se activa la pestaña de Reservas
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        if ($(e.target).attr('href') === '#tabReservas') {
-            buscarReservas();
+      // Manejar cambio de pestaña para cargar datos cuando se activa la pestaña de Reservas
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+        const targetTab = $(e.target).attr('href');
+        console.log("Cambio a pestaña:", targetTab);
+        
+        if (targetTab === '#tabReservas') {
+            console.log("Recargando datos de reservas...");
+            // Limpiamos selectores para evitar problemas de caché
+            $('#selectMedicoReservas').empty();
+            $('#selectEstadoReserva').val('0');
+            
+            setTimeout(function() {
+                // Cargar los médicos primero
+                $.ajax({
+                    url: "ajax/servicios.ajax.php",
+                    method: "POST",
+                    data: { action: "obtenerMedicos" },
+                    dataType: "json",
+                    success: function(respuesta) {
+                        console.log("Médicos cargados manualmente:", respuesta);
+                        
+                        if (respuesta.status === "success" && respuesta.data) {
+                            let opciones = '<option value="0">Todos los médicos</option>';
+                            
+                            respuesta.data.forEach(function(medico) {
+                                const nombre = medico.nombre_doctor || `Dr. ${medico.doctor_id}`;
+                                opciones += `<option value="${medico.doctor_id}">${nombre}</option>`;
+                            });
+                            
+                            $('#selectMedicoReservas').html(opciones);
+                            
+                            // Una vez cargados los médicos, ahora sí buscar reservas
+                            buscarReservas();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error cargando médicos:", error);
+                        buscarReservas(); // Intentar buscar reservas de todas formas
+                    }
+                });
+            }, 200);
         }
     });
     
@@ -1163,12 +1211,23 @@ function inicializarTabReservas() {
     // Inicializar la búsqueda de reservas con valores predeterminados
     buscarReservas();
     
+    // Eliminar eventos para evitar duplicación
+    $(document).off('click', '#btnBuscarReservas');
+    $(document).off('click', '#btnLimpiarFiltrosReservas');
+    $(document).off('click', '.btnCambiarEstadoReserva');
+    $(document).off('change', '#fechaReservas');
+    $(document).off('change', '#selectMedicoReservas');
+    $(document).off('change', '#selectEstadoReserva');
+    $(document).off('keyup', '#buscarPacienteReserva');
+    
     // Eventos para botones y filtros
-    $('#btnBuscarReservas').on('click', function() {
+    $(document).on('click', '#btnBuscarReservas', function() {
+        console.log('Botón Buscar Reservas clickeado');
         buscarReservas();
     });
     
-    $('#btnLimpiarFiltrosReservas').on('click', function() {
+    $(document).on('click', '#btnLimpiarFiltrosReservas', function() {
+        console.log('Botón Limpiar Filtros clickeado');
         limpiarFiltrosReservas();
     });
     
@@ -1176,8 +1235,33 @@ function inicializarTabReservas() {
     $(document).on('click', '.btnCambiarEstadoReserva', function() {
         const reservaId = $(this).data('id');
         const nuevoEstado = $(this).data('estado');
-        
+        console.log(`Cambiando estado de reserva ${reservaId} a ${nuevoEstado}`);
         cambiarEstadoReservaTab(reservaId, nuevoEstado);
+    });
+      // Eventos de cambio para actualizar automáticamente
+    $(document).on('change', '#fechaReservas', function() {
+        console.log('Fecha cambiada a:', $(this).val());
+        buscarReservas();
+    });
+    
+    $(document).on('change', '#selectMedicoReservas', function() {
+        console.log('Médico cambiado a:', $(this).val());
+        buscarReservas();
+    });
+    
+    $(document).on('change', '#selectEstadoReserva', function() {
+        console.log('Estado cambiado a:', $(this).val());
+        buscarReservas();
+    });
+    
+    // Para el campo de búsqueda de paciente, esperar a que el usuario termine de escribir
+    let typingTimer;
+    $(document).on('keyup', '#buscarPacienteReserva', function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function() {
+            console.log('Búsqueda de paciente actualizada');
+            buscarReservas();
+        }, 500); // Esperar 500ms después de que el usuario deje de escribir
     });
 }
 
@@ -1185,6 +1269,10 @@ function inicializarTabReservas() {
  * Carga la lista de médicos para el filtro de reservas
  */
 function cargarMedicosParaFiltroReservas() {
+    // Guardar el valor actual antes de la llamada AJAX
+    const valorActual = $('#selectMedicoReservas').val();
+    console.log("Valor actual del selector de médicos antes de AJAX:", valorActual);
+    
     $.ajax({
         url: "ajax/servicios.ajax.php",
         method: "POST",
@@ -1195,19 +1283,37 @@ function cargarMedicosParaFiltroReservas() {
         success: function(respuesta) {
             console.log("Respuesta de médicos para filtro:", respuesta);
             
+            // Debug de los IDs de los médicos disponibles
+            if (respuesta.status === "success" && respuesta.data) {
+                console.log("IDs de médicos disponibles:", respuesta.data.map(m => m.doctor_id));
+            }
+            
             if (respuesta.status === "success" && respuesta.data) {
                 let opciones = '<option value="0">Todos los médicos</option>';
-                
-                respuesta.data.forEach(function(medico) {
-                    const nombreCompleto = medico.nombre || 
+                  respuesta.data.forEach(function(medico) {
+                    const doctorId = medico.doctor_id;
+                    const nombreCompleto = medico.nombre_doctor || 
                                           (medico.first_name && medico.last_name ? 
                                            medico.first_name + ' - ' + medico.last_name : 
                                            'Dr. ' + medico.doctor_id);
-                                           
-                    opciones += `<option value="${medico.doctor_id}">${nombreCompleto}</option>`;
+                    
+                    // Asegurar que doctorId sea un string para el value del option
+                    const doctorIdValue = String(doctorId);
+                    
+                    opciones += `<option value="${doctorIdValue}">Dr. ${doctorIdValue} - ${nombreCompleto}</option>`;
+                    
+                    // Debug de la opción creada
+                    console.log(`Creada opción para doctor: ID=${doctorIdValue}, Nombre=${nombreCompleto}`);
                 });
                 
+                // Actualizar las opciones
                 $('#selectMedicoReservas').html(opciones);
+                
+                // Intentar restaurar el valor seleccionado previamente
+                if (valorActual && valorActual !== '0') {
+                    $('#selectMedicoReservas').val(valorActual);
+                    console.log("Intentando restaurar valor:", valorActual, "Valor actual:", $('#selectMedicoReservas').val());
+                }
             }
         },
         error: function(xhr, status, error) {
@@ -1220,34 +1326,72 @@ function cargarMedicosParaFiltroReservas() {
  * Busca reservas según los filtros seleccionados
  */
 function buscarReservas() {
+    // Capturar los valores directamente de los elementos DOM
     const fecha = $('#fechaReservas').val() || '';
+    
+    // Obtener doctorId correctamente y asegurar que sea un string
     const doctorId = $('#selectMedicoReservas').val() || '0';
+    
+    // Obtener estado del elemento select
     const estado = $('#selectEstadoReserva').val() || '0';
+    
     const paciente = $('#buscarPacienteReserva').val() || '';
     
     console.log(`Buscando reservas - Fecha: ${fecha}, Doctor: ${doctorId}, Estado: ${estado}, Paciente: ${paciente}`);
     
+    // Debug para verificar valores
+    console.log('Elementos DOM:');
+    console.log('- fechaReservas:', $('#fechaReservas').length ? 'Existe' : 'No existe', $('#fechaReservas').val());
+    console.log('- selectMedicoReservas:', $('#selectMedicoReservas').length ? 'Existe' : 'No existe', doctorId);
+    console.log('- selectEstadoReserva:', $('#selectEstadoReserva').length ? 'Existe' : 'No existe', estado);
+    console.log('- buscarPacienteReserva:', $('#buscarPacienteReserva').length ? 'Existe' : 'No existe', $('#buscarPacienteReserva').val());
+      
+    // Preparar los datos para la solicitud
+    const requestData = { 
+        action: "buscarReservas",
+        fecha: fecha
+    };
+
+    // Verificar tipos de datos para debugging
+    console.log("Tipo de doctorId:", typeof doctorId);
+    console.log("Valor numérico de doctorId:", Number(doctorId));
+
+    // Añadir doctor_id solo si es diferente de 0 o "0"
+    if (doctorId && doctorId !== '0') {
+        requestData.doctor_id = doctorId;
+    }
+
+    // Añadir estado solo si es diferente de 0 o "0"
+    if (estado && estado !== '0') {
+        requestData.estado = estado;
+    }
+
+    // Añadir paciente solo si no está vacío
+    if (paciente && paciente.trim() !== '') {
+        requestData.paciente = paciente;
+    }
+
+    console.log('Enviando solicitud AJAX con datos:', requestData);
+
     $.ajax({
         url: "ajax/servicios.ajax.php",
         method: "POST",
-        data: { 
-            action: "buscarReservas",
-            fecha: fecha,
-            doctor_id: doctorId,
-            estado: estado,
-            paciente: paciente
-        },
+        data: requestData,
         dataType: "json",
         beforeSend: function() {
             $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando reservas...</td></tr>');
         },
         success: function(respuesta) {
             console.log("Respuesta de búsqueda de reservas:", respuesta);
+            console.log("Filtros aplicados en el servidor:", respuesta.filtros);
             
             if (respuesta.status === "success" && respuesta.data && respuesta.data.length > 0) {
                 let filas = '';
                 
                 respuesta.data.forEach(function(reserva) {
+                    // Debug de doctor_id
+                    console.log("Reserva doctor_id:", reserva.doctor_id_original);
+                    
                     // Formatear la fecha para mostrar
                     const fechaFormateada = formatearFechaParaMostrar(reserva.fecha_reserva);
                     
@@ -1294,19 +1438,22 @@ function buscarReservas() {
                             </button>
                         `;
                     }
-                    
-                    filas += `
+                      filas += `
                         <tr>
                             <td>${reserva.fecha_reserva}</td>
-                            <td>${reserva.dia_semana}</td>
-                            <td>${reserva.horario}</td>
-                            <td>${reserva.paciente}</td>
-                            <td>${reserva.doctor}</td>
-                            <td>${reserva.nombre_servicio}</td>
-                            <td>${reserva.sala_nombre}</td>
+                            <td>${reserva.dia_semana || 'N/A'}</td>
+                            <td>${reserva.horario || 'N/A'}</td>
+                            <td>${reserva.paciente || 'N/A'}</td>
+                            <td>${reserva.doctor || 'N/A'}</td>
+                            <td>${reserva.nombre_servicio || 'N/A'}</td>
+                            <td>${reserva.sala_nombre || 'N/A'}</td>
                             <td class="text-right">${monto}</td>
                             <td><span class="badge ${claseEstado}">${estado}</span></td>
-                            <td>${botonesAccion}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    ${botonesAccion}
+                                </div>
+                            </td>
                         </tr>
                     `;
                 });
@@ -1324,15 +1471,16 @@ function buscarReservas() {
 }
 
 /**
- * Limpia todos los filtros de reservas y recarga la tabla
+ * Limpia los filtros de búsqueda de reservas y vuelve a cargar
  */
 function limpiarFiltrosReservas() {
-    $('#fechaReservas').val(new Date().toISOString().split('T')[0]); // Establece la fecha actual
+    // Resetear el formulario
+    $('#fechaReservas').val(moment().format('YYYY-MM-DD'));
     $('#selectMedicoReservas').val('0');
     $('#selectEstadoReserva').val('0');
     $('#buscarPacienteReserva').val('');
     
-    // Recargar la tabla con los filtros limpiados
+    console.log('Filtros limpiados. Buscando nuevamente...');
     buscarReservas();
 }
 

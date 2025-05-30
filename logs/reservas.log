@@ -2300,4 +2300,957 @@ CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: Fecha=2025-05-
             INNER JOIN rh_person rp ON rd.person_id = rp.person_id
             INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
             INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
-            WHERE 1=1 AND sr.fecha_reserva = :fecha ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}
+            WHERE 1=1 AND sr.fecha_reserva = :fecha ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de doctor: 13mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.doctor_id = :doctor_id ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "13"
+HINT:  Perhaps you need a different "datestyle" setting.
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de doctor: 14mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.doctor_id = :doctor_id ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "14"
+HINT:  Perhaps you need a different "datestyle" setting.
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"CONFIRMADA","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: CONFIRMADAmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "CONFIRMADA"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"PENDIENTE","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: PENDIENTEmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "PENDIENTE"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"PENDIENTE","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: PENDIENTEmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "PENDIENTE"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":"mar"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: marmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%mar%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":"mary"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marymdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marymdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: marymdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%mary%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de doctor: 13mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.doctor_id = :doctor_id ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCError al buscar reservas: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "13"
+HINT:  Perhaps you need a different "datestyle" setting.
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"0","estado":"0","paciente":""}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de doctor: 13mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.doctor_id = :doctor_id ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":doctor_id":13}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :doctor_id = 13 como PARAM_INTError al buscar reservas: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "13"
+HINT:  Perhaps you need a different "datestyle" setting.
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de doctor: 14mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.doctor_id = :doctor_id ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":doctor_id":14}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :doctor_id = 14 como PARAM_INTError al buscar reservas: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "14"
+HINT:  Perhaps you need a different "datestyle" setting.
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"CONFIRMADA"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: CONFIRMADAmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":estado":"CONFIRMADA"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :estado = CONFIRMADAError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "CONFIRMADA"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: PENDIENTEmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":estado":"PENDIENTE"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :estado = PENDIENTEError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "PENDIENTE"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"ma"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=mamdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=mamdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: mamdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%ma%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :paciente = %ma% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%ma%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"mary"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marymdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marymdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: marymdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%mary%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :paciente = %mary% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%mary%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"mar"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: marmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%mar%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :paciente = %mar% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%mar%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"ma"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=mamdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=mamdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: mamdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%ma%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :paciente = %ma% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%ma%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"Ma"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=MamdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=MamdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: MamdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%Ma%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :paciente = %Ma% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%Ma%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"Mary"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=MarymdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=MarymdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: MarymdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%Mary%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :paciente = %Mary% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%Mary%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de doctor: 13mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.doctor_id = :doctor_id ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":doctor_id":13}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Bindeando :doctor_id = 13 como PARAM_INTError al buscar reservas: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "13"
+HINT:  Perhaps you need a different "datestyle" setting.
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30mdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 2 reservas con doctor_id=13ctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30mdlBuscarReservasPorDoctor: Encontradas 1 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30mdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 2 reservas con doctor_id=13ctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30mdlBuscarReservasPorDoctor: Encontradas 1 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"CONFIRMADA"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=CONFIRMADA, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: CONFIRMADAmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":estado":"CONFIRMADA"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Bindeando :estado = CONFIRMADA con bindParamError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "CONFIRMADA"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=PENDIENTE, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de estado: PENDIENTEmdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":estado":"PENDIENTE"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Bindeando :estado = PENDIENTE con bindParamError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "PENDIENTE"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","paciente":"mary"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=marymdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=marymdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: Aplicando filtro de paciente: marymdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :paciente) ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30",":paciente":"%mary%"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Bindeando :paciente = %mary% como PARAM_STRError al buscar reservas: SQLSTATE[22007]: Invalid datetime format: 7 ERROR:  invalid input syntax for type date: "%mary%"
+CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 2 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 2 reservas con doctor_id=13ctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30mdlBuscarReservasPorDoctor: Encontradas 1 reservasAJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 8 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 8 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX guardarReserva: Datos recibidos = {"doctor_id":13,"servicio_id":2,"paciente_id":45,"fecha_reserva":"2025-05-30","hora_inicio":"17:00:00","hora_fin":"17:30:00","seguro_id":"","observaciones":"erwerwerwer","agenda_id":25}ctrGuardarReserva: Enviando datos al modelo: {"servicio_id":2,"doctor_id":13,"paciente_id":45,"fecha_reserva":"2025-05-30","hora_inicio":"17:00:00","hora_fin":"17:30:00","observaciones":"erwerwerwer","reserva_estado":"PENDIENTE","business_id":1,"created_by":7,"agenda_id":25}Intentando guardar reserva: {"servicio_id":2,"doctor_id":13,"paciente_id":45,"fecha_reserva":"2025-05-30","hora_inicio":"17:00:00","hora_fin":"17:30:00","observaciones":"erwerwerwer","reserva_estado":"PENDIENTE","business_id":1,"created_by":7,"agenda_id":25}SQL a ejecutar: INSERT INTO servicios_reservas...Parámetros: {"servicio_id":2,"doctor_id":"13","paciente_id":45,"fecha_reserva":"2025-05-30","hora_inicio":"17:00:00","hora_fin":"17:30:00","agenda_id":25,"tarifa_id":null,"seguro_id":null}Reserva creada con ID: 16AJAX guardarReserva: Reserva creada con ID 16AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 9 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 3 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-31mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-31"}mdlBuscarReservas: Bindeando :fecha = 2025-05-31 con bindParammdlBuscarReservas: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 3 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 3 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 12:00:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 9 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 9 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullmdlBuscarReservas INICIO: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlBuscarReservas: Aplicando filtro de fecha: 2025-05-30mdlBuscarReservas: SQL=SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                sr.hora_inicio || ' - ' || sr.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado,
+                sr.doctor_id as doctor_id_original
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 3 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 08:30:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}

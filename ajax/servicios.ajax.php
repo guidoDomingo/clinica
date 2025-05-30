@@ -313,31 +313,62 @@ if (isset($_POST['action'])) {
                 ]);
             }
             break;
+              case 'buscarReservas':
+            // Debug para verificar los datos recibidos
+            error_log("AJAX buscarReservas: POST=" . json_encode($_POST), 3, 'c:/laragon/www/clinica/logs/reservas.log');
             
-        case 'buscarReservas':
-            $fecha = isset($_POST['fecha']) ? $_POST['fecha'] : null;
-            $doctorId = isset($_POST['doctor_id']) && $_POST['doctor_id'] !== '0' ? intval($_POST['doctor_id']) : null;
+            $fecha = isset($_POST['fecha']) && !empty($_POST['fecha']) ? $_POST['fecha'] : null;
+            
+            // Asegurar que doctorId sea tratado correctamente como entero
+            $doctorId = null;
+            if (isset($_POST['doctor_id']) && $_POST['doctor_id'] !== '0' && $_POST['doctor_id'] !== '') {
+                $doctorId = intval($_POST['doctor_id']);
+                error_log("AJAX buscarReservas: doctor_id recibido={$_POST['doctor_id']}, convertido a int={$doctorId}", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            }
+            
             $estado = isset($_POST['estado']) && $_POST['estado'] !== '0' ? $_POST['estado'] : null;
-            $paciente = isset($_POST['paciente']) ? $_POST['paciente'] : null;
+            $paciente = isset($_POST['paciente']) && !empty($_POST['paciente']) ? $_POST['paciente'] : null;
             
-            error_log("AJAX buscarReservas: Fecha=" . ($fecha ?? "null") . 
-                      ", DoctorID=" . ($doctorId ?? "null") . 
+            error_log("AJAX buscarReservas (procesado): Fecha=" . ($fecha ?? "null") . 
+                      ", DoctorID=" . ($doctorId ?? "null") . " (tipo: " . gettype($doctorId) . ")" .
                       ", Estado=" . ($estado ?? "null") . 
                       ", Paciente=" . ($paciente ?? "null"), 
                       3, 'c:/laragon/www/clinica/logs/reservas.log');
             
             try {
+                // Verificar directamente si existen registros para este doctor
+                if ($doctorId !== null) {
+                    $db = Conexion::conectar();
+                    $check = $db->prepare("SELECT COUNT(*) FROM servicios_reservas WHERE doctor_id = ?");
+                    $check->execute([$doctorId]);
+                    $count = $check->fetchColumn();
+                    error_log("AJAX buscarReservas: Verificación previa - Existen {$count} reservas con doctor_id={$doctorId}", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                }
+                
                 $reservas = ControladorServicios::ctrBuscarReservas($fecha, $doctorId, $estado, $paciente);
                 
+                // Agregar información del request para depuración
                 echo json_encode([
                     "status" => "success",
-                    "data" => $reservas
+                    "data" => $reservas,
+                    "filtros" => [
+                        "fecha" => $fecha,
+                        "doctor_id" => $doctorId,
+                        "estado" => $estado,
+                        "paciente" => $paciente
+                    ]
                 ]);
             } catch (Exception $e) {
                 error_log("AJAX buscarReservas ERROR: " . $e->getMessage(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
                 echo json_encode([
                     "status" => "error",
-                    "mensaje" => "Error al buscar reservas: " . $e->getMessage()
+                    "mensaje" => "Error al buscar reservas: " . $e->getMessage(),
+                    "debug_info" => [
+                        "fecha" => $fecha,
+                        "doctor_id" => $doctorId,
+                        "estado" => $estado,
+                        "paciente" => $paciente
+                    ]
                 ]);
             }
             break;
