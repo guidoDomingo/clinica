@@ -1402,7 +1402,7 @@ class ModelServicios {
             $stmt->bindParam(":first_name", $datos["first_name"], PDO::PARAM_STR);
             $stmt->bindParam(":last_name", $datos["last_name"], PDO::PARAM_STR);
             $stmt->bindParam(":document_number", $datos["document_number"], PDO::PARAM_STR);
-
+            
             if ($stmt->execute()) {
                 $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
                 return $resultado["person_id"];
@@ -1457,7 +1457,7 @@ class ModelServicios {
                     :business_id, :created_by, :agenda_id, :tarifa_id, :seguro_id
                 ) RETURNING reserva_id"
             );
-
+            
             // Bindear los parámetros obligatorios
             $stmt->bindParam(":servicio_id", $datos['servicio_id'], PDO::PARAM_INT);
             $stmt->bindParam(":doctor_id", $datos['doctor_id'], PDO::PARAM_INT);
@@ -1521,7 +1521,7 @@ class ModelServicios {
             return false;
         }
     }
-
+    
     /**
      * Obtiene los proveedores de seguro médico
      * @return array Listado de proveedores de seguro médico
@@ -1552,6 +1552,102 @@ class ModelServicios {
             
         } catch (PDOException $e) {
             error_log("Error en mdlObtenerProveedoresSeguro: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Busca reservas con filtros
+     * @param string $fecha Fecha de reserva (opcional)
+     * @param int $doctorId ID del doctor (opcional)
+     * @param string $estado Estado de la reserva (opcional)
+     * @param string $paciente Nombre del paciente para búsqueda (opcional)
+     * @return array Lista de reservas que coinciden con los filtros
+     */
+    static public function mdlBuscarReservas($fecha = null, $doctorId = null, $estado = null, $paciente = null) {
+        try {
+            // Verificar si existe la tabla de reservas
+            $stmtCheck = Conexion::conectar()->prepare("SELECT to_regclass('public.servicios_reservas')");
+            $stmtCheck->execute();
+            $tablaReservasExiste = $stmtCheck->fetchColumn();
+            
+            if (!$tablaReservasExiste) {
+                error_log("mdlBuscarReservas: La tabla servicios_reservas no existe", 3, "c:/laragon/www/clinica/logs/reservas.log");
+                return [];
+            }
+            
+            // Construir la consulta SQL basada en el query proporcionado
+            $sql = "SELECT 
+                sr.reserva_id,
+                sr.fecha_reserva,
+                ad.dia_semana,
+                ad.hora_inicio || ' - ' || ad.hora_fin as horario,
+                ad.intervalo_minutos,
+                s.sala_nombre,
+                rp.first_name || ' - ' || rp.last_name as doctor,
+                rp2.first_name || ' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion as nombre_servicio,
+                rs.serv_monto as monto,
+                sr.reserva_estado 
+            FROM servicios_reservas sr 
+            INNER JOIN agendas_detalle ad ON sr.agenda_id = ad.detalle_id 
+            INNER JOIN salas s ON ad.sala_id = s.sala_id
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1";
+            
+            // Agregar condiciones según los filtros
+            $params = [];
+            
+            if ($fecha !== null && $fecha !== '') {
+                $sql .= " AND sr.fecha_reserva = :fecha";
+                $params[':fecha'] = $fecha;
+            }
+            
+            if ($doctorId !== null && $doctorId !== '') {
+                $sql .= " AND sr.doctor_id = :doctor_id";
+                $params[':doctor_id'] = $doctorId;
+            }
+            
+            if ($estado !== null && $estado !== '') {
+                $sql .= " AND sr.reserva_estado = :estado";
+                $params[':estado'] = $estado;
+            }
+            
+            if ($paciente !== null && $paciente !== '') {
+                $sql .= " AND (rp2.first_name ILIKE :paciente OR rp2.last_name ILIKE :paciente OR rp2.first_name || ' ' || rp2.last_name ILIKE :paciente)";
+                $params[':paciente'] = '%' . $paciente . '%';
+            }
+            
+            // Ordenar los resultados
+            $sql .= " ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASC";
+            
+            error_log("mdlBuscarReservas: SQL=$sql", 3, "c:/laragon/www/clinica/logs/reservas.log");
+            
+            $stmt = Conexion::conectar()->prepare($sql);
+            
+            // Bindear parámetros
+            foreach ($params as $param => $value) {
+                if (strpos($param, 'paciente') !== false) {
+                    $stmt->bindValue($param, $value, PDO::PARAM_STR);
+                } else {
+                    $stmt->bindParam($param, $value);
+                }
+            }
+            
+            $stmt->execute();
+            $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("mdlBuscarReservas: Se encontraron " . count($reservas) . " reservas", 3, "c:/laragon/www/clinica/logs/reservas.log");
+            if (count($reservas) > 0) {
+                error_log("mdlBuscarReservas: Primera reserva: " . json_encode($reservas[0]), 3, "c:/laragon/www/clinica/logs/reservas.log");
+            }
+            
+            return $reservas;
+        } catch (PDOException $e) {
+            error_log("Error al buscar reservas: " . $e->getMessage(), 3, "c:/laragon/www/clinica/logs/reservas.log");
             return [];
         }
     }

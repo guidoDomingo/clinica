@@ -304,4 +304,24 @@ class ControladorServicios {
     static public function ctrObtenerProveedoresSeguro() {
         return ModelServicios::mdlObtenerProveedoresSeguro();
     }
+    
+    /**
+     * Busca reservas con filtros
+     * @param string $fecha Fecha de reserva (opcional)
+     * @param int $doctorId ID del doctor (opcional)
+     * @param string $estado Estado de la reserva (opcional)
+     * @param string $paciente Nombre del paciente para búsqueda (opcional)
+     * @return array Lista de reservas que coinciden con los filtros
+     */
+    static public function ctrBuscarReservas($fecha = null, $doctorId = null, $estado = null, $paciente = null) {
+        return ModelServicios::mdlBuscarReservas($fecha, $doctorId, $estado, $paciente);
+    }
+    
+    /**
+     * Obtiene todos los médicos disponibles
+     * @return array Lista de médicos
+     */
+    static public function ctrObtenerMedicos() {
+        return ModelServicios::mdlObtenerMedicos();
+    }
 }

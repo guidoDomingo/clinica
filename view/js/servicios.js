@@ -17,6 +17,21 @@ $(document).ready(function() {
     inicializarFechas();
     inicializarEventosCompactos();
     manejarSeleccionFechaDirecta();
+    inicializarTabReservas(); // Inicializar la pestaña de Reservas
+    
+    // Inicializar filtros si ya hay una fecha seleccionada
+    if ($('#fechaReserva').val()) {
+        const fechaActual = $('#fechaReserva').val();
+        cargarDoctoresParaFiltro(fechaActual);
+        cargarReservasDelDia(fechaActual);
+    }
+    
+    // Manejar cambio de pestaña para cargar datos cuando se activa la pestaña de Reservas
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        if ($(e.target).attr('href') === '#tabReservas') {
+            buscarReservas();
+        }
+    });
     
     // Debug: Mostrar información de fecha/hora en la consola para ayudar con la depuración
     console.log("Información de fecha/hora del sistema:");
@@ -1134,6 +1149,225 @@ function manejarSeleccionFechaDirecta() {
                 $inputFecha.val('');
                 return false;
             }
+        }
+    });
+}
+
+/**
+ * Inicializa la pestaña de Reservas
+ */
+function inicializarTabReservas() {
+    // Cargar médicos para el filtro
+    cargarMedicosParaFiltroReservas();
+    
+    // Inicializar la búsqueda de reservas con valores predeterminados
+    buscarReservas();
+    
+    // Eventos para botones y filtros
+    $('#btnBuscarReservas').on('click', function() {
+        buscarReservas();
+    });
+    
+    $('#btnLimpiarFiltrosReservas').on('click', function() {
+        limpiarFiltrosReservas();
+    });
+    
+    // Evento para cambiar estado de reserva
+    $(document).on('click', '.btnCambiarEstadoReserva', function() {
+        const reservaId = $(this).data('id');
+        const nuevoEstado = $(this).data('estado');
+        
+        cambiarEstadoReservaTab(reservaId, nuevoEstado);
+    });
+}
+
+/**
+ * Carga la lista de médicos para el filtro de reservas
+ */
+function cargarMedicosParaFiltroReservas() {
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "obtenerMedicos" 
+        },
+        dataType: "json",
+        success: function(respuesta) {
+            console.log("Respuesta de médicos para filtro:", respuesta);
+            
+            if (respuesta.status === "success" && respuesta.data) {
+                let opciones = '<option value="0">Todos los médicos</option>';
+                
+                respuesta.data.forEach(function(medico) {
+                    const nombreCompleto = medico.nombre || 
+                                          (medico.first_name && medico.last_name ? 
+                                           medico.first_name + ' - ' + medico.last_name : 
+                                           'Dr. ' + medico.doctor_id);
+                                           
+                    opciones += `<option value="${medico.doctor_id}">${nombreCompleto}</option>`;
+                });
+                
+                $('#selectMedicoReservas').html(opciones);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cargar médicos para filtro:", error);
+        }
+    });
+}
+
+/**
+ * Busca reservas según los filtros seleccionados
+ */
+function buscarReservas() {
+    const fecha = $('#fechaReservas').val() || '';
+    const doctorId = $('#selectMedicoReservas').val() || '0';
+    const estado = $('#selectEstadoReserva').val() || '0';
+    const paciente = $('#buscarPacienteReserva').val() || '';
+    
+    console.log(`Buscando reservas - Fecha: ${fecha}, Doctor: ${doctorId}, Estado: ${estado}, Paciente: ${paciente}`);
+    
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "buscarReservas",
+            fecha: fecha,
+            doctor_id: doctorId,
+            estado: estado,
+            paciente: paciente
+        },
+        dataType: "json",
+        beforeSend: function() {
+            $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando reservas...</td></tr>');
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de búsqueda de reservas:", respuesta);
+            
+            if (respuesta.status === "success" && respuesta.data && respuesta.data.length > 0) {
+                let filas = '';
+                
+                respuesta.data.forEach(function(reserva) {
+                    // Formatear la fecha para mostrar
+                    const fechaFormateada = formatearFechaParaMostrar(reserva.fecha_reserva);
+                    
+                    // Determinar color según estado
+                    let claseEstado = '';
+                    const estado = (reserva.reserva_estado || '').toUpperCase();
+                    
+                    switch (estado) {
+                        case 'PENDIENTE': claseEstado = 'badge-warning'; break;
+                        case 'CONFIRMADA': claseEstado = 'badge-success'; break;
+                        case 'CANCELADA': claseEstado = 'badge-danger'; break;
+                        case 'COMPLETADA': claseEstado = 'badge-info'; break;
+                        default: claseEstado = 'badge-secondary';
+                    }
+                    
+                    // Formatear el monto
+                    const monto = parseFloat(reserva.monto || 0).toFixed(2);
+                    
+                    // Botones de acción según el estado
+                    let botonesAccion = '';
+                    
+                    if (estado === 'PENDIENTE') {
+                        botonesAccion = `
+                            <button type="button" class="btn btn-xs btn-success btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="CONFIRMADA" title="Confirmar">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-danger btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="CANCELADA" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    } else if (estado === 'CONFIRMADA') {
+                        botonesAccion = `
+                            <button type="button" class="btn btn-xs btn-info btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="COMPLETADA" title="Completar">
+                                <i class="fas fa-flag-checkered"></i>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-danger btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="CANCELADA" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    } else if (estado === 'CANCELADA' || estado === 'COMPLETADA') {
+                        botonesAccion = `
+                            <button type="button" class="btn btn-xs btn-warning btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="PENDIENTE" title="Restaurar">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        `;
+                    }
+                    
+                    filas += `
+                        <tr>
+                            <td>${reserva.fecha_reserva}</td>
+                            <td>${reserva.dia_semana}</td>
+                            <td>${reserva.horario}</td>
+                            <td>${reserva.paciente}</td>
+                            <td>${reserva.doctor}</td>
+                            <td>${reserva.nombre_servicio}</td>
+                            <td>${reserva.sala_nombre}</td>
+                            <td class="text-right">${monto}</td>
+                            <td><span class="badge ${claseEstado}">${estado}</span></td>
+                            <td>${botonesAccion}</td>
+                        </tr>
+                    `;
+                });
+                
+                $('#tablaReservas tbody').html(filas);
+            } else {
+                $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center">No se encontraron reservas con los filtros seleccionados</td></tr>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al buscar reservas:", xhr, status, error);
+            $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center text-danger">Error al buscar reservas: ' + error + '</td></tr>');
+        }
+    });
+}
+
+/**
+ * Limpia todos los filtros de reservas y recarga la tabla
+ */
+function limpiarFiltrosReservas() {
+    $('#fechaReservas').val(new Date().toISOString().split('T')[0]); // Establece la fecha actual
+    $('#selectMedicoReservas').val('0');
+    $('#selectEstadoReserva').val('0');
+    $('#buscarPacienteReserva').val('');
+    
+    // Recargar la tabla con los filtros limpiados
+    buscarReservas();
+}
+
+/**
+ * Cambia el estado de una reserva desde la pestaña Reservas
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            mostrarAlerta('info', 'Actualizando estado de la reserva...', 'center', false);
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                mostrarAlerta('success', 'Estado actualizado correctamente', 'center');
+                // Recargar las reservas con los filtros actuales
+                buscarReservas();
+            } else {
+                mostrarAlerta('error', 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'));
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            mostrarAlerta('error', 'Error al actualizar: ' + error);
         }
     });
 }

@@ -332,25 +332,25 @@ if (!isset($_SESSION['perfil'])) {
                                 <input type="hidden" id="tarifaId">
                                 </div>
                                 
-                                <!-- PESTAÑA: RESERVAS ACTUALES -->
-                                <div class="tab-pane fade" id="tabReservas" role="tabpanel" aria-labelledby="tab-reservas-tab">
+                                <!-- PESTAÑA: RESERVAS ACTUALES -->                                <div class="tab-pane fade" id="tabReservas" role="tabpanel" aria-labelledby="tab-reservas-tab">
+                                    <!-- Filtros de búsqueda -->
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="fechaReservas">Fecha:</label>
                                                 <input type="date" class="form-control" id="fechaReservas" value="<?php echo date('Y-m-d'); ?>">
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="selectMedicoReservas">Médico:</label>
                                                 <select class="form-control" id="selectMedicoReservas">
-                                                    <option value="0">Todos los médicos</option>                                                    <!-- Las opciones se cargan con JavaScript -->
-                                                    
+                                                    <option value="0">Todos los médicos</option>
+                                                    <!-- Las opciones se cargan con JavaScript -->
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="selectEstadoReserva">Estado:</label>
                                                 <select class="form-control" id="selectEstadoReserva">
@@ -362,18 +362,39 @@ if (!isset($_SESSION['perfil'])) {
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="buscarPacienteReserva">Buscar Paciente:</label>
+                                                <input type="text" class="form-control" id="buscarPacienteReserva" placeholder="Nombre del paciente...">
+                                            </div>
+                                        </div>
                                     </div>
                                     
-                                    <div class="table-responsive">
+                                    <!-- Botón de búsqueda -->
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <button id="btnBuscarReservas" class="btn btn-primary">
+                                                <i class="fas fa-search"></i> Buscar Reservas
+                                            </button>
+                                            <button id="btnLimpiarFiltrosReservas" class="btn btn-secondary ml-2">
+                                                <i class="fas fa-sync"></i> Limpiar Filtros
+                                            </button>
+                                        </div>
+                                    </div>
+                                      <div class="table-responsive">
                                         <table class="table table-bordered table-striped" id="tablaReservas">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 15%">Horario</th>
-                                                    <th style="width: 20%">Servicio</th>
-                                                    <th style="width: 20%">Paciente</th>
-                                                    <th style="width: 20%">Doctor</th>
-                                                    <th style="width: 15%">Estado</th>
-                                                    <th style="width: 10%">Acciones</th>
+                                                    <th>Fecha</th>
+                                                    <th>Día de Semana</th>
+                                                    <th>Horario</th>
+                                                    <th>Paciente</th>
+                                                    <th>Doctor</th>
+                                                    <th>Servicio</th>
+                                                    <th>Sala</th>
+                                                    <th>Monto</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
