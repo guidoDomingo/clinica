@@ -50,6 +50,8 @@
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="#icd" data-toggle="tab">ICD</a>
                                 </li>
+                                <li class="nav-item"><a class="nav-link" href="#remedios" data-toggle="tab">Buscar Remedio</a>
+                                </li>
                             </ul>
                         </div><!-- /.card-header -->
                         <div class="card-body">
@@ -71,6 +73,15 @@
                                     
                                     <?php
                                         include "view/inc/frmConsultaICD.php";
+                                    ?>
+                    
+                                </div>
+                                <!-- /.tab-pane -->
+
+                                <div class="tab-pane" id="remedios">
+                                    
+                                    <?php
+                                        include "view/inc/frmConsultaRemedio.php";
                                     ?>
                     
                                 </div>
@@ -227,5 +238,6 @@
     </div>
 </div>
 
-<!-- Script para la funcionalidad de autocompletado de datos del paciente -->
-<!-- <script src="view/js/consultas.js"></script> -->
+<!-- Scripts para la funcionalidad del módulo de consultas -->
+<script src="view/js/consultas.js"></script>
+<script src="view/js/remedios.js"></script>
