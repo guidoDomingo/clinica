@@ -1033,9 +1033,9 @@ class ModelServicios {
      * @param int $doctorId ID del doctor (opcional)
      * @param string $estado Estado de la reserva (opcional)
      * @return array Lista de reservas
-     */    static public function mdlObtenerReservasPorFecha($fecha, $doctorId = null, $estado = null) {
+     */    static public function mdlObtenerReservasPorFecha($fecha, $doctorId = null, $estado = null, $paciente = null) {
         try {
-            error_log("mdlObtenerReservasPorFecha: Fecha=$fecha, DoctorID=" . ($doctorId ?? "null") . ", Estado=" . ($estado ?? "null"), 3, "c:/laragon/www/clinica/logs/reservas.log");
+            error_log("mdlObtenerReservasPorFecha: Fecha=$fecha, DoctorID=" . ($doctorId ?? "null") . ", Estado=" . ($estado ?? "null") . ", Paciente=" . ($paciente ?? "null"), 3, "c:/laragon/www/clinica/logs/reservas.log");
             
             // Verificar si existe la tabla de reservas
             $stmtCheck = Conexion::conectar()->prepare("SELECT to_regclass('public.servicios_reservas')");
@@ -1048,17 +1048,13 @@ class ModelServicios {
             }
             
             // Asegurarse de que la fecha esté en formato YYYY-MM-DD
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            if ($fecha !== null && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
                 $fechaFormateada = date('Y-m-d', strtotime($fecha));
                 error_log("mdlObtenerReservasPorFecha: Formato de fecha incorrecto ($fecha), reformateando a $fechaFormateada", 3, "c:/laragon/www/clinica/logs/reservas.log");
                 $fecha = $fechaFormateada;
             }
             
-            // Construir rango de fechas para la consulta
-            $fechaInicio = $fecha . " 00:00:00";
-            $fechaFin = $fecha . " 23:59:59";
-            
-            // Consulta optimizada basada en el esquema correcto de la base de datos
+            // Construir la consulta SQL
             $sql = "SELECT 
                 sr.reserva_id,
                 sr.servicio_id,
@@ -1074,39 +1070,67 @@ class ModelServicios {
                 sr.updated_at,
                 sr.agenda_id,
                 sr.sala_id,
+                s.sala_nombre,
                 sr.tarifa_id,
                 rp.first_name ||' - ' || rp.last_name as doctor,
                 rp2.first_name ||' - ' || rp2.last_name as paciente,
-                rs.serv_descripcion
+                rs.serv_descripcion,
+                rs.serv_monto
             FROM servicios_reservas sr 
             INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
             INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
             INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
             INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
-            WHERE sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin";
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1";
+            
+            // Añadir filtros según los parámetros proporcionados
+            if ($fecha !== null) {
+                // Construir rango de fechas para la consulta
+                $fechaInicio = $fecha . " 00:00:00";
+                $fechaFin = $fecha . " 23:59:59";
+                $sql .= " AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin";
+            }
             
             if ($doctorId !== null) {
                 $sql .= " AND sr.doctor_id = :doctor_id";
             }
-            
-            if ($estado !== null) {
+              
+            if ($estado !== null && $estado !== '') {
                 $sql .= " AND sr.reserva_estado = :estado";
             }
             
-            $sql .= " ORDER BY sr.hora_inicio ASC";
+            // Filtrar por nombre de paciente (búsqueda parcial mejorada)
+            if ($paciente !== null && trim($paciente) !== '') {
+                $sql .= " AND (rp2.first_name ILIKE :nombre_paciente 
+                        OR rp2.last_name ILIKE :nombre_paciente 
+                        OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :nombre_paciente)";
+            }
+            
+            $sql .= " ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASC";
             
             error_log("mdlObtenerReservasPorFecha: SQL=$sql", 3, "c:/laragon/www/clinica/logs/reservas.log");
             
             $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->bindParam(":fecha_inicio", $fechaInicio, PDO::PARAM_STR);
-            $stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
+            
+            // Bindear parámetros según los filtros usados
+            if ($fecha !== null) {
+                $stmt->bindParam(":fecha_inicio", $fechaInicio, PDO::PARAM_STR);
+                $stmt->bindParam(":fecha_fin", $fechaFin, PDO::PARAM_STR);
+            }
             
             if ($doctorId !== null) {
                 $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
             }
             
-            if ($estado !== null) {
+            if ($estado !== null && $estado !== '') {
                 $stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
+            }
+            
+            if ($paciente !== null && trim($paciente) !== '') {
+                $pacienteParam = '%' . trim($paciente) . '%';
+                $stmt->bindParam(":nombre_paciente", $pacienteParam, PDO::PARAM_STR);
             }
             
             $stmt->execute();
@@ -1194,6 +1218,7 @@ class ModelServicios {
             $precioFinal = isset($datos['precio_final']) ? $datos['precio_final'] : null;
             $businessId = isset($datos['business_id']) ? $datos['business_id'] : 1;
             $createdBy = isset($datos['created_by']) ? $datos['created_by'] : 1;
+            $seguroId = isset($datos['seguro_id']) ? $datos['seguro_id'] : null;
             
             $stmtInsertar->bindParam(":agenda_id", $agendaId, PDO::PARAM_INT);
             $stmtInsertar->bindParam(":observaciones", $observaciones, PDO::PARAM_STR);
@@ -1203,20 +1228,36 @@ class ModelServicios {
             $stmtInsertar->bindParam(":business_id", $businessId, PDO::PARAM_INT);
             $stmtInsertar->bindParam(":created_by", $createdBy, PDO::PARAM_INT);
             
-            if ($stmtInsertar->execute()) {
-                $reservaInsertada = $stmtInsertar->fetch(PDO::FETCH_ASSOC);
-                return [
-                    "error" => false,
-                    "mensaje" => "Reserva creada correctamente",
-                    "reserva_id" => $reservaInsertada['reserva_id']
-                ];
-            } else {
-                return ["error" => true, "mensaje" => "Error al crear la reserva"];
-            }
+            error_log("SQL a ejecutar: INSERT INTO servicios_reservas...", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            error_log("Parámetros: " . json_encode([
+                'servicio_id' => $datos['servicio_id'],
+                'doctor_id' => $datos['doctor_id'],
+                'paciente_id' => $datos['paciente_id'],
+                'fecha_reserva' => $datos['fecha_reserva'],
+                'hora_inicio' => $datos['hora_inicio'],
+                'hora_fin' => $datos['hora_fin'],
+                'agenda_id' => $agendaId,
+                'tarifa_id' => $tarifaId,
+                'seguro_id' => $seguroId
+            ]), 3, 'c:/laragon/www/clinica/logs/reservas.log');
             
+            if ($stmtInsertar->execute()) {
+                $resultado = $stmtInsertar->fetch(PDO::FETCH_ASSOC);
+                if ($resultado && isset($resultado['reserva_id'])) {
+                    error_log("Reserva creada con ID: " . $resultado['reserva_id'], 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                    return $resultado['reserva_id'];
+                } else {
+                    error_log("Error: La consulta se ejecutó pero no se obtuvo un ID de reserva", 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                    return false;
+                }
+            } else {
+                $errorInfo = $stmtInsertar->errorInfo();
+                error_log("Error al insertar reserva: SQLSTATE=" . $errorInfo[0] . ", Driver-specific code=" . $errorInfo[1] . ", Message=" . $errorInfo[2], 3, 'c:/laragon/www/clinica/logs/reservas.log');
+                return false;
+            }
         } catch (PDOException $e) {
-            error_log("Error al crear reserva: " . $e->getMessage(), 0);
-            return ["error" => true, "mensaje" => "Error en la base de datos: " . $e->getMessage()];
+            error_log("Excepción PDO al guardar reserva: " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, 'c:/laragon/www/clinica/logs/reservas.log');
+            return false;
         }
     }
 
@@ -1489,6 +1530,7 @@ class ModelServicios {
             $createdBy = isset($datos['created_by']) ? $datos['created_by'] : 1;
             $stmt->bindParam(":created_by", $createdBy, PDO::PARAM_INT);
             
+           
             // Estos campos no estaban en la consulta original pero sí están en la estructura de la tabla
             $agendaId = isset($datos['agenda_id']) ? $datos['agenda_id'] : null;
             $stmt->bindParam(":agenda_id", $agendaId, $agendaId ? PDO::PARAM_INT : PDO::PARAM_NULL);
@@ -1727,36 +1769,59 @@ class ModelServicios {
 
     /**
      * Busca reservas por doctor específico (consulta directa simplificada)
-     * @param int $doctorId ID del doctor
-     * @param string $fecha Fecha de la reserva (opcional)
+     * @param int $doctorId ID del doctor     * @param string $fecha Fecha de la reserva (opcional)
+     * @param string $estado Estado de la reserva (opcional)
+     * @param string $paciente Nombre del paciente para búsqueda (opcional)
      * @return array Lista de reservas encontradas
      */
-    static public function mdlBuscarReservasPorDoctor($doctorId, $fecha = null) {
+    static public function mdlBuscarReservasPorDoctor($doctorId, $fecha = null, $estado = null, $paciente = null) {
         try {
             error_log("mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=$doctorId, fecha=" . 
-                     ($fecha ? $fecha : "NULL"), 3, "c:/laragon/www/clinica/logs/reservas.log");
+                     ($fecha ? $fecha : "NULL") . ", estado=" . ($estado ?? "NULL") . ", paciente=" . ($paciente ?? "NULL"), 
+                     3, "c:/laragon/www/clinica/logs/reservas.log");
             
             $sql = "SELECT 
                 sr.reserva_id,
-                sr.fecha_reserva,
+                sr.servicio_id,
                 sr.doctor_id,
                 sr.paciente_id,
+                sr.fecha_reserva,
                 sr.hora_inicio,
                 sr.hora_fin,
                 sr.reserva_estado,
-                rp_doctor.first_name || ' - ' || rp_doctor.last_name as doctor,
-                rp_paciente.first_name || ' - ' || rp_paciente.last_name as paciente,
-                rs.serv_descripcion as nombre_servicio,
-                rs.serv_monto as monto
-            FROM servicios_reservas sr
-            JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id
-            JOIN rh_person rp_doctor ON rd.person_id = rp_doctor.person_id
-            JOIN rh_person rp_paciente ON sr.paciente_id = rp_paciente.person_id
-            JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id
             WHERE sr.doctor_id = :doctor_id";
             
             if ($fecha) {
                 $sql .= " AND sr.fecha_reserva::date = :fecha::date";
+            }
+            
+            // Filtro por estado
+            if ($estado !== null && $estado !== '') {
+                $sql .= " AND sr.reserva_estado = :estado";
+            }
+            
+            // Filtro por paciente
+            if ($paciente !== null && trim($paciente) !== '') {
+                $sql .= " AND (rp_paciente.first_name ILIKE :paciente OR rp_paciente.last_name ILIKE :paciente OR (rp_paciente.first_name || ' ' || rp_paciente.last_name) ILIKE :paciente)";
             }
             
             $sql .= " ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASC";
@@ -1766,6 +1831,17 @@ class ModelServicios {
             
             if ($fecha) {
                 $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+            }
+            
+            // Bindear parámetro de estado si se proporciona
+            if ($estado !== null && $estado !== '') {
+                $stmt->bindParam(':estado', $estado, PDO::PARAM_STR);
+            }
+            
+            // Bindear parámetro de paciente si se proporciona
+            if ($paciente !== null && trim($paciente) !== '') {
+                $pacienteParam = '%' . trim($paciente) . '%';
+                $stmt->bindParam(':paciente', $pacienteParam, PDO::PARAM_STR);
             }
             
             $stmt->execute();

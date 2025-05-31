@@ -172,7 +172,7 @@ function inicializarEventosCompactos() {
                 (anioSeleccionado === anioHoy && mesSeleccionado === mesHoy && diaSeleccionado < diaHoy)) {
                 
                 console.log("La fecha seleccionada es anterior a hoy");
-                mostrarAlerta('error', 'No puede seleccionar una fecha en el pasado.');
+                mostrarAlerta('error', 'No puede seleccionar una fecha en el pasado, intente de nuevo.');
                 $('#fechaReserva').val('');
                 fechaSeleccionada = '';
                 return;
@@ -1145,6 +1145,17 @@ function debugFechas(titulo, resultado, fechaA, fechaB) {
 function manejarSeleccionFechaDirecta() {
     // 1. Agregar manejador para input type="date" (selector nativo)
     $(document).on('change', 'input[type="date"]', function() {
+
+        // Determinar en qué sección estamos
+        const esTabReservas = $('#tabReservas').hasClass('active') || 
+                         $(this).closest('#tabReservas').length > 0 || 
+                         $(this).attr('id') === 'fechaReservas';
+
+            // Si estamos en la sección de Reservas, permitir cualquier fecha
+        if (esTabReservas) {
+            return; // No aplicar restricción de fecha
+        }
+
         const fechaSeleccionada = $(this).val();
         console.log("Fecha seleccionada (input nativo):", fechaSeleccionada);
         
@@ -1254,14 +1265,14 @@ function inicializarTabReservas() {
         buscarReservas();
     });
     
-    // Para el campo de búsqueda de paciente, esperar a que el usuario termine de escribir
-    let typingTimer;
+    // Búsqueda por paciente con retraso para evitar demasiadas peticiones
+    let timeoutPaciente = null;
     $(document).on('keyup', '#buscarPacienteReserva', function() {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(function() {
-            console.log('Búsqueda de paciente actualizada');
+        console.log('Buscando paciente:', $(this).val());
+        clearTimeout(timeoutPaciente);
+        timeoutPaciente = setTimeout(function() {
             buscarReservas();
-        }, 500); // Esperar 500ms después de que el usuario deje de escribir
+        }, 600); // Esperar 600ms después de que el usuario deje de escribir
     });
 }
 
@@ -1331,11 +1342,14 @@ function buscarReservas() {
     
     // Obtener doctorId correctamente y asegurar que sea un string
     const doctorId = $('#selectMedicoReservas').val() || '0';
+      
+    // Obtener estado directamente del elemento DOM para evitar problemas con el valor
+    const estadoElem = document.getElementById('selectEstadoReserva');
+    const estado = estadoElem ? estadoElem.value : '0';
+    console.log('Estado seleccionado (directo del DOM):', estado);
     
-    // Obtener estado del elemento select
-    const estado = $('#selectEstadoReserva').val() || '0';
-    
-    const paciente = $('#buscarPacienteReserva').val() || '';
+    // Obtener paciente y asegurar que no sea un string vacío
+    const paciente = $('#buscarPacienteReserva').val() ? $('#buscarPacienteReserva').val().trim() : '';
     
     console.log(`Buscando reservas - Fecha: ${fecha}, Doctor: ${doctorId}, Estado: ${estado}, Paciente: ${paciente}`);
     
@@ -1349,8 +1363,12 @@ function buscarReservas() {
     // Preparar los datos para la solicitud
     const requestData = { 
         action: "buscarReservas",
-        fecha: fecha
     };
+
+    // Añadir fecha solo si no está vacía
+    if (fecha && fecha.trim() !== '') {
+        requestData.fecha = fecha;
+    }
 
     // Verificar tipos de datos para debugging
     console.log("Tipo de doctorId:", typeof doctorId);
@@ -1383,104 +1401,135 @@ function buscarReservas() {
         },
         success: function(respuesta) {
             console.log("Respuesta de búsqueda de reservas:", respuesta);
-            console.log("Filtros aplicados en el servidor:", respuesta.filtros);
+            
+            // Verificar si hay información de depuración
+            if (respuesta.filtros) {
+                console.log("Filtros aplicados en el servidor:", respuesta.filtros);
+            }
             
             if (respuesta.status === "success" && respuesta.data && respuesta.data.length > 0) {
                 let filas = '';
                 
                 respuesta.data.forEach(function(reserva) {
-                    // Debug de doctor_id
-                    console.log("Reserva doctor_id:", reserva.doctor_id_original);
-                    
                     // Formatear la fecha para mostrar
                     const fechaFormateada = formatearFechaParaMostrar(reserva.fecha_reserva);
                     
                     // Determinar color según estado
-                    let claseEstado = '';
-                    const estado = (reserva.reserva_estado || '').toUpperCase();
+                    let claseFila = '';
+                    let iconoEstado = '';
                     
-                    switch (estado) {
-                        case 'PENDIENTE': claseEstado = 'badge-warning'; break;
-                        case 'CONFIRMADA': claseEstado = 'badge-success'; break;
-                        case 'CANCELADA': claseEstado = 'badge-danger'; break;
-                        case 'COMPLETADA': claseEstado = 'badge-info'; break;
-                        default: claseEstado = 'badge-secondary';
+                    switch (reserva.reserva_estado) {
+                        case 'PENDIENTE':
+                            claseFila = 'table-warning';
+                            iconoEstado = '<i class="fas fa-clock text-warning"></i>';
+                            break;
+                        case 'CONFIRMADA':
+                            claseFila = 'table-info';
+                            iconoEstado = '<i class="fas fa-check-circle text-info"></i>';
+                            break;
+                        case 'COMPLETADA':
+                            claseFila = 'table-success';
+                            iconoEstado = '<i class="fas fa-check-double text-success"></i>';
+                            break;
+                        case 'CANCELADA':
+                            claseFila = 'table-danger';
+                            iconoEstado = '<i class="fas fa-times-circle text-danger"></i>';
+                            break;
+                        default:
+                            claseFila = '';
+                            iconoEstado = '<i class="fas fa-question-circle text-secondary"></i>';
                     }
                     
-                    // Formatear el monto
-                    const monto = parseFloat(reserva.monto || 0).toFixed(2);
+                    // Calcular día de la semana
+                    // const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                    // const fecha = new Date(reserva.fecha_reserva);
+                    // const diaSemana = dias[fecha.getDay()];
+
+                    // Calcular día de la semana correctamente
+                    const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+                    // Método 1: Crear la fecha con UTC específicamente
+                    const fechaParts = reserva.fecha_reserva.split('-').map(Number);
+                    const fecha = new Date(Date.UTC(fechaParts[0], fechaParts[1] - 1, fechaParts[2]));
+                    const diaSemana = dias[fecha.getUTCDay()]; // Usar getUTCDay en lugar de getDay
                     
-                    // Botones de acción según el estado
-                    let botonesAccion = '';
+                    // Formato de horario
+                    const horario = `${reserva.hora_inicio} - ${reserva.hora_fin}`;
                     
-                    if (estado === 'PENDIENTE') {
-                        botonesAccion = `
-                            <button type="button" class="btn btn-xs btn-success btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="CONFIRMADA" title="Confirmar">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button type="button" class="btn btn-xs btn-danger btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="CANCELADA" title="Cancelar">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        `;
-                    } else if (estado === 'CONFIRMADA') {
-                        botonesAccion = `
-                            <button type="button" class="btn btn-xs btn-info btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="COMPLETADA" title="Completar">
-                                <i class="fas fa-flag-checkered"></i>
-                            </button>
-                            <button type="button" class="btn btn-xs btn-danger btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="CANCELADA" title="Cancelar">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        `;
-                    } else if (estado === 'CANCELADA' || estado === 'COMPLETADA') {
-                        botonesAccion = `
-                            <button type="button" class="btn btn-xs btn-warning btnCambiarEstadoReserva" data-id="${reserva.reserva_id}" data-estado="PENDIENTE" title="Restaurar">
-                                <i class="fas fa-undo"></i>
-                            </button>
-                        `;
-                    }
-                      filas += `
-                        <tr>
-                            <td>${reserva.fecha_reserva}</td>
-                            <td>${reserva.dia_semana || 'N/A'}</td>
-                            <td>${reserva.horario || 'N/A'}</td>
-                            <td>${reserva.paciente || 'N/A'}</td>
-                            <td>${reserva.doctor || 'N/A'}</td>
-                            <td>${reserva.nombre_servicio || 'N/A'}</td>
-                            <td>${reserva.sala_nombre || 'N/A'}</td>
-                            <td class="text-right">${monto}</td>
-                            <td><span class="badge ${claseEstado}">${estado}</span></td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    ${botonesAccion}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
+                    // Formatear monto si está disponible
+                    const monto = reserva.monto ? `$${parseFloat(reserva.monto).toFixed(2)}` : 'N/A';
+                    
+                    // Nombre de la sala (si está disponible)
+                    const sala = reserva.sala_nombre || 'Sin asignar';
+                    
+                    filas += `<tr class="${claseFila}">
+                        <td>${fechaFormateada}</td>
+                        <td>${diaSemana}</td>
+                        <td>${horario}</td>
+                        <td>${reserva.paciente}</td>
+                        <td>${reserva.doctor}</td>
+                        <td>${reserva.serv_descripcion || reserva.nombre_servicio || 'N/A'}</td>
+                        <td>${reserva.sala_nombre || 'Sin asignar'}</td>
+                        <td>${reserva.serv_monto ? `$${parseFloat(reserva.serv_monto).toFixed(2)}` : 'N/A'}</td>
+                        <td>${iconoEstado} ${reserva.reserva_estado}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-info btn-sm btnVerReserva" data-id="${reserva.reserva_id}" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm btnEditarReserva" data-id="${reserva.reserva_id}" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm btnCancelarReserva" data-id="${reserva.reserva_id}" title="Cancelar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
                 });
                 
                 $('#tablaReservas tbody').html(filas);
             } else {
+                // Mostrar mensaje si no hay reservas
                 $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center">No se encontraron reservas con los filtros seleccionados</td></tr>');
             }
         },
         error: function(xhr, status, error) {
-            console.error("Error al buscar reservas:", xhr, status, error);
-            $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center text-danger">Error al buscar reservas: ' + error + '</td></tr>');
+            console.error("Error al buscar reservas:", error);
+            
+            // Mostrar mensaje de error
+            $('#tablaReservas tbody').html('<tr><td colspan="10" class="text-center text-danger">Error al cargar reservas: ' + error + '</td></tr>');
+            
+            // Intentar obtener más detalles del error
+            try {
+                const respuesta = JSON.parse(xhr.responseText);
+                console.error("Detalles del error:", respuesta);
+            } catch (e) {
+                console.error("No se pudo parsear la respuesta del error:", xhr.responseText);
+            }
         }
     });
 }
 
 /**
- * Limpia los filtros de búsqueda de reservas y vuelve a cargar
+ * Limpia todos los filtros de búsqueda de reservas
  */
 function limpiarFiltrosReservas() {
-    // Resetear el formulario
+    console.log('Limpiando todos los filtros de reservas');
+    
+    // Restablecer fecha a hoy
     $('#fechaReservas').val(moment().format('YYYY-MM-DD'));
+    
+    // Restablecer médico a "Todos"
     $('#selectMedicoReservas').val('0');
+    
+    // Restablecer estado a "Todos"
     $('#selectEstadoReserva').val('0');
+    
+    // Limpiar búsqueda de paciente
     $('#buscarPacienteReserva').val('');
     
-    console.log('Filtros limpiados. Buscando nuevamente...');
+    // Volver a cargar las reservas con los filtros limpios
     buscarReservas();
 }
 

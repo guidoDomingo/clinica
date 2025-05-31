@@ -3253,4 +3253,1146 @@ CONTEXT:  unnamed portal parameter $1 = '...'AJAX buscarReservas: POST={"action"
             INNER JOIN rh_person rp ON rd.person_id = rp.person_id
             INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
             INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
-            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 3 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 08:30:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}
+            WHERE 1=1 AND sr.fecha_reserva::date = :fecha::date ORDER BY sr.fecha_reserva DESC, ad.hora_inicio ASCmdlBuscarReservas: Parámetros a bindear: {":fecha":"2025-05-30"}mdlBuscarReservas: Bindeando :fecha = 2025-05-30 con bindParammdlBuscarReservas: Se encontraron 3 reservasmdlBuscarReservas: Primera reserva: {"reserva_id":14,"fecha_reserva":"2025-05-30","dia_semana":"VIERNES","horario":"08:00:00 - 08:30:00","intervalo_minutos":15,"sala_nombre":"Sala 1","doctor":"ronal - ricardo","paciente":"Mary - Riquelme","nombre_servicio":"Consulta m\u00e9dica general b\u00e1sica","monto":"150000.00","reserva_estado":"PENDIENTE","doctor_id_original":14}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14","estado":"PENDIENTE"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=PENDIENTE, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=PENDIENTE, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14","estado":"CONFIRMADA"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=CONFIRMADA, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=CONFIRMADA, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=CONFIRMADA, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14","estado":"PENDIENTE"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=PENDIENTE, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=PENDIENTE, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14","estado":"PENDIENTE","paciente":"car"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=PENDIENTE, Paciente=carAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=PENDIENTE, Paciente=carctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=PENDIENTE, paciente=carmdlBuscarReservasPorDoctor: Encontradas 3 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14","estado":"PENDIENTE"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=PENDIENTE, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=PENDIENTE, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 9 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-29"}AJAX buscarReservas (procesado): Fecha=2025-05-29, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 4 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX obtenerReservas: Se encontraron 9 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-29","paciente":"me"}AJAX buscarReservas (procesado): Fecha=2025-05-29, DoctorID=null (tipo: NULL), Estado=null, Paciente=mectrBuscarReservas: Llamada con Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=mectrBuscarReservas: Filtrando específicamente por paciente=memdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=memdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND (rp2.first_name ILIKE :nombre_paciente 
+                        OR rp2.last_name ILIKE :nombre_paciente 
+                        OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :nombre_paciente) ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 2 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":6,"servicio_id":2,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-29","hora_inicio":"08:45:00","hora_fin":"09:15:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-28 22:08:48.948464","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-29"}AJAX buscarReservas (procesado): Fecha=2025-05-29, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 4 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":4,"servicio_id":2,"doctor_id":14,"paciente_id":11,"fecha_reserva":"2025-05-29","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"","business_id":1,"created_at":"2025-05-27 23:21:30.437619","updated_at":null,"agenda_id":null,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"guido - benitez","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 9 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-29"}AJAX buscarReservas (procesado): Fecha=2025-05-29, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 7 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 1 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-29"}AJAX buscarReservas (procesado): Fecha=2025-05-29, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-29, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX obtenerReservas: Se encontraron 3 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX obtenerReservas: Fecha=2025-06-01, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-06-01, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX obtenerReservas: Fecha=2025-06-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-06-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX obtenerReservas: Fecha=2025-06-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-06-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-31"}AJAX buscarReservas (procesado): Fecha=2025-05-31, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-31, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX obtenerReservas: Fecha=2025-05-30, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX obtenerReservas: Se encontraron 3 reservasAJAX obtenerReservas: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX obtenerReservas: Fecha=2025-06-05, DoctorID=null, Estado=nullmdlObtenerReservasPorFecha: Fecha=2025-06-05, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX obtenerReservas: Se encontraron 0 reservasAJAX obtenerReservas: No se encontraron reservas para esta fechaAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"13"}AJAX buscarReservas: doctor_id recibido=13, convertido a int=13AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=13 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 3 reservas con doctor_id=13ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=13, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=13mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=13, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 2 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","doctor_id":"14"}AJAX buscarReservas: doctor_id recibido=14, convertido a int=14AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=14 (tipo: integer), Estado=null, Paciente=nullAJAX buscarReservas: Verificación previa - Existen 13 reservas con doctor_id=14ctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=14, Estado=null, Paciente=nullctrBuscarReservas: Usando consulta específica para doctor_id=14mdlBuscarReservasPorDoctor: Ejecutando consulta directa para doctor_id=14, fecha=2025-05-30, estado=NULL, paciente=NULLmdlBuscarReservasPorDoctor: Encontradas 1 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=null, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=null, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"CONFIRMADA"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=CONFIRMADA, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullctrBuscarReservas: Filtrando específicamente por estado=CONFIRMADAmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=CONFIRMADA, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 0 reservasAJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Filtrando específicamente por estado=PENDIENTEmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE","paciente":"ale"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=PENDIENTE, Paciente=alectrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=alectrBuscarReservas: Filtrando específicamente por estado=PENDIENTEmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=alemdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND sr.reserva_estado = :estado AND (rp2.first_name ILIKE :nombre_paciente 
+                        OR rp2.last_name ILIKE :nombre_paciente 
+                        OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :nombre_paciente) ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 2 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":16,"servicio_id":2,"doctor_id":13,"paciente_id":45,"fecha_reserva":"2025-05-30","hora_inicio":"17:00:00","hora_fin":"17:30:00","reserva_estado":"PENDIENTE","observaciones":"erwerwerwer","business_id":1,"created_at":"2025-05-30 07:03:51.563937","updated_at":null,"agenda_id":25,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"Antonio - Galeano","paciente":"alejandro - visconte","serv_descripcion":"Cirug\u00eda de cataratas por facoemulsificaci\u00f3n","serv_monto":"3000000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Filtrando específicamente por estado=PENDIENTEmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE","paciente":"mar"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=PENDIENTE, Paciente=marctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=marctrBuscarReservas: Filtrando específicamente por estado=PENDIENTEmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=marmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND sr.reserva_estado = :estado AND (rp2.first_name ILIKE :nombre_paciente 
+                        OR rp2.last_name ILIKE :nombre_paciente 
+                        OR (rp2.first_name || ' ' || rp2.last_name) ILIKE :nombre_paciente) ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 1 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}AJAX buscarReservas: POST={"action":"buscarReservas","fecha":"2025-05-30","estado":"PENDIENTE"}AJAX buscarReservas (procesado): Fecha=2025-05-30, DoctorID=null (tipo: NULL), Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Llamada con Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullctrBuscarReservas: Filtrando específicamente por estado=PENDIENTEmdlObtenerReservasPorFecha: Fecha=2025-05-30, DoctorID=null, Estado=PENDIENTE, Paciente=nullmdlObtenerReservasPorFecha: SQL=SELECT 
+                sr.reserva_id,
+                sr.servicio_id,
+                sr.doctor_id,
+                sr.paciente_id,
+                sr.fecha_reserva,
+                sr.hora_inicio,
+                sr.hora_fin,
+                sr.reserva_estado,
+                sr.observaciones,
+                sr.business_id,
+                sr.created_at,
+                sr.updated_at,
+                sr.agenda_id,
+                sr.sala_id,
+                s.sala_nombre,
+                sr.tarifa_id,
+                rp.first_name ||' - ' || rp.last_name as doctor,
+                rp2.first_name ||' - ' || rp2.last_name as paciente,
+                rs.serv_descripcion,
+                rs.serv_monto
+            FROM servicios_reservas sr 
+            INNER JOIN rh_doctors rd ON sr.doctor_id = rd.doctor_id 
+            INNER JOIN rh_person rp ON rd.person_id = rp.person_id 
+            INNER JOIN rh_person rp2 ON sr.paciente_id = rp2.person_id 
+            INNER JOIN rs_servicios rs ON sr.servicio_id = rs.serv_id 
+            inner join agendas_detalle ad on sr.agenda_id = ad.detalle_id 
+            inner join salas s on s.sala_id = ad.sala_id 
+            WHERE 1=1 AND sr.fecha_reserva BETWEEN :fecha_inicio AND :fecha_fin AND sr.reserva_estado = :estado ORDER BY sr.fecha_reserva DESC, sr.hora_inicio ASCmdlObtenerReservasPorFecha: Se encontraron 3 reservasmdlObtenerReservasPorFecha: Primera reserva: {"reserva_id":14,"servicio_id":1,"doctor_id":14,"paciente_id":51,"fecha_reserva":"2025-05-30","hora_inicio":"08:00:00","hora_fin":"08:30:00","reserva_estado":"PENDIENTE","observaciones":"dfsdfsdfsdfdsfdsfds","business_id":1,"created_at":"2025-05-29 22:28:24.249113","updated_at":null,"agenda_id":24,"sala_id":null,"sala_nombre":"Sala 1","tarifa_id":null,"doctor":"ronal - ricardo","paciente":"Mary - Riquelme","serv_descripcion":"Consulta m\u00e9dica general b\u00e1sica","serv_monto":"150000.00"}

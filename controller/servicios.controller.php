@@ -304,8 +304,7 @@ class ControladorServicios {
     static public function ctrObtenerProveedoresSeguro() {
         return ModelServicios::mdlObtenerProveedoresSeguro();
     }
-    
-    /**
+      /**
      * Busca reservas con filtros
      * @param string $fecha Fecha de reserva (opcional)
      * @param int $doctorId ID del doctor (opcional)
@@ -314,15 +313,35 @@ class ControladorServicios {
      * @return array Lista de reservas que coinciden con los filtros
      */
     static public function ctrBuscarReservas($fecha = null, $doctorId = null, $estado = null, $paciente = null) {
-        // Si se está filtrando por doctor, usamos la consulta optimizada
+        error_log("ctrBuscarReservas: Llamada con Fecha=" . ($fecha ?? "null") . 
+                 ", DoctorID=" . ($doctorId ?? "null") . 
+                 ", Estado=" . ($estado ?? "null") . 
+                 ", Paciente=" . ($paciente ?? "null"),
+                 3, "c:/laragon/www/clinica/logs/reservas.log");
+          // Si se está filtrando por doctor, usamos la consulta optimizada
         if ($doctorId !== null) {
             error_log("ctrBuscarReservas: Usando consulta específica para doctor_id=$doctorId", 
                      3, "c:/laragon/www/clinica/logs/reservas.log");
-            return ModelServicios::mdlBuscarReservasPorDoctor($doctorId, $fecha);
+            // Pasar todos los parámetros para filtrado completo
+            return ModelServicios::mdlBuscarReservasPorDoctor($doctorId, $fecha, $estado, $paciente);
         }
         
-        // En caso contrario, usamos la consulta general
-        return ModelServicios::mdlBuscarReservas($fecha, $doctorId, $estado, $paciente);
+        // Si se está filtrando solo por estado
+        if ($estado !== null && $estado !== '' && $doctorId === null) {
+            error_log("ctrBuscarReservas: Filtrando específicamente por estado=$estado", 
+                     3, "c:/laragon/www/clinica/logs/reservas.log");
+            return ModelServicios::mdlObtenerReservasPorFecha($fecha, $doctorId, $estado, $paciente);
+        }
+        
+        // Si se está filtrando solo por paciente
+        if ($paciente !== null && trim($paciente) !== '' && $doctorId === null && ($estado === null || $estado === '')) {
+            error_log("ctrBuscarReservas: Filtrando específicamente por paciente=$paciente", 
+                     3, "c:/laragon/www/clinica/logs/reservas.log");
+            return ModelServicios::mdlObtenerReservasPorFecha($fecha, $doctorId, $estado, $paciente);
+        }
+        
+        // En caso contrario, usamos la consulta general con todos los filtros
+        return ModelServicios::mdlObtenerReservasPorFecha($fecha, $doctorId, $estado, $paciente);
     }
     
     /**
