@@ -72,6 +72,7 @@ if (typeof inicializarSlotsPaginados !== 'function') {
                         `);
                     },
                     success: function(respuesta) {
+                        console.log("Respuesta de horarios:", respuesta);
                         if (respuesta.data && respuesta.data.length > 0) {
                             // Mostrar slots sin paginación
                             mostrarSlotsSimples(respuesta.data);

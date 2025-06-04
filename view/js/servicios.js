@@ -774,7 +774,7 @@ function cargarHorariosDisponibles(servicioId, doctorId, fecha) {
                     console.log("Valor de agenda_id:", primerSlot.agenda_id);
                 }
             }
-              if (respuesta.data && respuesta.data.length > 0) {
+            if (respuesta.data && respuesta.data.length > 0) {
                 // Construir la rejilla de slots horarios
                 const slots = respuesta.data;
                 const isSingleSlot = slots.length === 1; // Verificar si solo hay un slot

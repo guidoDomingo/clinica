@@ -78,6 +78,9 @@ if (isset($_POST['action'])) {
                 $servicioId = $_POST['servicio_id'];
                 $doctorId = $_POST['doctor_id'];
                 $fecha = $_POST['fecha'];
+
+               //agregar un log para verificar los datos recibidos
+                error_log("AJAX generarSlotsDisponibles: ServicioID=$servicioId, DoctorID=$doctorId, Fecha=$fecha", 3, 'c:/laragon/www/clinica/logs/slots.log');
                 
                 $slots = ControladorServicios::ctrGenerarSlotsDisponibles($servicioId, $doctorId, $fecha);
                 echo json_encode([

@@ -119,15 +119,15 @@ class ModelServicios {
         try {
             $stmt = Conexion::conectar()->prepare(
                 "SELECT 
-                    servicio_id, 
-                    servicio_codigo, 
-                    servicio_nombre, 
-                    duracion_minutos,
-                    precio_base
+                    serv_id as servicio_id, 
+                    serv_codigo as servicio_codigo, 
+                    serv_descripcion as servicio_nombre, 
+                    30 as duracion_minutos,
+                    serv_monto as precio_base
                 FROM 
                     rs_servicios
                 WHERE 
-                    servicio_id = :servicio_id"
+                    serv_id = :servicio_id"
             );
 
             $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
@@ -346,6 +346,10 @@ class ModelServicios {
             
             // Obtener el servicio para conocer su duración
             $servicio = self::mdlObtenerServicioPorId($servicioId);
+
+            if (!$servicio) {
+                error_log("ADVERTENCIA: Servicio ID {$servicioId} no encontrado. Usando duración predeterminada.", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            }
             
             // Duración predeterminada de 30 minutos si no se especifica o si el servicio no existe
             $duracionServicio = 30;
@@ -493,11 +497,10 @@ class ModelServicios {
         foreach ($horarios as $horario) {
             // Registrar el horario base completo
             error_log("Horario base: " . json_encode($horario), 3, 'c:/laragon/www/clinica/logs/servicios.log');
-            error_log("Agenda ID del horario base: " . ($horario['agenda_id'] ?? 'NULL'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
-            
-            // Convertir las cadenas de hora a objetos DateTime para manipulación
-            $horaInicio = new DateTime($horario['hora_inicio']);
-            $horaFin = new DateTime($horario['hora_fin']);
+            error_log("Agenda ID del horario base: " . ($horario['agenda_id'] ?? 'NULL'), 3, 'c:/laragon/www/clinica/logs/servicios.log');            // Convertir las cadenas de hora a objetos DateTime para manipulación
+            // Asegurar que las horas tengan la fecha correcta de la cita
+            $horaInicio = new DateTime($fecha . ' ' . $horario['hora_inicio']);
+            $horaFin = new DateTime($fecha . ' ' . $horario['hora_fin']);
             $intervaloMinutos = $horario['intervalo_minutos'] ?? 30;
             
             // Ajustar el intervalo según duración del servicio
@@ -505,22 +508,52 @@ class ModelServicios {
             
             // Crear una variable para llevar el seguimiento de la hora actual mientras generamos slots
             $horaActual = clone $horaInicio;
+
+            // Log detallado de las horas de inicio y fin
+            error_log("Hora de inicio: " . $horaInicio->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            error_log("Hora de fin: " . $horaFin->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            error_log("Intervalo efectivo: {$intervaloEfectivo} minutos", 3, 'c:/laragon/www/clinica/logs/servicios.log');
             
             // Generar slots mientras haya tiempo disponible
-            while ($horaActual < $horaFin) {
-                $slotInicio = clone $horaActual;
+            while ($horaActual < $horaFin) {                $slotInicio = clone $horaActual;
                 $slotFin = clone $horaActual;
                 $slotFin->add(new DateInterval('PT' . $duracionServicio . 'M'));
                 
-                // Verificar si este slot ya está reservado
-                $slotDisponible = true;
+                // Log para depuración de slots con fecha y hora completas
+                error_log("Generando slot: " . $slotInicio->format('Y-m-d H:i:s') . " - " . $slotFin->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
                 
-                // Comprobar la hora actual para evitar slots en el pasado
-                if ($fecha === date('Y-m-d')) {
-                    $horaActual = new DateTime();
-                    // Si el slot comienza en el pasado, no está disponible
-                    if ($slotInicio < $horaActual) {
+                // Verificar si este slot ya está reservado
+                $slotDisponible = true;                // Comprobar la hora actual para evitar slots en el pasado
+                $fechaHoySistema = date('Y-m-d');
+                $horaSistema = new DateTime();
+                $ahora = new DateTime(); // Momento actual completo
+                
+                // Crear fecha y hora completa para el slot
+                $slotDateTime = new DateTime($fecha . ' ' . $slotInicio->format('H:i:s'));
+                
+                error_log("Generando slot: " . $slotDateTime->format('Y-m-d H:i:s') . " - " . $fecha . " " . $slotFin->format('H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                error_log("Comparando slot: " . $slotDateTime->format('Y-m-d H:i:s') . " con ahora: " . $ahora->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                
+                // Verificamos sólo si la fecha del slot es igual a la fecha actual
+                if ($fecha === $fechaHoySistema) {
+                    // Solo para el día actual, comprobamos que la hora no esté en el pasado
+                    if ($slotDateTime < $ahora) {
+                        error_log("Slot descartado por estar en el pasado (fecha/hora actual: " . $ahora->format('Y-m-d H:i:s') . ")", 3, 'c:/laragon/www/clinica/logs/servicios.log');
                         $slotDisponible = false;
+                    } else {
+                        error_log("Slot en el futuro para hoy, disponible por tiempo", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                    }
+                } else {
+                    // Si es un día diferente al actual, comprobamos si es futuro o pasado
+                    $fechaSlot = new DateTime($fecha);
+                    $fechaActual = new DateTime($fechaHoySistema);
+                    
+                    if ($fechaSlot < $fechaActual) {
+                        error_log("Slot descartado porque la fecha es anterior a hoy", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                        $slotDisponible = false;
+                    } else {
+                        error_log("Slot para fecha futura (" . $fecha . "), disponible", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                        // Para fechas futuras, siempre disponible sin importar la hora
                     }
                 }
                 
@@ -557,8 +590,7 @@ class ModelServicios {
                 if ($slotDisponible && $slotFin <= $horaFin) {
                     // Log detallado para agenda_id antes de construir el slot
                     error_log("Construyendo slot - Usando agenda_id: " . ($horario['agenda_id'] ?? 'NULL'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
-                    
-                    $slotsDisponibles[] = [
+                      $slotsDisponibles[] = [
                         'agenda_id' => $horario['agenda_id'],
                         'horario_id' => $horario['horario_id'],
                         'turno_id' => $horario['turno_id'],
@@ -567,15 +599,17 @@ class ModelServicios {
                         'sala_nombre' => $horario['sala_nombre'],
                         'doctor_id' => $horario['doctor_id'],
                         'nombre_doctor' => $horario['nombre_doctor'],
+                        'fecha_reserva' => $fecha,
                         'hora_inicio' => $slotInicio->format('H:i:s'),
                         'hora_fin' => $slotFin->format('H:i:s'),
                         'duracion_minutos' => $duracionServicio,
                         'tipo_horario' => 'NORMAL',
                     ];
-                }
-                  // Avanzar al siguiente slot
-                $horaActual = clone $slotInicio;
+                }                // Avanzar al siguiente slot (usamos directamente el intervalo efectivo)
+                // CORREGIDO: Avanzamos desde la hora actual, no desde el inicio del slot
                 $horaActual->add(new DateInterval('PT' . $intervaloEfectivo . 'M'));
+                // Log para depurar el avance de slots
+                error_log("Avanzando al siguiente slot: " . $horaActual->format('H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
             }        }
         
         // Agregar información de log sobre los slots generados
@@ -1514,6 +1548,7 @@ class ModelServicios {
             // Bindear los parámetros obligatorios
             $stmt->bindParam(":servicio_id", $datos['servicio_id'], PDO::PARAM_INT);
             $stmt->bindParam(":doctor_id", $datos['doctor_id'], PDO::PARAM_INT);
+
             $stmt->bindParam(":paciente_id", $datos['paciente_id'], PDO::PARAM_INT);
             $stmt->bindParam(":fecha_reserva", $datos['fecha_reserva'], PDO::PARAM_STR);
             $stmt->bindParam(":hora_inicio", $datos['hora_inicio'], PDO::PARAM_STR);
