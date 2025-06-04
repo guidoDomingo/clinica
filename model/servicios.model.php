@@ -339,10 +339,15 @@ class ModelServicios {
      * @param int $servicioId ID del servicio
      * @param int $doctorId ID del doctor
      * @param string $fecha Fecha para la verificación (formato YYYY-MM-DD)
-     * @return array Listado de slots de horarios
-     */    static public function mdlGenerarSlotsDisponibles($servicioId, $doctorId, $fecha) {
+     * @return array Listado de slots de horarios     */    static public function mdlGenerarSlotsDisponibles($servicioId, $doctorId, $fecha) {
         try {
+            // Asegurarnos de que la zona horaria esté correctamente configurada
+            date_default_timezone_set('America/Caracas');
+            $horaServidor = date('Y-m-d H:i:s');
+            $zonaTiempo = date_default_timezone_get();
+            
             error_log("Generando slots disponibles para - ServicioID: {$servicioId}, DoctorID: {$doctorId}, Fecha: {$fecha}", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            error_log("Hora actual del servidor: {$horaServidor}, Zona horaria: {$zonaTiempo}", 3, 'c:/laragon/www/clinica/logs/servicios.log');
             
             // Obtener el servicio para conocer su duración
             $servicio = self::mdlObtenerServicioPorId($servicioId);
@@ -521,24 +526,31 @@ class ModelServicios {
                 
                 // Log para depuración de slots con fecha y hora completas
                 error_log("Generando slot: " . $slotInicio->format('Y-m-d H:i:s') . " - " . $slotFin->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                  // Verificar si este slot ya está reservado
+                $slotDisponible = true;
                 
-                // Verificar si este slot ya está reservado
-                $slotDisponible = true;                // Comprobar la hora actual para evitar slots en el pasado
+                // Comprobar la hora actual para evitar slots en el pasado
                 $fechaHoySistema = date('Y-m-d');
-                $horaSistema = new DateTime();
-                $ahora = new DateTime(); // Momento actual completo
+                // Asegurarnos de usar la hora exacta del servidor con timezone adecuado
+                date_default_timezone_set('America/Caracas'); // Confirmar que esté configurada correctamente
+                $ahora = new DateTime(); // Momento actual completo con la zona horaria correcta
                 
                 // Crear fecha y hora completa para el slot
                 $slotDateTime = new DateTime($fecha . ' ' . $slotInicio->format('H:i:s'));
                 
+                // Agregar 5 minutos de margen al horario actual para evitar reservas demasiado justas
+                $ahoraConMargen = clone $ahora;
+                $ahoraConMargen->add(new DateInterval('PT5M')); // Añade 5 minutos
+                
                 error_log("Generando slot: " . $slotDateTime->format('Y-m-d H:i:s') . " - " . $fecha . " " . $slotFin->format('H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
-                error_log("Comparando slot: " . $slotDateTime->format('Y-m-d H:i:s') . " con ahora: " . $ahora->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                error_log("Comparando slot: " . $slotDateTime->format('Y-m-d H:i:s') . " con ahora (+5min): " . $ahoraConMargen->format('Y-m-d H:i:s'), 3, 'c:/laragon/www/clinica/logs/servicios.log');
                 
                 // Verificamos sólo si la fecha del slot es igual a la fecha actual
                 if ($fecha === $fechaHoySistema) {
                     // Solo para el día actual, comprobamos que la hora no esté en el pasado
-                    if ($slotDateTime < $ahora) {
-                        error_log("Slot descartado por estar en el pasado (fecha/hora actual: " . $ahora->format('Y-m-d H:i:s') . ")", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                    // Usamos la hora actual más el margen para filtrar
+                    if ($slotDateTime < $ahoraConMargen) {
+                        error_log("Slot descartado por estar en el pasado o demasiado próximo (fecha/hora actual+5min: " . $ahoraConMargen->format('Y-m-d H:i:s') . ")", 3, 'c:/laragon/www/clinica/logs/servicios.log');
                         $slotDisponible = false;
                     } else {
                         error_log("Slot en el futuro para hoy, disponible por tiempo", 3, 'c:/laragon/www/clinica/logs/servicios.log');

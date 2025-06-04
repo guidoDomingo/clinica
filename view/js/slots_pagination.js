@@ -33,17 +33,61 @@ function inicializarSlotsPaginados(slots) {
  * Muestra los slots de la página actual
  */
 function mostrarSlotsPaginados() {
+    // Filtrar los slots que ya pasaron en el día actual
+    let slotsValidos = todosLosSlots.filter(function(slot) {
+        // Solo aplicamos el filtro adicional si es para el día actual
+        const ahora = new Date();
+        const fechaHoy = ahora.toISOString().split('T')[0]; // YYYY-MM-DD
+        const fechaSlot = slot.fecha_reserva || fechaHoy;
+        
+        if (fechaSlot === fechaHoy) {
+            // Si es para hoy, comprobamos que la hora no haya pasado
+            const horaActual = ahora.getHours();
+            const minutosActuales = ahora.getMinutes();
+            
+            const horaInicioSlot = parseInt(slot.hora_inicio.substring(0, 2), 10);
+            const minutosInicioSlot = parseInt(slot.hora_inicio.substring(3, 5), 10);
+            
+            // Añadimos un margen de 5 minutos
+            if (horaInicioSlot < horaActual || 
+                (horaInicioSlot === horaActual && minutosInicioSlot <= minutosActuales + 5)) {
+                console.log("Slot descartado por tiempo:", slot.hora_inicio);
+                return false;
+            }
+        }
+        return true;
+    });
+    
+    // Si no quedan slots válidos después del filtrado
+    if (slotsValidos.length === 0) {
+        $('#slotsPaginados').html(`
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock"></i> 
+                    No hay horarios disponibles para este momento. Los horarios mostrados ya han pasado.
+                </div>
+            </div>
+        `);
+        $('#slotsPagination').hide();
+        return;
+    }
+    
+    // Recalcular paginación con los slots filtrados
+    totalPaginas = Math.ceil(slotsValidos.length / slotsPorPagina);
+    if (paginaActual > totalPaginas) paginaActual = 1;
+    
     // Calcular índices para la paginación
     const inicio = (paginaActual - 1) * slotsPorPagina;
-    const fin = Math.min(inicio + slotsPorPagina, todosLosSlots.length);
+    const fin = Math.min(inicio + slotsPorPagina, slotsValidos.length);
     
     // Obtener los slots para esta página
-    const slotsPagina = todosLosSlots.slice(inicio, fin);
+    const slotsPagina = slotsValidos.slice(inicio, fin);
     
     // Construir HTML
     let html = '<div class="row">';
     
-    slotsPagina.forEach(function(slot) {        // Determinar si el slot está disponible
+    slotsPagina.forEach(function(slot) {
+        // Determinar si el slot está disponible
         const disponible = slot.disponible !== false; // Por defecto, asumimos disponible
         const claseDisponibilidad = disponible ? '' : 'no-disponible';
         
