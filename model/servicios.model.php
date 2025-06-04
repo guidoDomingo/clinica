@@ -2001,11 +2001,11 @@ class ModelServicios {
             // Asegurar de tener valores para los campos requeridos
             $datos['business_id'] = $_SESSION['business_id'] ?? 1;
             $datos['user_id'] = $_SESSION['id_usuario'] ?? 1;
-            
-            $stmt->bindParam(":codigo", $datos['serv_codigo'], PDO::PARAM_STR);
+              $stmt->bindParam(":codigo", $datos['serv_codigo'], PDO::PARAM_STR);
             $stmt->bindParam(":descripcion", $datos['serv_descripcion'], PDO::PARAM_STR);
             $stmt->bindParam(":descripcion_factura", $datos['serv_descripcion'], PDO::PARAM_STR); // Usamos la misma descripción
             $stmt->bindParam(":monto", $datos['serv_monto'], PDO::PARAM_STR);
+            $stmt->bindParam(":duracion", $datos['serv_tte'], PDO::PARAM_STR);
             $stmt->bindParam(":tipo_servicio", $datos['tserv_cod'], PDO::PARAM_INT);
             $stmt->bindParam(":estado", $datos['is_active'], PDO::PARAM_BOOL);
             $stmt->bindParam(":user_id", $datos['user_id'], PDO::PARAM_INT);
@@ -2042,16 +2042,17 @@ class ModelServicios {
                 serv_descripcion = :descripcion,
                 serv_descripcion_factura = :descripcion_factura,
                 serv_monto = :monto,
+                serv_tte = :duracion,
                 tserv_cod = :tipo_servicio,
                 is_active = :estado
             WHERE serv_id = :id"
             );
-            
-            $stmt->bindParam(":id", $datos['serv_id'], PDO::PARAM_INT);
+              $stmt->bindParam(":id", $datos['serv_id'], PDO::PARAM_INT);
             $stmt->bindParam(":codigo", $datos['serv_codigo'], PDO::PARAM_STR);
             $stmt->bindParam(":descripcion", $datos['serv_descripcion'], PDO::PARAM_STR);
-            $stmt->bindParam(":descripcion_factura", $datos['serv_descripcion'], PDO::PARAM_STR); // Usamos la misma descripción
+            $stmt->bindParam(":descripcion_factura", $datos['serv_descripcion'], PDO::PARAM_STR); // Usamos la misma descripción 
             $stmt->bindParam(":monto", $datos['serv_monto'], PDO::PARAM_STR);
+            $stmt->bindParam(":duracion", $datos['serv_tte'], PDO::PARAM_STR);
             $stmt->bindParam(":tipo_servicio", $datos['tserv_cod'], PDO::PARAM_INT);
             $stmt->bindParam(":estado", $datos['is_active'], PDO::PARAM_BOOL);
             

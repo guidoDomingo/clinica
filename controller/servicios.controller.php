@@ -352,3 +352,4 @@ class ControladorServicios {
         return ModelServicios::mdlObtenerMedicos();
     }
 }
+

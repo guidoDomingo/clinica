@@ -67,11 +67,12 @@
     <script src="view/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="view/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
     <script src="view/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="view/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <!-- SweetAlert2  -->
+    <script src="view/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>    <!-- SweetAlert2  -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Toastr -->
     <script src="view/plugins/toastr/toastr.min.js"></script>
+    <!-- Alertify compatibility layer -->
+    <script src="view/plugins/alertify/alertify.js"></script>
     <!-- Moment.js -->
     <script src="view/plugins/moment/moment.min.js"></script>
     <!-- Tempus Dominus Bootstrap 4 (DateTimePicker) -->
