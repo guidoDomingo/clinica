@@ -72,6 +72,12 @@
                         <p>Servicios</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="index.php?ruta=rs_servicios" class="nav-link">
+                        <i class="nav-icon fas fa-briefcase-medical"></i>
+                        <p>Gestión de Servicios</p>
+                    </a>
+                </li>
                 <li class="nav-header">CONFIGURACIÓN</li>
                 <li class="nav-item">
                     <a href="index.php?ruta=roles" class="nav-link">

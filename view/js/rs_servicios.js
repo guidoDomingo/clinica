@@ -1,0 +1,438 @@
+/**
+ * Script para manejar el CRUD de servicios (rs_servicios)
+ * Este archivo maneja las operaciones de crear, leer, actualizar y eliminar servicios
+ */
+
+// Variables globales
+let tablaServicios;
+let tablaTipos;
+
+// Inicializar cuando el documento esté listo
+$(document).ready(function() {
+    console.log("Inicializando rs_servicios.js");
+      // Inicializar la tabla de servicios con DataTables
+    tablaServicios = $('#tblServicios').DataTable({
+        "ajax": {
+            "url": "ajax/rs_servicios.ajax.php",
+            "type": "POST",
+            "data": function(d) {
+                d.accion = "listar";
+            },
+            "dataSrc": ""
+        },        "columns": [
+            {"data": "serv_id"},
+            {"data": "serv_codigo"},
+            {"data": "serv_descripcion"},
+            {"data": "categoria_nombre"},
+            {"data": null, "render": function(data) {
+                return data.serv_tte || "30 min";
+            }},
+            {
+                "data": "serv_monto",
+                "render": function(data) {
+                    return parseFloat(data).toFixed(2);
+                }
+            },
+            {
+                "data": "is_active",
+                "render": function(data) {
+                    return data == true ? 
+                        '<span class="badge badge-success">Activo</span>' : 
+                        '<span class="badge badge-danger">Inactivo</span>';
+                }
+            },
+            {
+                "defaultContent": `
+                <div class='btn-group'>
+                    <button class='btn btn-info btn-sm btnEditar'>
+                        <i class='fas fa-edit'></i>
+                    </button>
+                    <button class='btn btn-danger btn-sm btnEliminar'>
+                        <i class='fas fa-trash-alt'></i>
+                    </button>
+                </div>`,
+                "orderable": false
+            }
+        ],
+        "responsive": true,
+        "autoWidth": false,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+        },
+        "order": [[0, 'desc']]
+    });
+    
+    // Evento para abrir el modal de agregar servicio
+    $("#modalAgregarServicio").click(function() {
+        $("#servicioForm")[0].reset();
+        cargarTiposServicio();
+        $("#modalAgregarServicios").modal("show");
+    });
+    
+    // Evento para abrir el modal de gestionar tipos
+    $("#modalGestionarTipos").click(function() {
+        cargarTablaTipos();
+        $("#modalTiposServicio").modal("show");
+    });
+    
+    // Evento para guardar nuevo servicio
+    $("#btnGuardarServicio").click(function() {
+        guardarServicio();
+    });
+    
+    // Evento para editar servicio
+    $("#tblServicios").on("click", ".btnEditar", function() {
+        let data = tablaServicios.row($(this).parents("tr")).data();
+        editarServicio(data);
+    });
+      // Evento para eliminar servicio
+    $("#tblServicios").on("click", ".btnEliminar", function() {
+        let data = tablaServicios.row($(this).parents("tr")).data();
+        eliminarServicio(data.serv_id);
+    });
+    
+    // Evento para guardar servicio editado
+    $("#btnEditarServicio").click(function() {
+        actualizarServicio();
+    });
+    
+    // Evento para filtrar servicios
+    $("#btnFiltrarServicios").click(function() {
+        filtrarServicios();
+    });
+    
+    // Evento para limpiar filtros
+    $("#btnLimpiarServicios").click(function() {
+        limpiarFiltros();
+    });
+    
+    // Evento para agregar nuevo tipo
+    $("#btnAgregarTipo").click(function() {
+        agregarTipoServicio();
+    });
+});
+
+// Función para cargar tipos de servicio en select
+function cargarTiposServicio() {    $.ajax({
+        url: "ajax/rs_servicios.ajax.php",
+        type: "POST",
+        data: {
+            accion: "listarTipos"
+        },
+        dataType: "json",
+        success: function(respuesta) {
+            // Limpiar select
+            $("#servTipo").html('<option value="" selected>Seleccionar...</option>');
+            $("#EditServTipo").html('<option value="" selected>Seleccionar...</option>');
+            
+            // Agregar opciones
+            respuesta.forEach(function(tipo) {
+                $("#servTipo").append('<option value="' + tipo.tserv_cod + '">' + tipo.servicio + '</option>');
+                $("#EditServTipo").append('<option value="' + tipo.tserv_cod + '">' + tipo.servicio + '</option>');
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cargar tipos de servicio:", error);
+            alertify.error("Error al cargar tipos de servicio");
+        }
+    });
+}
+
+// Función para cargar tabla de tipos
+function cargarTablaTipos() {
+    if (tablaTipos) {
+        tablaTipos.destroy();
+    }
+      tablaTipos = $('#tblTiposServicio').DataTable({
+        "ajax": {
+            "url": "ajax/rs_servicios.ajax.php",
+            "type": "POST",
+            "data": {
+                accion: "listarTipos"
+            },
+            "dataSrc": ""
+        },
+        "columns": [
+            {"data": "tserv_cod"},
+            {"data": "servicio"},
+            {
+                "defaultContent": `
+                <div class='btn-group'>
+                    <button class='btn btn-warning btn-sm btnEditarTipo'>
+                        <i class='fas fa-edit'></i>
+                    </button>
+                    <button class='btn btn-danger btn-sm btnEliminarTipo'>
+                        <i class='fas fa-trash-alt'></i>
+                    </button>
+                </div>`,
+                "orderable": false
+            }
+        ],
+        "responsive": true,
+        "autoWidth": false,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+        }
+    });
+    
+    // Evento para editar tipo
+    $("#tblTiposServicio").on("click", ".btnEditarTipo", function() {
+        let data = tablaTipos.row($(this).parents("tr")).data();
+        editarTipoServicio(data);
+    });
+    
+    // Evento para eliminar tipo
+    $("#tblTiposServicio").on("click", ".btnEliminarTipo", function() {
+        let data = tablaTipos.row($(this).parents("tr")).data();
+        eliminarTipoServicio(data.tserv_cod);
+    });
+}
+
+// Función para guardar servicio
+function guardarServicio() {
+    let servicio = {
+        serv_codigo: $("#servCodigo").val(),
+        tserv_cod: $("#servTipo").val(),
+        serv_descripcion: $("#servDescripcion").val(),
+        serv_tte: $("#servDuracion").val(),
+        serv_monto: $("#servPrecio").val(),
+        is_active: $("#servEstado").val()
+    };
+    
+    // Validación básica
+    if (!servicio.serv_codigo || !servicio.tserv_cod || !servicio.serv_descripcion) {
+        alertify.error("Todos los campos marcados son obligatorios");
+        return;
+    }
+      $.ajax({
+        url: "ajax/rs_servicios.ajax.php",
+        type: "POST",
+        data: {
+            accion: "crear",
+            servicio: servicio
+        },
+        dataType: "json",
+        success: function(respuesta) {
+            if (respuesta.exito) {
+                $("#modalAgregarServicios").modal("hide");
+                tablaServicios.ajax.reload();
+                alertify.success("Servicio registrado correctamente");
+            } else {
+                alertify.error(respuesta.mensaje || "Error al registrar servicio");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al guardar servicio:", error);
+            alertify.error("Error al guardar servicio");
+        }
+    });
+}
+
+// Función para editar servicio
+function editarServicio(data) {
+    $("#idServicio").val(data.serv_id);
+    $("#EditServCodigo").val(data.serv_codigo);
+    $("#EditServTipo").val(data.tserv_cod);
+    $("#EditServDescripcion").val(data.serv_descripcion);
+    $("#EditServDuracion").val(data.serv_tte || "30");
+    $("#EditServPrecio").val(data.serv_monto);
+    $("#EditServEstado").val(data.is_active.toString());
+    
+    cargarTiposServicio();
+    $("#modalEditarServicios").modal("show");
+}
+
+// Función para actualizar servicio
+function actualizarServicio() {
+    let servicio = {
+        serv_id: $("#idServicio").val(),
+        serv_codigo: $("#EditServCodigo").val(),
+        tserv_cod: $("#EditServTipo").val(),
+        serv_descripcion: $("#EditServDescripcion").val(),
+        serv_tte: $("#EditServDuracion").val(),
+        serv_monto: $("#EditServPrecio").val(),
+        is_active: $("#EditServEstado").val()
+    };
+    
+    // Validación básica
+    if (!servicio.serv_codigo || !servicio.tserv_cod || !servicio.serv_descripcion) {
+        alertify.error("Todos los campos marcados son obligatorios");
+        return;
+    }
+      $.ajax({
+        url: "ajax/rs_servicios.ajax.php",
+        type: "POST",
+        data: {
+            accion: "actualizar",
+            servicio: servicio
+        },
+        dataType: "json",
+        success: function(respuesta) {
+            if (respuesta.exito) {
+                $("#modalEditarServicios").modal("hide");
+                tablaServicios.ajax.reload();
+                alertify.success("Servicio actualizado correctamente");
+            } else {
+                alertify.error(respuesta.mensaje || "Error al actualizar servicio");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al actualizar servicio:", error);
+            alertify.error("Error al actualizar servicio");
+        }
+    });
+}
+
+// Función para eliminar servicio
+function eliminarServicio(id) {
+    alertify.confirm(
+        "Eliminar servicio", 
+        "¿Está seguro de eliminar este servicio?",
+        function() {            $.ajax({
+                url: "ajax/rs_servicios.ajax.php",
+                type: "POST",
+                data: {
+                    accion: "eliminar",
+                    id: id
+                },
+                dataType: "json",
+                success: function(respuesta) {
+                    if (respuesta.exito) {
+                        tablaServicios.ajax.reload();
+                        alertify.success("Servicio eliminado correctamente");
+                    } else {
+                        alertify.error(respuesta.mensaje || "Error al eliminar servicio");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al eliminar servicio:", error);
+                    alertify.error("Error al eliminar servicio");
+                }
+            });
+        },
+        function() {
+            // Cancelar eliminación
+        }
+    );
+}
+
+// Función para filtrar servicios
+function filtrarServicios() {
+    tablaServicios.ajax.reload();
+}
+
+// Función para limpiar filtros
+function limpiarFiltros() {
+    $("#validarCodigo").val("");
+    $("#validarDescripcion").val("");
+    $("#validarTipoServicio").val("0");
+    tablaServicios.ajax.reload();
+}
+
+// Función para agregar nuevo tipo de servicio
+function agregarTipoServicio() {
+    let nuevoTipo = $("#nuevoTipoServicio").val();
+    
+    if (!nuevoTipo) {
+        alertify.error("Ingrese el nombre del tipo de servicio");
+        return;
+    }
+      $.ajax({
+        url: "ajax/rs_servicios.ajax.php",
+        type: "POST",
+        data: {
+            accion: "crearTipo",
+            nombre: nuevoTipo
+        },
+        dataType: "json",
+        success: function(respuesta) {
+            if (respuesta.exito) {
+                $("#nuevoTipoServicio").val("");
+                tablaTipos.ajax.reload();
+                cargarTiposServicio();
+                alertify.success("Tipo de servicio agregado correctamente");
+            } else {
+                alertify.error(respuesta.mensaje || "Error al agregar tipo de servicio");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al agregar tipo de servicio:", error);
+            alertify.error("Error al agregar tipo de servicio");
+        }
+    });
+}
+
+// Función para editar tipo de servicio
+function editarTipoServicio(data) {
+    alertify.prompt(
+        "Editar tipo de servicio", 
+        "Nombre del tipo de servicio", 
+        data.servicio,
+        function(evt, value) {
+            if (!value) {
+                alertify.error("Ingrese el nombre del tipo de servicio");
+                return;
+            }
+              $.ajax({
+                url: "ajax/rs_servicios.ajax.php",
+                type: "POST",
+                data: {
+                    accion: "actualizarTipo",
+                    id: data.tserv_cod,
+                    nombre: value
+                },
+                dataType: "json",
+                success: function(respuesta) {
+                    if (respuesta.exito) {
+                        tablaTipos.ajax.reload();
+                        cargarTiposServicio();
+                        alertify.success("Tipo de servicio actualizado correctamente");
+                    } else {
+                        alertify.error(respuesta.mensaje || "Error al actualizar tipo de servicio");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al actualizar tipo de servicio:", error);
+                    alertify.error("Error al actualizar tipo de servicio");
+                }
+            });
+        },
+        function() {
+            // Cancelar edición
+        }
+    );
+}
+
+// Función para eliminar tipo de servicio
+function eliminarTipoServicio(id) {
+    alertify.confirm(
+        "Eliminar tipo de servicio", 
+        "¿Está seguro de eliminar este tipo de servicio? Esta acción podría afectar a los servicios asociados.",
+        function() {            $.ajax({
+                url: "ajax/rs_servicios.ajax.php",
+                type: "POST",
+                data: {
+                    accion: "eliminarTipo",
+                    id: id
+                },
+                dataType: "json",
+                success: function(respuesta) {
+                    if (respuesta.exito) {
+                        tablaTipos.ajax.reload();
+                        cargarTiposServicio();
+                        alertify.success("Tipo de servicio eliminado correctamente");
+                    } else {
+                        alertify.error(respuesta.mensaje || "Error al eliminar tipo de servicio");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al eliminar tipo de servicio:", error);
+                    alertify.error("Error al eliminar tipo de servicio");
+                }
+            });
+        },
+        function() {
+            // Cancelar eliminación
+        }
+    );
+}

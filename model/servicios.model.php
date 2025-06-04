@@ -1904,4 +1904,389 @@ class ModelServicios {
             return [];
         }
     }
+
+    /**
+     * Obtiene todos los servicios de la tabla rs_servicios
+     * @return array Listado de servicios
+     */
+    static public function mdlObtenerTodosRsServicios() {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT 
+                rs.serv_id, 
+                rs.serv_codigo, 
+                rs.serv_descripcion,
+                rs.serv_descripcion_factura,
+                rs.serv_monto,
+                rs.serv_tte,
+                rs.serv_rtte,
+                rs.serv_uso_equipo,
+                rs.serv_der_sala,
+                rs.tserv_cod,
+                rs.is_active,
+                rst.servicio as categoria_nombre
+            FROM 
+                rs_servicios rs
+            INNER JOIN 
+                rs_servicios_tipos rst ON rs.tserv_cod = rst.tserv_cod
+            ORDER BY 
+                rs.serv_id DESC"
+            );
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            error_log("Error en mdlObtenerTodosRsServicios: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene los tipos de servicios
+     * @return array Listado de tipos de servicios
+     */
+    static public function mdlObtenerTiposRsServicio() {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT 
+                tserv_cod,
+                servicio
+            FROM 
+                rs_servicios_tipos
+            WHERE 
+                is_active = true
+            ORDER BY 
+                servicio"
+            );
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            error_log("Error en mdlObtenerTiposRsServicio: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Crea un nuevo servicio
+     * @param array $datos Datos del servicio
+     * @return array Respuesta de la operación
+     */
+    static public function mdlCrearRsServicio($datos) {
+        try {
+            $db = Conexion::conectar();
+            $stmt = $db->prepare(                "INSERT INTO rs_servicios (
+                serv_codigo, 
+                serv_descripcion, 
+                serv_descripcion_factura,
+                serv_monto,
+                serv_tte,
+                tserv_cod,
+                is_active,
+                user_id,
+                business_id
+            ) VALUES (
+                :codigo,
+                :descripcion,
+                :descripcion_factura,
+                :monto,
+                :duracion,
+                :tipo_servicio,
+                :estado,
+                :user_id,
+                :business_id
+            ) RETURNING serv_id"
+            );
+            
+            // Asegurar de tener valores para los campos requeridos
+            $datos['business_id'] = $_SESSION['business_id'] ?? 1;
+            $datos['user_id'] = $_SESSION['id_usuario'] ?? 1;
+            
+            $stmt->bindParam(":codigo", $datos['serv_codigo'], PDO::PARAM_STR);
+            $stmt->bindParam(":descripcion", $datos['serv_descripcion'], PDO::PARAM_STR);
+            $stmt->bindParam(":descripcion_factura", $datos['serv_descripcion'], PDO::PARAM_STR); // Usamos la misma descripción
+            $stmt->bindParam(":monto", $datos['serv_monto'], PDO::PARAM_STR);
+            $stmt->bindParam(":tipo_servicio", $datos['tserv_cod'], PDO::PARAM_INT);
+            $stmt->bindParam(":estado", $datos['is_active'], PDO::PARAM_BOOL);
+            $stmt->bindParam(":user_id", $datos['user_id'], PDO::PARAM_INT);
+            $stmt->bindParam(":business_id", $datos['business_id'], PDO::PARAM_INT);
+            
+            $stmt->execute();
+            $idServicio = $stmt->fetchColumn();
+            
+            return [
+                'exito' => true,
+                'mensaje' => 'Servicio creado correctamente',
+                'id' => $idServicio
+            ];
+        } catch(PDOException $e) {
+            error_log("Error en mdlCrearRsServicio: " . $e->getMessage());
+            return [
+                'exito' => false,
+                'mensaje' => 'Error al crear el servicio: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Actualiza un servicio existente
+     * @param array $datos Datos del servicio
+     * @return array Respuesta de la operación
+     */
+    static public function mdlActualizarRsServicio($datos) {
+        try {
+            $db = Conexion::conectar();
+            $stmt = $db->prepare(
+                "UPDATE rs_servicios SET
+                serv_codigo = :codigo,
+                serv_descripcion = :descripcion,
+                serv_descripcion_factura = :descripcion_factura,
+                serv_monto = :monto,
+                tserv_cod = :tipo_servicio,
+                is_active = :estado
+            WHERE serv_id = :id"
+            );
+            
+            $stmt->bindParam(":id", $datos['serv_id'], PDO::PARAM_INT);
+            $stmt->bindParam(":codigo", $datos['serv_codigo'], PDO::PARAM_STR);
+            $stmt->bindParam(":descripcion", $datos['serv_descripcion'], PDO::PARAM_STR);
+            $stmt->bindParam(":descripcion_factura", $datos['serv_descripcion'], PDO::PARAM_STR); // Usamos la misma descripción
+            $stmt->bindParam(":monto", $datos['serv_monto'], PDO::PARAM_STR);
+            $stmt->bindParam(":tipo_servicio", $datos['tserv_cod'], PDO::PARAM_INT);
+            $stmt->bindParam(":estado", $datos['is_active'], PDO::PARAM_BOOL);
+            
+            $stmt->execute();
+            
+            return [
+                'exito' => true,
+                'mensaje' => 'Servicio actualizado correctamente'
+            ];
+        } catch(PDOException $e) {
+            error_log("Error en mdlActualizarRsServicio: " . $e->getMessage());
+            return [
+                'exito' => false,
+                'mensaje' => 'Error al actualizar el servicio: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Elimina un servicio (desactivación lógica)
+     * @param int $id ID del servicio
+     * @return array Respuesta de la operación
+     */
+    static public function mdlEliminarRsServicio($id) {
+        try {
+            $db = Conexion::conectar();
+            $stmt = $db->prepare(
+                "UPDATE rs_servicios SET
+                is_active = false
+            WHERE serv_id = :id"
+            );
+            
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return [
+                'exito' => true,
+                'mensaje' => 'Servicio eliminado correctamente'
+            ];
+        } catch(PDOException $e) {
+            error_log("Error en mdlEliminarRsServicio: " . $e->getMessage());
+            return [
+                'exito' => false,
+                'mensaje' => 'Error al eliminar el servicio: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Crea un nuevo tipo de servicio
+     * @param string $nombre Nombre del tipo de servicio
+     * @return array Respuesta de la operación
+     */
+    static public function mdlCrearTipoRsServicio($nombre) {
+        try {
+            $db = Conexion::conectar();
+            $stmt = $db->prepare(
+                "INSERT INTO rs_servicios_tipos (
+                servicio,
+                is_active,
+                user_id,
+                business_id
+            ) VALUES (
+                :nombre,
+                true,
+                :user_id,
+                :business_id
+            ) RETURNING tserv_cod"
+            );
+            
+            $userId = $_SESSION['id_usuario'] ?? 1;
+            $businessId = $_SESSION['business_id'] ?? 1;
+            
+            $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
+            $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
+            $stmt->bindParam(":business_id", $businessId, PDO::PARAM_INT);
+            
+            $stmt->execute();
+            $idTipo = $stmt->fetchColumn();
+            
+            return [
+                'exito' => true,
+                'mensaje' => 'Tipo de servicio creado correctamente',
+                'id' => $idTipo
+            ];
+        } catch(PDOException $e) {
+            error_log("Error en mdlCrearTipoRsServicio: " . $e->getMessage());
+            return [
+                'exito' => false,
+                'mensaje' => 'Error al crear el tipo de servicio: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Actualiza un tipo de servicio
+     * @param int $id ID del tipo
+     * @param string $nombre Nuevo nombre
+     * @return array Respuesta de la operación
+     */
+    static public function mdlActualizarTipoRsServicio($id, $nombre) {
+        try {
+            $db = Conexion::conectar();
+            $stmt = $db->prepare(
+                "UPDATE rs_servicios_tipos SET
+                servicio = :nombre
+            WHERE tserv_cod = :id"
+            );
+            
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
+            
+            $stmt->execute();
+            
+            return [
+                'exito' => true,
+                'mensaje' => 'Tipo de servicio actualizado correctamente'
+            ];
+        } catch(PDOException $e) {
+            error_log("Error en mdlActualizarTipoRsServicio: " . $e->getMessage());
+            return [
+                'exito' => false,
+                'mensaje' => 'Error al actualizar el tipo de servicio: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Elimina un tipo de servicio (desactivación lógica)
+     * @param int $id ID del tipo
+     * @return array Respuesta de la operación
+     */
+    static public function mdlEliminarTipoRsServicio($id) {
+        try {
+            // Primero verificamos si hay servicios usando este tipo
+            $db = Conexion::conectar();
+            $stmt = $db->prepare(
+                "SELECT COUNT(*) FROM rs_servicios WHERE tserv_cod = :id AND is_active = true"
+            );
+            
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            
+            if ($count > 0) {
+                return [
+                    'exito' => false,
+                    'mensaje' => 'No se puede eliminar este tipo porque está siendo utilizado por ' . $count . ' servicio(s)'
+                ];
+            }
+            
+            // Si no hay servicios asociados, procedemos a desactivar
+            $stmt = $db->prepare(
+                "UPDATE rs_servicios_tipos SET
+                is_active = false
+            WHERE tserv_cod = :id"
+            );
+            
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return [
+                'exito' => true,
+                'mensaje' => 'Tipo de servicio eliminado correctamente'
+            ];
+        } catch(PDOException $e) {
+            error_log("Error en mdlEliminarTipoRsServicio: " . $e->getMessage());
+            return [
+                'exito' => false,
+                'mensaje' => 'Error al eliminar el tipo de servicio: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Filtra servicios según criterios
+     * @param array $filtros Criterios de filtrado
+     * @return array Listado filtrado de servicios
+     */
+    static public function mdlFiltrarRsServicios($filtros) {
+        try {
+            $condiciones = [];
+            $parametros = [];
+            
+            // Construir condiciones de filtrado
+            if (!empty($filtros['codigo'])) {
+                $condiciones[] = "rs.serv_codigo ILIKE :codigo";
+                $parametros[':codigo'] = '%' . $filtros['codigo'] . '%';
+            }
+            
+            if (!empty($filtros['descripcion'])) {
+                $condiciones[] = "rs.serv_descripcion ILIKE :descripcion";
+                $parametros[':descripcion'] = '%' . $filtros['descripcion'] . '%';
+            }
+            
+            if (!empty($filtros['tipo']) && $filtros['tipo'] != "0") {
+                $condiciones[] = "rs.tserv_cod = :tipo";
+                $parametros[':tipo'] = $filtros['tipo'];
+            }
+            
+            $whereSql = count($condiciones) > 0 ? "AND " . implode(" AND ", $condiciones) : "";
+            
+            $sql = "SELECT 
+                rs.serv_id, 
+                rs.serv_codigo, 
+                rs.serv_descripcion,
+                rs.serv_descripcion_factura,
+                rs.serv_monto,
+                rs.serv_tte,
+                rs.serv_rtte,
+                rs.serv_uso_equipo,
+                rs.serv_der_sala,
+                rs.tserv_cod,
+                rs.is_active,
+                rst.servicio as categoria_nombre
+            FROM 
+                rs_servicios rs
+            INNER JOIN 
+                rs_servicios_tipos rst ON rs.tserv_cod = rst.tserv_cod
+            WHERE 1=1 {$whereSql}
+            ORDER BY 
+                rs.serv_id DESC";
+            
+            $stmt = Conexion::conectar()->prepare($sql);
+            
+            // Vincular parámetros
+            foreach ($parametros as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            error_log("Error en mdlFiltrarRsServicios: " . $e->getMessage());
+            return [];
+        }
+    }
 }
