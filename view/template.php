@@ -218,9 +218,9 @@ switch ($ruta) {
     case "servicios":
         // Removed servicios.js inclusion since it's already included in the module file
         break;
-        
-    case "rs_servicios":
+          case "rs_servicios":
         echo '<script src="view/js/rs_servicios.js"></script>';
+        echo '<script src="view/js/reservas_confirmacion.js"></script>';
         break;
         
     // Caso por defecto para el home o páginas que no requieren JS específico

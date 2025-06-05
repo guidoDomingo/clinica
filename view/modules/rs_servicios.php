@@ -32,10 +32,15 @@
                 <i class="fas fa-plus-circle"></i>
               </button>
             </div>
-            <!-- Botón para gestionar tipos de servicio -->
-            <div class="col-md-1">
+            <!-- Botón para gestionar tipos de servicio -->          <div class="col-md-1">
               <button type="button" class="btn btn-warning" id="modalGestionarTipos">
                 <i class="fas fa-tags"></i>
+              </button>
+            </div>
+            <!-- Botón para enviar PDF -->
+            <div class="col-md-1">
+              <button type="button" class="btn btn-primary" id="btnAbrirModalPDF" title="Enviar PDF">
+                <i class="fas fa-file-pdf"></i>
               </button>
             </div>
 
@@ -267,3 +272,6 @@
     </div>
   </div>
 </div>
+
+<!-- Incluir Modal para enviar PDFs -->
+<?php include "modal_enviar_pdf.php"; ?>

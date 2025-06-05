@@ -128,19 +128,15 @@ $(document).ready(function () {
     $("#btnAgregarTipo").click(function () {
         agregarTipoServicio();
     });
-      // Evento para buscar al presionar Enter en los campos de filtro
-    $("#validarCodigo, #validarDescripcion").keypress(function(e) {
-        if(e.which == 13) { // 13 es el código de la tecla Enter
-            e.preventDefault();
-            filtrarServicios();
-        }
+    
+    // Evento para abrir modal de envío de PDF
+    $("#btnAbrirModalPDF").click(function() {
+        $("#modalEnviarPDF").modal("show");
     });
     
-    // Evento para buscar al cambiar el tipo de servicio
-    $("#validarTipoServicio").change(function() {
-        if ($(this).val() !== "0") {
-            filtrarServicios();
-        }
+    // Evento para enviar PDF
+    $("#btnEnviarPDF").click(function() {
+        enviarPDFManual();
     });
     
     // Iniciar al cargarse la página
@@ -186,6 +182,117 @@ function cargarTiposServicio() {
             toastr.error("Error al cargar tipos de servicio");
         }
     });
+}
+
+/**
+ * Función para enviar un documento PDF al paciente
+ * @param {string} telefono - Número de teléfono del paciente en formato internacional (ej: 595982313358)
+ * @param {string} mediaUrl - URL del PDF a enviar
+ * @param {string} mediaCaption - Texto descriptivo que acompañará al PDF
+ * @returns {Promise} - Promesa que resuelve con la respuesta del servidor
+ */
+function enviarPDFPaciente(telefono, mediaUrl, mediaCaption) {
+    console.log("Enviando PDF al paciente:", { telefono, mediaUrl, mediaCaption });
+    
+    // Validación básica
+    if (!telefono || !mediaUrl) {
+        alertify.error("Se requiere teléfono y URL del documento");
+        return Promise.reject(new Error("Datos incompletos"));
+    }
+    
+    // Formatear el teléfono si es necesario (eliminar espacios, guiones, etc.)
+    telefono = telefono.replace(/[^0-9]/g, "");
+      // Verificar formato internacional
+    if (!/^\d{9,15}$/.test(telefono)) {
+        alertify.error("Formato de teléfono inválido. Use formato internacional sin '+' (ej: 595982313358)");
+        return Promise.reject(new Error("Formato de teléfono inválido"));
+    }
+    
+    // Mostrar notificación de envío en proceso
+    const toastEnviando = toastr.info("Enviando documento al paciente...", null, {timeOut: 0, extendedTimeOut: 0});
+    
+    // Realizar la petición al servidor
+    return fetch("ajax/enviar_media.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            telefono: telefono,
+            mediaUrl: mediaUrl,
+            mediaCaption: mediaCaption || "Documento de la Clínica"
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        return response.json();
+    })    .then(data => {
+        console.log("Respuesta del servidor:", data);
+        
+        // Cerrar notificación de enviando
+        toastr.clear(toastEnviando);
+        
+        if (data.success) {
+            alertify.success("Documento enviado correctamente al paciente");
+            return data;
+        } else {
+            alertify.error(data.error || "Error al enviar el documento");
+            throw new Error(data.error || "Error en la respuesta del servidor");
+        }
+    })    .catch(error => {
+        console.error("Error al enviar documento:", error);
+        
+        // Cerrar notificación de enviando
+        toastr.clear(toastEnviando);
+        
+        alertify.error("Error al enviar el documento. Revise la consola para más detalles.");
+        throw error;
+    });
+}
+
+/**
+ * Envía un PDF manualmente utilizando los datos del formulario
+ */
+function enviarPDFManual() {
+    // Obtener datos del formulario
+    const telefono = $("#enviarPDF_telefono").val().trim();
+    const mediaUrl = $("#enviarPDF_url").val().trim();
+    const mediaCaption = $("#enviarPDF_descripcion").val().trim();
+    
+    // Validación básica
+    if (!telefono) {
+        alertify.error("Debe ingresar un número de teléfono");
+        return;
+    }
+    
+    if (!mediaUrl) {
+        alertify.error("Debe proporcionar una URL válida para el PDF");
+        return;
+    }
+    
+    // Deshabilitar el botón durante el envío
+    $("#btnEnviarPDF").prop('disabled', true);
+    
+    // Mostrar mensaje inicial
+    toastr.info("Preparando envío del documento...");
+    
+    // Llamar a la función de envío
+    enviarPDFPaciente(telefono, mediaUrl, mediaCaption)
+        .then(response => {
+            console.log("PDF enviado con éxito:", response);
+            alertify.success("Documento enviado correctamente al número: " + telefono);
+            $("#modalEnviarPDF").modal("hide");
+        })
+        .catch(error => {
+            console.error("Error al enviar PDF:", error);
+            alertify.error("No se pudo enviar el documento. Revise la consola para más detalles.");
+        })
+        .finally(() => {
+            // Re-habilitar el botón
+            $("#btnEnviarPDF").prop('disabled', false);
+        });
 }
 
 // Función para cargar tabla de tipos
