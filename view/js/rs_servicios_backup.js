@@ -253,14 +253,6 @@ function editarServicio(data) {
     console.log("Editando servicio con ID:", data.serv_id);
     console.log("Tipo de servicio a seleccionar:", tipoServicioId);
     
-    // Establecer los valores básicos del formulario primero
-    $("#idServicio").val(data.serv_id);
-    $("#EditServCodigo").val(data.serv_codigo);
-    $("#EditServDescripcion").val(data.serv_descripcion);
-    $("#EditServDuracion").val(data.serv_tte || "30");
-    $("#EditServPrecio").val(data.serv_monto);
-    $("#EditServEstado").val(data.is_active.toString());
-    
     // Primero cargar los tipos de servicio
     $.ajax({
         url: "ajax/rs_servicios.ajax.php",
@@ -272,33 +264,25 @@ function editarServicio(data) {
         success: function (respuesta) {
             console.log("Tipos de servicio cargados:", respuesta);
             
-            // Limpiar el select de tipos
-            $("#EditServTipo").empty();
-            $("#EditServTipo").append('<option value="">Seleccionar...</option>');
+            // Limpiar y llenar el select de tipos
+            $("#EditServTipo").html('<option value="" selected>Seleccionar...</option>');
             
-            // Variable para verificar si encontramos un match
-            let encontradoMatch = false;
-            
-            // Agregar opciones y marcar la seleccionada
+            // Agregar opciones
             respuesta.forEach(function (tipo) {
                 const selected = (tipo.tserv_cod == tipoServicioId) ? 'selected' : '';
-                if (tipo.tserv_cod == tipoServicioId) {
-                    encontradoMatch = true;
-                }
                 $("#EditServTipo").append('<option value="' + tipo.tserv_cod + '" ' + selected + '>' + tipo.servicio + '</option>');
             });
             
-            // Si no se encontró la opción, podríamos mostrar un mensaje
-            if (!encontradoMatch && tipoServicioId) {
-                console.warn("No se encontró el tipo de servicio con ID:", tipoServicioId);
-                toastr.warning("El tipo de servicio seleccionado anteriormente no está disponible");
-            }
-            
-            // Forzar la selección correcta después de agregar todas las opciones
-            $("#EditServTipo").val(tipoServicioId);
+            // Ahora establecer todos los valores del formulario
+            $("#idServicio").val(data.serv_id);
+            $("#EditServCodigo").val(data.serv_codigo);
+            $("#EditServDescripcion").val(data.serv_descripcion);
+            $("#EditServDuracion").val(data.serv_tte || "30");
+            $("#EditServPrecio").val(data.serv_monto);
+            $("#EditServEstado").val(data.is_active.toString());
             
             // Verificar que el tipo de servicio se haya seleccionado correctamente
-            console.log("Valor final de EditServTipo:", $("#EditServTipo").val());
+            console.log("Valor de EditServTipo después de establecerlo:", $("#EditServTipo").val());
             
             // Mostrar el modal después de que todo esté cargado
             $("#modalEditarServicios").modal("show");
@@ -306,9 +290,6 @@ function editarServicio(data) {
         error: function (xhr, status, error) {
             console.error("Error al cargar tipos de servicio:", error);
             toastr.error("Error al cargar tipos de servicio");
-            
-            // Aun así mostramos el modal con los datos básicos
-            $("#modalEditarServicios").modal("show");
         }
     });
 }
@@ -471,31 +452,21 @@ function editarTipoServicio(data) {
                 dataType: "json",
                 success: function (respuesta) {
                     if (respuesta.exito) {
-                        console.log("Tipo de servicio actualizado:", respuesta);
-                        
-                        // Recargar la tabla de tipos
                         tablaTipos.ajax.reload();
-                        
-                        // Actualizar los selectores
                         cargarTiposServicio();
-                        
-                        // Mostrar mensaje de éxito
                         alertify.success("Tipo de servicio actualizado correctamente");
                     } else {
-                        console.error("Error en la respuesta:", respuesta.mensaje);
                         alertify.error(respuesta.mensaje || "Error al actualizar tipo de servicio");
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al actualizar tipo de servicio:", error);
-                    console.error("Detalles:", {xhr: xhr, status: status});
                     alertify.error("Error al actualizar tipo de servicio");
                 }
             });
         },
         function () {
             // Cancelar edición
-            console.log("Edición de tipo de servicio cancelada");
         }
     );
 }
