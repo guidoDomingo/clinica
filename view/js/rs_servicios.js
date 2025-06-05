@@ -13,14 +13,24 @@ let tablaTipos;
 // Inicializar cuando el documento esté listo
 $(document).ready(function () {
     console.log("Inicializando rs_servicios.js v1.0.1");
-    
-    // Inicializar la tabla de servicios con DataTables
+      // Inicializar la tabla de servicios con DataTables
     tablaServicios = $('#tblServicios').DataTable({
         "ajax": {
             "url": "ajax/rs_servicios.ajax.php",
             "type": "POST",
             "data": function (d) {
                 d.accion = "listar";
+                // Agregar parámetros de filtrado si están presentes
+                const codigo = $("#validarCodigo").val();
+                const descripcion = $("#validarDescripcion").val();
+                const tipo = $("#validarTipoServicio").val();
+                
+                if (codigo || descripcion || (tipo && tipo !== "0")) {
+                    d.accion = "filtrar";
+                    d.codigo = codigo;
+                    d.descripcion = descripcion;
+                    d.tipo = tipo;
+                }
             },
             "dataSrc": ""
         },
@@ -118,12 +128,26 @@ $(document).ready(function () {
     $("#btnAgregarTipo").click(function () {
         agregarTipoServicio();
     });
+      // Evento para buscar al presionar Enter en los campos de filtro
+    $("#validarCodigo, #validarDescripcion").keypress(function(e) {
+        if(e.which == 13) { // 13 es el código de la tecla Enter
+            e.preventDefault();
+            filtrarServicios();
+        }
+    });
+    
+    // Evento para buscar al cambiar el tipo de servicio
+    $("#validarTipoServicio").change(function() {
+        if ($(this).val() !== "0") {
+            filtrarServicios();
+        }
+    });
     
     // Iniciar al cargarse la página
     cargarTiposServicio();
 });
 
-// Función para cargar tipos de servicio en select, solo actualiza el selector para agregar servicio
+// Función para cargar tipos de servicio en select, actualiza los selectores de agregar y filtrar
 // El selector para editar se maneja en la función editarServicio
 function cargarTiposServicio() {
     $.ajax({
@@ -134,6 +158,8 @@ function cargarTiposServicio() {
         },
         dataType: "json",
         success: function (respuesta) {
+            console.log("Tipos de servicio cargados:", respuesta);
+            
             // Limpiar select de agregar servicio
             $("#servTipo").html('<option value="" selected>Seleccionar...</option>');
             
@@ -142,11 +168,18 @@ function cargarTiposServicio() {
                 $("#servTipo").append('<option value="' + tipo.tserv_cod + '">' + tipo.servicio + '</option>');
             });
             
-            // También actualizar el filtro de búsqueda
+            // Actualizar el filtro de búsqueda
+            const valorActual = $("#validarTipoServicio").val();
             $("#validarTipoServicio").html('<option value="0">Seleccionar tipo</option>');
+            
             respuesta.forEach(function (tipo) {
                 $("#validarTipoServicio").append('<option value="' + tipo.tserv_cod + '">' + tipo.servicio + '</option>');
             });
+            
+            // Restaurar el valor seleccionado si existe
+            if (valorActual && valorActual !== "0") {
+                $("#validarTipoServicio").val(valorActual);
+            }
         },
         error: function (xhr, status, error) {
             console.error("Error al cargar tipos de servicio:", error);
@@ -405,6 +438,18 @@ function eliminarServicio(id) {
 
 // Función para filtrar servicios
 function filtrarServicios() {
+    // Obtener valores de los filtros
+    const codigo = $("#validarCodigo").val();
+    const descripcion = $("#validarDescripcion").val();
+    const tipo = $("#validarTipoServicio").val();
+    
+    console.log("Filtrando servicios con:", {
+        codigo: codigo,
+        descripcion: descripcion,
+        tipo: tipo
+    });
+    
+    // Recargar la tabla para aplicar los filtros
     tablaServicios.ajax.reload();
 }
 
@@ -413,6 +458,10 @@ function limpiarFiltros() {
     $("#validarCodigo").val("");
     $("#validarDescripcion").val("");
     $("#validarTipoServicio").val("0");
+    
+    console.log("Limpiando filtros");
+    
+    // Recargar la tabla sin filtros
     tablaServicios.ajax.reload();
 }
 

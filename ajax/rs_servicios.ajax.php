@@ -155,13 +155,16 @@ if (isset($_POST['accion'])) {
                 echo json_encode(['exito' => false, 'mensaje' => 'ID no especificado']);
             }
             break;
-            
-        case 'filtrar':
+              case 'filtrar':
             $filtros = [
-                'codigo' => $_POST['codigo'] ?? '',
-                'descripcion' => $_POST['descripcion'] ?? '',
-                'tipo' => $_POST['tipo'] ?? 0
+                'codigo' => isset($_POST['codigo']) ? $_POST['codigo'] : '',
+                'descripcion' => isset($_POST['descripcion']) ? $_POST['descripcion'] : '',
+                'tipo' => isset($_POST['tipo']) ? $_POST['tipo'] : '0'
             ];
+            
+            // Log para depuración
+            error_log('Filtrando servicios con: ' . json_encode($filtros));
+            
             $ajax::filtrarServicios($filtros);
             break;
             
