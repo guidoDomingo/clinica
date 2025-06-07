@@ -10,31 +10,38 @@ class ReservasModel {
      * Obtiene una reserva por su ID
      * @param int $id ID de la reserva
      * @return array|null Datos de la reserva o null si no se encuentra
-     */
-    public function obtenerReservaPorId($id) {
+     */    public function obtenerReservaPorId($id) {
         try {
             $stmt = Conexion::conectar()->prepare(
                 "SELECT 
-                    r.reserva_id as id,
-                    r.paciente_id,
-                    p.paciente_nombre || ' ' || p.paciente_apellido as nombre_paciente,
-                    p.paciente_documento as documento_paciente,
-                    p.paciente_telefono as telefono,
-                    s.serv_descripcion as servicio,
-                    m.medico_nombre || ' ' || m.medico_apellido as nombre_medico,
-                    r.fecha_reserva as fecha,
-                    r.hora_inicio as hora,
-                    r.estado
+                    sr.reserva_id as id,
+                    sr.paciente_id,
+                    rp2.first_name || ' - ' || rp2.last_name as nombre_paciente,
+                    '' as documento_paciente, -- Ajustar según estructura
+                    '' as telefono, -- Ajustar según estructura
+                    rs.serv_descripcion as servicio,
+                    rp.first_name || ' - ' || rp.last_name as nombre_medico,
+                    sr.fecha_reserva as fecha,
+                    sr.hora_inicio as hora,
+                    sr.reserva_estado as estado,
+                    s.sala_nombre,
+                    rs.serv_monto
                 FROM 
-                    reservas r
-                LEFT JOIN 
-                    pacientes p ON r.paciente_id = p.paciente_id
-                LEFT JOIN 
-                    rs_servicios s ON r.servicio_id = s.serv_id
-                LEFT JOIN 
-                    medicos m ON r.medico_id = m.medico_id
+                    servicios_reservas sr
+                INNER JOIN 
+                    rh_doctors rd ON sr.doctor_id = rd.doctor_id
+                INNER JOIN 
+                    rh_person rp ON rd.person_id = rp.person_id
+                INNER JOIN 
+                    rh_person rp2 ON sr.paciente_id = rp2.person_id
+                INNER JOIN 
+                    rs_servicios rs ON sr.servicio_id = rs.serv_id
+                INNER JOIN 
+                    agendas_detalle ad ON sr.agenda_id = ad.detalle_id
+                INNER JOIN 
+                    salas s ON sr.sala_id = s.sala_id
                 WHERE 
-                    r.reserva_id = :id"
+                    sr.reserva_id = :id"
             );
             
             $stmt->bindParam(":id", $id, PDO::PARAM_INT);

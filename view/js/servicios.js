@@ -1471,18 +1471,19 @@ function buscarReservas() {
                         <td>${reserva.serv_descripcion || reserva.nombre_servicio || 'N/A'}</td>
                         <td>${reserva.sala_nombre || 'Sin asignar'}</td>
                         <td>${reserva.serv_monto ? `$${parseFloat(reserva.serv_monto).toFixed(2)}` : 'N/A'}</td>
-                        <td>${iconoEstado} ${reserva.reserva_estado}</td>
-                        <td>
+                        <td>${iconoEstado} ${reserva.reserva_estado}</td>                        <td>
                             <div class="btn-group">
                                 <button class="btn btn-info btn-sm btnVerReserva" data-id="${reserva.reserva_id}" title="Ver detalles">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <button class="btn btn-warning btn-sm btnEditarReserva" data-id="${reserva.reserva_id}" title="Editar">
                                     <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm btnCancelarReserva" data-id="${reserva.reserva_id}" title="Cancelar">
+                                </button>                                <button class="btn btn-danger btn-sm btnCancelarReserva" data-id="${reserva.reserva_id}" title="Cancelar">
                                     <i class="fas fa-times"></i>
                                 </button>
+                                <a href="generar_pdf_reserva.php?id=${reserva.reserva_id}" class="btn btn-success btn-sm" target="_blank" title="Descargar PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
                             </div>
                         </td>
                     </tr>`;
