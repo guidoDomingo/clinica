@@ -714,3 +714,4 @@ if (!isset($_SESSION['perfil'])) {
 <script src="view/js/slots_init.js"></script>
 <script src="view/js/slots_fallback.js"></script>
 <script src="view/js/slots_pagination.js"></script>
+<script src="view/js/enviar_pdf_reserva.js"></script>

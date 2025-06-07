@@ -1,0 +1,9 @@
+# Mantener archivos PDF solo por 24 horas
+<FilesMatch "\.(pdf)$">
+  Header set Cache-Control "max-age=86400, public"
+</FilesMatch>
+
+# Permitir acceso a los archivos PDF
+<Files "*.pdf">
+  Require all granted
+</Files>

@@ -1,0 +1,30 @@
+# Configuración .htaccess para PDFs
+
+# Permitir solicitudes HEAD y OPTIONS
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # No cambiar nada para solicitudes HEAD y OPTIONS
+    RewriteCond %{REQUEST_METHOD} ^(HEAD|OPTIONS)
+    RewriteRule .* - [R=200,L]
+</IfModule>
+
+# Habilitar CORS para los PDFs
+<FilesMatch "\.(pdf)$">
+    <IfModule mod_headers.c>
+        # Permitir solicitudes desde cualquier origen
+        Header set Access-Control-Allow-Origin "*"
+        # Permitir métodos comunes
+        Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+        # Permitir cabeceras comunes
+        Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+        # Establecer tipo MIME correcto
+        Header set Content-Type "application/pdf"
+    </IfModule>
+</FilesMatch>
+
+# Para activar el envío parcial de contenido (necesario para visor de PDF)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(pdf)$">
+        Header set Accept-Ranges "bytes"
+    </FilesMatch>
+</IfModule>

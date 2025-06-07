@@ -1484,6 +1484,9 @@ function buscarReservas() {
                                 <a href="generar_pdf_reserva.php?id=${reserva.reserva_id}" class="btn btn-success btn-sm" target="_blank" title="Descargar PDF">
                                     <i class="fas fa-file-pdf"></i>
                                 </a>
+                                <button class="btn btn-info btn-sm btnEnviarWhatsApp" data-id="${reserva.reserva_id}" data-telefono="${reserva.telefono || ''}" title="Enviar por WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>`;

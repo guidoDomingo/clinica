@@ -27,55 +27,6 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-// Verificar si es una solicitud POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener datos del cuerpo de la solicitud
-    $datos = json_decode(file_get_contents('php://input'), true);
-    
-    // Verificar si los datos necesarios existen
-    if (isset($datos['telefono']) && isset($datos['mediaUrl']) && isset($datos['mediaCaption'])) {
-        
-        // Validar el teléfono (asegurarse que tiene el formato correcto)
-        $telefono = trim($datos['telefono']);
-        // Validar que el teléfono tenga un formato válido (puedes ajustar esta validación según tus necesidades)
-        if (!preg_match('/^\d{9,15}$/', $telefono)) {
-            echo json_encode(['success' => false, 'error' => 'Formato de teléfono inválido']);
-            exit;
-        }
-        
-        // Preparar datos para la solicitud a la API externa
-        $apiUrl = 'http://aventisdev.com:8082/media.php';
-        $username = 'admin';
-        $password = '1234';
-        
-        // Preparar los datos para la solicitud
-        $postData = [
-            'telefono' => $telefono,
-            'mediaUrl' => $datos['mediaUrl'],
-            'mediaCaption' => $datos['mediaCaption']
-        ];
-        
-        // Registrar el intento de envío para depuración
-        error_log('Enviando documento a ' . $telefono);
-        error_log('URL de documento: ' . $datos['mediaUrl']);
-        error_log('Datos de envío: ' . json_encode($postData));
-
-        // Verificar si cURL está disponible
-        $curlAvailable = function_exists('curl_version');
-          if ($curlAvailable) {
-            // Usar cURL para la solicitud
-            enviarMediaPorCurl($apiUrl, $username, $password, $postData, $datos);
-        } else {
-            // Usar Guzzle como alternativa si cURL no está disponible
-            enviarMediaPorGuzzle($apiUrl, $username, $password, $postData, $datos);
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Faltan parámetros requeridos']);
-    }
-} else {
-    echo json_encode(['success' => false, 'error' => 'Método no permitido']);
-}
-
 /**
  * Función para enviar media usando cURL
  */
@@ -292,47 +243,50 @@ function enviarMediaPorGuzzle($apiUrl, $username, $password, $postData, $datos) 
             'error' => 'Error inesperado: ' . $errorMsg
         ]);
     }
-}} else {
-            // Verificar el código HTTP
-            if ($httpCode != 200) {
-                error_log('Error HTTP al conectar con la API externa. Código: ' . $httpCode);
-                error_log('Respuesta recibida: ' . $result);
-                
-                echo json_encode([
-                    'success' => false, 
-                    'error' => 'Error del servidor: código ' . $httpCode, 
-                    'debug_info' => [
-                        'request' => $headerSent,
-                        'postData' => $postData,
-                        'response' => $result,
-                        'httpCode' => $httpCode
-                    ]
-                ]);
-            } else {
-                // Decodificar respuesta
-                $response = json_decode($result, true);
-                
-                // Registrar respuesta para depuración
-                error_log('Respuesta de la API: ' . $result);
-                
-                // Verificar si la respuesta fue exitosa
-                if ($response !== null && isset($response['status']) && $response['status'] === 'ok') {
-                    error_log('Envío de documento exitoso a: ' . $telefono);
-                    echo json_encode([
-                        'success' => true, 
-                        'data' => $response,
-                        'message' => 'Documento enviado correctamente al número: ' . $telefono
-                    ]);
-                } else {
-                    error_log('Error en la respuesta de la API: ' . $result);
-                    echo json_encode([
-                        'success' => false, 
-                        'error' => 'Error en la respuesta de la API', 
-                        'response' => $response ?? 'Respuesta inválida',
-                        'rawResponse' => $result
-                    ]);
-                }
-            }
+}
+
+// Verificar si es una solicitud POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Obtener datos del cuerpo de la solicitud
+    $datos = json_decode(file_get_contents('php://input'), true);
+    
+    // Verificar si los datos necesarios existen
+    if (isset($datos['telefono']) && isset($datos['mediaUrl']) && isset($datos['mediaCaption'])) {
+        
+        // Validar el teléfono (asegurarse que tiene el formato correcto)
+        $telefono = trim($datos['telefono']);
+        // Validar que el teléfono tenga un formato válido (puedes ajustar esta validación según tus necesidades)
+        if (!preg_match('/^\d{9,15}$/', $telefono)) {
+            echo json_encode(['success' => false, 'error' => 'Formato de teléfono inválido']);
+            exit;
+        }
+        
+        // Preparar datos para la solicitud a la API externa
+        $apiUrl = 'http://aventisdev.com:8082/media.php';
+        $username = 'admin';
+        $password = '1234';
+        
+        // Preparar los datos para la solicitud
+        $postData = [
+            'telefono' => $telefono,
+            'mediaUrl' => $datos['mediaUrl'],
+            'mediaCaption' => $datos['mediaCaption']
+        ];
+        
+        // Registrar el intento de envío para depuración
+        error_log('Enviando documento a ' . $telefono);
+        error_log('URL de documento: ' . $datos['mediaUrl']);
+        error_log('Datos de envío: ' . json_encode($postData));
+
+        // Verificar si cURL está disponible
+        $curlAvailable = function_exists('curl_version');
+        
+        if ($curlAvailable) {
+            // Usar cURL para la solicitud
+            enviarMediaPorCurl($apiUrl, $username, $password, $postData, $datos);
+        } else {
+            // Usar Guzzle como alternativa si cURL no está disponible
+            enviarMediaPorGuzzle($apiUrl, $username, $password, $postData, $datos);
         }
     } else {
         echo json_encode(['success' => false, 'error' => 'Faltan parámetros requeridos']);

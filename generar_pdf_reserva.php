@@ -218,14 +218,64 @@ try {    // Obtener datos de la reserva con el método estándar
     
     // Renderizar PDF
     $dompdf->render();
-    
-    // Establecer nombre del archivo
+      // Establecer nombre del archivo
     $filename = 'Reserva_' . $reservaId . '.pdf';
     
-    // Enviar el PDF al navegador
-    $dompdf->stream($filename, array('Attachment' => true));
+    // Verificar si se está solicitando guardar en servidor para enviar
+    $guardarParaEnviar = isset($_GET['enviar']) && $_GET['enviar'] == '1';
     
-} catch (Exception $e) {
+    if ($guardarParaEnviar) {
+        // Definir la ruta donde se guardará el PDF
+        $directorioGuardado = 'pdf_reservas/';
+        
+        // Crear el directorio si no existe
+        if (!file_exists($directorioGuardado)) {
+            mkdir($directorioGuardado, 0755, true);
+        }
+        
+        // Generar un nombre de archivo único
+        $nombreArchivo = $directorioGuardado . 'reserva_' . $reservaId . '_' . date('YmdHis') . '.pdf';
+        
+        // Guardar el PDF en el servidor
+        file_put_contents($nombreArchivo, $dompdf->output());
+        
+        // Construir la URL pública para el PDF
+        $urlBase = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        $pathRelativo = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath(dirname(__FILE__))));
+        $urlPdf = $urlBase . $pathRelativo . '/' . $nombreArchivo;
+        
+        // Si se proporciona un número de teléfono, enviar directamente
+        if (isset($_GET['telefono']) && !empty($_GET['telefono'])) {
+            require_once 'enviar_pdf_whatsapp.php';
+            
+            $telefono = $_GET['telefono'];
+            $caption = "Confirmación de reserva - " . ($reserva['nombre_paciente'] ?? 'Paciente') . 
+                       " - " . ($reserva['fecha'] ?? date('Y-m-d')) . 
+                       " - " . ($reserva['hora'] ?? '');
+            
+            // Enviar el PDF por WhatsApp
+            $resultado = enviarPDFPorWhatsApp($telefono, $urlPdf, $caption);
+            
+            // Devolver el resultado como JSON
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => $resultado['success'],
+                'message' => $resultado['success'] ? 'PDF enviado correctamente' : $resultado['error'],
+                'data' => $resultado['data'] ?? null,
+                'pdfUrl' => $urlPdf
+            ]);
+            exit;
+        }
+        
+        // Si no hay teléfono pero se pide enviar, redirigir al formulario con la URL del PDF
+        header('Location: enviar_pdf_whatsapp.php?mediaUrl=' . urlencode($urlPdf) . '&mediaCaption=' . 
+               urlencode("Confirmación de reserva - " . ($reserva['nombre_paciente'] ?? 'Paciente')));
+        exit;
+    }
+    
+    // Comportamiento normal: enviar el PDF al navegador
+    $dompdf->stream($filename, array('Attachment' => true));
+    } catch (Exception $e) {
     die('Error al generar el PDF: ' . $e->getMessage());
 }
 ?>
