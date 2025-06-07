@@ -1,0 +1,91 @@
+[2025-06-07 02:52:26] Iniciando limpieza final del proyecto...
+[2025-06-07 02:52:26] Eliminado: ajax_test_slots.php
+[2025-06-07 02:52:26] Eliminado: api_test_reservas.php
+[2025-06-07 02:52:26] Eliminado: bash.exe.stackdump
+[2025-06-07 02:52:26] Archivo no encontrado: check_agenda_structure.php
+[2025-06-07 02:52:26] Eliminado: check_and_enable_pgsql.php
+[2025-06-07 02:52:26] Archivo no encontrado: check_http_client.php
+[2025-06-07 02:52:26] Archivo no encontrado: check_pgsql.php
+[2025-06-07 02:52:26] Archivo no encontrado: check_rs_servicios.php
+[2025-06-07 02:52:26] Eliminado: check_servicios_reservas.php
+[2025-06-07 02:52:26] Archivo no encontrado: check_simple_rs_servicios.php
+[2025-06-07 02:52:26] Archivo no encontrado: check_table.php
+[2025-06-07 02:52:26] Archivo no encontrado: check_table2.php
+[2025-06-07 02:52:26] Archivo no encontrado: corregir_bd_servicios.php
+[2025-06-07 02:52:26] Archivo no encontrado: corregir_formato_dias.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_tabla_simple.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_tablas_servicios.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_todas_tablas_servicios.php
+[2025-06-07 02:52:26] Eliminado: enable_pgsql.bat
+[2025-06-07 02:52:26] Eliminado: enable_pgsql.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_ajax_undefined_var.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_alerts_comprehensive.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_alerts_final.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_alerts.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_database_tables.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_database.bat
+[2025-06-07 02:52:26] Archivo no encontrado: fix_database.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_horarios_servicios.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_notifications_path.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_notifications.php
+[2025-06-07 02:52:26] Archivo no encontrado: fix_reservas_function.php
+[2025-06-07 02:52:26] Eliminado: generar_diagnostico.php
+[2025-06-07 02:52:26] Archivo no encontrado: icd11_description_test.html
+[2025-06-07 02:52:26] Archivo no encontrado: icd11_iframe_test.html
+[2025-06-07 02:52:26] Archivo no encontrado: icd11_integration_test.html
+[2025-06-07 02:52:26] Archivo no encontrado: icd11_service_test.php
+[2025-06-07 02:52:26] Archivo no encontrado: icd11_test.html
+[2025-06-07 02:52:26] Archivo no encontrado: ir_a_diagnostico.html
+[2025-06-07 02:52:26] Archivo no encontrado: list_tables.php
+[2025-06-07 02:52:26] Eliminado: php_test.php
+[2025-06-07 02:52:26] Eliminado: quick_fix.php
+[2025-06-07 02:52:26] Archivo no encontrado: reparar_agenda_medico.php
+[2025-06-07 02:52:26] Archivo no encontrado: reparar_visualizacion_reservas.php
+[2025-06-07 02:52:26] Archivo no encontrado: servicios_database.sql
+[2025-06-07 02:52:26] Eliminado: test_output.json
+[2025-06-07 02:52:26] Eliminado: test_syntax.bat
+[2025-06-07 02:52:26] Eliminado: syntax_check.php
+[2025-06-07 02:52:26] Eliminado: SOLUCION_HORARIOS_PASADOS.md
+[2025-06-07 02:52:26] Eliminado: SLOTS_SOLUTION_README_NEW.md
+[2025-06-07 02:52:26] Eliminado: servicios_js_update.js
+[2025-06-07 02:52:26] Eliminado: crear_tabla_reservas.php
+[2025-06-07 02:52:26] Eliminado: crear_tabla_reservas_ui.php
+[2025-06-07 02:52:26] Eliminado: crear_reserva_hoy.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_tabla_servicios_proveedores.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_tabla_servicios_requisitos.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_tabla_servicios_reservas.php
+[2025-06-07 02:52:26] Archivo no encontrado: crear_tabla_servicios_tarifas.php
+[2025-06-07 02:52:26] Eliminado: eliminar_archivos_prueba.php
+[2025-06-07 02:52:26] Eliminado: limpiar_proyecto.php
+[2025-06-07 02:52:26] Eliminado: limpiar_proyecto_avanzado.php
+[2025-06-07 02:52:26] Eliminado: ejecutar_creacion_tabla.php
+[2025-06-07 02:52:26] Eliminado: diagnostico_whatsapp_pdf_soluciones.md
+[2025-06-07 02:52:26] Eliminado: doctor_estado_fix.md
+[2025-06-07 02:52:26] Archivo no encontrado: FIXES_SERVICIOS_README.md
+[2025-06-07 02:52:26] Archivo no encontrado: HORARIOS_SLOTS_FIX.md
+[2025-06-07 02:52:26] Eliminado: icd11_fix_summary.md
+[2025-06-07 02:52:26] Eliminado: icd11_integration_summary.md
+[2025-06-07 02:52:26] Eliminado: README_SERVICIOS.md
+[2025-06-07 02:52:26] Archivo no encontrado: diagnostico_horarios.html
+[2025-06-07 02:52:26] Eliminado: monitor_reservas.html
+[2025-06-07 02:52:26] Archivo no encontrado: AdminLTE-3.2.0.zip
+[2025-06-07 02:52:26] Eliminado: actualizar_funcion_reservas.php
+[2025-06-07 02:52:26] Eliminado: ajax_filtrar_reservas.php
+[2025-06-07 02:52:26] Eliminado: ajax_slots_simplificados.php
+[2025-06-07 02:52:26] Eliminado: depurador_reservas.php
+[2025-06-07 02:52:26] Eliminado: implementacion_reservas.php
+[2025-06-07 02:52:26] Eliminado: insertar_datos_proveedores.php
+[2025-06-07 02:52:26] Eliminado: insertar_preformatos.php
+[2025-06-07 02:52:26] Eliminado: reparar_sistema_reservas.php
+[2025-06-07 02:52:26] Eliminado: verificacion_final_reservas.php
+[2025-06-07 02:52:26] Eliminado: verificar_reservas_implementacion.php
+[2025-06-07 02:52:26] Limpiando directorio temporal: C:\laragon\www\clinica/pdf_temp
+[2025-06-07 02:52:26] Limpiando directorio temporal: C:\laragon\www\clinica/pdfs_temp
+[2025-06-07 02:52:26] Limpiando directorio temporal: C:\laragon\www\clinica/temp
+[2025-06-07 02:52:26] Limpiando PDFs de reservas antiguos (>7 días)...
+[2025-06-07 02:52:26] Se eliminaron 0 PDFs antiguos.
+[2025-06-07 02:52:26] Limpiando logs antiguos (>30 días)...
+[2025-06-07 02:52:26] Se eliminaron 1 logs antiguos.
+[2025-06-07 02:52:26] ¡Limpieza finalizada!
+[2025-06-07 02:52:26] Total de archivos eliminados: 40
+[2025-06-07 02:52:26] Se ha creado un registro detallado en: C:\laragon\www\clinica/logs/limpieza_final_2025-06-07_02-52-26.log

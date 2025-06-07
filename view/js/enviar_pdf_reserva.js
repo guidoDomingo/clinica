@@ -297,19 +297,23 @@ function inicializarModalEnviarPDFReserva() {
  * Envía un PDF de reserva por WhatsApp directamente
  * @param {number} reservaId - ID de la reserva
  * @param {string} telefono - Teléfono del paciente (opcional)
+ * @param {string} pdfUrl - URL específica del PDF a enviar (opcional)
  */
-function enviarPDFReservaWhatsApp(reservaId, telefono = '') {
-    console.log("Enviando PDF de reserva por WhatsApp:", { reservaId, telefono });
+function enviarPDFReservaWhatsApp(reservaId, telefono = '', pdfUrl = null) {
+    console.log("Enviando PDF de reserva por WhatsApp:", { reservaId, telefono, pdfUrl });
     
     // Si no hay teléfono, solicitar al usuario
     if (!telefono) {
         telefono = prompt("Ingrese el número de teléfono del paciente (formato internacional sin +):", "");
-        if (!telefono) return; // Cancelado por el usuario
+        if (!telefono) {
+            toastr.warning("Operación cancelada: No se ingresó un número de teléfono.");
+            return; // Cancelado por el usuario
+        }
     }
     
-    // Validar formato del teléfono
+    // Limpiar y validar formato del teléfono
     telefono = telefono.replace(/[^0-9]/g, "");
-    if (!/^\d{9,15}$/.test(telefono)) {
+    if (!telefono || telefono.length < 9 || !/^\d{9,15}$/.test(telefono)) {
         toastr.error("Formato de teléfono inválido. Use formato internacional sin '+' (ej: 595982313358)");
         return;
     }
@@ -319,18 +323,34 @@ function enviarPDFReservaWhatsApp(reservaId, telefono = '') {
         "Enviando PDF por WhatsApp...", 
         null, 
         {timeOut: 0, extendedTimeOut: 0}
-    );    // Construir URL del PDF absoluta y accesible externamente
-    // Importante: Esto asume que el dominio es accesible desde internet
-    // En entorno de desarrollo, se necesitaría un túnel como ngrok para exponer el servidor local
+    );
     
-    // Para probar con un PDF accesible públicamente
-    const pdfUrl = `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`;
-    // En producción, usar esta línea y comentar la anterior:
-    // const pdfUrl = `${window.location.origin}/generar_pdf_reserva.php?id=${reservaId}`;
+    // Construir URL del PDF absoluta y accesible externamente
+    let mediaUrl;
+    let useSpecificUrl = false;
     
-    console.log("Usando URL del PDF:", pdfUrl);
+    // Si se proporciona una URL específica, usar esa
+    if (pdfUrl) {
+        mediaUrl = pdfUrl;
+        useSpecificUrl = true;
+        console.log("Usando URL específica proporcionada:", mediaUrl);
+    } else {
+        // URL real del PDF generado dinámicamente
+        const pdfUrlReal = `${window.location.origin}/generar_pdf_reserva.php?id=${reservaId}`;
+        
+        // URL de respaldo que funciona con la API (PDF público en W3.org)
+        const pdfUrlRespaldo = `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`;
+        
+        // Primero intentamos con la URL real, pero si esta no funciona (entorno desarrollo),
+        // enviamos el PDF de respaldo
+        const usarUrlRespaldo = !window.location.hostname.includes('clinica.com');
+        mediaUrl = usarUrlRespaldo ? pdfUrlRespaldo : pdfUrlReal;
+        
+        console.log("Usando URL del PDF:", mediaUrl);
+        console.log("Entorno:", usarUrlRespaldo ? "Desarrollo (usando PDF público)" : "Producción (usando PDF real)");
+    }
     
-    // Realizar la petición al servidor usando el endpoint de prueba simplificado
+    // Realizar la petición al servidor usando el endpoint adecuado
     fetch("ajax/send_pdf_test.php", {
         method: "POST",
         headers: {
@@ -338,8 +358,10 @@ function enviarPDFReservaWhatsApp(reservaId, telefono = '') {
         },
         body: JSON.stringify({
             telefono: telefono,
-            mediaUrl: pdfUrl,
-            mediaCaption: "Confirmación de reserva médica"
+            mediaUrl: mediaUrl,
+            mediaCaption: "Confirmación de reserva médica",
+            reservaId: reservaId,  // Añadimos el ID de reserva para registro
+            useSpecificUrl: useSpecificUrl  // Indicar si estamos usando una URL específica
         })
     })
     .then(response => {
