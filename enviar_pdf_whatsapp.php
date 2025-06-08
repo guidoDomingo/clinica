@@ -290,9 +290,21 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
 if (basename($_SERVER['SCRIPT_NAME']) === basename(__FILE__)) {
     // Obtener parámetros de la solicitud
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $telefono = $_POST['telefono'] ?? '';
-        $mediaUrl = $_POST['mediaUrl'] ?? '';
-        $mediaCaption = $_POST['mediaCaption'] ?? '';
+        // Verificar si es una solicitud JSON o un formulario regular
+        $contentType = isset($_SERVER["CONTENT_TYPE"]) ? $_SERVER["CONTENT_TYPE"] : '';
+        
+        if (strpos($contentType, 'application/json') !== false) {
+            // Procesar datos JSON
+            $datos = json_decode(file_get_contents('php://input'), true);
+            $telefono = isset($datos['telefono']) ? $datos['telefono'] : '';
+            $mediaUrl = isset($datos['mediaUrl']) ? $datos['mediaUrl'] : '';
+            $mediaCaption = isset($datos['mediaCaption']) ? $datos['mediaCaption'] : '';
+        } else {
+            // Procesar datos de formulario
+            $telefono = $_POST['telefono'] ?? '';
+            $mediaUrl = $_POST['mediaUrl'] ?? '';
+            $mediaCaption = $_POST['mediaCaption'] ?? '';
+        }
         
         $result = enviarPDFPorWhatsApp($telefono, $mediaUrl, $mediaCaption);
         

@@ -30,9 +30,8 @@ function enviarPDFPaciente(telefono, mediaUrl, mediaCaption) {
     
     // Mostrar notificación de envío en proceso
     const toastEnviando = toastr.info("Enviando documento al paciente...", null, {timeOut: 0, extendedTimeOut: 0});
-    
-    // Realizar la petición al servidor
-    return fetch("ajax/enviar_media.php", {
+      // Realizar la petición al servidor
+    return fetch("enviar_pdf_whatsapp.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

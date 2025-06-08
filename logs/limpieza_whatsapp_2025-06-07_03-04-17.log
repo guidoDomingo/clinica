@@ -1,0 +1,27 @@
+[2025-06-07 03:04:17] Iniciando limpieza de archivos innecesarios de WhatsApp...
+[2025-06-07 03:04:17] Eliminado: ajax/enviar_media.php
+[2025-06-07 03:04:17] Archivo no encontrado: ajax/pdf_uploader.php
+[2025-06-07 03:04:17] Archivo no encontrado: ajax/upload_pdf.php
+[2025-06-07 03:04:17] Archivo no encontrado: ajax/send_pdf_test.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_pdf_whatsapp.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_pdf_url_especifica.html
+[2025-06-07 03:04:17] Archivo no encontrado: test_pdf_simple.html
+[2025-06-07 03:04:17] Archivo no encontrado: test_pdf_reserva.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_pdf_local.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_pdf_urls.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_whatsapp.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_whatsapp_http_client.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_api_whatsapp.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_api_guzzle.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_api_direct.php
+[2025-06-07 03:04:17] Archivo no encontrado: test_simple.html
+[2025-06-07 03:04:17] Archivo no encontrado: api/test_whatsapp.php
+[2025-06-07 03:04:17] Archivo no encontrado: view/modules/test_whatsapp.php
+[2025-06-07 03:04:17] Archivo no encontrado: whatsapp_diagnostico.php
+[2025-06-07 03:04:17] Archivo no encontrado: whatsapp_config.php
+[2025-06-07 03:04:17] Archivo no encontrado: whatsapp_api_test.php
+[2025-06-07 03:04:17] Limpiando directorio: C:\laragon\www\clinica/uploads/pdf_whatsapp
+[2025-06-07 03:04:17] Eliminado directorio vacío: uploads/pdf_whatsapp
+[2025-06-07 03:04:17] ¡Limpieza finalizada!
+[2025-06-07 03:04:17] Total de archivos eliminados: 1
+[2025-06-07 03:04:17] Se ha creado un registro detallado en: C:\laragon\www\clinica/logs/limpieza_whatsapp_2025-06-07_03-04-17.log
