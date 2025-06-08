@@ -1,107 +1,123 @@
 <?php
-class WelcomeEmail
-{
+/**
+ * Clase WelcomeEmail para generar el contenido de correo electrónico de bienvenida
+ * 
+ * Esta clase se utiliza para generar el contenido HTML del correo electrónico
+ * de bienvenida que se envía a los usuarios cuando se registran en el sistema.
+ */
+class WelcomeEmail {
     private $userName;
     private $startLink;
-    private $pass;
-
-    // Constructor para inicializar el nombre del usuario y el enlace de inicio
-    public function __construct($userName, $startLink, $pass)
-    {
+    private $password;
+    
+    /**
+     * Constructor de la clase
+     * 
+     * @param string $userName  Nombre del usuario
+     * @param string $startLink Enlace de inicio para el usuario
+     * @param string $password  Contraseña del usuario
+     */
+    public function __construct($userName, $startLink, $password) {
         $this->userName = $userName;
         $this->startLink = $startLink;
-        $this->pass = $pass;
+        $this->password = $password;
     }
-
-    // Método para generar el cuerpo del correo en HTML
-    public function getBody()
-    {
-        return '
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Bienvenido a Nuestro Servicio</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f4;
-                    margin: 0;
-                    padding: 0;
-                }
-                .email-container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: #ffffff;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                }
-                .header {
-                    text-align: center;
-                    padding: 20px 0;
-                }
-                .header h1 {
-                    color: #333333;
-                    margin: 0;
-                }
-                .content {
-                    padding: 20px;
-                    color: #555555;
-                    line-height: 1.6;
-                }
-                .content h2 {
-                    color: #333333;
-                }
-                .footer {
-                    text-align: center;
-                    padding: 20px;
-                    font-size: 12px;
-                    color: #777777;
-                }
-                .button {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    margin: 20px 0;
-                    font-size: 16px;
-                    color: #ffffff;
-                    background-color: #007BFF;
-                    text-decoration: none;
-                    border-radius: 5px;
-                }
-                .button:hover {
-                    background-color: #0056b3;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="header">
-                    <h1>¡Bienvenido a Nuestro Servicio!</h1>
-                </div>
-                <div class="content">
-                    <h2>Hola ' . htmlspecialchars($this->userName) . ',</h2>
-                    <p>Gracias por unirte a nuestra plataforma. Estamos emocionados de tenerte con nosotros y esperamos que disfrutes de todos los beneficios que ofrecemos.</p>
-                    <p>Aquí hay algunas cosas que puedes hacer para empezar:</p>
-                    <ul>
-                        <li>Completa tu perfil para personalizar tu experiencia.</li>
-                        <li>Explora nuestras características principales.</li>
-                        <li>Consulta nuestro centro de ayuda si tienes alguna pregunta.</li>
-                    </ul>
-                    <p>Si tienes alguna duda, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
-                    <a href="' . htmlspecialchars($this->startLink) . '" class="button">Comenzar Ahora</a>
-                    <p>Guarde su contraseña en un lugar seguro.</p>
-                    <p>'.$this->pass.'</p>
-                </div>
-                <div class="footer">
-                    <p>Si no te registraste en nuestro servicio, por favor ignora este correo.</p>
-                    <p>&copy; 2023 Tu Empresa. Todos los derechos reservados.</p>
-                </div>
+    
+    /**
+     * Obtiene el cuerpo HTML del correo electrónico
+     * 
+     * @return string HTML del correo electrónico de bienvenida
+     */
+    public function getBody() {
+        return '<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a Clínica</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .credentials {
+            background-color: #eee;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>¡Bienvenido a Clínica!</h1>
+        </div>
+        <div class="content">
+            <p>Estimado/a <strong>' . htmlspecialchars($this->userName) . '</strong>,</p>
+            
+            <p>¡Gracias por registrarte en nuestro sistema de Clínica! Estamos encantados de tenerte como parte de nuestra comunidad.</p>
+            
+            <p>A continuación, encontrarás tus credenciales de acceso:</p>
+            
+            <div class="credentials">
+                <p><strong>Usuario:</strong> ' . htmlspecialchars($this->userName) . '</p>
+                <p><strong>Contraseña:</strong> ' . htmlspecialchars($this->password) . '</p>
             </div>
-        </body>
-        </html>
-        ';
+            
+            <p>Para acceder al sistema, por favor haz clic en el siguiente enlace:</p>
+            
+            <a href="' . htmlspecialchars($this->startLink) . '" class="button">Iniciar Sesión</a>
+            
+            <p>Por razones de seguridad, te recomendamos cambiar tu contraseña después del primer inicio de sesión.</p>
+            
+            <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
+            
+            <p>¡Saludos cordiales!</p>
+            <p><strong>El equipo de Clínica</strong></p>
+        </div>
+        <div class="footer">
+            <p>Este es un correo electrónico automático. Por favor, no responder a este mensaje.</p>
+            <p>&copy; ' . date('Y') . ' Clínica. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>';
     }
 }
-?>
