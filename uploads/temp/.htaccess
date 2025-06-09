@@ -1,0 +1,17 @@
+Options -Indexes
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Denegar acceso a archivos de ciertos tipos
+<FilesMatch "\.(php|php5|php7|phtml|pl|py|jsp|asp|aspx|cgi|exe)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Permitir solo ciertos tipos de archivos para subida
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|xls|xlsx|zip|rar)$">
+    Order deny,allow
+    Allow from all
+</FilesMatch>

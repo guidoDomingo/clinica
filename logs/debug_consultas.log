@@ -78,3 +78,43 @@
 
 )
 
+[2025-06-09 11:28:29][CONSULTA] Iniciando proceso de guardar consulta 
+[POST] => Array
+(
+    [txtdocumento] => 753159
+    [txtficha] => 79846
+    [txtnombre] => ronaldo jesus
+    [idPersona] => 12
+    [motivoscomunes] => 1
+    [formatoConsulta] => 9
+    [txtmotivo] => Dolor de diente
+    [visionod] => 0.23
+    [visionoi] => 0.25
+    [tensionod] => 0.25
+    [tensionoi] => 0.58
+    [consulta-textarea] => <p><font color="#000000" style="background-color: rgb(255, 255, 0);"><span style="font-size: 24px;"><b>pruebaaaaaaaaaaaaaaaaaa</b></span></font></p>
+    [formatoreceta] => Seleccionar
+    [receta-textarea] => <p><br></p><p><strong>IBUDOLANET</strong> (GRAMON PARAGUAY)</p><p>Indicaciones: tomar cada 5 minutos</p>
+    [txtnota] => pruebaa
+    [proximaconsulta] => 2025-06-30
+    [whatsapptxt] => 
+    [email] => 
+    [id_user] => 9
+    [id_reserva] => 0
+    [medico_id] => 1
+)
+
+[FILES] => Array
+(
+    [files] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+

@@ -102,3 +102,77 @@ Para configurar un mantenimiento automático semanal:
 
 1. Ejecute `configurar_mantenimiento_automatico.bat` (requiere privilegios de administrador)
 2. Esto configurará una tarea programada para ejecutar la limpieza cada domingo a la 1:00 AM
+
+## Mantenimiento del Sistema en Producción
+
+### Limpieza de Archivos Temporales
+
+El sistema genera archivos PDF temporales en las siguientes ubicaciones:
+- `pdf_temp/`: PDFs generados temporalmente
+- `ajax/temp/pdfs_web/`: PDFs temporales para envío web
+
+Es recomendable limpiar estos directorios periódicamente mediante una tarea programada:
+
+```php
+// Ejemplo de script para limpiar archivos temporales
+$directorios = ['pdf_temp', 'ajax/temp/pdfs_web', 'uploads/temp'];
+foreach ($directorios as $dir) {
+    if (is_dir($dir)) {
+        $files = glob($dir . '/*');
+        foreach ($files as $file) {
+            if (is_file($file) && filemtime($file) < time() - 86400) { // más de 1 día
+                unlink($file);
+            }
+        }
+    }
+}
+```
+
+### Rotación de Logs
+
+El sistema mantiene logs en la carpeta `logs/`. Para evitar que crezcan indefinidamente:
+
+1. Configura una rotación de logs diaria o semanal
+2. Utiliza el siguiente script en una tarea programada:
+
+```php
+// Rotar logs con más de 30 días
+$logDir = 'logs';
+$files = glob($logDir . '/*.log');
+foreach ($files as $file) {
+    if (is_file($file) && filemtime($file) < time() - (30 * 86400)) {
+        $archiveDir = $logDir . '/archive';
+        if (!is_dir($archiveDir)) mkdir($archiveDir, 0755, true);
+        
+        $newName = $archiveDir . '/' . basename($file) . '.' . date('Y-m-d', filemtime($file));
+        rename($file, $newName);
+    }
+}
+```
+
+### Respaldo de Base de Datos
+
+Configura respaldos automáticos de la base de datos:
+
+```bash
+# Ejemplo de script para respaldo de PostgreSQL
+pg_dump -U usuario -Fc nombredb > /ruta/respaldos/clinica_$(date +%Y%m%d).dump
+```
+
+### Monitoreo del Sistema
+
+Para monitorear el sistema en producción:
+
+1. Revisa regularmente los logs en `logs/application.log` y `logs/database.log`
+2. Configura alertas para errores críticos
+3. Monitorea el espacio en disco, especialmente en las carpetas de uploads y PDFs
+
+### Optimización
+
+Para mantener el rendimiento óptimo:
+
+1. Activa el caché de PHP
+2. Configura el servidor web con compresión gzip
+3. Utiliza un CDN para archivos estáticos si el tráfico aumenta
+
+## Estructura de la Base de Datos

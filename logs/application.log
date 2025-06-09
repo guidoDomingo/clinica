@@ -20,3 +20,27 @@ Data: {
     "reg_activation": "0f49aa894ff9af908cd39f07f0ae8504"
 }
 ----------------------------------------
+[2025-06-09 11:16:32] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-09 11:16:32] [INFO] [user.controller.php:22] user: 92f115a32bf6c21948a3d23aa97ba006
+Data: 92f115a32bf6c21948a3d23aa97ba006
+----------------------------------------
+[2025-06-09 11:16:32] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "92f115a32bf6c21948a3d23aa97ba006",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": null,
+    "user_is_active": true,
+    "profile_photo": null,
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-09 07:24:38] [INFO] [RhPersonController.php:599] 
+Data: Creado nuevo registro de médico para la persona ID 58 con empresa ID 2
+----------------------------------------
