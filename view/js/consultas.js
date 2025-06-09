@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnLimpiarPersona = document.getElementById('btnLimpiarPersona');
     const btnGuardarConsulta = document.getElementById('btnGuardarConsulta');
     const btnSubirArchivos = document.getElementById('btnSubirArchivos');
+    const btnDescargarPDF = document.getElementById('btnDescargarPDF');
    
     // Inicializar autocompletado para el campo de búsqueda de paciente
     inicializarAutocompletado();
@@ -34,6 +35,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (btnSubirArchivos) {
         btnSubirArchivos.addEventListener('click', subirArchivos);
+    }
+
+    // Event listener para el botón de descargar PDF
+    if (btnDescargarPDF) {
+        btnDescargarPDF.addEventListener('click', descargarPDFConsulta);
     }
     
     // Inicializar tabla de consultas
@@ -552,7 +558,30 @@ function guardarConsulta() {
         processData: false,
         contentType: false,
         success: function(response) {
-            if (response === "ok" || response === "actualizado") {
+            let idConsultaGuardada = '';
+            // Verificar si la respuesta contiene el ID de la consulta (en caso de una nueva)
+            if (response.includes('id:')) {
+                const partes = response.split('id:');
+                if (partes.length > 1) {
+                    idConsultaGuardada = partes[1].trim();
+                    // Guardar el ID de la consulta en un campo oculto o atributo de datos
+                    if (!document.getElementById('id_consulta_actual')) {
+                        const idConsultaInput = document.createElement('input');
+                        idConsultaInput.type = 'hidden';
+                        idConsultaInput.id = 'id_consulta_actual';
+                        document.getElementById('tblConsulta').appendChild(idConsultaInput);
+                    }
+                    document.getElementById('id_consulta_actual').value = idConsultaGuardada;
+                    
+                    // Habilitar el botón de descargar PDF
+                    const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+                    if (btnDescargarPDF) {
+                        btnDescargarPDF.disabled = false;
+                    }
+                }
+            }
+            
+            if (response.includes("ok") || response.includes("actualizado")) {
                 const mensaje = esActualizacion ? "Consulta actualizada correctamente" : "Consulta guardada correctamente";
                 Swal.fire({
                     position: "center",
@@ -561,6 +590,21 @@ function guardarConsulta() {
                     showConfirmButton: false,
                     timer: 1500
                 });
+                
+                // Si es una actualización, usar el ID existente para habilitar el botón de PDF
+                if (esActualizacion && idConsulta) {
+                    const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+                    if (btnDescargarPDF) {
+                        btnDescargarPDF.disabled = false;
+                        if (!document.getElementById('id_consulta_actual')) {
+                            const idConsultaInput = document.createElement('input');
+                            idConsultaInput.type = 'hidden';
+                            idConsultaInput.id = 'id_consulta_actual';
+                            document.getElementById('tblConsulta').appendChild(idConsultaInput);
+                        }
+                        document.getElementById('id_consulta_actual').value = idConsulta;
+                    }
+                }
                 
                 // Actualizar información después de guardar
                 obtenerResumenConsulta(idPersona);
@@ -658,9 +702,9 @@ function mostrarHistorialConsultas(idPersona) {
                                 ${html}
                                 <strong>Motivo:</strong> ${consulta.txtmotivo || 'No especificado'}<br>
                                 <strong>Diagnóstico:</strong> ${consulta.consulta_textarea || 'No especificado'}
-                            </div>
-                            <div class="timeline-footer">
+                            </div>                            <div class="timeline-footer">
                                 <button class="btn btn-info btn-sm ver-detalle-consulta" data-id="${consulta.id_consulta}">Ver detalles</button>
+                                <a href="generar_pdf_consulta.php?id=${consulta.id_consulta}" target="_blank" class="btn btn-primary btn-sm">Descargar PDF</a>
                             </div>
                         </div>
                     </div>
@@ -1206,6 +1250,20 @@ function cargarConsultaEnFormulario(consulta, archivos) {
             }
         });
     }
+      // Guardar el ID de la consulta actual para el botón de descarga PDF
+    if (!document.getElementById('id_consulta_actual')) {
+        const idConsultaActualInput = document.createElement('input');
+        idConsultaActualInput.type = 'hidden';
+        idConsultaActualInput.id = 'id_consulta_actual';
+        document.getElementById('tblConsulta').appendChild(idConsultaActualInput);
+    }
+    document.getElementById('id_consulta_actual').value = consulta.id_consulta;
+    
+    // Habilitar el botón de descarga de PDF
+    const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+    if (btnDescargarPDF) {
+        btnDescargarPDF.disabled = false;
+    }
     
     // Notificar al usuario
     Swal.fire({
@@ -1248,8 +1306,7 @@ function limpiarFormularioConsulta() {
             document.getElementById('consulta-textarea').value = '';
         }
     }
-    
-    if ($('#receta-textarea').length > 0) {
+      if ($('#receta-textarea').length > 0) {
         if ($('#receta-textarea').data('summernote')) {
             // Si está inicializado con Summernote, usar el método de la API de Summernote
             $('#receta-textarea').summernote('code', '');
@@ -1258,6 +1315,15 @@ function limpiarFormularioConsulta() {
             // Si no está inicializado con Summernote, limpiar como textarea normal
             document.getElementById('receta-textarea').value = '';
         }
+    }
+    
+    // Eliminar el ID de consulta actual y deshabilitar el botón de descarga PDF
+    if (document.getElementById('id_consulta_actual')) {
+        document.getElementById('id_consulta_actual').value = '';
+    }
+    const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+    if (btnDescargarPDF) {
+        btnDescargarPDF.disabled = true;
     }
     
     // Resetear selects a su primera opción
@@ -2526,4 +2592,30 @@ function inicializarAutocompletado() {
     document.head.appendChild(style);
     
     console.log('Autocompletado inicializado correctamente');
+}
+
+/**
+ * Función para descargar el PDF de una consulta médica
+ */
+function descargarPDFConsulta() {
+    // Obtener el ID de la consulta actual desde el input oculto
+    const idConsulta = document.getElementById('id_consulta_actual') ? document.getElementById('id_consulta_actual').value : null;
+    
+    if (!idConsulta) {
+        Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "No hay una consulta disponible para descargar",
+            text: "Por favor, guarde la consulta primero",
+            showConfirmButton: false,
+            timer: 2000
+        });
+        return;
+    }
+    
+    // URL para generar el PDF
+    const urlPDF = `generar_pdf_consulta.php?id=${idConsulta}`;
+    
+    // Abrir en una nueva ventana
+    window.open(urlPDF, '_blank');
 }

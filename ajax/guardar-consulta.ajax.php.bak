@@ -1,0 +1,89 @@
+<?php
+// Incluir el archivo de depuración
+require_once "../logs/debug_guardar.php"; 
+debug_log("Iniciando proceso de guardar consulta", ["POST" => $_POST, "FILES" => $_FILES], "[CONSULTA]");
+
+require_once "../controller/consultas.controller.php";
+require_once "../model/consultas.model.php";
+
+class TableConsultas {
+    public function ajaxInsertarConsulta($datos) {
+        $response = ControllerConsulta::ctrSetConsulta($datos);
+        echo $response;
+    }
+
+    public function ajaxEliminarConsulta($id) {
+        $response = ControllerConsulta::ctrEliminarConsulta($id);
+        echo json_encode($response);
+    }
+}
+
+// Procesar la inserción o actualización de una consulta
+if (isset($_POST["motivoscomunes"]) && isset($_POST["formatoConsulta"])) {
+    $insertar = new TableConsultas();
+    $datos = array();
+
+    // Recopilar todos los datos del formulario
+    foreach ($_POST as $key => $value) {
+        $datos[$key] = $value;
+    }
+
+    // Manejar archivos adjuntos (si existen)
+    if (!empty($_FILES)) {
+        $archivos = $_FILES; // Aquí puedes procesar los archivos subidos
+        // Ejemplo: Guardar archivos en una carpeta
+        $rutaDestino = '../view/uploads/'; // Cambia esto por la ruta donde quieras guardar los archivos
+        foreach ($archivos as $archivo) {
+            $nombreArchivo = basename($archivo['name']);
+            $rutaCompleta = $rutaDestino . $nombreArchivo;
+            if (move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
+                // Archivo guardado correctamente
+                $datos['archivos'][] = $rutaCompleta; // Guardar la ruta en los datos
+            } else {
+                // Error al guardar el archivo
+            }
+        }
+    }    // Verificar si es una actualización o una nueva consulta
+    if (isset($datos['id_consulta']) && !empty($datos['id_consulta'])) {
+        // Es una actualización
+        $insertar->ajaxInsertarConsulta($datos); // El modelo ya maneja la diferencia      } else {
+        // Es una nueva consulta
+        // Registrar datos para depuración
+        $log_dir = "../logs";
+        if (!is_dir($log_dir)) {
+            mkdir($log_dir, 0777, true);
+        }
+        // Registrar sólo los campos importantes para no llenar el log
+        $log_data = [
+            'id_persona' => $datos['idPersona'] ?? 'no-id',
+            'txtmotivo' => $datos['txtmotivo'] ?? 'no-motivo',
+            'consulta-textarea' => substr($datos['consulta-textarea'] ?? '', 0, 100) . '...',
+        ];
+        error_log(date('Y-m-d H:i:s') . " - Guardando consulta: " . json_encode($log_data) . "\n", 3, "$log_dir/consultas.log");
+        
+        try {
+            $response = ControllerConsulta::ctrSetConsulta($datos);
+            // Si la respuesta incluye el ID de la consulta, devolvemos ese ID
+            if (is_numeric($response)) {
+                echo "ok id:" . $response;
+                error_log(date('Y-m-d H:i:s') . " - Consulta guardada exitosamente con ID: $response\n", 3, "$log_dir/consultas.log");
+            } else {
+                echo $response;
+                error_log(date('Y-m-d H:i:s') . " - Error al guardar consulta: $response\n", 3, "$log_dir/consultas.log");
+            }
+        } catch (Exception $e) {
+            $error_msg = "Error al guardar consulta: " . $e->getMessage();
+            error_log(date('Y-m-d H:i:s') . " - $error_msg\n", 3, "$log_dir/consultas.log");
+            echo $error_msg;
+        }
+    }
+}
+
+// Procesar la eliminación de una consulta
+if (isset($_POST["idConsulta"]) && isset($_POST["operacion"])) {
+    $crud = new TableConsultas();
+    if ($_POST["operacion"] == "eliminarconsulta") {
+        $crud->ajaxEliminarConsulta($_POST["idConsulta"]);
+    }
+}
+?>

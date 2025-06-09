@@ -2,52 +2,295 @@
 require_once "conexion.php"; // Archivo para la conexión a la base de datos
 
 class ModelConsulta {
-    public static function mdlSetConsulta($datos) {
+    // Eliminamos las propiedades y constructor que causaban conflictos
+    // con los métodos estáticos
+      public static function mdlSetConsulta($datos) {
+        // Verificar si existe la función de logs detallados
+        $log_function_exists = function_exists('debug_detallado');
+        
+        if ($log_function_exists) {
+            debug_detallado('MODELO', "Iniciando mdlSetConsulta", [
+                'datos' => array_keys($datos),
+                'es_actualizacion' => isset($datos["id_consulta"]) && !empty($datos["id_consulta"])
+            ], 'info');
+        }
+        
         // Verificar si es una actualización o una nueva consulta
         if (isset($datos["id_consulta"]) && !empty($datos["id_consulta"])) {
+            if ($log_function_exists) {
+                debug_detallado('MODELO', "Redirigiendo a actualización de consulta", [
+                    'id_consulta' => $datos["id_consulta"]
+                ], 'info');
+            }
             return self::mdlActualizarConsulta($datos);
         }
         
-        // Preparar la consulta SQL para inserción
-        $stmt = Conexion::conectar()->prepare(
-            "INSERT INTO consultas (
-                motivoscomunes, txtmotivo, visionod, visionoi, tensionod, tensionoi,
-                consulta_textarea, receta_textarea, txtnota, proximaconsulta,
-                whatsapptxt, email, id_user, id_reserva, id_persona
-            ) VALUES (
-                :motivoscomunes, :txtmotivo, :visionod, :visionoi, :tensionod, :tensionoi,
-                :consulta_textarea, :receta_textarea, :txtnota, :proximaconsulta,
-                :whatsapptxt, :email, :id_user, :id_reserva, :id_persona
-            )"
-        );
-
-        // Bind de parámetros
-        $stmt->bindParam(":motivoscomunes", $datos["motivoscomunes"], PDO::PARAM_STR);
-        $stmt->bindParam(":txtmotivo", $datos["txtmotivo"], PDO::PARAM_STR);
-        $stmt->bindParam(":visionod", $datos["visionod"], PDO::PARAM_STR);
-        $stmt->bindParam(":visionoi", $datos["visionoi"], PDO::PARAM_STR);
-        $stmt->bindParam(":tensionod", $datos["tensionod"], PDO::PARAM_STR);
-        $stmt->bindParam(":tensionoi", $datos["tensionoi"], PDO::PARAM_STR);
-        $stmt->bindParam(":consulta_textarea", $datos["consulta-textarea"], PDO::PARAM_STR);
-        $stmt->bindParam(":receta_textarea", $datos["receta-textarea"], PDO::PARAM_STR);
-        $stmt->bindParam(":txtnota", $datos["txtnota"], PDO::PARAM_STR);
-        // Manejo de proximaconsulta (puede ser NULL)
-        if (empty($datos["proximaconsulta"])) {
-            $stmt->bindValue(":proximaconsulta", null, PDO::PARAM_NULL); // Asignar NULL
-        } else {
-            $stmt->bindParam(":proximaconsulta", $datos["proximaconsulta"], PDO::PARAM_STR);
+        // Obtener la conexión antes de usarla y verificar
+        if ($log_function_exists) {
+            debug_detallado('MODELO', "Intentando obtener conexión a BD", [], 'info');
         }
-        $stmt->bindParam(":whatsapptxt", $datos["whatsapptxt"], PDO::PARAM_STR);
-        $stmt->bindParam(":email", $datos["email"], PDO::PARAM_STR);
-        $stmt->bindParam(":id_user", $datos["id_user"], PDO::PARAM_INT);
-        $stmt->bindParam(":id_reserva", $datos["id_reserva"], PDO::PARAM_INT);
-        $stmt->bindParam(":id_persona", $datos["idPersona"], PDO::PARAM_INT);
-
+        
+        $db = Conexion::conectar();
+        if ($db === null) {
+            $mensaje = "Error: No se pudo establecer conexión en mdlSetConsulta";
+            error_log($mensaje);
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', $mensaje, [
+                    'error' => error_get_last()
+                ], 'error');
+            }
+            
+            return "error_conexion";
+        }
+        
+        if ($log_function_exists) {
+            debug_detallado('MODELO', "Conexión establecida correctamente", [], 'success');
+            
+            // Verificar información del paciente
+            try {
+                $checkStmt = $db->prepare("SELECT person_id, first_name, last_name FROM rh_person WHERE person_id = :id_persona");
+                $checkStmt->bindParam(":id_persona", $datos["idPersona"], PDO::PARAM_INT);
+                $checkStmt->execute();
+                $persona = $checkStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($persona) {
+                    debug_detallado('MODELO', "Paciente encontrado para la consulta", [
+                        'person_id' => $persona['person_id'],
+                        'nombre' => $persona['first_name'] . ' ' . $persona['last_name']
+                    ], 'info');
+                } else {
+                    debug_detallado('MODELO', "No se encontró el paciente en la base de datos", [
+                        'id_persona' => $datos["idPersona"]
+                    ], 'warning');
+                }
+            } catch (Exception $e) {
+                debug_detallado('MODELO', "Error al verificar paciente", [
+                    'error' => $e->getMessage()
+                ], 'error');
+            }
+        }
+        
+        // Verificar cada campo obligatorio y su tipo
+        if ($log_function_exists) {
+            $campos_obligatorios = [
+                'motivoscomunes' => isset($datos["motivoscomunes"]) ? 'OK' : 'FALTA',
+                'txtmotivo' => isset($datos["txtmotivo"]) ? 'OK' : 'FALTA',
+                'id_persona' => isset($datos["idPersona"]) ? 'OK' : 'FALTA'
+            ];
+            
+            debug_detallado('MODELO', "Verificando campos obligatorios", $campos_obligatorios, 'info');
+        }
+        
+        // Preparar la consulta SQL para inserción
+        if ($log_function_exists) {
+            debug_detallado('MODELO', "Preparando consulta SQL para inserción", [], 'info');
+        }
+        
+        try {
+            $stmt = $db->prepare(
+                "INSERT INTO consultas (
+                    motivoscomunes, txtmotivo, visionod, visionoi, tensionod, tensionoi,
+                    consulta_textarea, receta_textarea, txtnota, proximaconsulta,
+                    whatsapptxt, email, id_user, id_reserva, id_persona
+                ) VALUES (
+                    :motivoscomunes, :txtmotivo, :visionod, :visionoi, :tensionod, :tensionoi,
+                    :consulta_textarea, :receta_textarea, :txtnota, :proximaconsulta,
+                    :whatsapptxt, :email, :id_user, :id_reserva, :id_persona
+                )"
+            );
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', "Consulta SQL preparada correctamente", [], 'success');
+            }
+        } catch (PDOException $e) {
+            $mensaje = "Error al preparar la consulta SQL: " . $e->getMessage();
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', $mensaje, [
+                    'error_code' => $e->getCode(),
+                    'sql_state' => $e->errorInfo[0] ?? 'desconocido'
+                ], 'error');
+            }
+            
+            return "error_sql: " . $e->getMessage();
+        }        // Bind de parámetros
+        if ($log_function_exists) {
+            debug_detallado('MODELO', "Comenzando bind de parámetros", [], 'info');
+        }
+        
+        try {
+            // Crear un array con todos los binds para loguear errores específicos
+            $bind_params = [
+                ":motivoscomunes" => ["valor" => $datos["motivoscomunes"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":txtmotivo" => ["valor" => $datos["txtmotivo"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":visionod" => ["valor" => $datos["visionod"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":visionoi" => ["valor" => $datos["visionoi"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":tensionod" => ["valor" => $datos["tensionod"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":tensionoi" => ["valor" => $datos["tensionoi"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":consulta_textarea" => ["valor" => $datos["consulta-textarea"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":receta_textarea" => ["valor" => $datos["receta-textarea"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":txtnota" => ["valor" => $datos["txtnota"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":whatsapptxt" => ["valor" => $datos["whatsapptxt"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":email" => ["valor" => $datos["email"] ?? null, "tipo" => PDO::PARAM_STR],
+                ":id_user" => ["valor" => $datos["id_user"] ?? null, "tipo" => PDO::PARAM_INT],
+                ":id_reserva" => ["valor" => $datos["id_reserva"] ?? null, "tipo" => PDO::PARAM_INT],
+                ":id_persona" => ["valor" => $datos["idPersona"] ?? null, "tipo" => PDO::PARAM_INT]
+            ];
+            
+            // Loguear información sobre los parámetros
+            if ($log_function_exists) {
+                debug_detallado('MODELO', "Valores para bind de parámetros", $bind_params, 'debug');
+            }
+              // Realizar los binds uno por uno para detectar posibles errores
+            // En bindParam debemos usar variables, no expresiones, porque espera una referencia
+            $motivoscomunes = isset($datos["motivoscomunes"]) ? $datos["motivoscomunes"] : '';
+            $txtmotivo = isset($datos["txtmotivo"]) ? $datos["txtmotivo"] : '';
+            $visionod = isset($datos["visionod"]) ? $datos["visionod"] : '';
+            $visionoi = isset($datos["visionoi"]) ? $datos["visionoi"] : '';
+            $tensionod = isset($datos["tensionod"]) ? $datos["tensionod"] : '';
+            $tensionoi = isset($datos["tensionoi"]) ? $datos["tensionoi"] : '';
+            
+            $stmt->bindParam(":motivoscomunes", $motivoscomunes, PDO::PARAM_STR);
+            $stmt->bindParam(":txtmotivo", $txtmotivo, PDO::PARAM_STR);
+            $stmt->bindParam(":visionod", $visionod, PDO::PARAM_STR);
+            $stmt->bindParam(":visionoi", $visionoi, PDO::PARAM_STR);
+            $stmt->bindParam(":tensionod", $tensionod, PDO::PARAM_STR);
+            $stmt->bindParam(":tensionoi", $tensionoi, PDO::PARAM_STR);
+              // Verificar si existe la clave "consulta-textarea"
+            if (isset($datos["consulta-textarea"])) {
+                $consulta_textarea = $datos["consulta-textarea"];
+                $stmt->bindParam(":consulta_textarea", $consulta_textarea, PDO::PARAM_STR);
+            } else {
+                if ($log_function_exists) {
+                    debug_detallado('MODELO', "Campo consulta-textarea no encontrado", [], 'warning');
+                }
+                $stmt->bindValue(":consulta_textarea", '', PDO::PARAM_STR);
+            }
+            
+            // Verificar si existe la clave "receta-textarea"
+            if (isset($datos["receta-textarea"])) {
+                $receta_textarea = $datos["receta-textarea"];
+                $stmt->bindParam(":receta_textarea", $receta_textarea, PDO::PARAM_STR);
+            } else {
+                if ($log_function_exists) {
+                    debug_detallado('MODELO', "Campo receta-textarea no encontrado", [], 'warning');
+                }
+                $stmt->bindValue(":receta_textarea", '', PDO::PARAM_STR);
+            }
+            
+            $txtnota = isset($datos["txtnota"]) ? $datos["txtnota"] : '';
+            $stmt->bindParam(":txtnota", $txtnota, PDO::PARAM_STR);
+              // Manejo de proximaconsulta (puede ser NULL)
+            if (empty($datos["proximaconsulta"])) {
+                if ($log_function_exists) {
+                    debug_detallado('MODELO', "Campo proximaconsulta está vacío, asignando NULL", [], 'info');
+                }
+                $stmt->bindValue(":proximaconsulta", null, PDO::PARAM_NULL);
+            } else {
+                if ($log_function_exists) {
+                    debug_detallado('MODELO', "Campo proximaconsulta tiene valor", [
+                        'valor' => $datos["proximaconsulta"]
+                    ], 'info');
+                }
+                $proximaconsulta = $datos["proximaconsulta"];
+                $stmt->bindParam(":proximaconsulta", $proximaconsulta, PDO::PARAM_STR);
+            }
+            
+            $whatsapptxt = isset($datos["whatsapptxt"]) ? $datos["whatsapptxt"] : '';
+            $email = isset($datos["email"]) ? $datos["email"] : '';
+            $stmt->bindParam(":whatsapptxt", $whatsapptxt, PDO::PARAM_STR);
+            $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+            
+            // Verificar valores de los IDs (deben ser enteros)
+            $id_user = isset($datos["id_user"]) ? intval($datos["id_user"]) : 1;
+            $id_reserva = isset($datos["id_reserva"]) ? intval($datos["id_reserva"]) : 0;
+            $id_persona = isset($datos["idPersona"]) ? intval($datos["idPersona"]) : 0;
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', "IDs después de convertir a enteros", [
+                    'id_user' => $id_user,
+                    'id_reserva' => $id_reserva,
+                    'id_persona' => $id_persona
+                ], 'info');
+            }
+            
+            $stmt->bindParam(":id_user", $id_user, PDO::PARAM_INT);
+            $stmt->bindParam(":id_reserva", $id_reserva, PDO::PARAM_INT);
+            $stmt->bindParam(":id_persona", $id_persona, PDO::PARAM_INT);
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', "Todos los parámetros bindeados correctamente", [], 'success');
+            }
+            
+        } catch (PDOException $e) {
+            $mensaje = "Error en bind de parámetros: " . $e->getMessage();
+            if ($log_function_exists) {
+                debug_detallado('MODELO', $mensaje, [
+                    'exception' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ], 'error');
+            }
+            return "error_bind: " . $e->getMessage();
+        }
+        
         // Ejecutar la consulta
-        if ($stmt->execute()) {
-            return "ok";
-        } else {
-            return "error";
+        try {
+            if ($log_function_exists) {
+                debug_detallado('MODELO', "Intentando ejecutar la consulta SQL", [], 'info');
+            }
+            
+            if ($stmt->execute()) {
+                // Obtener el id del registro insertado usando la misma conexión
+                $id_consulta = $db->lastInsertId();
+                
+                if ($log_function_exists) {
+                    debug_detallado('MODELO', "Consulta ejecutada correctamente", [
+                        'id_consulta' => $id_consulta
+                    ], 'success');
+                }
+                
+                return $id_consulta; // Devuelve el ID de la consulta insertada
+            } else {
+                $errorInfo = $stmt->errorInfo();
+                $mensaje = "Error SQL en mdlSetConsulta: " . json_encode($errorInfo);
+                error_log($mensaje);
+                
+                if ($log_function_exists) {
+                    debug_detallado('MODELO', $mensaje, [
+                        'error_code' => $errorInfo[0],
+                        'sql_state' => $errorInfo[1],
+                        'mensaje' => $errorInfo[2]
+                    ], 'error');
+                }
+                
+                return "error_sql: " . $errorInfo[2];
+            }
+        } catch (PDOException $e) {
+            $mensaje = "Excepción PDO en mdlSetConsulta: " . $e->getMessage();
+            error_log($mensaje);
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', $mensaje, [
+                    'exception' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'trace' => $e->getTraceAsString()
+                ], 'error');
+            }
+            
+            return "error_pdo: " . $e->getMessage();
+        } catch (Exception $e) {
+            $mensaje = "Excepción general en mdlSetConsulta: " . $e->getMessage();
+            error_log($mensaje);
+            
+            if ($log_function_exists) {
+                debug_detallado('MODELO', $mensaje, [
+                    'exception' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ], 'error');
+            }
+            
+            return "error_general: " . $e->getMessage();
         }
     }
     
@@ -294,6 +537,77 @@ class ModelConsulta {
             // Devolver error en formato consistente
             return ['error' => $e->getMessage()];
         }
+    }    /**
+     * Obtiene los datos de una consulta específica por su ID
+     * @param int $id_consulta - ID de la consulta
+     * @return array - Datos de la consulta
+     */
+    public function obtenerConsulta($id_consulta) {
+        try {
+            // Usar conexión estática para compatibilidad con el resto del código
+            $stmt = Conexion::conectar()->prepare("
+                SELECT 
+                    c.*,
+                    CONCAT(p.first_name, ' ', p.last_name) AS nombre_paciente,
+                    p.document_number,
+                    p.birth_date,
+                    p.person_id AS id_persona
+                FROM 
+                    consultas c
+                LEFT JOIN 
+                    rh_person p ON c.id_persona = p.person_id
+                WHERE 
+                    c.id_consulta = :id_consulta
+            ");
+            $stmt->bindParam(':id_consulta', $id_consulta, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerConsulta: " . $e->getMessage());
+            return false;
+        }
+    }    /**
+     * Obtiene los datos de una persona por su ID
+     * @param int $id_persona - ID de la persona
+     * @return array - Datos de la persona
+     */
+    public function obtenerDatosPersona($id_persona) {
+        try {
+            // Usar conexión estática para compatibilidad con el resto del código
+            $stmt = Conexion::conectar()->prepare("
+                SELECT 
+                    person_id,
+                    first_name AS nombres, 
+                    last_name AS apellidos, 
+                    document_number AS documento, 
+                    record_number AS nro_ficha,
+                    birth_date AS fecha_nacimiento,
+                    phone_number AS telefono,
+                    email
+                FROM 
+                    rh_person 
+                WHERE 
+                    person_id = :id_persona
+            ");
+            $stmt->bindParam(':id_persona', $id_persona, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerDatosPersona: " . $e->getMessage());
+            return false;
+        }
+    }
+      /**
+     * Obtiene los diagnósticos asociados a una consulta
+     * Como la tabla diagnósticos no existe, devolvemos un array vacío
+     * @param int $id_consulta - ID de la consulta
+     * @return array - Lista de diagnósticos (vacío)
+     */
+    public function obtenerDiagnosticos($id_consulta) {
+        // Como la tabla diagnosticos no existe en la base de datos,
+        // devolvemos un array vacío
+        return [];
     }
 }
-?>
