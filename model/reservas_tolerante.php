@@ -17,16 +17,15 @@ function obtenerReservaPorIdTolerante($id) {
             "SELECT 
                 sr.reserva_id as id,
                 sr.paciente_id,
-                '' as nombre_paciente_directo,
                 COALESCE(rp2.first_name || ' - ' || rp2.last_name, 'Paciente #' || sr.paciente_id) as nombre_paciente,
-                'No disponible' as documento_paciente,
-                '' as telefono,
+                rp2.document_number  as documento_paciente,
+                rp2.phone_number  as telefono,
                 COALESCE(rs.serv_descripcion, 'No especificado') as servicio,
                 COALESCE(rp.first_name || ' - ' || rp.last_name, 'Doctor #' || sr.doctor_id) as nombre_medico,
                 sr.fecha_reserva as fecha,
                 sr.hora_inicio as hora,
                 sr.reserva_estado as estado,
-                COALESCE(s.sala_nombre, 'No asignada') as sala_nombre,
+                COALESCE(s.sala_nombre , 'No asignada') as sala_nombre,
                 COALESCE(rs.serv_monto, 0) as serv_monto
             FROM 
                 servicios_reservas sr
@@ -41,7 +40,7 @@ function obtenerReservaPorIdTolerante($id) {
             LEFT JOIN 
                 agendas_detalle ad ON sr.agenda_id = ad.detalle_id
             LEFT JOIN 
-                salas s ON sr.sala_id = s.sala_id
+                salas s ON ad.sala_id  = s.sala_id
             WHERE 
                 sr.reserva_id = :id"
         );

@@ -38,11 +38,11 @@
               </button>
             </div>
             <!-- Botón para enviar PDF -->
-            <div class="col-md-1">
+            <!-- <div class="col-md-1">
               <button type="button" class="btn btn-primary" id="btnAbrirModalPDF" title="Enviar PDF">
                 <i class="fas fa-file-pdf"></i>
               </button>
-            </div>
+            </div> -->
 
             <!-- Campo de Código -->
             <div class="col-md-2">

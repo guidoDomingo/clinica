@@ -14,34 +14,34 @@ class ReservasModel {
         try {
             $stmt = Conexion::conectar()->prepare(
                 "SELECT 
-                    sr.reserva_id as id,
-                    sr.paciente_id,
-                    rp2.first_name || ' - ' || rp2.last_name as nombre_paciente,
-                    '' as documento_paciente, -- Ajustar según estructura
-                    '' as telefono, -- Ajustar según estructura
-                    rs.serv_descripcion as servicio,
-                    rp.first_name || ' - ' || rp.last_name as nombre_medico,
-                    sr.fecha_reserva as fecha,
-                    sr.hora_inicio as hora,
-                    sr.reserva_estado as estado,
-                    s.sala_nombre,
-                    rs.serv_monto
-                FROM 
-                    servicios_reservas sr
-                INNER JOIN 
-                    rh_doctors rd ON sr.doctor_id = rd.doctor_id
-                INNER JOIN 
-                    rh_person rp ON rd.person_id = rp.person_id
-                INNER JOIN 
-                    rh_person rp2 ON sr.paciente_id = rp2.person_id
-                INNER JOIN 
-                    rs_servicios rs ON sr.servicio_id = rs.serv_id
-                INNER JOIN 
-                    agendas_detalle ad ON sr.agenda_id = ad.detalle_id
-                INNER JOIN 
-                    salas s ON sr.sala_id = s.sala_id
-                WHERE 
-                    sr.reserva_id = :id"
+                sr.reserva_id as id,
+                sr.paciente_id,
+                COALESCE(rp2.first_name || ' - ' || rp2.last_name, 'Paciente #' || sr.paciente_id) as nombre_paciente,
+                rp2.document_number  as documento_paciente,
+                rp2.phone_number  as telefono,
+                COALESCE(rs.serv_descripcion, 'No especificado') as servicio,
+                COALESCE(rp.first_name || ' - ' || rp.last_name, 'Doctor #' || sr.doctor_id) as nombre_medico,
+                sr.fecha_reserva as fecha,
+                sr.hora_inicio as hora,
+                sr.reserva_estado as estado,
+                COALESCE(s.sala_nombre , 'No asignada') as sala_nombre,
+                COALESCE(rs.serv_monto, 0) as serv_monto
+            FROM 
+                servicios_reservas sr
+            LEFT JOIN 
+                rh_doctors rd ON sr.doctor_id = rd.doctor_id
+            LEFT JOIN 
+                rh_person rp ON rd.person_id = rp.person_id
+            LEFT JOIN 
+                rh_person rp2 ON sr.paciente_id = rp2.person_id
+            LEFT JOIN 
+                rs_servicios rs ON sr.servicio_id = rs.serv_id
+            LEFT JOIN 
+                agendas_detalle ad ON sr.agenda_id = ad.detalle_id
+            LEFT JOIN 
+                salas s ON ad.sala_id  = s.sala_id
+            WHERE 
+                sr.reserva_id = :id"
             );
             
             $stmt->bindParam(":id", $id, PDO::PARAM_INT);
