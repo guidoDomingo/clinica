@@ -131,10 +131,10 @@
 <hr>
 
 <div class="form-container">
-    <h2>Subir Archivos</h2>
-    <form id="uploadForm" method="post" enctype="multipart/form-data">
+    <h2>Subir Archivos</h2>    <form id="uploadForm" method="post" enctype="multipart/form-data">
         <input type="hidden" id="id_persona_file" name="id_persona_file">
         <input type="hidden" id="id_usuario" name="id_usuario" value="1"> <!-- Añadido campo id_usuario -->
+        <input type="hidden" id="id_consulta_file" name="id_consulta_file"> <!-- Campo para el ID de consulta -->
         <div class="file-upload-container">
             <div class="file-drop-area" id="dropArea">
                 <span class="file-message">Arrastra y suelta archivos aquí o</span>

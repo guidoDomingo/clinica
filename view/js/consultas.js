@@ -570,8 +570,13 @@ function guardarConsulta() {
                         idConsultaInput.type = 'hidden';
                         idConsultaInput.id = 'id_consulta_actual';
                         document.getElementById('tblConsulta').appendChild(idConsultaInput);
+                    }                    document.getElementById('id_consulta_actual').value = idConsultaGuardada;
+                    
+                    // También actualizar el campo oculto en el formulario de archivos
+                    if (document.getElementById('id_consulta_file')) {
+                        document.getElementById('id_consulta_file').value = idConsultaGuardada;
+                        console.log('ID consulta actualizado en formulario de archivos:', idConsultaGuardada);
                     }
-                    document.getElementById('id_consulta_actual').value = idConsultaGuardada;
                     
                     // Habilitar el botón de descargar PDF
                     const btnDescargarPDF = document.getElementById('btnDescargarPDF');
@@ -1789,15 +1794,24 @@ function mostrarAlerta(tipo, mensaje) {
 /**
  * Función para subir archivos asociados a una consulta
  */
-function subirArchivos() {
-  // Obtener el ID de persona del campo oculto correcto
+function subirArchivos() {  // Obtener el ID de persona del campo oculto correcto
   const idPersona = document.getElementById('id_persona_file').value;
-  const idConsulta = document.getElementById('id_consulta') ? document.getElementById('id_consulta').value : '';
+  
+  // Buscar el ID de consulta - primero intentamos con id_consulta_actual (donde se guarda al crear una consulta)
+  // o si no existe, buscamos id_consulta (usado cuando se edita una consulta existente)
+  let idConsulta = '';
+  if (document.getElementById('id_consulta_actual')) {
+    idConsulta = document.getElementById('id_consulta_actual').value;
+  } else if (document.getElementById('id_consulta')) {
+    idConsulta = document.getElementById('id_consulta').value;
+  }
   
   if (!idPersona) {
     mostrarAlerta('warning', 'Debe seleccionar un paciente antes de subir archivos');
     return;
   }
+  
+  console.log('Subiendo archivos para persona:', idPersona, 'consulta:', idConsulta);
   
   // Usar el ID correcto 'files' en lugar de 'archivo'
   const fileInput = document.getElementById('files');
@@ -1813,15 +1827,25 @@ function subirArchivos() {
     mostrarAlerta('warning', 'Debe seleccionar o arrastrar un archivo para subir');
     return;
   }
-  
-  // Crear un FormData con los archivos seleccionados
+    // Crear un FormData con los archivos seleccionados
   const formData = new FormData();
   
   // Usar el nombre de campo correcto 'id_persona_file' en lugar de 'id_persona'
   formData.append('id_persona_file', idPersona);
   
+  // Asegurarnos de que estamos enviando el ID de la consulta (si existe)
   if (idConsulta) {
     formData.append('id_consulta', idConsulta);
+    console.log('Añadiendo ID de consulta al formulario:', idConsulta);
+  } else {
+    console.log('No hay ID de consulta disponible');
+    
+    // Intentar obtener el ID de consulta del campo oculto en el formulario
+    const idConsultaField = document.getElementById('id_consulta_file');
+    if (idConsultaField && idConsultaField.value) {
+      formData.append('id_consulta', idConsultaField.value);
+      console.log('Usando ID de consulta del campo oculto:', idConsultaField.value);
+    }
   }
   
   // Obtener el ID del usuario desde el atributo de datos del body

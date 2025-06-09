@@ -83,20 +83,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Añadir resultado a la respuesta
                 if ($resultado === "ok") {
                     $response['message'] .= "El archivo $fileName se ha subido correctamente. ";
-                    
-                    // Si hay un ID de consulta, relacionar el archivo con la consulta
+                      // Si hay un ID de consulta, relacionar el archivo con la consulta
                     if ($consulta) {
+                        // Log para depuración
+                        $log_dir = "../logs";
+                        if (!is_dir($log_dir)) {
+                            mkdir($log_dir, 0777, true);
+                        }
+                        error_log(date('Y-m-d H:i:s') . " - Intentando relacionar archivo '$fileName' con consulta ID: $consulta\n", 3, "$log_dir/archivos.log");
+                        
                         // Obtener el ID del archivo recién insertado
                         $idArchivo = ModelArchivos::mdlGetUltimoIdArchivo();
                         
                         if ($idArchivo) {
+                            error_log(date('Y-m-d H:i:s') . " - ID de archivo obtenido: $idArchivo\n", 3, "$log_dir/archivos.log");
+                            
                             // Relacionar el archivo con la consulta
                             $relacionado = ModelArchivos::mdlRelacionarArchivoConsulta($consulta, $idArchivo);
                             
-                            if ($relacionado !== "ok") {
-                                $errors[] = "Error al relacionar el archivo $fileName con la consulta.";
+                            if ($relacionado === "ok") {
+                                error_log(date('Y-m-d H:i:s') . " - Archivo relacionado correctamente con la consulta\n", 3, "$log_dir/archivos.log");
+                                $response['message'] .= "Archivo vinculado a la consulta #$consulta. ";
+                            } else {
+                                error_log(date('Y-m-d H:i:s') . " - Error al relacionar archivo: $relacionado\n", 3, "$log_dir/archivos.log");
+                                $errors[] = "Error al relacionar el archivo $fileName con la consulta: $relacionado";
                             }
                         } else {
+                            error_log(date('Y-m-d H:i:s') . " - No se pudo obtener el ID del archivo\n", 3, "$log_dir/archivos.log");
                             $errors[] = "Error al obtener el ID del archivo $fileName.";
                         }
                     }

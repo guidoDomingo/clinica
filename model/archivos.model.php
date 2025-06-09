@@ -84,20 +84,34 @@ class ModelArchivos {
             return [];
         }
     }  
-    
-    /**
+      /**
      * Obtiene el ID del último archivo insertado
      * @return int|null ID del archivo o null si hay error
      */
     public static function mdlGetUltimoIdArchivo() {
+        // Log para depuración
+        $log_dir = "logs";
+        if (!is_dir($log_dir)) {
+            mkdir($log_dir, 0777, true);
+        }
+        
         // Si tenemos el ID almacenado en la variable estática, lo devolvemos directamente
         if (isset(self::$ultimoIdArchivo)) {
+            error_log(date('Y-m-d H:i:s') . " - Usando ID de archivo almacenado en variable: " . self::$ultimoIdArchivo . "\n", 3, "$log_dir/archivos.log");
             return self::$ultimoIdArchivo;
         }
         
         // Si no, lo buscamos en la base de datos como antes
         try {
-            $stmt = Conexion::conectar()->prepare(
+            error_log(date('Y-m-d H:i:s') . " - Buscando último ID de archivo en la base de datos\n", 3, "$log_dir/archivos.log");
+            
+            $db = Conexion::conectar();
+            if (!$db) {
+                error_log(date('Y-m-d H:i:s') . " - Error: No se pudo conectar a la base de datos\n", 3, "$log_dir/archivos.log");
+                return null;
+            }
+            
+            $stmt = $db->prepare(
                 "SELECT id_archivo FROM archivos ORDER BY id_archivo DESC LIMIT 1"
             );
             
@@ -105,25 +119,77 @@ class ModelArchivos {
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($resultado && isset($resultado['id_archivo'])) {
+                error_log(date('Y-m-d H:i:s') . " - Último ID de archivo encontrado: " . $resultado['id_archivo'] . "\n", 3, "$log_dir/archivos.log");
+                // Actualizar la variable estática para futuros usos
+                self::$ultimoIdArchivo = $resultado['id_archivo'];
                 return $resultado['id_archivo'];
             }
             
+            error_log(date('Y-m-d H:i:s') . " - No se encontró ningún archivo en la base de datos\n", 3, "$log_dir/archivos.log");
             return null;
         } catch (PDOException $e) {
-            error_log("Error en mdlGetUltimoIdArchivo: " . $e->getMessage());
+            error_log(date('Y-m-d H:i:s') . " - Error en mdlGetUltimoIdArchivo: " . $e->getMessage() . "\n", 3, "$log_dir/archivos.log");
             return null;
         }
     }
-    
-    /**
+      /**
      * Relaciona un archivo con una consulta en la tabla archivos_consulta
      * @param int $idConsulta ID de la consulta
      * @param int $idArchivo ID del archivo
      * @return string "ok" si se realizó correctamente, "error" en caso contrario
      */
     public static function mdlRelacionarArchivoConsulta($idConsulta, $idArchivo) {
+        // Log para depuración
+        $log_dir = "logs";
+        if (!is_dir($log_dir)) {
+            mkdir($log_dir, 0777, true);
+        }
+        error_log(date('Y-m-d H:i:s') . " - Intentando relacionar archivo ID: $idArchivo con consulta ID: $idConsulta\n", 3, "$log_dir/archivos.log");
+        
+        // Validación de entrada
+        if (empty($idConsulta) || empty($idArchivo)) {
+            error_log(date('Y-m-d H:i:s') . " - Error: ID de consulta o ID de archivo vacío\n", 3, "$log_dir/archivos.log");
+            return "error: ID de consulta o ID de archivo vacío";
+        }
+        
         try {
-            $stmt = Conexion::conectar()->prepare(
+            // Verificar si la consulta existe
+            $db = Conexion::conectar();
+            $checkStmt = $db->prepare("SELECT id_consulta FROM consultas WHERE id_consulta = :id_consulta");
+            $checkStmt->bindParam(":id_consulta", $idConsulta, PDO::PARAM_INT);
+            $checkStmt->execute();
+            
+            if ($checkStmt->rowCount() == 0) {
+                error_log(date('Y-m-d H:i:s') . " - Error: La consulta con ID: $idConsulta no existe\n", 3, "$log_dir/archivos.log");
+                return "error: La consulta no existe";
+            }
+            
+            // Verificar si el archivo existe
+            $checkStmt = $db->prepare("SELECT id_archivo FROM archivos WHERE id_archivo = :id_archivo");
+            $checkStmt->bindParam(":id_archivo", $idArchivo, PDO::PARAM_INT);
+            $checkStmt->execute();
+            
+            if ($checkStmt->rowCount() == 0) {
+                error_log(date('Y-m-d H:i:s') . " - Error: El archivo con ID: $idArchivo no existe\n", 3, "$log_dir/archivos.log");
+                return "error: El archivo no existe";
+            }
+            
+            // Verificar si la relación ya existe para evitar duplicados
+            $checkStmt = $db->prepare(
+                "SELECT id_archivo_consulta FROM archivos_consulta 
+                 WHERE id_consulta = :id_consulta AND id_archivo = :id_archivo"
+            );
+            $checkStmt->bindParam(":id_consulta", $idConsulta, PDO::PARAM_INT);
+            $checkStmt->bindParam(":id_archivo", $idArchivo, PDO::PARAM_INT);
+            $checkStmt->execute();
+            
+            if ($checkStmt->rowCount() > 0) {
+                error_log(date('Y-m-d H:i:s') . " - Aviso: La relación entre archivo ID: $idArchivo y consulta ID: $idConsulta ya existe\n", 3, "$log_dir/archivos.log");
+                return "ok"; // Ya existe, se considera exitoso
+            }
+            
+            // Crear la relación
+            $stmt = $db->prepare(
                 "INSERT INTO archivos_consulta(id_consulta, id_archivo) VALUES(:id_consulta, :id_archivo)"
             );
             
@@ -131,11 +197,15 @@ class ModelArchivos {
             $stmt->bindParam(":id_archivo", $idArchivo, PDO::PARAM_INT);
             
             if ($stmt->execute()) {
+                error_log(date('Y-m-d H:i:s') . " - Éxito: Archivo ID: $idArchivo relacionado correctamente con consulta ID: $idConsulta\n", 3, "$log_dir/archivos.log");
                 return "ok";
             } else {
-                return "error";
+                $errorInfo = $stmt->errorInfo();
+                error_log(date('Y-m-d H:i:s') . " - Error SQL: " . $errorInfo[2] . "\n", 3, "$log_dir/archivos.log");
+                return "error: " . $errorInfo[2];
             }
         } catch (PDOException $e) {
+            error_log(date('Y-m-d H:i:s') . " - Excepción: " . $e->getMessage() . "\n", 3, "$log_dir/archivos.log");
             return "error: " . $e->getMessage();
         }
     }
