@@ -1,0 +1,22 @@
+[2025-06-09 07:08:03] [INFO] [SysRegisterController.php:84] New registration attempt
+Data: {
+    "reg_document": "3654123",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi",
+    "reg_email": "angel@angel.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1995-02-02",
+    "reg_activation": "pending"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [SysRegisterController.php:119] New registration attempt
+Data: {
+    "reg_document": "3654123",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi",
+    "reg_email": "angel@angel.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1995-02-02",
+    "reg_activation": "0f49aa894ff9af908cd39f07f0ae8504"
+}
+----------------------------------------

@@ -1,1 +1,91 @@
-[2025-06-09 02:23:04] Error: PDO PostgreSQL extension not loaded[2025-06-09 02:23:04] Extensiones cargadas: Core, bcmath, calendar, ctype, date, filter, hash, iconv, json, SPL, pcre, random, readline, Reflection, session, standard, mysqlnd, tokenizer, zlib, libxml, dom, PDO, Phar, SimpleXML, xml, xmlreader, xmlwriter[2025-06-09 02:41:48] Error: PDO PostgreSQL extension not loaded[2025-06-09 02:41:48] Extensiones cargadas: Core, bcmath, calendar, ctype, date, filter, hash, iconv, json, SPL, pcre, random, readline, Reflection, session, standard, mysqlnd, tokenizer, zlib, libxml, dom, PDO, Phar, SimpleXML, xml, xmlreader, xmlwriter
+[2025-06-09 02:23:04] Error: PDO PostgreSQL extension not loaded[2025-06-09 02:23:04] Extensiones cargadas: Core, bcmath, calendar, ctype, date, filter, hash, iconv, json, SPL, pcre, random, readline, Reflection, session, standard, mysqlnd, tokenizer, zlib, libxml, dom, PDO, Phar, SimpleXML, xml, xmlreader, xmlwriter[2025-06-09 02:41:48] Error: PDO PostgreSQL extension not loaded[2025-06-09 02:41:48] Extensiones cargadas: Core, bcmath, calendar, ctype, date, filter, hash, iconv, json, SPL, pcre, random, readline, Reflection, session, standard, mysqlnd, tokenizer, zlib, libxml, dom, PDO, Phar, SimpleXML, xml, xmlreader, xmlwriter[2025-06-09 07:08:03] [INFO] [Model.php:175]
+SQL: SELECT * FROM sys_register WHERE reg_email = :email
+Parameters: {
+    "email": "angel@angel.com"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Model.php:175]
+SQL: SELECT * FROM sys_register WHERE reg_document = :document
+Parameters: {
+    "document": "3654123"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Model::create]
+Table: sys_register
+Original Data: {
+    "reg_document": "3654123",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi",
+    "reg_email": "angel@angel.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1995-02-02",
+    "reg_activation": "0f49aa894ff9af908cd39f07f0ae8504"
+}
+Filtered Data: {
+    "reg_document": "3654123",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi",
+    "reg_email": "angel@angel.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1995-02-02",
+    "reg_activation": "0f49aa894ff9af908cd39f07f0ae8504"
+}
+Excluded Data: []
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Model.php:110]
+SQL: INSERT INTO sys_register (reg_document, reg_name, reg_lastname, reg_email, reg_phone, reg_bdate, reg_activation) VALUES (:reg_document, :reg_name, :reg_lastname, :reg_email, :reg_phone, :reg_bdate, :reg_activation)
+Parameters: {
+    "reg_document": "3654123",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi",
+    "reg_email": "angel@angel.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1995-02-02",
+    "reg_activation": "0f49aa894ff9af908cd39f07f0ae8504"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Database.php:255]
+SQL: INSERT INTO sys_register (reg_document, reg_name, reg_lastname, reg_email, reg_phone, reg_bdate, reg_activation) VALUES (:reg_document, :reg_name, :reg_lastname, :reg_email, :reg_phone, :reg_bdate, :reg_activation)
+Parameters: {
+    "reg_document": "3654123",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi",
+    "reg_email": "angel@angel.com",
+    "reg_phone": "0982313359",
+    "reg_bdate": "1995-02-02",
+    "reg_activation": "0f49aa894ff9af908cd39f07f0ae8504"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Database.php:231]
+SQL: SELECT * FROM sys_register WHERE reg_id = :id
+Parameters: {
+    "id": "9"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Model.php:175]
+SQL: SELECT * FROM sys_users WHERE reg_id = :reg_id
+Parameters: {
+    "reg_id": "9"
+}
+----------------------------------------
+[2025-06-09 07:08:03] [INFO] [Model.php:175]
+SQL: INSERT INTO sys_user_roles (user_id, role_id) VALUES (:userId, :roleId)
+Parameters: {
+    "userId": 9,
+    "roleId": 2
+}
+----------------------------------------
+[2025-06-09 07:08:07] [INFO] [Model.php:143]
+SQL: UPDATE sys_users SET user_is_active = :user_is_active WHERE user_id = :id
+Parameters: {
+    "user_is_active": true,
+    "id": 9
+}
+----------------------------------------
+[2025-06-09 07:08:07] [INFO] [Database.php:281]
+SQL: UPDATE sys_users SET user_is_active = :user_is_active WHERE user_id = :id
+Parameters: {
+    "user_is_active": true,
+    "id": 9
+}
+----------------------------------------
