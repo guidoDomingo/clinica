@@ -100,37 +100,13 @@ function enviarPDFPorWhatsApp($telefono, $mediaUrl, $mediaCaption = '') {
         FILE_APPEND
     );
     
-    // Si no está disponible cURL ni Guzzle, mostrar un mensaje de error claro
-    if (!$curlAvailable && !class_exists('GuzzleHttp\\Client')) {
-        $errorMsg = "No hay métodos disponibles para realizar la solicitud HTTP. Se necesita cURL o Guzzle.";
-        error_log($errorMsg);
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | ERROR: $errorMsg\n",
-            FILE_APPEND
-        );
-        
-        return [
-            'success' => false,
-            'error' => $errorMsg,
-            'solution' => 'Habilite la extensión cURL de PHP o instale Guzzle con Composer'
-        ];
-    }
-      try {
+    try {
         if ($curlAvailable) {
             // Usar cURL si está disponible
             return enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption);
-        } else if (class_exists('GuzzleHttp\\Client')) {
+        } else {
             // Usar Guzzle como alternativa si cURL no está disponible
             return enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption);
-        } else {
-            // Si ni cURL ni Guzzle están disponibles, usar implementación nativa
-            file_put_contents(
-                'logs/whatsapp_envios_' . date('Y_m') . '.log',
-                date('Y-m-d H:i:s') . " | Ni cURL ni Guzzle disponibles, intentando con método nativo\n",
-                FILE_APPEND
-            );
-            return enviarPDFPorWhatsAppNativo($telefono, $mediaUrl, $mediaCaption);
         }
     } catch (Exception $e) {
         // Capturar cualquier excepción y registrarla
@@ -322,20 +298,6 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
  * Implementación de envío de PDF usando Guzzle
  */
 function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
-    // Verificar que Guzzle esté disponible
-    if (!class_exists('GuzzleHttp\\Client')) {
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | ERROR: Guzzle no está disponible\n",
-            FILE_APPEND
-        );
-        
-        return [
-            'success' => false,
-            'error' => 'Guzzle no está disponible. Instálelo con Composer: composer require guzzlehttp/guzzle'
-        ];
-    }
-    
     // Preparar los datos para la solicitud
     $postData = [
         'telefono' => $telefono,
@@ -345,7 +307,7 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
     
     try {
         // Inicializar el cliente Guzzle
-        $client = new \GuzzleHttp\Client([
+        $client = new Client([
             'timeout' => 30,
             'verify' => false // No verificar SSL en desarrollo
         ]);
@@ -397,7 +359,8 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
             'success' => true,
             'data' => $responseData,
             'method' => 'guzzle' // Para indicar que se usó Guzzle
-        ];    } catch (RequestException $e) {
+        ];
+    } catch (RequestException $e) {
         // Error en la solicitud HTTP
         $errorMsg = "Error en solicitud Guzzle: " . $e->getMessage();
         error_log($errorMsg);
@@ -407,32 +370,9 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
             FILE_APPEND
         );
         
-        // Intentar extraer información más detallada del error
-        $response = $e->hasResponse() ? $e->getResponse() : null;
-        $statusCode = $response ? $response->getStatusCode() : 0;
-        $body = $response ? $response->getBody()->getContents() : '';
-        
-        // Registrar información adicional
-        if ($response) {
-            file_put_contents(
-                'logs/whatsapp_envios_' . date('Y_m') . '.log',
-                date('Y-m-d H:i:s') . " | Detalles adicionales - Código: $statusCode, Cuerpo: $body\n",
-                FILE_APPEND
-            );
-        }
-        
-        // Si el error es 500 y tiene que ver con el PDF, sugerir solución
-        $errorDetail = '';
-        if ($statusCode == 500 && strpos($body, 'Error al enviar media') !== false) {
-            $errorDetail = ' - Esto suele ocurrir cuando la URL del PDF no es accesible desde internet. ' . 
-                          'Verifica que el PDF esté disponible públicamente o usa un servicio como pdfhost.io para subirlo temporalmente.';
-        }
-        
         return [
             'success' => false,
-            'error' => 'Error de comunicación: ' . $e->getMessage() . $errorDetail,
-            'status_code' => $statusCode,
-            'response_body' => $body
+            'error' => 'Error de comunicación: ' . $e->getMessage()
         ];
     } catch (ConnectException $e) {
         // Error de conexión
@@ -445,108 +385,6 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
         ];
     } catch (Exception $e) {
         // Cualquier otra excepción
-        $errorMsg = "Error inesperado: " . $e->getMessage();
-        error_log($errorMsg);
-    
-        return [
-            'success' => false,
-            'error' => 'Error inesperado: ' . $errorMsg
-        ];
-    }
-}
-
-/**
- * Implementación de envío de PDF usando file_get_contents como último recurso
- */
-function enviarPDFPorWhatsAppNativo($telefono, $mediaUrl, $mediaCaption = '') {
-    // Preparar los datos para la solicitud
-    $postData = http_build_query([
-        'telefono' => $telefono,
-        'mediaUrl' => $mediaUrl,
-        'mediaCaption' => $mediaCaption
-    ]);
-    
-    file_put_contents(
-        'logs/whatsapp_envios_' . date('Y_m') . '.log',
-        date('Y-m-d H:i:s') . " | Usando método nativo file_get_contents\n",
-        FILE_APPEND
-    );
-    
-    try {
-        // Crear el contexto para la solicitud POST
-        $opts = [
-            'http' => [
-                'method'  => 'POST',
-                'header'  => [
-                    'Content-Type: application/x-www-form-urlencoded',
-                    'Authorization: Basic ' . base64_encode(API_USERNAME . ':' . API_PASSWORD),
-                    'Accept: application/json'
-                ],
-                'content' => $postData,
-                'timeout' => 30
-            ],
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false
-            ]
-        ];
-        
-        $context = stream_context_create($opts);
-        
-        // Ejecutar la solicitud
-        $response = @file_get_contents(API_ENDPOINT, false, $context);
-        $responseCode = 0;
-        
-        // Obtener el código de respuesta HTTP
-        if (isset($http_response_header[0])) {
-            preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-            $responseCode = (int)($matches[1] ?? 0);
-        }
-        
-        // Registrar la respuesta
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | Respuesta nativa (código $responseCode): " . ($response ?: 'Error al obtener respuesta') . "\n",
-            FILE_APPEND
-        );
-        
-        // Si no hay respuesta, hubo un error
-        if ($response === false) {
-            return [
-                'success' => false,
-                'error' => 'Error al realizar la solicitud',
-                'details' => error_get_last()
-            ];
-        }
-        
-        // Decodificar la respuesta JSON
-        $responseData = json_decode($response, true);
-        
-        if ($responseCode != 200) {
-            return [
-                'success' => false,
-                'error' => 'Error HTTP: ' . $responseCode,
-                'response' => $responseData ?? $response
-            ];
-        }
-        
-        // Verificar si la respuesta es válida JSON
-        if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
-            return [
-                'success' => false,
-                'error' => 'Error al decodificar respuesta JSON: ' . json_last_error_msg(),
-                'raw_response' => $response
-            ];
-        }
-        
-        // Todo parece estar bien
-        return [
-            'success' => true,
-            'data' => $responseData,
-            'method' => 'native' // Para indicar que se usó file_get_contents
-        ];
-    } catch (Exception $e) {
-        // Cualquier excepción
         $errorMsg = "Error inesperado: " . $e->getMessage();
         error_log($errorMsg);
         

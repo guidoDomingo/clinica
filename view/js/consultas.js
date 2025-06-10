@@ -35,11 +35,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (btnSubirArchivos) {
         btnSubirArchivos.addEventListener('click', subirArchivos);
-    }
-
-    // Event listener para el botón de descargar PDF
+    }    // Event listener para el botón de descargar PDF
     if (btnDescargarPDF) {
         btnDescargarPDF.addEventListener('click', descargarPDFConsulta);
+    }
+    
+    // Event listener para el botón de enviar por WhatsApp
+    const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
+    if (btnEnviarWhatsApp) {
+        btnEnviarWhatsApp.addEventListener('click', enviarPDFPorWhatsApp);
     }
     
     // Inicializar tabla de consultas
@@ -577,11 +581,14 @@ function guardarConsulta() {
                         document.getElementById('id_consulta_file').value = idConsultaGuardada;
                         console.log('ID consulta actualizado en formulario de archivos:', idConsultaGuardada);
                     }
-                    
-                    // Habilitar el botón de descargar PDF
+                      // Habilitar los botones de descargar PDF y WhatsApp
                     const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+                    const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
                     if (btnDescargarPDF) {
                         btnDescargarPDF.disabled = false;
+                    }
+                    if (btnEnviarWhatsApp) {
+                        btnEnviarWhatsApp.disabled = false;
                     }
                 }
             }
@@ -595,20 +602,22 @@ function guardarConsulta() {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                
-                // Si es una actualización, usar el ID existente para habilitar el botón de PDF
+                  // Si es una actualización, usar el ID existente para habilitar los botones de PDF y WhatsApp
                 if (esActualizacion && idConsulta) {
                     const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+                    const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
                     if (btnDescargarPDF) {
-                        btnDescargarPDF.disabled = false;
-                        if (!document.getElementById('id_consulta_actual')) {
-                            const idConsultaInput = document.createElement('input');
-                            idConsultaInput.type = 'hidden';
-                            idConsultaInput.id = 'id_consulta_actual';
-                            document.getElementById('tblConsulta').appendChild(idConsultaInput);
-                        }
-                        document.getElementById('id_consulta_actual').value = idConsulta;
+                        btnDescargarPDF.disabled = false;                    }
+                    if (btnEnviarWhatsApp) {
+                        btnEnviarWhatsApp.disabled = false;
                     }
+                    if (!document.getElementById('id_consulta_actual')) {
+                        const idConsultaInput = document.createElement('input');
+                        idConsultaInput.type = 'hidden';
+                        idConsultaInput.id = 'id_consulta_actual';
+                        document.getElementById('tblConsulta').appendChild(idConsultaInput);
+                    }
+                    document.getElementById('id_consulta_actual').value = idConsulta;
                 }
                 
                 // Actualizar información después de guardar
@@ -1263,11 +1272,14 @@ function cargarConsultaEnFormulario(consulta, archivos) {
         document.getElementById('tblConsulta').appendChild(idConsultaActualInput);
     }
     document.getElementById('id_consulta_actual').value = consulta.id_consulta;
-    
-    // Habilitar el botón de descarga de PDF
+      // Habilitar los botones de descarga de PDF y WhatsApp
     const btnDescargarPDF = document.getElementById('btnDescargarPDF');
+    const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
     if (btnDescargarPDF) {
         btnDescargarPDF.disabled = false;
+    }
+    if (btnEnviarWhatsApp) {
+        btnEnviarWhatsApp.disabled = false;
     }
     
     // Notificar al usuario
@@ -2642,4 +2654,144 @@ function descargarPDFConsulta() {
     
     // Abrir en una nueva ventana
     window.open(urlPDF, '_blank');
+}
+
+/**
+ * Función para enviar el PDF de una consulta médica por WhatsApp
+ */
+function enviarPDFPorWhatsApp() {
+    // Obtener el ID de la consulta actual desde el input oculto
+    const idConsulta = document.getElementById('id_consulta_actual') ? document.getElementById('id_consulta_actual').value : null;
+    const whatsappNumber = document.getElementById('whatsapptxt') ? document.getElementById('whatsapptxt').value.trim() : '';
+    
+    console.log("Enviando PDF de consulta ID:", idConsulta, "a número:", whatsappNumber);
+    
+    if (!idConsulta) {
+        Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "No hay una consulta disponible para enviar",
+            text: "Por favor, guarde la consulta primero",
+            showConfirmButton: true
+        });
+        return;
+    }
+    
+    if (!whatsappNumber) {
+        Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "Número de WhatsApp no disponible",
+            text: "Por favor, ingrese un número de WhatsApp válido",
+            showConfirmButton: true
+        });
+        return;
+    }
+    
+    // Mostrar indicador de carga
+    Swal.fire({
+        title: 'Enviando PDF por WhatsApp...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Crear objeto FormData para enviar los datos
+    const formData = new FormData();
+    formData.append('id_consulta', idConsulta);
+    formData.append('telefono', whatsappNumber);
+    
+    console.log("Datos del formulario a enviar:", {
+        id_consulta: idConsulta,
+        telefono: whatsappNumber
+    });
+    
+    // Realizar petición AJAX para enviar el PDF por WhatsApp
+    $.ajax({
+        type: 'POST',
+        url: 'enviar_pdf_consulta.php',
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log("Respuesta del servidor:", response);
+            
+            if (response.success) {  
+                let mensaje = response.message || "El PDF ha sido enviado correctamente";
+                let titulo = "PDF enviado por WhatsApp";
+                
+                // Si estamos en modo de prueba, indicarlo claramente
+                if (response.test_mode) {
+                    titulo = "[MODO PRUEBA] " + titulo;
+                    mensaje += " (Simulación en modo de prueba)";
+                }
+                
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: titulo,
+                    text: mensaje,
+                    showConfirmButton: true
+                });
+            } else {
+                console.error("Error en el envío:", response.error);
+                
+                // Mensaje de error más detallado
+                let errorMessage = response.error || "No se pudo enviar el PDF por WhatsApp";
+                
+                // Mostrar información detallada en la consola
+                if (response.debug_info) {
+                    console.log("Información de depuración:", response.debug_info);
+                }
+                
+                // Si el error es muy largo, truncarlo para la alerta
+                let shortError = errorMessage;
+                if (errorMessage.length > 100) {
+                    shortError = errorMessage.substring(0, 97) + "...";
+                }
+                
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "Error al enviar el PDF",
+                    text: shortError,
+                    footer: '<a href="#" onclick="console.log(\'' + errorMessage.replace(/'/g, "\\'") + '\')">Ver detalles completos en la consola</a>',
+                    showConfirmButton: true
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error en la petición AJAX:", {xhr, status, error});
+            
+            let errorMsg = "No se pudo establecer comunicación con el servidor";
+            
+            // Intentar obtener más detalles del error
+            if (xhr.responseText) {
+                console.log("Respuesta del servidor:", xhr.responseText);
+                try {
+                    const errorData = JSON.parse(xhr.responseText);
+                    errorMsg = errorData.error || errorMsg;
+                } catch (e) {
+                    // Si no es JSON válido, mostrar parte del texto
+                    if (xhr.responseText.length > 100) {
+                        errorMsg = xhr.responseText.substring(0, 97) + "...";
+                    } else {
+                        errorMsg = xhr.responseText;
+                    }
+                }
+            }
+            
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error de comunicación",
+                text: errorMsg,
+                footer: '<a href="#" onclick="console.log(\'Estado HTTP: ' + xhr.status + '\')">Ver detalles en la consola</a>',
+                showConfirmButton: true
+            });
+        }
+    });
 }

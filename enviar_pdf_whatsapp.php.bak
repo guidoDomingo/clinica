@@ -46,8 +46,7 @@ function enviarPDFPorWhatsApp($telefono, $mediaUrl, $mediaCaption = '') {
     $workingPdfUrls = [
         'mozilla' => 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf',
         'w3' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-    ];
-    
+    ];    // Comprobar si la URL es accesible desde internet
     // Comentamos esta sección para permitir URLs locales o internas
     /*
     if (strpos($mediaUrl, 'localhost') !== false || 
@@ -69,18 +68,17 @@ function enviarPDFPorWhatsApp($telefono, $mediaUrl, $mediaCaption = '') {
             'error' => 'La URL del PDF no es válida: ' . $mediaUrl
         ];
     }
-    
-    // Opción de modo de prueba - desactivado para asegurar que los mensajes se envíen
+      // Opción de modo de prueba - desactivado para asegurar que los mensajes se envíen
     $testMode = false; // Mantener en false para enviar realmente
+    
+    // Eliminar completamente la simulación para asegurar que siempre se envíe el mensaje real
     
     // Preparar los datos para la solicitud
     $postData = [
         'telefono' => $telefono,
         'mediaUrl' => $mediaUrl,
         'mediaCaption' => $mediaCaption
-    ];
-    
-    // Registrar los datos que se enviarán para depuración
+    ];    // Registrar los datos que se enviarán para depuración
     error_log('Enviando datos a API WhatsApp: ' . json_encode($postData));
     
     // Escribir en el log detallado de WhatsApp
@@ -100,37 +98,13 @@ function enviarPDFPorWhatsApp($telefono, $mediaUrl, $mediaCaption = '') {
         FILE_APPEND
     );
     
-    // Si no está disponible cURL ni Guzzle, mostrar un mensaje de error claro
-    if (!$curlAvailable && !class_exists('GuzzleHttp\\Client')) {
-        $errorMsg = "No hay métodos disponibles para realizar la solicitud HTTP. Se necesita cURL o Guzzle.";
-        error_log($errorMsg);
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | ERROR: $errorMsg\n",
-            FILE_APPEND
-        );
-        
-        return [
-            'success' => false,
-            'error' => $errorMsg,
-            'solution' => 'Habilite la extensión cURL de PHP o instale Guzzle con Composer'
-        ];
-    }
-      try {
+    try {
         if ($curlAvailable) {
             // Usar cURL si está disponible
             return enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption);
-        } else if (class_exists('GuzzleHttp\\Client')) {
+        } else {
             // Usar Guzzle como alternativa si cURL no está disponible
             return enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption);
-        } else {
-            // Si ni cURL ni Guzzle están disponibles, usar implementación nativa
-            file_put_contents(
-                'logs/whatsapp_envios_' . date('Y_m') . '.log',
-                date('Y-m-d H:i:s') . " | Ni cURL ni Guzzle disponibles, intentando con método nativo\n",
-                FILE_APPEND
-            );
-            return enviarPDFPorWhatsAppNativo($telefono, $mediaUrl, $mediaCaption);
         }
     } catch (Exception $e) {
         // Capturar cualquier excepción y registrarla
@@ -180,8 +154,7 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
     // Permitir usar HTTPS sin verificar certificado (para entornos de desarrollo)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    
-    // Registrar la acción en el log
+      // Registrar la acción en el log
     file_put_contents(
         'logs/whatsapp_envios_' . date('Y_m') . '.log',
         date('Y-m-d H:i:s') . " | Iniciando solicitud cURL a API_ENDPOINT\n",
@@ -199,8 +172,7 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
         date('Y-m-d H:i:s') . " | Código de respuesta HTTP: " . $info['http_code'] . "\n",
         FILE_APPEND
     );
-    
-    // Si hubo un error en cURL
+      // Si hubo un error en cURL
     $error = curl_error($ch);
     if (curl_errno($ch)) {
         $errorMsg = "Error cURL: " . $error;
@@ -228,7 +200,7 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
     // Registrar información detallada para depuración
     error_log("Solicitud HTTP a API WhatsApp (cURL): " . $headerSent);
     error_log("Código de respuesta HTTP: " . $httpCode);
-    
+      
     // Verificar si hubo algún error
     if ($error) {
         error_log("Error cURL al enviar PDF: " . $error);
@@ -241,8 +213,7 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
             ]
         ];
     }
-    
-    // Registrar la respuesta recibida
+      // Registrar la respuesta recibida
     file_put_contents(
         'logs/whatsapp_envios_' . date('Y_m') . '.log',
         date('Y-m-d H:i:s') . " | Respuesta recibida: " . $response . "\n",
@@ -277,8 +248,7 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
         FILE_APPEND
     );
     
-    // Verificar el estado de la respuesta    
-    if ($httpCode != 200) {
+    // Verificar el estado de la respuesta    if ($httpCode != 200) {
         $errorMsg = "Error HTTP al enviar PDF: " . $httpCode;
         error_log($errorMsg);
         
@@ -322,20 +292,6 @@ function enviarPDFPorWhatsAppCurl($telefono, $mediaUrl, $mediaCaption = '') {
  * Implementación de envío de PDF usando Guzzle
  */
 function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
-    // Verificar que Guzzle esté disponible
-    if (!class_exists('GuzzleHttp\\Client')) {
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | ERROR: Guzzle no está disponible\n",
-            FILE_APPEND
-        );
-        
-        return [
-            'success' => false,
-            'error' => 'Guzzle no está disponible. Instálelo con Composer: composer require guzzlehttp/guzzle'
-        ];
-    }
-    
     // Preparar los datos para la solicitud
     $postData = [
         'telefono' => $telefono,
@@ -345,7 +301,7 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
     
     try {
         // Inicializar el cliente Guzzle
-        $client = new \GuzzleHttp\Client([
+        $client = new Client([
             'timeout' => 30,
             'verify' => false // No verificar SSL en desarrollo
         ]);
@@ -355,200 +311,87 @@ function enviarPDFPorWhatsAppGuzzle($telefono, $mediaUrl, $mediaCaption = '') {
             'auth' => [API_USERNAME, API_PASSWORD],
             'form_params' => $postData,
             'headers' => [
-                'Accept' => 'application/json'
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/x-www-form-urlencoded',
             ]
         ]);
         
-        // Obtener el código de respuesta HTTP
+        // Obtener información de la respuesta
         $httpCode = $response->getStatusCode();
+        $responseBody = $response->getBody()->getContents();
         
-        // Obtener el cuerpo de la respuesta
-        $body = $response->getBody()->getContents();
+        // Registrar información detallada para depuración
+        error_log("Solicitud HTTP a API WhatsApp (Guzzle)");
+        error_log("Código de respuesta HTTP: " . $httpCode);
         
-        // Registrar la respuesta en el log
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | Respuesta Guzzle (código $httpCode): $body\n",
-            FILE_APPEND
-        );
-        
-        // Decodificar la respuesta JSON
-        $responseData = json_decode($body, true);
-        
-        if ($httpCode !== 200) {
+        // Verificar código de respuesta HTTP
+        if ($httpCode >= 400) {
+            error_log("Error HTTP al enviar PDF (Guzzle): " . $httpCode);
+            error_log("Respuesta del servidor: " . $responseBody);
             return [
                 'success' => false,
-                'error' => 'Error HTTP: ' . $httpCode,
-                'response' => $responseData ?? $body
+                'error' => 'Error del servidor: código ' . $httpCode,
+                'response' => $responseBody,
+                'debug_info' => [
+                    'postData' => $postData,
+                    'mediaUrl' => $mediaUrl 
+                ]
             ];
         }
+
+        // Intentar decodificar la respuesta JSON
+        $responseData = json_decode($responseBody, true);
         
         // Verificar si la respuesta es válida
         if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
+            error_log("Error al decodificar respuesta JSON (Guzzle): " . json_last_error_msg());
+            error_log("Respuesta recibida: " . $responseBody);
             return [
                 'success' => false,
-                'error' => 'Error al decodificar respuesta JSON: ' . json_last_error_msg(),
-                'raw_response' => $body
+                'error' => 'Respuesta inválida del servidor',
+                'raw_response' => $responseBody
             ];
         }
         
         // Todo parece estar bien
+        error_log("PDF enviado exitosamente por WhatsApp a: " . $telefono . " (Guzzle)");
         return [
             'success' => true,
             'data' => $responseData,
             'method' => 'guzzle' // Para indicar que se usó Guzzle
-        ];    } catch (RequestException $e) {
-        // Error en la solicitud HTTP
-        $errorMsg = "Error en solicitud Guzzle: " . $e->getMessage();
-        error_log($errorMsg);
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | $errorMsg\n",
-            FILE_APPEND
-        );
+        ];
         
-        // Intentar extraer información más detallada del error
-        $response = $e->hasResponse() ? $e->getResponse() : null;
-        $statusCode = $response ? $response->getStatusCode() : 0;
-        $body = $response ? $response->getBody()->getContents() : '';
+    } catch (RequestException $e) {
+        $errorMsg = $e->getMessage();
+        error_log("Error Guzzle (RequestException) al enviar PDF: " . $errorMsg);
         
-        // Registrar información adicional
-        if ($response) {
-            file_put_contents(
-                'logs/whatsapp_envios_' . date('Y_m') . '.log',
-                date('Y-m-d H:i:s') . " | Detalles adicionales - Código: $statusCode, Cuerpo: $body\n",
-                FILE_APPEND
-            );
-        }
-        
-        // Si el error es 500 y tiene que ver con el PDF, sugerir solución
-        $errorDetail = '';
-        if ($statusCode == 500 && strpos($body, 'Error al enviar media') !== false) {
-            $errorDetail = ' - Esto suele ocurrir cuando la URL del PDF no es accesible desde internet. ' . 
-                          'Verifica que el PDF esté disponible públicamente o usa un servicio como pdfhost.io para subirlo temporalmente.';
-        }
+        // Intentar obtener respuesta si existe
+        $response = $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : 'Sin respuesta';
         
         return [
             'success' => false,
-            'error' => 'Error de comunicación: ' . $e->getMessage() . $errorDetail,
-            'status_code' => $statusCode,
-            'response_body' => $body
-        ];
-    } catch (ConnectException $e) {
-        // Error de conexión
-        $errorMsg = "Error de conexión Guzzle: " . $e->getMessage();
-        error_log($errorMsg);
-        
-        return [
-            'success' => false,
-            'error' => 'No se pudo conectar con el servidor: ' . $e->getMessage()
-        ];
-    } catch (Exception $e) {
-        // Cualquier otra excepción
-        $errorMsg = "Error inesperado: " . $e->getMessage();
-        error_log($errorMsg);
-    
-        return [
-            'success' => false,
-            'error' => 'Error inesperado: ' . $errorMsg
-        ];
-    }
-}
-
-/**
- * Implementación de envío de PDF usando file_get_contents como último recurso
- */
-function enviarPDFPorWhatsAppNativo($telefono, $mediaUrl, $mediaCaption = '') {
-    // Preparar los datos para la solicitud
-    $postData = http_build_query([
-        'telefono' => $telefono,
-        'mediaUrl' => $mediaUrl,
-        'mediaCaption' => $mediaCaption
-    ]);
-    
-    file_put_contents(
-        'logs/whatsapp_envios_' . date('Y_m') . '.log',
-        date('Y-m-d H:i:s') . " | Usando método nativo file_get_contents\n",
-        FILE_APPEND
-    );
-    
-    try {
-        // Crear el contexto para la solicitud POST
-        $opts = [
-            'http' => [
-                'method'  => 'POST',
-                'header'  => [
-                    'Content-Type: application/x-www-form-urlencoded',
-                    'Authorization: Basic ' . base64_encode(API_USERNAME . ':' . API_PASSWORD),
-                    'Accept: application/json'
-                ],
-                'content' => $postData,
-                'timeout' => 30
-            ],
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false
+            'error' => 'Error de conexión: ' . $errorMsg,
+            'debug_info' => [
+                'exception' => get_class($e),
+                'response' => $response,
+                'postData' => $postData
             ]
         ];
+    } catch (ConnectException $e) {
+        $errorMsg = $e->getMessage();
+        error_log("Error Guzzle (ConnectException) al enviar PDF: " . $errorMsg);
         
-        $context = stream_context_create($opts);
-        
-        // Ejecutar la solicitud
-        $response = @file_get_contents(API_ENDPOINT, false, $context);
-        $responseCode = 0;
-        
-        // Obtener el código de respuesta HTTP
-        if (isset($http_response_header[0])) {
-            preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-            $responseCode = (int)($matches[1] ?? 0);
-        }
-        
-        // Registrar la respuesta
-        file_put_contents(
-            'logs/whatsapp_envios_' . date('Y_m') . '.log',
-            date('Y-m-d H:i:s') . " | Respuesta nativa (código $responseCode): " . ($response ?: 'Error al obtener respuesta') . "\n",
-            FILE_APPEND
-        );
-        
-        // Si no hay respuesta, hubo un error
-        if ($response === false) {
-            return [
-                'success' => false,
-                'error' => 'Error al realizar la solicitud',
-                'details' => error_get_last()
-            ];
-        }
-        
-        // Decodificar la respuesta JSON
-        $responseData = json_decode($response, true);
-        
-        if ($responseCode != 200) {
-            return [
-                'success' => false,
-                'error' => 'Error HTTP: ' . $responseCode,
-                'response' => $responseData ?? $response
-            ];
-        }
-        
-        // Verificar si la respuesta es válida JSON
-        if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
-            return [
-                'success' => false,
-                'error' => 'Error al decodificar respuesta JSON: ' . json_last_error_msg(),
-                'raw_response' => $response
-            ];
-        }
-        
-        // Todo parece estar bien
         return [
-            'success' => true,
-            'data' => $responseData,
-            'method' => 'native' // Para indicar que se usó file_get_contents
+            'success' => false,
+            'error' => 'Error de conexión: ' . $errorMsg,
+            'debug_info' => [
+                'exception' => get_class($e),
+                'postData' => $postData
+            ]
         ];
     } catch (Exception $e) {
-        // Cualquier excepción
-        $errorMsg = "Error inesperado: " . $e->getMessage();
-        error_log($errorMsg);
+        $errorMsg = $e->getMessage();
+        error_log("Error general al enviar PDF con Guzzle: " . $errorMsg);
         
         return [
             'success' => false,

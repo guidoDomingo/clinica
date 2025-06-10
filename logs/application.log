@@ -44,3 +44,24 @@ Data: {
 [2025-06-09 07:24:38] [INFO] [RhPersonController.php:599] 
 Data: Creado nuevo registro de médico para la persona ID 58 con empresa ID 2
 ----------------------------------------
+[2025-06-09 22:31:40] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-09 22:31:40] [INFO] [user.controller.php:22] user: angel123
+Data: angel123
+----------------------------------------
+[2025-06-09 22:31:40] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-09 07:16:32.248298",
+    "user_is_active": true,
+    "profile_photo": null,
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
