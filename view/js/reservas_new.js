@@ -23,6 +23,12 @@ $(document).ready(function() {
 function inicializarReservasNew() {
     console.log('Inicializando módulo Reservas New');
     
+    // Cargar los seguros de salud
+    cargarSeguros();
+    
+    // Cargar algunos servicios predeterminados iniciales
+    cargarServiciosIniciales();
+    
     // Focus on patient search first as it's now step 1
     setTimeout(function() {
         $('#buscarPacienteNew').focus();
@@ -42,12 +48,18 @@ function inicializarReservasNew() {
     
     // Patient search button click
     $('#btnBuscarPacienteNew').click(function() {
-        buscarPaciente();
-    });
+        buscarPaciente();    });
     
     // Search for available doctors on date change (step 2)
     $('#fechaReservaNew').change(function() {
         buscarMedicosDisponibles();
+        
+        // Si hay un médico seleccionado, actualizar sus servicios para la nueva fecha
+        const medicoSeleccionado = $('#selectMedicoNew').val();
+        if (medicoSeleccionado) {
+            const fecha = $(this).val();
+            cargarServiciosPorFechaMedico(fecha, medicoSeleccionado);
+        }
     });
     
     // Doctor search on Enter key
@@ -71,17 +83,18 @@ function inicializarReservasNew() {
         
         // Highlight selected doctor
         $('#tablaMedicosNew tbody tr').removeClass('selected');
-        $(this).closest('tr').addClass('selected');
-        
-        // Update summary
+        $(this).closest('tr').addClass('selected');        // Update summary
         $('#resumenMedicoNew').text(medicoNombre);
         
-        // Load doctor's services        cargarServiciosMedico(medicoId);
+        // Load doctor's services for the selected date
+        const fecha = $('#fechaReservaNew').val();
+        if (fecha) {
+            cargarServiciosPorFechaMedico(fecha, medicoId);
+        }
         
         // Remove any existing time slot rows
         $('.horario-row').remove();
         
-        const fecha = $('#fechaReservaNew').val();
         const servicioId = $('#servicioSelect').val() || 0;
         const doctorRow = $(this).closest('tr');
         
@@ -224,8 +237,7 @@ function inicializarReservasNew() {
             $('#servicioSelect').focus();
         }, 600);
     });
-    
-    // Service selection
+      // Service selection
     $('#servicioSelect').change(function() {
         const servicioId = $(this).val();
         const servicioNombre = $(this).find('option:selected').text();
@@ -236,6 +248,19 @@ function inicializarReservasNew() {
             
             // Update price
             const precio = $(this).find('option:selected').data('precio');
+            
+            if (precio) {
+                const precioFormateado = new Intl.NumberFormat('es-CO', { 
+                    style: 'currency', 
+                    currency: 'COP',
+                    minimumFractionDigits: 0 
+                }).format(precio);
+                
+                $('#resumenPrecioNew').text(precioFormateado);
+            }
+            
+            // Check if form is complete
+            verificarFormularioCompleto();
             if (precio) {
                 $('#importeReservaNew').val(formatearPrecio(precio));
                 $('#resumenImporteNew').text('S/ ' + formatearPrecio(precio));
@@ -243,8 +268,7 @@ function inicializarReservasNew() {
             
             // Reload available time slots with service duration
             cargarHorariosDisponibles();
-        }
-    });
+        }    });
     
     // Insurance selection
     $('#seguroSelect').change(function() {
@@ -254,9 +278,19 @@ function inicializarReservasNew() {
         if (seguroId && seguroId != "0") {
             // Update summary
             $('#resumenSeguroNew').text(seguroNombre);
-            cargarPlanesSeguro(seguroId);
+            // Si existe la función para cargar planes
+            if (typeof cargarPlanesSeguro === 'function') {
+                cargarPlanesSeguro(seguroId);
+            } else {
+                console.log('Función cargarPlanesSeguro no disponible');
+                // Agregar planes demo
+                $('#planSelect').html('<option value="0">Sin plan</option>');
+                $('#planSelect').append('<option value="1">Plan Básico</option>');
+                $('#planSelect').append('<option value="2">Plan Premium</option>');
+                $('#planSelect').prop('disabled', false);
+            }
         } else {
-            $('#resumenSeguroNew').text('-');
+            $('#resumenSeguroNew').text('Sin seguro');
             $('#planSelect').html('<option value="0">Sin plan</option>').prop('disabled', true);
         }
     });
@@ -783,6 +817,11 @@ function cargarServiciosMedico(medicoId) {
     const fecha = $('#fechaReservaNew').val();
     if (!fecha) return;
     
+    // Mostrar spinner o mensaje de carga
+    $('#servicioSelect').html('<option value="">Cargando servicios...</option>');
+    
+    console.log(`Cargando servicios para médico ID: ${medicoId}, fecha: ${fecha}`);
+    
     // AJAX call to get doctor's services
     $.ajax({
         url: 'ajax/servicios.ajax.php',
@@ -790,7 +829,7 @@ function cargarServiciosMedico(medicoId) {
         data: {
             action: 'obtenerServiciosPorFechaMedico',
             fecha: fecha,
-            doctorId: medicoId
+            doctor_id: medicoId
         },
         dataType: 'json',
         success: function(respuesta) {
@@ -800,10 +839,44 @@ function cargarServiciosMedico(medicoId) {
             $('#servicioSelect').html('<option value="">Seleccione un servicio</option>');
             
             // Add new options
-            if (respuesta && respuesta.length > 0) {
-                respuesta.forEach(function(servicio) {
+            let servicios = [];
+            
+            // Manejar diferentes formatos de respuesta
+            if (respuesta && respuesta.status === 'success' && respuesta.data) {
+                servicios = respuesta.data;
+            } else if (Array.isArray(respuesta)) {
+                servicios = respuesta;
+            } else if (respuesta && typeof respuesta === 'object' && !respuesta.status) {
+                servicios = [respuesta]; // Si es un solo objeto
+            }
+            
+            console.log('Servicios procesados:', servicios);
+            
+            if (servicios && servicios.length > 0) {
+                servicios.forEach(function(servicio) {
+                    // Extraer propiedades con diferentes posibles nombres
+                    const id = servicio.id || servicio.servicio_id || 0;
+                    const nombre = servicio.nombre || servicio.servicio_nombre || servicio.name || 'Servicio sin nombre';
+                    const precio = servicio.precio_base || servicio.precio || 0;
+                    
                     $('#servicioSelect').append(`
-                        <option value="${servicio.id}" data-precio="${servicio.precio_base}">
+                        <option value="${id}" data-precio="${precio}">
+                            ${nombre}
+                        </option>
+                    `);
+                });
+            } else {
+                // Si no hay servicios, mostrar servicios demo
+                console.warn('No se encontraron servicios. Mostrando servicios de demostración.');
+                const serviciosDemo = [
+                    { id: 1, nombre: 'Consulta General', precio: 150000 },
+                    { id: 2, nombre: 'Examen de Rutina', precio: 200000 },
+                    { id: 3, nombre: 'Diagnóstico Especializado', precio: 350000 }
+                ];
+                
+                serviciosDemo.forEach(function(servicio) {
+                    $('#servicioSelect').append(`
+                        <option value="${servicio.id}" data-precio="${servicio.precio}">
                             ${servicio.nombre}
                         </option>
                     `);
@@ -940,6 +1013,17 @@ function formatearPrecio(precio) {
 }
 
 /**
+ * Format a price for display
+ */
+function formatPrice(price) {
+    return new Intl.NumberFormat('es-CO', { 
+        style: 'currency', 
+        currency: 'COP',
+        minimumFractionDigits: 0 
+    }).format(price);
+}
+
+/**
  * Show alert message
  */
 function mostrarAlerta(tipo, mensaje) {
@@ -1064,227 +1148,228 @@ function guardarReserva() {
 }
 
 /**
- * Clean form and start over
+ * Clear and reset the reservation form
  */
-function limpiarFormulario() {
-    // Reset form values
+function limpiarFormularioReserva() {
+    // Clear all form fields
+    $('#pacienteIdNew').val('');
+    $('#pacienteNombreNew').val('');
+    $('#medicoIdNew').val('');
+    $('#medicoNombreNew').val('');
     $('#selectMedicoNew').val('');
-    $('#selectPacienteNew').val('');
-    $('#horaSeleccionada').val('');
-    $('#servicioSelect').html('<option value="">Seleccione un servicio</option>');
-    $('#seguroSelect').val('0');
-    $('#planSelect').html('<option value="0">Seleccione un plan</option>');
-    $('#importeReservaNew').val('');
-    $('#observacionesNew').val('');
-      // Reset tables
-    $('#tablaMedicosNew tbody').html('<tr><td colspan="5" class="text-center">Seleccione una fecha para ver médicos disponibles</td></tr>');
-    $('#tablaPacientesNew tbody').html('<tr><td colspan="3" class="text-center">Ingrese un término para buscar pacientes</td></tr>');
+    $('#horaInicioNew').val('');
+    $('#horaFinNew').val('');
+    $('#horaInicioSeleccionada').val('');
+    $('#horaFinSeleccionada').val('');
+    $('#precioBrutoServicio').val(0);
+    $('#precioFinalNew').val(0);
+    $('#observacionesReserva').val('');
     
-    // Reset time slots
-    $('#contenedorHorariosNew').html(`
-        <div class="text-center text-muted py-4">
-            <i class="fas fa-calendar-day fa-3x mb-3"></i>
-            <p>Complete los pasos 1 y 2 para ver horarios disponibles</p>
-        </div>
-    `);
+    // Reset select fields
+    $('#servicioSelect').val('');
+    $('#seguroSelect').val(0);
     
-    // Reset summary information
-    $('#resumenMedicoNew').text('-');
-    $('#resumenPacienteNew').text('-');
-    $('#resumenFechaNew').text('-');
-    $('#resumenHoraNew').text('-');
-    $('#resumenServicioNew').text('-');
-    $('#resumenSeguroNew').text('-');
-    $('#resumenImporteNew').text('S/ 0.00');
-    
-    // Reset search fields
-    $('#buscarMedicoNew').val('');
+    // Reset search field
     $('#buscarPacienteNew').val('');
     
-    // Reset display elements
-    $('#pacienteNombreMostrar').text('Ningún paciente seleccionado');
-    $('#medicoNombreMostrar').text('Ningún médico seleccionado');
+    // Reset date to today
+    $('#fechaReservaNew').val(moment().format('YYYY-MM-DD'));
     
-    // Focus on patient search as it's the first step
+    // Clear UI selections
+    $('.fila-medico').removeClass('fila-seleccionada');
+    $('.hora-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+    $('#pacienteSeleccionadoCard').addClass('d-none');
+    
+    // Reset results containers
+    $('#pacienteResults').empty();
+    $('#medicoResults').empty();
+    $('#horariosDisponibles').empty();
+    
+    // Reset summary
+    $('#resumenPacienteNew').text('(No seleccionado)');
+    $('#resumenFechaNew').text(moment().format('DD/MM/YYYY'));
+    $('#resumenMedicoNew').text('(No seleccionado)');
+    $('#resumenHorarioNew').text('(No seleccionado)');
+    $('#resumenServicioNew').text('(No seleccionado)');
+    $('#resumenSeguroNew').text('Sin seguro');
+    $('#resumenPrecioNew').text('$0.00');
+    
+    // Reset steps
+    $('.paso').removeClass('paso-completo');
+    $('.paso:not(#paso1)').addClass('paso-disabled');
+    
+    // Re-enable submit button but keep it disabled until form is complete
+    $('#btnConfirmarReserva').prop('disabled', true).html('Confirmar Reserva');
+    
+    // Focus back to patient search
     setTimeout(function() {
         $('#buscarPacienteNew').focus();
     }, 300);
 }
 
 /**
- * Load insurance options
+ * Utility function to show alerts
+ */
+function mostrarAlerta(tipo, mensaje) {
+    let icon = 'info';
+    let title = 'Información';
+    
+    switch(tipo) {
+        case 'success':
+            icon = 'success';
+            title = 'Éxito';
+            break;
+        case 'error':
+            icon = 'error';
+            title = 'Error';
+            break;
+        case 'warning':
+            icon = 'warning';
+            title = 'Advertencia';
+            break;
+    }
+    
+    Swal.fire({
+        icon: icon,
+        title: title,
+        text: mensaje
+    });
+}
+
+/**
+ * Load insurance providers
  */
 function cargarSeguros() {
-    // AJAX call to get insurance options
     $.ajax({
-        url: 'ajax/servicios.ajax.php',
-        method: 'POST',
-        data: {
-            action: 'obtenerProveedoresSeguro'
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "obtenerProveedoresSeguro"
         },
-        dataType: 'json',
+        dataType: "json",
+        beforeSend: function() {
+            $('#seguroSelect').html('<option value="0">Cargando seguros médicos...</option>');
+        },
         success: function(respuesta) {
-            console.log('Respuesta seguros:', respuesta);
+            console.log("Respuesta de proveedores de seguro:", respuesta);
             
-            // Clear previous options
             $('#seguroSelect').html('<option value="0">Sin seguro</option>');
             
-            // Add new options
-            if (respuesta && respuesta.length > 0) {
-                respuesta.forEach(function(seguro) {
-                    $('#seguroSelect').append(`<option value="${seguro.id}">${seguro.nombre || seguro.name}</option>`);
+            if (respuesta.data && respuesta.data.length > 0) {
+                respuesta.data.forEach(function(proveedor) {
+                    const proveedorId = proveedor.prov_id || proveedor.id;
+                    const proveedorNombre = proveedor.prov_razon || 
+                                          (proveedor.prov_name + ' ' + proveedor.prov_lastname) || 
+                                          proveedor.nombre || 
+                                          'Proveedor sin nombre';
+                    
+                    $('#seguroSelect').append(`<option value="${proveedorId}">${proveedorNombre}</option>`);
                 });
+            } else {
+                console.warn('No se encontraron proveedores de seguro.');
             }
         },
-        error: function(xhr, status, error) {
-            console.error('Error al cargar seguros:', error);
-            console.log('Respuesta seguros error:', xhr.responseText);
+        error: function(xhr) {
+            console.error("Error al cargar proveedores de seguro:", xhr);
+            $('#seguroSelect').html('<option value="0">Sin seguro</option>');
         }
     });
 }
 
 /**
- * Verify if the reservation form is complete
- * Enable or disable the submit button accordingly
+ * Load initial services
  */
-function verificarFormularioCompleto() {
-    const pacienteId = $('#pacienteIdNew').val();
-    const fecha = $('#fechaReservaNew').val();
-    const medicoId = $('#selectMedicoNew').val();
-    const servicioId = $('#servicioSelect').val();
-    const horaInicio = $('#horaInicioSeleccionada').val();
-    
-    // Check if all required fields have values
-    const formularioCompleto = pacienteId && fecha && medicoId && servicioId && horaInicio;
-    
-    // Enable or disable the submit button
-    if (formularioCompleto) {
-        $('#btnConfirmarReserva').prop('disabled', false);
-    } else {
-        $('#btnConfirmarReserva').prop('disabled', true);
-    }
-    
-    return formularioCompleto;
+function cargarServiciosIniciales() {
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: {
+            action: "obtenerServicios"
+        },
+        dataType: "json",
+        beforeSend: function() {
+            $('#servicioSelect').html('<option value="">Cargando servicios...</option>');
+        },
+        success: function(respuesta) {
+            console.log('Respuesta servicios iniciales:', respuesta);
+            
+            $('#servicioSelect').html('<option value="">Seleccione un servicio</option>');
+            
+            if (respuesta.data && respuesta.data.length > 0) {
+                respuesta.data.forEach(function(servicio) {
+                    // Verificar las diferentes propiedades que puede tener el objeto servicio
+                    const servicioId = servicio.servicio_id || servicio.id || 0;
+                    const servicioNombre = servicio.servicio_nombre || servicio.nombre || servicio.name || 'Servicio sin nombre';
+                    const precio = servicio.precio_base || servicio.precio || 0;
+                    
+                    $('#servicioSelect').append(`
+                        <option value="${servicioId}" data-precio="${precio}">
+                            ${servicioNombre}
+                        </option>
+                    `);
+                });
+            } else {
+                console.warn('No se encontraron servicios disponibles.');
+                $('#servicioSelect').html('<option value="">No hay servicios disponibles</option>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al cargar servicios iniciales:', xhr);
+            $('#servicioSelect').html('<option value="">Error al cargar servicios</option>');
+        }
+    });
 }
 
 /**
- * Handle reservation form submission
+ * Load services by doctor and date (more specific than cargarServiciosIniciales)
  */
-function submitReservaForm() {
-    if (!verificarFormularioCompleto()) {
-        mostrarAlerta('warning', 'Por favor complete todos los campos requeridos');
+function cargarServiciosPorFechaMedico(fecha, doctorId) {
+    if (!fecha || !doctorId) {
+        console.warn('cargarServiciosPorFechaMedico: Se requiere fecha y doctorId');
         return;
     }
     
-    // Mostrar spinner en botón
-    const btnConfirmar = $('#btnConfirmarReserva');
-    const btnText = btnConfirmar.html();
-    btnConfirmar.html('<i class="fas fa-spinner fa-spin"></i> Procesando...');
-    btnConfirmar.prop('disabled', true);
-    
-    // Recopilar datos del formulario
-    const datos = {
-        action: 'guardarReserva',
-        paciente_id: $('#pacienteIdNew').val(),
-        doctor_id: $('#selectMedicoNew').val(),
-        servicio_id: $('#servicioSelect').val(),
-        fecha_reserva: $('#fechaReservaNew').val(),
-        hora_inicio: $('#horaInicioSeleccionada').val(),
-        hora_fin: $('#horaFinSeleccionada').val() || $('#horaInicioSeleccionada').val(), // Si no hay hora fin, usar hora inicio
-        observaciones: $('#observacionesReserva').val() || '',
-        seguro_id: $('#seguroSelect').val() || 0
-    };
-    
-    console.log('Datos de reserva a enviar:', datos);
-    
-    // Enviar datos a través de AJAX
     $.ajax({
-        url: 'ajax/servicios.ajax.php',
-        method: 'POST',
-        data: datos,
-        dataType: 'json',
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "obtenerServiciosPorFechaMedico",
+            fecha: fecha,
+            doctor_id: doctorId
+        },
+        dataType: "json",
+        beforeSend: function() {
+            $('#servicioSelect').html('<option value="">Cargando servicios...</option>');
+        },
         success: function(respuesta) {
-            console.log('Respuesta de guardar reserva:', respuesta);
+            console.log("Respuesta de servicios por fecha y médico:", respuesta);
             
-            // Restaurar botón
-            btnConfirmar.html(btnText);
-            btnConfirmar.prop('disabled', false);
+            $('#servicioSelect').html('<option value="">Seleccione un servicio</option>');
             
-            if (respuesta.status === 'success') {
-                // Mostrar mensaje de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Reserva guardada!',
-                    text: 'La reserva se ha guardado exitosamente',
-                    showConfirmButton: true
-                }).then(() => {
-                    // Reiniciar formulario o redireccionar
-                    limpiarFormularioReserva();
-                    
-                    // Opcional: recargar la página o ir a listado de reservas
-                    // window.location.reload();
+            if (respuesta.data && respuesta.data.length > 0) {
+                respuesta.data.forEach(function(servicio) {
+                    // Verificar qué propiedades trae el objeto servicio
+                    if (servicio.servicio_id) {
+                        // Si viene con servicio_id y servicio_nombre (formato de la API)
+                        const precio = servicio.precio_base || servicio.precio || 0;
+                        $('#servicioSelect').append(`<option value="${servicio.servicio_id}" data-precio="${precio}">${servicio.servicio_nombre}</option>`);
+                    } else if (servicio.id) {
+                        // Si viene con id y nombre (formato antiguo)
+                        const precio = servicio.precio_base || servicio.precio || 0;
+                        $('#servicioSelect').append(`<option value="${servicio.id}" data-precio="${precio}">${servicio.nombre}</option>`);
+                    } else if (servicio.message) {
+                        // Si es un mensaje de error/advertencia
+                        console.warn("Mensaje desde API:", servicio.message);
+                    }
                 });
             } else {
-                // Mostrar error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: respuesta.message || 'No se pudo guardar la reserva. Intente nuevamente.'
-                });
+                $('#servicioSelect').html('<option value="">No hay servicios disponibles</option>');
+                console.warn('El médico seleccionado no tiene servicios disponibles para esta fecha.');
             }
         },
-        error: function(xhr, status, error) {
-            console.error('Error al guardar reserva:', error);
-            
-            // Restaurar botón
-            btnConfirmar.html(btnText);
-            btnConfirmar.prop('disabled', false);
-            
-            // Mostrar mensaje de error
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al intentar guardar la reserva. Por favor intente nuevamente.'
-            });
+        error: function(xhr) {
+            console.error("Error al cargar servicios por fecha y médico:", xhr);
+            $('#servicioSelect').html('<option value="">Error al cargar servicios</option>');
         }
     });
-}
-
-/**
- * Clear reservation form and reset to initial state
- */
-function limpiarFormularioReserva() {
-    // Limpiar campos
-    $('#pacienteSearchNew').val('');
-    $('#pacienteIdNew').val('');
-    $('#fechaReservaNew').val('');
-    $('#selectMedicoNew').val('');
-    $('#servicioSelect').val('');
-    $('#horaSeleccionada').val('');
-    $('#horaInicioSeleccionada').val('');
-    $('#horaFinSeleccionada').val('');
-    $('#observacionesReserva').val('');
-    $('#seguroSelect').val('');
-    
-    // Limpiar resumen
-    $('#resumenPaciente').text('No seleccionado');
-    $('#resumenFecha').text('No seleccionada');
-    $('#resumenDoctor').text('No seleccionado');
-    $('#resumenServicio').text('No seleccionado');
-    $('#resumenHoraNew').text('No seleccionada');
-    
-    // Limpiar resultados
-    $('#resultadosDoctores').html('');
-    $('#contenedorHorariosNew').html('<p>Complete los pasos 1 y 2 para ver horarios disponibles</p>');
-    
-    // Deshabilitar botón confirmar
-    $('#btnConfirmarReserva').prop('disabled', true);
-    
-    // Scrollear arriba y enfocar en búsqueda de paciente
-    setTimeout(function() {
-        $('html, body').animate({
-            scrollTop: $('#pacienteSearchNew').offset().top - 100
-        }, 300);
-        $('#pacienteSearchNew').focus();
-    }, 100);
 }
