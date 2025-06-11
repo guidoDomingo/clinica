@@ -351,5 +351,41 @@ class ControladorServicios {
     static public function ctrObtenerMedicos() {
         return ModelServicios::mdlObtenerMedicos();
     }
+      /**
+     * Obtiene los horarios disponibles para un doctor específico en una fecha
+     * @param int $servicioId ID del servicio (opcional)
+     * @param int $doctorId ID del doctor
+     * @param string $fecha Fecha para la verificación (formato YYYY-MM-DD)
+     * @return array Listado de horarios disponibles
+     */
+    static public function ctrObtenerHorariosDisponibles($servicioId, $doctorId, $fecha) {
+        try {
+            // Verificar que los parámetros necesarios sean válidos
+            // El servicio ID ahora es opcional
+            if (empty($doctorId) || empty($fecha)) {
+                error_log("ctrObtenerHorariosDisponibles: Parámetros incompletos. DoctorID=$doctorId, Fecha=$fecha", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                return [];
+            }
+
+            // Validar formato de la fecha
+            $fechaObj = DateTime::createFromFormat('Y-m-d', $fecha);
+            if (!$fechaObj) {
+                error_log("ctrObtenerHorariosDisponibles: Formato de fecha inválido: $fecha", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+                return [];
+            }
+
+            // Obtener los horarios disponibles del modelo
+            $horarios = ModelServicios::mdlObtenerHorariosDisponibles($servicioId, $doctorId, $fecha);
+            
+            // Registrar cuántos horarios se encontraron
+            error_log("ctrObtenerHorariosDisponibles: Se encontraron " . count($horarios) . " horarios disponibles", 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            
+            return $horarios;
+            
+        } catch (Exception $e) {
+            error_log("ERROR en ctrObtenerHorariosDisponibles: " . $e->getMessage(), 3, 'c:/laragon/www/clinica/logs/servicios.log');
+            return [];
+        }
+    }
 }
 

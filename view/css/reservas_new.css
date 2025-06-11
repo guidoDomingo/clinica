@@ -1,0 +1,543 @@
+/* Estilos para la nueva pestaña de Reservas New */
+.reservas-new-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+}
+
+.reservas-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.section-left {
+    flex: 1;
+    min-width: 300px;
+}
+
+.section-right {
+    flex: 1;
+    min-width: 300px;
+}
+
+.reservas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 15px;
+}
+
+.reservas-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.reservas-header h3 i {
+    margin-right: 8px;
+}
+
+.reservas-header .header-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-square {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: none;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.btn-square:hover {
+    background-color: #e9ecef;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px 15px;
+}
+
+.form-col {
+    flex: 1;
+    min-width: 200px;
+    padding: 0 10px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-group {
+    display: flex;
+}
+
+.input-group input {
+    flex: 1;
+    border-radius: 4px 0 0 4px;
+}
+
+.input-group-append {
+    display: flex;
+}
+
+.input-group-append button {
+    border-radius: 0;
+    border-left: 0;
+}
+
+.input-group-append button:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 14px;
+    line-height: 1.428571429;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Green check button */
+.btn-success.btn-circle {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Gray check button */
+.btn-secondary.btn-circle {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.table-reservas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.table-reservas th {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.table-reservas td {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.table-reservas tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.action-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    border: none;
+    margin: 0 auto;
+}
+
+.action-blue {
+    background-color: #007bff;
+}
+
+.action-green {
+    background-color: #28a745;
+}
+
+.action-dark {
+    background-color: #343a40;
+}
+
+.resumen-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.resumen-info {
+    margin: 15px 0;
+    border-radius: 4px;
+    background-color: #f8fafc;
+    padding: 15px;
+}
+
+.resumen-item {
+    display: flex;
+    margin-bottom: 10px;
+    font-size: 14px;
+    border-bottom: 1px dotted #eee;
+    padding-bottom: 5px;
+}
+
+.resumen-label {
+    flex: 0 0 100px;
+    font-weight: bold;
+    color: #555;
+}
+
+.resumen-value {
+    flex: 1;
+    color: #333;
+}
+
+.separator {
+    height: 2px;
+    background-color: #f8f9fa;
+    margin: 20px 0;
+}
+
+.sales-graph {
+    margin-top: 20px;
+}
+
+.sales-graph-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.sales-graph-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.sales-graph-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.graph-inputs {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.graph-inputs input {
+    flex: 1;
+}
+
+.btn-grabar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 500;
+}
+
+.btn-grabar:hover {
+    background-color: #0069d9;
+}
+
+/* Estilos para elementos seleccionados */
+tr.selected {
+    background-color: #e8f4fe !important;
+}
+
+.selected-doctor-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #007bff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: #e8f4fe;
+}
+
+.header-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.selected-patient-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #28a745;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: #e8f5e9;
+}
+
+.horarios-container {
+    margin-top: 15px;
+    min-height: 150px;
+}
+
+.hora-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hora-slot:hover {
+    background: #f0f7ff;
+    border-color: #b8d4f5;
+}
+
+.hora-slot.selected {
+    background: #e8f4ff;
+    border-color: #4a9fff;
+    box-shadow: 0 0 0 2px rgba(74, 159, 255, 0.2);
+}
+
+.hora-slot.no-disponible {
+    background: #f5f5f5;
+    border-color: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn-select-horario {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.hora-slot:not(.selected) .btn-select-horario {
+    opacity: 0.5;
+}
+
+.hora-slot.selected .btn-select-horario {
+    background-color: #28a745;
+    opacity: 1;
+}
+
+.hora-slot.no-disponible .btn-select-horario {
+    background-color: #aaaaaa;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Style for the time column */
+.hora-column {
+    font-weight: bold;
+    width: 80px;
+}
+
+/* Style for the check column */
+.check-column {
+    width: 60px;
+    text-align: center;
+}
+
+/* Make the tables more compact */
+#tablaMedicosNew {
+    border-collapse: collapse;
+}
+
+#tablaMedicosNew th, 
+#tablaMedicosNew td {
+    padding: 8px;
+}
+
+/* Better styles for the doctors table */
+
+/* Blue doctor select button */
+.btn-primary.btn-circle {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Make the table header darker */
+#tablaMedicosNew thead th {
+    background-color: #343a40 !important;
+    color: white !important;
+    border-color: #454d55 !important;
+}
+
+/* Vertical alignment for table cells */
+#tablaMedicosNew td {
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+/* Hora column width and styling */
+.hora-column {
+    text-align: right !important;
+    padding-right: 20px !important;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Check column styling */
+.check-column {
+    text-align: center !important;
+}
+
+/* Style for doctor rows */
+.doctor-row td {
+    border-top: 2px solid #dee2e6;
+}
+
+/* Style for time slot rows */
+.horario-row {
+    background-color: #f8f9fa;
+}
+
+/* Selected doctor row */
+tr.selected {
+    background-color: rgba(0, 123, 255, 0.1) !important;
+}
+
+/* Estilos para la tabla de horarios dentro de la fila del doctor */
+.table-horarios {
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.table-horarios thead th {
+    background-color: #343a40;
+    color: white;
+    font-size: 0.9rem;
+    padding: 8px;
+}
+
+.table-horarios tbody tr:hover {
+    background-color: #f1f8ff;
+}
+
+.horario-item.text-muted {
+    opacity: 0.7;
+}
+
+.btn-circle {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-circle:hover {
+    transform: scale(1.1);
+}
+
+.btn-circle.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.horario-row {
+    background-color: #f8f9fa;
+}
+
+/* Responsive layout */
+@media (max-width: 992px) {
+    .reservas-new-container {
+        flex-direction: column;
+    }
+    
+    .section-left, .section-right {
+        width: 100%;
+    }
+}
+
+/* Medium gray background for alternating rows */
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+/* Make the table header darker */
+#tablaMedicosNew thead th {
+    background-color: #343a40;
+    color: white;
+}
+
+/* Hora column width */
+#tablaMedicosNew td.text-right {
+    width: 80px;
+    font-weight: bold;
+}

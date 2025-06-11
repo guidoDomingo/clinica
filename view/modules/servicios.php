@@ -58,10 +58,14 @@ if (!isset($_SESSION['perfil'])) {
                                     <a class="nav-link" id="tab-reservas-tab" data-toggle="pill" href="#tabReservas" role="tab" aria-controls="tabReservas" aria-selected="false">
                                         <i class="fas fa-calendar-alt mr-1"></i>Reservas
                                     </a>
-                                </li>
-                                <li class="nav-item">
+                                </li>                                <li class="nav-item">
                                     <a class="nav-link" id="tab-calendario-tab" data-toggle="pill" href="#tabCalendario" role="tab" aria-controls="tabCalendario" aria-selected="false">
                                         <i class="fas fa-calendar-week mr-1"></i>Calendario
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-reservas-new-tab" data-toggle="pill" href="#tabReservasNew" role="tab" aria-controls="tabReservasNew" aria-selected="false">
+                                        <i class="fas fa-calendar-check mr-1"></i>Reservas New
                                     </a>
                                 </li>
                                 <?php if (in_array($_SESSION['perfil'], ['Administrador', 'Director Médico'])): ?>
@@ -397,6 +401,221 @@ if (!isset($_SESSION['perfil'])) {
                                 <div class="tab-pane fade" id="tabCalendario" role="tabpanel" aria-labelledby="tab-calendario-tab">
                                     <div id="calendar"></div>
                                 </div>
+                                  <!-- PESTAÑA: RESERVAS NEW -->
+                                <div class="tab-pane fade" id="tabReservasNew" role="tabpanel" aria-labelledby="tab-reservas-new-tab">
+                                    <div class="reservas-new-container">
+                                        <!-- Panel izquierdo -->
+                                        <div class="section-left">
+                                            <!-- Sección Paciente (ahora es el primer paso) -->
+                                            <div class="reservas-section">
+                                                <div class="reservas-header">
+                                                    <h3><i class="fas fa-user"></i> Paso 1: Seleccione un Paciente</h3>
+                                                    <div class="header-actions">
+                                                        <button type="button" class="btn-square" id="btnNuevoPaciente" title="Nuevo paciente">
+                                                            <i class="fas fa-user-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="buscarPacienteNew">Buscar paciente</label>
+                                                    <div class="input-group">
+                                                        <input type="text" id="buscarPacienteNew" class="form-control" placeholder="Nombre, documento o teléfono...">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-primary" type="button" id="btnBuscarPacienteNew">
+                                                                <i class="fas fa-search"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Tabla de pacientes -->
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-hover table-reservas" id="tablaPacientesNew">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Nombre</th>
+                                                                <th>Documento</th>
+                                                                <th>Acción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr><td colspan="3" class="text-center">Ingrese un término para buscar pacientes</td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <input type="hidden" id="selectPacienteNew" value="">
+                                            </div>
+                                            
+                                            <!-- Sección Médico (ahora es el segundo paso) -->
+                                            <div class="reservas-section">
+                                                <div class="reservas-header">
+                                                    <h3><i class="fas fa-user-md"></i> Paso 2: Seleccione un Médico</h3>
+                                                    <div class="header-actions">
+                                                        <button type="button" class="btn-square" id="btnRefreshMedicos" title="Actualizar lista">
+                                                            <i class="fas fa-sync-alt"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="fechaReservaNew">Fecha</label>
+                                                            <input type="date" id="fechaReservaNew" class="form-control" min="<?php echo date('Y-m-d'); ?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="buscarMedicoNew">Buscar médico</label>
+                                                            <div class="input-group">
+                                                                <input type="text" id="buscarMedicoNew" class="form-control" placeholder="Nombre del médico...">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-primary" type="button" id="btnBuscarMedicoNew">
+                                                                        <i class="fas fa-search"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>                                                <!-- Tabla de médicos -->
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover table-reservas" id="tablaMedicosNew">
+                                                        <thead class="bg-dark text-white">
+                                                            <tr>
+                                                                <th width="5%">#</th>
+                                                                <th width="35%">Médico</th>
+                                                                <th width="30%">Turno</th>
+                                                                <th width="15%">Disponible</th>
+                                                                <th width="15%">Acción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Se llena dinámicamente con JS -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <input type="hidden" id="selectMedicoNew" value="">
+                                            </div>
+                                        </div>
+                                                      <!-- Panel derecho -->
+                                        <div class="section-right">
+                                            <!-- Sección horarios -->
+                                            <div class="reservas-section">
+                                                <div class="reservas-header">
+                                                    <h3><i class="fas fa-clock"></i> Paso 3: Horarios disponibles</h3>
+                                                    <div class="header-info">
+                                                        <span class="selected-patient-name" id="pacienteNombreMostrar">Ningún paciente seleccionado</span>
+                                                        <span class="selected-doctor-name" id="medicoNombreMostrar">Ningún médico seleccionado</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Contenedor de horarios -->
+                                                <div id="contenedorHorariosNew" class="horarios-container">
+                                                    <div class="text-center text-muted py-4">
+                                                        <i class="fas fa-calendar-day fa-3x mb-3"></i>
+                                                        <p>Complete los pasos 1 y 2 para ver horarios disponibles</p>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="horaSeleccionada" value="">
+                                                <input type="hidden" id="horaInicioSeleccionada" value="">
+                                                <input type="hidden" id="horaFinSeleccionada" value="">
+                                            </div>
+                                            
+                                            <!-- Sección servicio y seguro -->
+                                            <div class="reservas-section">
+                                                <div class="reservas-header">
+                                                    <h3><i class="fas fa-stethoscope"></i> Paso 4: Servicio y seguro</h3>
+                                                </div>
+                                                
+                                                <div class="form-row">
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="servicioSelect">Servicio</label>
+                                                            <select id="servicioSelect" class="form-control">
+                                                                <option value="">Seleccione un servicio</option>
+                                                                <!-- Se llena dinámicamente con JS -->
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="seguroSelect">Seguro de salud</label>
+                                                            <select id="seguroSelect" class="form-control">
+                                                                <option value="0">Sin seguro</option>
+                                                                <!-- Se llena dinámicamente con JS -->
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-row">
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="planSelect">Plan</label>
+                                                            <select id="planSelect" class="form-control">
+                                                                <option value="0">Seleccione un plan</option>
+                                                                <!-- Se llena dinámicamente con JS -->
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <div class="form-col">
+                                                        <div class="form-group">
+                                                            <label for="importeReservaNew">Importe (S/)</label>
+                                                            <input type="text" id="importeReservaNew" class="form-control" placeholder="0.00" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                              <!-- Sección resumen y guardar -->
+                                            <div class="reservas-section">
+                                                <div class="reservas-header">
+                                                    <h3><i class="fas fa-clipboard-check"></i> Paso 5: Resumen y confirmación</h3>
+                                                </div>
+                                                
+                                                <div class="resumen-info">
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Médico:</div>
+                                                        <div class="resumen-value" id="resumenMedicoNew">-</div>
+                                                    </div>
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Paciente:</div>
+                                                        <div class="resumen-value" id="resumenPacienteNew">-</div>
+                                                    </div>
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Fecha:</div>
+                                                        <div class="resumen-value" id="resumenFechaNew">-</div>
+                                                    </div>
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Hora:</div>
+                                                        <div class="resumen-value" id="resumenHoraNew">-</div>
+                                                    </div>
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Servicio:</div>
+                                                        <div class="resumen-value" id="resumenServicioNew">-</div>
+                                                    </div>
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Seguro:</div>
+                                                        <div class="resumen-value" id="resumenSeguroNew">-</div>
+                                                    </div>
+                                                    <div class="resumen-item">
+                                                        <div class="resumen-label">Importe:</div>
+                                                        <div class="resumen-value" id="resumenImporteNew">S/ 0.00</div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group mt-3">
+                                                    <label for="observacionesNew">Observaciones:</label>
+                                                    <textarea id="observacionesNew" class="form-control" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                                                </div>
+                                                
+                                                <button id="btnGuardarReservaNew" class="btn btn-primary btn-block mt-3">
+                                                    <i class="fas fa-save"></i> Guardar Reserva
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                                 <!-- PESTAÑA: ADMINISTRACIÓN -->
                                 <?php if (in_array($_SESSION['perfil'], ['Administrador', 'Director Médico'])): ?>
@@ -708,6 +927,7 @@ if (!isset($_SESSION['perfil'])) {
 <!-- Incluir estilos -->
 <link href="view/css/servicios.css" rel="stylesheet">
 <link href="view/css/slots_horario.css?v=1.3" rel="stylesheet">
+<link href="view/css/reservas_new.css?v=1.0" rel="stylesheet">
 
 <!-- Incluir JavaScript personalizado -->
 <script src="view/js/servicios.js"></script>
@@ -715,3 +935,4 @@ if (!isset($_SESSION['perfil'])) {
 <script src="view/js/slots_fallback.js"></script>
 <script src="view/js/slots_pagination.js"></script>
 <script src="view/js/enviar_pdf_reserva.js"></script>
+<script src="view/js/reservas_new.js"></script>

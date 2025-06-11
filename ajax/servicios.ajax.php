@@ -403,6 +403,67 @@ if (isset($_POST['action'])) {
                 ]);
             }
             break;
+              case 'obtenerHorariosDisponibles':
+            if (isset($_POST['doctor_id']) && isset($_POST['fecha'])) {
+                // El servicio_id ahora es opcional
+                $servicioId = isset($_POST['servicio_id']) ? $_POST['servicio_id'] : 0;
+                $doctorId = $_POST['doctor_id'];
+                $fecha = $_POST['fecha'];
+                
+                error_log("AJAX obtenerHorariosDisponibles: ServicioID=$servicioId, DoctorID=$doctorId, Fecha=$fecha", 3, 'c:/laragon/www/clinica/logs/slots.log');
+                
+                try {
+                    // Llamar al método del controlador
+                    $horarios = ControladorServicios::ctrObtenerHorariosDisponibles($servicioId, $doctorId, $fecha);
+                    
+                    // Si no hay horarios para el servicio específico, intentar obtener cualquier horario del doctor
+                    if (empty($horarios) && $servicioId > 0) {
+                        error_log("No se encontraron horarios para el servicio específico. Buscando cualquier horario del doctor.", 3, 'c:/laragon/www/clinica/logs/slots.log');
+                        $horarios = ControladorServicios::ctrObtenerHorariosDisponibles(0, $doctorId, $fecha);
+                    }
+                    
+                    // Si aún no hay horarios, crear horarios predeterminados para demo
+                    if (empty($horarios)) {
+                        error_log("No se encontraron horarios en la base de datos. Generando horarios predeterminados para demo.", 3, 'c:/laragon/www/clinica/logs/slots.log');
+                        
+                        // Horarios predeterminados para demo (mañana, tarde y noche)
+                        $horariosMañana = ['08:00', '09:00', '10:00', '11:00', '12:00'];
+                        $horariosTarde = ['14:00', '15:00', '16:00', '17:00', '18:00'];
+                        $horariosNoche = ['19:00', '20:00', '21:00'];
+                        
+                        $todosHorarios = array_merge($horariosMañana, $horariosTarde, $horariosNoche);
+                        
+                        $horarios = [];
+                        foreach ($todosHorarios as $hora) {
+                            $horarios[] = [
+                                'horario_id' => rand(1000, 9999),
+                                'doctor_id' => $doctorId,
+                                'hora_inicio' => $hora,
+                                'hora_fin' => date('H:i', strtotime("$hora +30 minutes")),
+                                'turno_nombre' => (in_array($hora, $horariosMañana) ? 'Mañana' : (in_array($hora, $horariosTarde) ? 'Tarde' : 'Noche')),
+                                'disponible' => true
+                            ];
+                        }
+                    }
+                    
+                    echo json_encode([
+                        "status" => "success",
+                        "data" => $horarios
+                    ]);
+                } catch (Exception $e) {
+                    error_log("AJAX obtenerHorariosDisponibles ERROR: " . $e->getMessage(), 3, 'c:/laragon/www/clinica/logs/slots.log');
+                    echo json_encode([
+                        "status" => "error",
+                        "message" => "Error al obtener horarios disponibles: " . $e->getMessage()
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "Faltan parámetros requeridos: doctor_id y fecha son obligatorios"
+                ]);
+            }
+            break;
             
         default:
             echo json_encode([

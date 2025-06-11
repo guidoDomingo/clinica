@@ -48,36 +48,19 @@ $(document).ready(function() {
             $('#selectMedicoReservas').empty();
             $('#selectEstadoReserva').val('0');
             
-            setTimeout(function() {
-                // Cargar los médicos primero
-                $.ajax({
-                    url: "ajax/servicios.ajax.php",
-                    method: "POST",
-                    data: { action: "obtenerMedicos" },
-                    dataType: "json",
-                    success: function(respuesta) {
-                        console.log("Médicos cargados manualmente:", respuesta);
-                        
-                        if (respuesta.status === "success" && respuesta.data) {
-                            let opciones = '<option value="0">Todos los médicos</option>';
-                            
-                            respuesta.data.forEach(function(medico) {
-                                const nombre = medico.nombre_doctor || `Dr. ${medico.doctor_id}`;
-                                opciones += `<option value="${medico.doctor_id}">${nombre}</option>`;
-                            });
-                            
-                            $('#selectMedicoReservas').html(opciones);
-                            
-                            // Una vez cargados los médicos, ahora sí buscar reservas
-                            buscarReservas();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error cargando médicos:", error);
-                        buscarReservas(); // Intentar buscar reservas de todas formas
-                    }
-                });
-            }, 200);
+            cargarMedicosParaFiltroReservas();
+            buscarReservas();
+        } else if (targetTab === '#tabReservasNew') {
+            console.log("Inicializando pestaña Reservas New...");
+            
+            // Ensure the function exists before calling it
+            if (typeof inicializarReservasNew === 'function') {
+                // Only initialize if not already initialized
+                if (!window.reservasNewInicializado) {
+                    inicializarReservasNew();
+                    window.reservasNewInicializado = true;
+                }
+            }
         }
     });
     

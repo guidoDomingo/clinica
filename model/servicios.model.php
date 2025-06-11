@@ -288,10 +288,9 @@ class ModelServicios {
         // Mapping directo para los días de la semana
         $diasSemanaTexto = [1 => 'LUNES', 2 => 'MARTES', 3 => 'MIERCOLES', 4 => 'JUEVES', 5 => 'VIERNES', 6 => 'SABADO', 7 => 'DOMINGO'];
         $diaSemanaTexto = $diasSemanaTexto[$diaSemanaNum];
-        
-        try {
-            $stmt = Conexion::conectar()->prepare(
-                "SELECT 
+          try {
+            // SQL base
+            $sql = "SELECT 
                     sh.horario_id,
                     sh.servicio_id,
                     sh.turno_id,
@@ -317,15 +316,24 @@ class ModelServicios {
                 INNER JOIN 
                     rh_person p ON rd.person_id = p.person_id
                 WHERE 
-                    sh.servicio_id = :servicio_id
-                    AND sh.doctor_id = :doctor_id
+                    sh.doctor_id = :doctor_id
                     AND sh.dia_semana = :dia_semana
-                    AND sh.horario_estado = true
-                ORDER BY 
-                    sh.hora_inicio ASC"
-            );
-    
-            $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
+                    AND sh.horario_estado = true";
+            
+            // Si se proporcionó un ID de servicio, agregar al WHERE
+            if (!empty($servicioId) && $servicioId > 0) {
+                $sql .= " AND sh.servicio_id = :servicio_id";
+            }
+            
+            // Agregar ORDER BY
+            $sql .= " ORDER BY sh.hora_inicio ASC";
+            
+            $stmt = Conexion::conectar()->prepare($sql);
+            
+            // Bind params
+            if (!empty($servicioId) && $servicioId > 0) {
+                $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
+            }
             $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
             $stmt->bindParam(":dia_semana", $diaSemanaTexto, PDO::PARAM_STR);
             $stmt->execute();
