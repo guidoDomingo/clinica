@@ -345,14 +345,85 @@ class ModelServicios {
             
             $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $conteo = count($resultados);
-            
-            // Log detailed results for debugging
+              // Log detailed results for debugging
             error_log("mdlObtenerHorariosDisponibles: Se encontraron $conteo resultados para DoctorID=$doctorId, Dia=$diaSemanaTexto", 
                       3, 'c:/laragon/www/clinica/logs/database.log');
             
             if ($conteo > 0) {
                 error_log("Primer resultado: " . json_encode($resultados[0]), 
                           3, 'c:/laragon/www/clinica/logs/database.log');
+                  // Generate detailed time slots based on the time range and interval
+                $slotsGenerados = [];
+                
+                // First, get all existing reservations for this doctor on this day
+                $reservasExistentes = self::mdlObtenerReservasExistentes($doctorId, $fecha);
+                
+                error_log("Verificando reservas existentes para DoctorID=$doctorId, Fecha=$fecha: " . 
+                          count($reservasExistentes) . " encontradas", 3, 'c:/laragon/www/clinica/logs/database.log');
+                
+                foreach ($resultados as $horario) {
+                    $horaInicio = new DateTime($fecha . ' ' . $horario['hora_inicio']);
+                    $horaFin = new DateTime($fecha . ' ' . $horario['hora_fin']);
+                    $intervaloMinutos = isset($horario['intervalo_minutos']) ? $horario['intervalo_minutos'] : 45; // Default to 45min if not specified
+                    
+                    error_log("Generando slots para horario: " . json_encode($horario) . 
+                              ", Intervalo: $intervaloMinutos minutos", 3, 'c:/laragon/www/clinica/logs/database.log');
+                    
+                    $horaActual = clone $horaInicio;
+                    
+                    // Generate slots until we reach the end time
+                    while ($horaActual < $horaFin) {
+                        $slotInicio = clone $horaActual;
+                        $slotFin = clone $horaActual;
+                        $slotFin->add(new DateInterval('PT' . $intervaloMinutos . 'M'));
+                        
+                        // Only add the slot if it fits within the overall end time
+                        if ($slotFin <= $horaFin) {
+                            // Check if this slot overlaps with any existing reservation
+                            $slotDisponible = true;
+                            $horaInicioStr = $slotInicio->format('H:i:s');
+                            $horaFinStr = $slotFin->format('H:i:s');
+                            
+                            foreach ($reservasExistentes as $reserva) {
+                                $reservaInicio = $reserva['hora_inicio'];
+                                $reservaFin = $reserva['hora_fin'];
+                                
+                                // Check for overlap: if the slot overlaps with an existing reservation, mark it as unavailable
+                                if (
+                                    // Slot starts during a reservation
+                                    ($horaInicioStr >= $reservaInicio && $horaInicioStr < $reservaFin) ||
+                                    // Slot ends during a reservation
+                                    ($horaFinStr > $reservaInicio && $horaFinStr <= $reservaFin) ||
+                                    // Slot completely contains a reservation
+                                    ($horaInicioStr <= $reservaInicio && $horaFinStr >= $reservaFin) ||
+                                    // Slot is completely within a reservation
+                                    ($horaInicioStr >= $reservaInicio && $horaFinStr <= $reservaFin)
+                                ) {
+                                    $slotDisponible = false;
+                                    error_log("Slot $horaInicioStr - $horaFinStr excluido por reserva existente: $reservaInicio - $reservaFin", 
+                                              3, 'c:/laragon/www/clinica/logs/database.log');
+                                    break;
+                                }
+                            }
+                            
+                            if ($slotDisponible) {
+                                $slot = $horario; // Copy all properties from the base schedule
+                                $slot['hora_inicio'] = $horaInicioStr;
+                                $slot['hora_fin'] = $horaFinStr;
+                                $slotsGenerados[] = $slot;
+                            }
+                        }
+                        
+                        // Move to the next slot
+                        $horaActual->add(new DateInterval('PT' . $intervaloMinutos . 'M'));
+                    }
+                }
+                
+                if (count($slotsGenerados) > 0) {
+                    error_log("Se generaron " . count($slotsGenerados) . " slots detallados", 
+                              3, 'c:/laragon/www/clinica/logs/database.log');
+                    return $slotsGenerados;
+                }
             }
             
             return $resultados;
@@ -1380,7 +1451,7 @@ class ModelServicios {
                     SET categoria_descripcion = EXCLUDED.categoria_descripcion
                     RETURNING categoria_id
                 ");
-                
+
                 $stmtCategoria->execute();
                 $categoriaResult = $stmtCategoria->fetch(PDO::FETCH_ASSOC);
                 $categoriaId = $categoriaResult['categoria_id'];
@@ -2313,6 +2384,68 @@ class ModelServicios {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch(PDOException $e) {
             error_log("Error en mdlFiltrarRsServicios: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene las reservas existentes para un doctor y fecha específica
+     * @param int $doctorId ID del doctor
+     * @param string $fecha Fecha para la verificación (formato YYYY-MM-DD)
+     * @return array Lista de reservas con horario de inicio y fin
+     */
+    static public function mdlObtenerReservasExistentes($doctorId, $fecha) {
+        try {
+            // Verificar si existe la tabla de reservas
+            $stmtCheck = Conexion::conectar()->prepare("SELECT to_regclass('public.servicios_reservas')");
+            $stmtCheck->execute();
+            $tablaReservasExiste = $stmtCheck->fetchColumn();
+            
+            if (!$tablaReservasExiste) {
+                error_log("mdlObtenerReservasExistentes: La tabla servicios_reservas no existe", 
+                          3, "c:/laragon/www/clinica/logs/database.log");
+                return [];
+            }
+            
+            // Consulta para obtener las reservas existentes para ese doctor y día
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT 
+                    reserva_id,
+                    servicio_id,
+                    agenda_id,
+                    doctor_id,
+                    fecha_reserva,
+                    hora_inicio,
+                    hora_fin
+                FROM 
+                    servicios_reservas
+                WHERE 
+                    doctor_id = :doctor_id
+                    AND fecha_reserva = :fecha_reserva
+                    AND reserva_estado IN ('CONFIRMADA', 'PENDIENTE')
+                ORDER BY 
+                    hora_inicio ASC"
+            );
+            
+            $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
+            $stmt->bindParam(":fecha_reserva", $fecha, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("mdlObtenerReservasExistentes: Encontradas " . count($reservas) . 
+                      " reservas para doctor ID $doctorId en fecha $fecha", 
+                      3, "c:/laragon/www/clinica/logs/database.log");
+            
+            if (count($reservas) > 0) {
+                error_log("Primera reserva: " . json_encode($reservas[0]), 
+                          3, "c:/laragon/www/clinica/logs/database.log");
+            }
+            
+            return $reservas;
+        } catch (PDOException $e) {
+            error_log("Error al obtener reservas existentes: " . $e->getMessage(), 
+                      3, "c:/laragon/www/clinica/logs/database.log");
             return [];
         }
     }
