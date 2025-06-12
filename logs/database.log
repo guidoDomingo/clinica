@@ -2930,3 +2930,36 @@ Parameters: {
 [2025-06-12 18:52:20] [INFO] [Model.php:175]
 SQL: SELECT COUNT(*) as total FROM rh_person
 ----------------------------------------
+DEBUG - Fecha: 2025-06-12, Número día: 4, Texto día: JUEVESBuscando médicos para fecha: 2025-06-12, día: JUEVESAgendas encontradas para JUEVES: [{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14},{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14}]DEBUG - Dia semana utilizado para la consulta: 'JUEVES'DEBUG - Días disponibles en agendas_detalle: ["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO"]Resultados crudos de la consulta: [{"doctor_id":14,"person_id":56,"nombre_doctor":"ronal ricardo","doctor_estado":"ACTIVO","agenda_id":18,"medico_id":14,"doctor_match":true,"dia_semana":"JUEVES"}]Médicos encontrados para 2025-06-12 (JUEVES): 1DEBUG - Fecha: 2025-06-12, Número día: 4, Texto día: JUEVESBuscando médicos para fecha: 2025-06-12, día: JUEVESAgendas encontradas para JUEVES: [{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14},{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14}]DEBUG - Dia semana utilizado para la consulta: 'JUEVES'DEBUG - Días disponibles en agendas_detalle: ["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO"]Resultados crudos de la consulta: [{"doctor_id":14,"person_id":56,"nombre_doctor":"ronal ricardo","doctor_estado":"ACTIVO","agenda_id":18,"medico_id":14,"doctor_match":true,"dia_semana":"JUEVES"}]Médicos encontrados para 2025-06-12 (JUEVES): 1DEBUG - Fecha: 2025-06-12, Número día: 4, Texto día: JUEVESBuscando médicos para fecha: 2025-06-12, día: JUEVESAgendas encontradas para JUEVES: [{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14},{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14}]DEBUG - Dia semana utilizado para la consulta: 'JUEVES'DEBUG - Días disponibles en agendas_detalle: ["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO"]Resultados crudos de la consulta: [{"doctor_id":14,"person_id":56,"nombre_doctor":"ronal ricardo","doctor_estado":"ACTIVO","agenda_id":18,"medico_id":14,"doctor_match":true,"dia_semana":"JUEVES"}]Médicos encontrados para 2025-06-12 (JUEVES): 1[2025-06-12 18:53:34] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-12 18:53:34] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-12 18:53:34] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-06-12 19:06:10] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-12 19:06:11] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-12 19:06:11] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+DEBUG - Fecha: 2025-06-12, Número día: 4, Texto día: JUEVESBuscando médicos para fecha: 2025-06-12, día: JUEVESAgendas encontradas para JUEVES: [{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14},{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14}]DEBUG - Dia semana utilizado para la consulta: 'JUEVES'DEBUG - Días disponibles en agendas_detalle: ["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO"]Resultados crudos de la consulta: [{"doctor_id":14,"person_id":56,"nombre_doctor":"ronal ricardo","doctor_estado":"ACTIVO","agenda_id":18,"medico_id":14,"doctor_match":true,"dia_semana":"JUEVES"}]Médicos encontrados para 2025-06-12 (JUEVES): 1DEBUG - Fecha: 2025-06-12, Número día: 4, Texto día: JUEVESBuscando médicos para fecha: 2025-06-12, día: JUEVESAgendas encontradas para JUEVES: [{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14},{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14}]DEBUG - Dia semana utilizado para la consulta: 'JUEVES'DEBUG - Días disponibles en agendas_detalle: ["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO"]Resultados crudos de la consulta: [{"doctor_id":14,"person_id":56,"nombre_doctor":"ronal ricardo","doctor_estado":"ACTIVO","agenda_id":18,"medico_id":14,"doctor_match":true,"dia_semana":"JUEVES"}]Médicos encontrados para 2025-06-12 (JUEVES): 1DEBUG - Fecha: 2025-06-12, Número día: 4, Texto día: JUEVESBuscando médicos para fecha: 2025-06-12, día: JUEVESAgendas encontradas para JUEVES: [{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14},{"agenda_id":18,"dia_semana":"JUEVES","agenda_descripcion":"prueba ","medico_id":14}]DEBUG - Dia semana utilizado para la consulta: 'JUEVES'DEBUG - Días disponibles en agendas_detalle: ["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO"]Resultados crudos de la consulta: [{"doctor_id":14,"person_id":56,"nombre_doctor":"ronal ricardo","doctor_estado":"ACTIVO","agenda_id":18,"medico_id":14,"doctor_match":true,"dia_semana":"JUEVES"}]Médicos encontrados para 2025-06-12 (JUEVES): 1

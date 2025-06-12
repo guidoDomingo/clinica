@@ -118,6 +118,9 @@ function inicializarReservasNew() {
     const fechaFormateada = moment().format('DD/MM/YYYY');
     $('#resumenFechaNew').text(fechaFormateada);
 
+    // Procesar parámetros URL para pre-llenar información del paciente
+    procesarParametrosURLPaciente();
+
     // Patient search on Enter key (priority as first step)
     $('#buscarPacienteNew').keyup(function (e) {
         if (e.keyCode === 13) {
@@ -1719,7 +1722,7 @@ function inicializarReservasNew() {
                             case 'CANCELADA': estadoIcono = '<i class="fas fa-times-circle mr-1"></i>'; break;
                         }
                         
-                        // Añade clases más específicas para el estilo del estado
+                        // Añades clases más específicas para el estilo del estado
                         estadoClass += ' estado-' + item.reserva_estado.toLowerCase();
                         
                         $('#tablaReservasPorFecha tbody').append(
@@ -1932,7 +1935,7 @@ function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
             console.log("Respuesta de cambio de estado:", respuesta);
             
             if (respuesta.status === "success") {
-                // Cerrar el diálogo de carga
+                                                             // Cerrar el diálogo de carga
                 Swal.close();
                 
                 // Mostrar mensaje de éxito con SweetAlert2
@@ -2198,5 +2201,68 @@ function verificarDisponibilidadDatatablesBotones() {
     } catch (error) {
         console.error('Error verificando disponibilidad de DataTables Buttons:', error);
         return false;
+    }
+}
+
+// Función para procesar parámetros URL y pre-llenar información del paciente
+function procesarParametrosURLPaciente() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pacienteId = urlParams.get('paciente_id');
+    const nombre = urlParams.get('nombre');
+    const apellido = urlParams.get('apellido');
+    const documento = urlParams.get('documento');
+    
+    if (pacienteId && nombre && apellido) {
+        console.log('Parámetros URL detectados - Pre-llenando información del paciente:', {
+            pacienteId,
+            nombre,
+            apellido,
+            documento
+        });
+        
+        // Pre-llenar el campo de búsqueda con el nombre completo
+        const nombreCompleto = `${nombre} ${apellido}`;
+        $('#buscarPacienteNew').val(nombreCompleto);
+        
+        // Guardar la información del paciente seleccionado
+        $('#pacienteSeleccionadoId').val(pacienteId);
+        $('#pacienteSeleccionadoNombre').val(nombreCompleto);
+        $('#pacienteSeleccionadoDocumento').val(documento || '');
+        
+        // Actualizar la información del resumen
+        $('#resumenPacienteNew').text(nombreCompleto);
+        if (documento) {
+            $('#resumenDocumentoNew').text(documento);
+        }
+        
+        // Marcar el campo de búsqueda como seleccionado
+        $('#buscarPacienteNew').addClass('selected-patient').prop('readonly', true);
+        
+        // Mostrar el botón de cambiar paciente
+        $('#btnCambiarPacienteNew').removeClass('d-none');
+        $('#btnBuscarPacienteNew').addClass('d-none');
+        
+        // Hacer scroll al siguiente paso (fecha/médico)
+        setTimeout(function() {
+            $('html, body').animate({
+                scrollTop: $('#fechaReservaNew').offset().top - 100
+            }, 500);
+            
+            // Mostrar mensaje informativo
+            toastr.success(`Paciente ${nombreCompleto} pre-seleccionado desde RH Personas`, 'Información cargada', {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true
+            });
+        }, 1000);
+        
+        // Verificar si el formulario está completo después de pre-llenar
+        setTimeout(function() {
+            verificarFormularioCompleto();
+        }, 1500);
+        
+        // Limpiar los parámetros URL para evitar que se procesen nuevamente
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?ruta=servicios";
+        window.history.replaceState({path: newUrl}, '', newUrl);
     }
 }

@@ -136,19 +136,19 @@ function inicializarTabla() {
         render: function (data) {
           return data ? "Activo" : "Inactivo";
         },
-      },
-      {
+      },      {
         data: null,
         render: function (data) {
-          const btnVer = `<button class="btn btn-info btn-sm btn-ver" btnId="${data.person_id}"><i class="fas fa-eye"></i></button>`;
-          const btnEspecialidades = `<button class="btn btn-purple btn-sm btn-especialidades" btnId="${data.person_id}"><i class="fas fa-stethoscope"></i></button>`;
-          const btnEditar = `<button class="btn btn-primary btn-sm btn-modificar" btnId="${data.person_id}"><i class="fas fa-edit"></i></button>`;
-          const btnEliminar = `<button class="btn btn-danger btn-sm btn-eliminar" btnId="${data.person_id}"><i class="fas fa-trash"></i></button>`;
+          const btnVer = `<button class="btn btn-info btn-sm btn-ver" btnId="${data.person_id}" title="Ver detalles"><i class="fas fa-eye"></i></button>`;
+          const btnEspecialidades = `<button class="btn btn-purple btn-sm btn-especialidades" btnId="${data.person_id}" title="Gestionar especialidades"><i class="fas fa-stethoscope"></i></button>`;
+          const btnReserva = `<button class="btn btn-success btn-sm btn-crear-reserva" btnId="${data.person_id}" data-nombre="${data.first_name}" data-apellido="${data.last_name}" data-documento="${data.document_number}" title="Crear Reserva"><i class="fas fa-calendar-plus"></i></button>`;
+          const btnEditar = `<button class="btn btn-primary btn-sm btn-modificar" btnId="${data.person_id}" title="Editar persona"><i class="fas fa-edit"></i></button>`;
+          const btnEliminar = `<button class="btn btn-danger btn-sm btn-eliminar" btnId="${data.person_id}" title="Eliminar persona"><i class="fas fa-trash"></i></button>`;
           const btnActivar = data.is_active
-            ? `<button class="btn btn-warning btn-sm btn-inactivar" btnId="${data.person_id}"><i class="fas fa-ban"></i></button>`
-            : `<button class="btn btn-success btn-sm btn-activar" btnId="${data.person_id}"><i class="fas fa-check"></i></button>`;
+            ? `<button class="btn btn-warning btn-sm btn-inactivar" btnId="${data.person_id}" title="Inactivar persona"><i class="fas fa-ban"></i></button>`
+            : `<button class="btn btn-success btn-sm btn-activar" btnId="${data.person_id}" title="Activar persona"><i class="fas fa-check"></i></button>`;
 
-          return `<div class="btn-group">${btnVer} ${btnEspecialidades} ${btnEditar} ${btnEliminar} ${btnActivar}</div>`;
+          return `<div class="btn-group">${btnVer} ${btnEspecialidades} ${btnReserva} ${btnEditar} ${btnEliminar} ${btnActivar}</div>`;
         },
       },
     ],
@@ -165,6 +165,7 @@ function inicializarTabla() {
     ".btn-especialidades",
     abrirModalEspecialidades
   );
+  $("#tblPersonas").on("click", ".btn-crear-reserva", crearReservaParaPaciente);
   $("#tblPersonas").on("click", ".btn-modificar", editarPersona);
   $("#tblPersonas").on("click", ".btn-eliminar", eliminarPersona);
   $("#tblPersonas").on("click", ".btn-inactivar", cambiarEstadoPersona);
@@ -1025,6 +1026,29 @@ function verPersona() {
 }
 
 /**
+ * Navega al módulo de reservas con información del paciente preseleccionado
+ */
+function crearReservaParaPaciente() {
+  const personId = $(this).attr("btnId");
+  const nombre = $(this).data("nombre");
+  const apellido = $(this).data("apellido");
+  const documento = $(this).data("documento");
+  
+  console.log("Navegando a Reservas con datos del paciente:", {
+    personId,
+    nombre,
+    apellido,
+    documento
+  });
+  
+  // Construir URL con parámetros del paciente
+  const url = `index.php?ruta=servicios&paciente_id=${personId}&nombre=${encodeURIComponent(nombre)}&apellido=${encodeURIComponent(apellido)}&documento=${encodeURIComponent(documento)}`;
+  
+  // Navegar a la página de servicios/reservas
+  window.location.href = url;
+}
+
+/**
  * Abre el modal para gestionar especialidades de una persona
  */
 function abrirModalEspecialidades() {
@@ -1482,163 +1506,5 @@ function cargarEmpresas() {
     })
     .catch((error) => {
       console.error("Error al cargar empresas:", error);
-    });
-}
-
-/**
- * Carga los datos profesionales de una persona
- * @param {number} personId - ID de la persona
- */
-function cargarDatosProfesionales(personId) {
-  fetch(`api/persons/professional?person_id=${personId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success" && data.data) {
-        // Llenar los campos con los datos profesionales
-        $("#modalPerProfesion").val(data.data.profesion || "");
-        $("#modalPerDireccionCorp").val(data.data.direccion_corporativa || "");
-        $("#modalPerEmailProf").val(data.data.email_profesional || "");
-        $("#modalPerDenominacionCorp").val(
-          data.data.denominacion_corporativa || ""
-        );
-        $("#modalPerRuc").val(data.data.ruc || "");
-        $("#modalPerWhatsapp").val(data.data.whatsapp || "");
-        $("#modalPerPlan").val(data.data.plan || "");
-        
-        // Si es médico, mostrar el selector de empresas y cargar la empresa asignada
-        if (data.data.profesion === "Médico") {
-          $("#divEmpresaMedico").show();
-          cargarEmpresas();
-          
-          // Obtener la empresa asignada al médico
-          fetch(`api/persons/show?id=${personId}`)
-            .then(response => response.json())
-            .then(personData => {
-              if (personData.status === "success" && personData.data) {
-                const personID = personData.data.person_id;
-                
-                // Consultar la tabla rh_doctors para obtener la empresa asignada
-                return fetch(`api/businesses/doctor?person_id=${personID}`)
-                  .then(response => response.json())
-                  .then(doctorData => {
-                    if (doctorData.status === "success" && doctorData.data && doctorData.data.business_id) {
-                      // Seleccionar la empresa en el dropdown
-                      $("#modalPerEmpresa").val(doctorData.data.business_id);
-                      console.log("Business ID cargado:", doctorData.data.business_id);
-                    }
-                  })
-                  .catch(error => {
-                    console.error("Error al cargar datos del doctor:", error);
-                  });
-              }
-            })
-            .catch(error => {
-              console.error("Error al cargar datos de la persona:", error);
-            });
-        } else {
-          $("#divEmpresaMedico").hide();
-        }
-      } else {
-        // Limpiar los campos si no hay datos
-        $("#modalPerProfesion").val("");
-        $("#modalPerDireccionCorp").val("");
-        $("#modalPerEmailProf").val("");
-        $("#modalPerDenominacionCorp").val("");
-        $("#modalPerRuc").val("");
-        $("#modalPerWhatsapp").val("");
-        $("#modalPerPlan").val("");
-        $("#divEmpresaMedico").hide();
-      }
-    })
-    .catch((error) => {
-      console.error("Error al cargar datos profesionales:", error);
-      // Limpiar los campos en caso de error
-      $("#modalPerProfesion").val("");
-      $("#modalPerDireccionCorp").val("");
-      $("#modalPerEmailProf").val("");
-      $("#modalPerDenominacionCorp").val("");
-      $("#modalPerRuc").val("");
-      $("#modalPerWhatsapp").val("");
-      $("#modalPerPlan").val("");
-      $("#divEmpresaMedico").hide();
-    });
-}
-
-/**
- * Guarda las especialidades y datos profesionales desde el modal
- */
-function guardarEspecialidadesModal() {
-  const personId = $("#especialidadesPersonId").val();
-  const especialidadesSeleccionadas = $("#modalPerEspecialidades").val() || [];
-
-  // Datos de especialidades
-  const especialidadesData = {
-    person_id: personId,
-    especialidades: especialidadesSeleccionadas,
-  };
-
-  // Datos profesionales
-  const profesionalData = {
-    person_id: personId,
-    profesion: $("#modalPerProfesion").val(),
-    direccion_corporativa: $("#modalPerDireccionCorp").val(),
-    email_profesional: $("#modalPerEmailProf").val(),
-    denominacion_corporativa: $("#modalPerDenominacionCorp").val(),
-    ruc: $("#modalPerRuc").val(),
-    whatsapp: $("#modalPerWhatsapp").val(),
-    plan: $("#modalPerPlan").val(),
-  };
-  
-  // Añadir business_id si la profesión es médico y se ha seleccionado una empresa
-  if ($("#modalPerProfesion").val() === "Médico") {
-    const empresaId = $("#modalPerEmpresa").val();
-    if (empresaId) {
-      profesionalData.business_id = empresaId;
-    }
-  }
-
-  // Guardar especialidades
-  fetch("api/especialidades/assign", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(especialidadesData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        // Guardar datos profesionales
-        return fetch("api/persons/professional", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(profesionalData),
-        });
-      } else {
-        throw new Error("Error al guardar especialidades");
-      }
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        mostrarAlerta(
-          "success",
-          "Información profesional guardada correctamente"
-        );
-        $("#modalEspecialidades").modal("hide");
-        // Recargar la tabla para mostrar los cambios
-        tablaPersonas.ajax.reload();
-      } else {
-        mostrarAlerta(
-          "error",
-          data.message || "Error al guardar información profesional"
-        );
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      mostrarAlerta("error", "Error al procesar la solicitud");
     });
 }
