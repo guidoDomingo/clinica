@@ -28,11 +28,13 @@ function inicializarReservasNew() {
     
     // Cargar algunos servicios predeterminados iniciales
     cargarServiciosIniciales();
-    
-    // Asegurarse de que el botón de cambiar médico esté oculto al inicio
+      // Asegurarse de que el botón de cambiar médico esté oculto al inicio
     $('#btnCambiarMedicoNew').addClass('d-none');
     $('#btnBuscarMedicoNew').removeClass('d-none');
     $('#buscarMedicoNew').prop('readonly', false).removeClass('selected-doctor');
+    
+    // Ocultar el resumen de horarios al inicio
+    $('#resumenHorariosNew').addClass('d-none');
     
     // Focus on patient search first as it's now step 1
     setTimeout(function() {
@@ -259,13 +261,32 @@ function inicializarReservasNew() {
             horaSeleccionada: $('#horaSeleccionada').val(),
             agendaId: $('#agendaId').val()
         });
-        
-        // Update summary information
+          // Update summary information
         $('#resumenHoraNew').text(horarioTexto);
+        
+        // Actualizar y mostrar el resumen en la sección de horarios
+        $('#resumenHoraHorario').text(horarioTexto);
+        $('#resumenMedicoHorario').text($('#medicoNombreMostrar').text());
+        $('#resumenFechaHorario').text($('#resumenFechaNew').text());
+        $('#resumenHorariosNew').removeClass('d-none');
+        
         console.log("Resumen actualizado:", $('#resumenHoraNew').text());
         
         // Check if form is complete after selecting time
-        verificarFormularioCompleto();        // Scroll to service selection as next step
+        verificarFormularioCompleto();
+        
+        // No hacer scroll automático al servicio, esperamos a que el usuario confirme el horario
+        
+        // Mostrar botón de confirmar horario
+        $('#btnConfirmarHorario').show();
+    });
+    
+    // Botón para confirmar horario y avanzar al siguiente paso
+    $('#btnConfirmarHorario').click(function() {
+        // Ocultar el resumen en la sección de horarios después de confirmar
+        $('#resumenHorariosNew').addClass('d-none');
+        
+        // Scroll al servicio como próximo paso
         $('html, body').animate({
             scrollTop: $('#servicioSelect').offset().top - 100
         }, 500);
@@ -274,6 +295,13 @@ function inicializarReservasNew() {
         setTimeout(function() {
             $('#servicioSelect').focus();
         }, 600);
+        
+        // Mostrar una notificación de confirmación
+        toastr.success('Horario seleccionado correctamente', 'Éxito', { 
+            timeOut: 2000,
+            positionClass: 'toast-top-right',
+            closeButton: true
+        });
     });
     
     // Service selection
@@ -1232,11 +1260,13 @@ function limpiarFormularioReserva() {
     $('.fila-medico').removeClass('fila-seleccionada');
     $('.hora-btn').removeClass('btn-primary').addClass('btn-outline-primary');
     $('#pacienteSeleccionadoCard').addClass('d-none');
-    
-    // Reset results containers
+      // Reset results containers
     $('#pacienteResults').empty();
     $('#medicoResults').empty();
     $('#horariosDisponibles').empty();
+    
+    // Ocultar el resumen de horarios
+    $('#resumenHorariosNew').addClass('d-none');
     
     // Reset summary
     $('#resumenPacienteNew').text('(No seleccionado)');

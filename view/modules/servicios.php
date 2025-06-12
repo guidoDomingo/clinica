@@ -502,19 +502,88 @@ if (!isset($_SESSION['perfil'])) {
                                         <div class="section-right">
                                             <!-- Sección horarios -->
                                             <div class="reservas-section">
-                                                <div class="reservas-header">
+                                                <!-- <div class="reservas-header">
                                                     <h3><i class="fas fa-clock"></i> Paso 3: Horarios disponibles</h3>
                                                     <div class="header-info">
                                                         <span class="selected-patient-name" id="pacienteNombreMostrar">Ningún paciente seleccionado</span>
                                                         <span class="selected-doctor-name" id="medicoNombreMostrar">Ningún médico seleccionado</span>
                                                     </div>
+                                                </div> -->
+
+                                                                                              <!-- Sección resumen y guardar -->
+                                                <div class="reservas-section">
+                                                    <div class="reservas-header">
+                                                        <h3><i class="fas fa-clipboard-check"></i> Paso 5: Resumen y confirmación</h3>
+                                                    </div>
+                                                    
+                                                    <div class="resumen-info">
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Médico:</div>
+                                                            <div class="resumen-value" id="resumenMedicoNew">-</div>
+                                                        </div>
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Paciente:</div>
+                                                            <div class="resumen-value" id="resumenPacienteNew">-</div>
+                                                        </div>
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Fecha:</div>
+                                                            <div class="resumen-value" id="resumenFechaNew">-</div>
+                                                        </div>
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Hora:</div>
+                                                            <div class="resumen-value" id="resumenHoraNew">-</div>
+                                                        </div>
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Servicio:</div>
+                                                            <div class="resumen-value" id="resumenServicioNew">-</div>
+                                                        </div>
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Seguro:</div>
+                                                            <div class="resumen-value" id="resumenSeguroNew">-</div>
+                                                        </div>
+                                                        <div class="resumen-item">
+                                                            <div class="resumen-label">Importe:</div>
+                                                            <div class="resumen-value" id="resumenImporteNew">S/ 0.00</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group mt-3">
+                                                        <label for="observacionesNew">Observaciones:</label>
+                                                        <textarea id="observacionesNew" class="form-control" rows="2" placeholder="Observaciones adicionales..."></textarea>
+                                                    </div>
+                                                    
+                                                    <button id="btnGuardarReservaNew" class="btn btn-primary btn-block mt-3">
+                                                        <i class="fas fa-save"></i> Guardar Reserva
+                                                    </button>
+                                                </div>
+                                                  <!-- Contenedor de horarios -->
+                                                <div id="contenedorHorariosNew" class="horarios-container">
+                                                    <!-- Este div se reemplazará dinámicamente con los horarios disponibles -->
                                                 </div>
                                                 
-                                                <!-- Contenedor de horarios -->
-                                                <div id="contenedorHorariosNew" class="horarios-container">
-                                                    <div class="text-center text-muted py-4">
-                                                        <i class="fas fa-calendar-day fa-3x mb-3"></i>
-                                                        <p>Complete los pasos 1 y 2 para ver horarios disponibles</p>
+                                                <!-- Resumen y confirmación dentro del contenedor de horarios -->
+                                                <div id="resumenHorariosNew" class="resumen-miniatura mt-3 d-none">
+                                                    <h4 class="mb-3"><i class="fas fa-clipboard-check"></i> Resumen de selección</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="resumen-item">
+                                                                <div class="resumen-label">Médico:</div>
+                                                                <div class="resumen-value" id="resumenMedicoHorario">-</div>
+                                                            </div>
+                                                            <div class="resumen-item">
+                                                                <div class="resumen-label">Fecha:</div>
+                                                                <div class="resumen-value" id="resumenFechaHorario">-</div>
+                                                            </div>
+                                                            <div class="resumen-item">
+                                                                <div class="resumen-label">Hora:</div>
+                                                                <div class="resumen-value" id="resumenHoraHorario">-</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 text-right">
+                                                            <button id="btnConfirmarHorario" class="btn btn-primary mt-3">
+                                                                <i class="fas fa-check-circle"></i> Confirmar horario
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <input type="hidden" id="horaSeleccionada" value="">
@@ -569,52 +638,7 @@ if (!isset($_SESSION['perfil'])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                              <!-- Sección resumen y guardar -->
-                                            <div class="reservas-section">
-                                                <div class="reservas-header">
-                                                    <h3><i class="fas fa-clipboard-check"></i> Paso 5: Resumen y confirmación</h3>
-                                                </div>
-                                                
-                                                <div class="resumen-info">
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Médico:</div>
-                                                        <div class="resumen-value" id="resumenMedicoNew">-</div>
-                                                    </div>
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Paciente:</div>
-                                                        <div class="resumen-value" id="resumenPacienteNew">-</div>
-                                                    </div>
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Fecha:</div>
-                                                        <div class="resumen-value" id="resumenFechaNew">-</div>
-                                                    </div>
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Hora:</div>
-                                                        <div class="resumen-value" id="resumenHoraNew">-</div>
-                                                    </div>
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Servicio:</div>
-                                                        <div class="resumen-value" id="resumenServicioNew">-</div>
-                                                    </div>
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Seguro:</div>
-                                                        <div class="resumen-value" id="resumenSeguroNew">-</div>
-                                                    </div>
-                                                    <div class="resumen-item">
-                                                        <div class="resumen-label">Importe:</div>
-                                                        <div class="resumen-value" id="resumenImporteNew">S/ 0.00</div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group mt-3">
-                                                    <label for="observacionesNew">Observaciones:</label>
-                                                    <textarea id="observacionesNew" class="form-control" rows="2" placeholder="Observaciones adicionales..."></textarea>
-                                                </div>
-                                                
-                                                <button id="btnGuardarReservaNew" class="btn btn-primary btn-block mt-3">
-                                                    <i class="fas fa-save"></i> Guardar Reserva
-                                                </button>
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

@@ -672,3 +672,43 @@ body .container-fluid .content-wrapper #reservasNewTab .table-horarios .btn-circ
 #buscarMedicoNew.selected-doctor::placeholder {
     color: transparent;
 }
+
+/* Estilos para el resumen miniatura dentro de la sección de horarios */
+.resumen-miniatura {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-top: 15px;
+}
+
+.resumen-miniatura h4 {
+    color: #007bff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.resumen-miniatura .resumen-item {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.resumen-miniatura .resumen-label {
+    font-weight: 600;
+    color: #495057;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.resumen-miniatura .resumen-value {
+    color: #212529;
+    font-weight: 400;
+    display: inline-block;
+}
+
+.resumen-miniatura .btn {
+    padding: 8px 16px;
+    font-weight: 500;
+}
