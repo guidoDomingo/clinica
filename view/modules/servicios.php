@@ -465,12 +465,14 @@ if (!isset($_SESSION['perfil'])) {
                                                     </div>
                                                     <div class="form-col">
                                                         <div class="form-group">
-                                                            <label for="buscarMedicoNew">Buscar médico</label>
-                                                            <div class="input-group">
+                                                            <label for="buscarMedicoNew">Buscar médico</label>                                                            <div class="input-group">
                                                                 <input type="text" id="buscarMedicoNew" class="form-control" placeholder="Nombre del médico...">
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-outline-primary" type="button" id="btnBuscarMedicoNew">
                                                                         <i class="fas fa-search"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-outline-secondary d-none" type="button" id="btnCambiarMedicoNew">
+                                                                        <i class="fas fa-times"></i>
                                                                     </button>
                                                                 </div>
                                                             </div>

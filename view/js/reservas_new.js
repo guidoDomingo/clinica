@@ -5,7 +5,8 @@
 $(document).ready(function() {
     console.log('Inicializando módulo Reservas New');
     inicializarReservasNew();
-      // Submit button click handler
+    
+    // Submit button click handler
     $('#btnConfirmarReserva').on('click', function() {
         guardarReserva();
     });
@@ -27,6 +28,11 @@ function inicializarReservasNew() {
     
     // Cargar algunos servicios predeterminados iniciales
     cargarServiciosIniciales();
+    
+    // Asegurarse de que el botón de cambiar médico esté oculto al inicio
+    $('#btnCambiarMedicoNew').addClass('d-none');
+    $('#btnBuscarMedicoNew').removeClass('d-none');
+    $('#buscarMedicoNew').prop('readonly', false).removeClass('selected-doctor');
     
     // Focus on patient search first as it's now step 1
     setTimeout(function() {
@@ -69,11 +75,12 @@ function inicializarReservasNew() {
             buscarMedicos();
         }
     });
-    
-    // Doctor search button click
+      // Doctor search button click
     $('#btnBuscarMedicoNew').click(function() {
         buscarMedicos();
-    });    // Doctor selection event
+    });
+    
+    // Doctor selection event
     $(document).on('click', '.btn-select-doctor', function() {
         const medicoId = $(this).data('medico-id');
         const medicoNombre = $(this).data('medico-nombre');
@@ -82,11 +89,16 @@ function inicializarReservasNew() {
         $('#selectMedicoNew').val(medicoId);
         $('#medicoNombreMostrar').text(medicoNombre);
         
-        // Highlight selected doctor
+        // Actualizar el campo de búsqueda de médico y deshabilitarlo
+        $('#buscarMedicoNew').val(medicoNombre).prop('readonly', true).addClass('selected-doctor');
+          // Highlight selected doctor
         $('#tablaMedicosNew tbody tr').removeClass('selected');
-        $(this).closest('tr').addClass('selected');        // Update summary
+        $(this).closest('tr').addClass('selected');
+        
+        // Update summary
         $('#resumenMedicoNew').text(medicoNombre);
-          // Load doctor's services for the selected date
+        
+        // Load doctor's services for the selected date
         const fecha = $('#fechaReservaNew').val();
         if (fecha) {
             cargarServiciosPorFechaMedico(fecha, medicoId);
@@ -98,8 +110,7 @@ function inicializarReservasNew() {
         // Remove any existing time slot rows
         $('.horario-row').remove();
         
-        const servicioId = $('#servicioSelect').val() || 0;
-        const doctorRow = $(this).closest('tr');
+        const servicioId = $('#servicioSelect').val() || 0;        const doctorRow = $(this).closest('tr');
         
         // Mostrar loader para los horarios
         doctorRow.after(`
@@ -109,6 +120,9 @@ function inicializarReservasNew() {
                 </td>
             </tr>
         `);
+        
+        // Asegurarse de que todas las filas anteriores de horarios sean eliminadas
+        $('.horario-row:not(.loading-slots)').remove();
         
         // Cargar horarios disponibles a través de AJAX
         $.ajax({
@@ -336,52 +350,87 @@ function inicializarReservasNew() {
     
     // Load insurance options on page load
     cargarSeguros();
-    
-    // Initial doctors load
+      // Initial doctors load
     buscarMedicosDisponibles();
+    
+    // Additional functionality for Reservas New - Movido dentro de inicialización
+    
+    // Este evento ya está definido antes, así que lo comentamos para evitar duplicados
+    /*
+    // Handle doctor search functionality
+    $('#btnBuscarMedicoNew').click(function() {
+        buscarMedicos();
+    });
+    
+    $('#buscarMedicoNew').keyup(function(e) {
+        if (e.keyCode === 13) {
+            buscarMedicos();
+        }
+    });
+    */
 }
 
-// Additional functionality for Reservas New
-
-// Handle doctor search functionality
-$('#btnBuscarMedicoNew').click(function() {
-    buscarMedicos();
-});
-
-$('#buscarMedicoNew').keyup(function(e) {
-    if (e.keyCode === 13) {
-        buscarMedicos();
-    }
-});
-
-// Refresh doctors list button
-$('#btnRefreshMedicos').click(function() {
-    buscarMedicosDisponibles();
-});
-
-// Actualiza el resumen de fecha cuando cambia la fecha
-$('#fechaReservaNew').change(function() {
-    const fecha = $(this).val();
-    if (fecha) {
-        const fechaFormateada = moment(fecha).format('DD/MM/YYYY');
-        $('#resumenFechaNew').text(fechaFormateada);
-    }
-});
-
-// Plan selection functionality
-$('#planSelect').change(function() {
-    const planId = $(this).val();
-    const planNombre = $(this).find('option:selected').text();
+// Estos eventos deberían estar dentro de la función $(document).ready()
+$(document).ready(function() {
+    // Refresh doctors list button
+    $('#btnRefreshMedicos').click(function() {
+        buscarMedicosDisponibles();
+    });
     
-    if (planId && planId != "0") {
-        actualizarPrecioPlan(planId);
-    }
+    // Actualiza el resumen de fecha cuando cambia la fecha
+    $('#fechaReservaNew').change(function() {
+        const fecha = $(this).val();
+        if (fecha) {
+            const fechaFormateada = moment(fecha).format('DD/MM/YYYY');
+            $('#resumenFechaNew').text(fechaFormateada);
+        }
+    });
+    
+    // Plan selection functionality
+    $('#planSelect').change(function() {
+        const planId = $(this).val();
+        const planNombre = $(this).find('option:selected').text();
+        
+        if (planId && planId != "0") {
+            actualizarPrecioPlan(planId);
+        }
+    });
+    
+    // Save reservation button
+    $('#btnGuardarReservaNew').click(function() {
+        guardarReserva();
+    });
 });
 
-// Save reservation button
-$('#btnGuardarReservaNew').click(function() {
-    guardarReserva();
-});
+// Cuando se selecciona un médico, mostrar el botón para cambiarlo
+    $(document).on('click', '.btn-select-doctor', function() {
+        $('#btnBuscarMedicoNew').addClass('d-none');
+        $('#btnCambiarMedicoNew').removeClass('d-none');
+    });
+
+    // Botón para cambiar médico (limpiar selección)
+    $('#btnCambiarMedicoNew').click(function() {
+        // Restaurar campo de búsqueda
+        $('#buscarMedicoNew').val('').prop('readonly', false).removeClass('selected-doctor');
+        
+        // Mostrar botón de búsqueda y ocultar botón de cambio
+        $('#btnBuscarMedicoNew').removeClass('d-none');
+        $('#btnCambiarMedicoNew').addClass('d-none');
+        
+        // Limpiar selección de médico
+        $('#selectMedicoNew').val('');
+        $('#medicoNombreMostrar').text('Ningún médico seleccionado');
+        $('#resumenMedicoNew').text('(No seleccionado)');
+        
+        // Eliminar todas las filas de horario
+        $('.horario-row').remove();
+        
+        // Eliminar highlight de la tabla de médicos
+        $('#tablaMedicosNew tbody tr').removeClass('selected');
+        
+        // Enfocar el campo de búsqueda
+        $('#buscarMedicoNew').focus();
+    });
 
 /**
  * Function to search for available doctors on a specific date
@@ -532,10 +581,11 @@ function generateTimeSlotRowsFromData(horarios) {
         return '<tr class="horario-row"><td colspan="5" class="text-center text-danger">Error en el formato de los datos de horarios</td></tr>';
     }
     
-    let html = '<tr class="horario-row"><td colspan="5">';
+    let html = '<tr class="horario-row"><td colspan="5" class="p-0">'; // Agregado p-0 para quitar padding
+    html += '<div class="horarios-container">'; // Envolver la tabla en un div con la clase horarios-container
     html += '<table class="table table-horarios">';
     html += '<thead><tr><th>Hora</th><th class="text-center">Check</th></tr></thead>';
-    html += '<tbody>';
+    html += '<tbody class="horarios-scroll">'; // Agregada clase para el scroll
     
     // Si no hay horarios, mostrar mensaje
     if (horarios.length === 0) {
@@ -581,8 +631,8 @@ function generateTimeSlotRowsFromData(horarios) {
             `;
         });
     }
-    
-    html += '</tbody></table>';
+      html += '</tbody></table>';
+    html += '</div>'; // Cerrar el div horarios-container
     html += '</td></tr>';
     
     console.log("HTML generado para horarios:", html);
@@ -1167,9 +1217,13 @@ function limpiarFormularioReserva() {
     // Reset select fields
     $('#servicioSelect').val('');
     $('#seguroSelect').val(0);
-    
-    // Reset search field
+      // Reset search fields
     $('#buscarPacienteNew').val('');
+    $('#buscarMedicoNew').val('').prop('readonly', false).removeClass('selected-doctor');
+    
+    // Restaurar botones de búsqueda
+    $('#btnBuscarMedicoNew').removeClass('d-none');
+    $('#btnCambiarMedicoNew').addClass('d-none');
     
     // Reset date to today
     $('#fechaReservaNew').val(moment().format('YYYY-MM-DD'));
