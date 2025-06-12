@@ -15,8 +15,7 @@ $(document).ready(function () {
     $(document).on('click', '.hora-btn', function () {
         logDataAttributes(this, 'Hora Button Clicked:');
     });
-    
-    // Confirm reservation button click handler (new)
+      // Confirm reservation button click handler (new)
     $(document).on('click', '.btnConfirmarReservaTab', function() {
         const reservaId = $(this).data('id');
         console.log(`Confirmando reserva ${reservaId} desde tabla`);
@@ -35,6 +34,41 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 // Llamar a la función para cambiar el estado
                 cambiarEstadoReservaTab(reservaId, 'CONFIRMADA');
+            }
+        });
+    });
+
+    // "Ir a Consulta" button click handler (new)
+    $(document).on('click', '.btnIrAConsultaTab', function() {
+        const pacienteId = $(this).data('paciente-id');
+        const reservaId = $(this).data('reserva-id');
+        const nombrePaciente = $(this).data('paciente-nombre') || 'el paciente';
+        
+        console.log(`Ir a consulta - Paciente ID: ${pacienteId}, Reserva ID: ${reservaId}`);
+        
+        // Mostrar confirmación usando SweetAlert2
+        Swal.fire({
+            title: '¿Ir al módulo de Consultas?',
+            text: `Se abrirá el módulo de consultas con los datos de ${nombrePaciente}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#007bff',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, ir a consultas',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Construir la URL con los parámetros
+                let url = 'index.php?ruta=consultas';
+                if (pacienteId) {
+                    url += `&paciente_id=${pacienteId}`;
+                }
+                if (reservaId) {
+                    url += `&reserva_id=${reservaId}`;
+                }
+                
+                // Redirigir a la página de consultas
+                window.location.href = url;
             }
         });
     });
@@ -1694,12 +1728,19 @@ function inicializarReservasNew() {
                             '<td><small>' + (item.doctor && item.doctor.length > 20 ? item.doctor.substring(0, 20) + '...' : item.doctor) + '</small></td>' +
                             '<td><small>' + (item.paciente && item.paciente.length > 20 ? item.paciente.substring(0, 20) + '...' : item.paciente) + '</small></td>' +
                             '<td><small>' + (item.serv_descripcion && item.serv_descripcion.length > 20 ? item.serv_descripcion.substring(0, 20) + '...' : item.serv_descripcion) + '</small></td>' +
-                            '<td class="text-center"><span class="' + estadoClass + ' small">' + estadoIcono + item.reserva_estado + '</span></td>' +
-                            '<td class="text-center">' +
+                            '<td class="text-center"><span class="' + estadoClass + ' small">' + estadoIcono + item.reserva_estado + '</span></td>' +                            '<td class="text-center">' +
                             (item.reserva_estado === 'PENDIENTE' ? 
                             '<button class="btn btn-success btn-xs btnConfirmarReservaTab" data-id="' + item.reserva_id + '" title="Confirmar reserva">' +
                             '<i class="fas fa-check"></i>' +
-                            '</button>' : (item.reserva_estado === 'CONFIRMADA' ? '<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>' : '')) +
+                            '</button>' : 
+                            (item.reserva_estado === 'CONFIRMADA' ?                            '<button class="btn btn-primary btn-xs btnIrAConsultaTab" ' +
+                            'data-paciente-id="' + (item.paciente_id || item.patient_id || '') + '" ' +
+                            'data-reserva-id="' + item.reserva_id + '" ' +
+                            'data-paciente-nombre="' + (item.paciente || 'Paciente') + '" ' +
+                            'title="Ir a Consulta">' +
+                            '<i class="fas fa-stethoscope"></i>' +
+                            '</button>' :
+                            '<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>')) +
                             '</td>' +
                             '</tr>'
                         );

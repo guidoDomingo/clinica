@@ -66,8 +66,7 @@ class ModelPersonas {
      * @return array|bool - Datos de la persona o false si no se encontró
      */
     public static function mdlGetPersonaPorId($idPersona) {
-        try {
-            $stmt = Conexion::conectar()->prepare("
+        try {            $stmt = Conexion::conectar()->prepare("
                 SELECT 
                     person_id as id_persona,
                     document_number as documento,
@@ -75,7 +74,7 @@ class ModelPersonas {
                     first_name as nombre,
                     last_name as apellido,
                     EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date)) as edad,
-                    phone as telefono,
+                    phone_number as telefono,
                     email as correo
                 FROM 
                     public.rh_person 

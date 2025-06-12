@@ -1253,6 +1253,44 @@ function inicializarTabReservas() {
             if (result.isConfirmed) {
                 cambiarEstadoReservaTab(reservaId, 'CONFIRMADA');
             }
+        });    });
+    
+    // Evento para ir a consulta desde reserva confirmada
+    $(document).off('click', '.btnIrAConsulta');
+    $(document).on('click', '.btnIrAConsulta', function() {
+        const pacienteId = $(this).data('paciente-id');
+        const reservaId = $(this).data('reserva-id');
+        
+        console.log(`Ir a consulta - Paciente ID: ${pacienteId}, Reserva ID: ${reservaId}`);
+        
+        if (!pacienteId) {
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudo obtener el ID del paciente',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        
+        // Construir la URL para ir al módulo de consultas con el paciente
+        const urlConsultas = `index.php?ruta=consultas&paciente_id=${pacienteId}&reserva_id=${reservaId}`;
+        
+        // Mostrar confirmación antes de navegar
+        Swal.fire({
+            title: '¿Ir a Consulta?',
+            text: `¿Desea abrir la consulta para este paciente?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#007bff',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, ir a consulta',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Navegar a la URL de consultas
+                window.location.href = urlConsultas;
+            }
         });
     });
       // Eventos de cambio para actualizar automáticamente
@@ -1483,10 +1521,16 @@ function buscarReservas() {
                             <div class="btn-group">
                                 <button class="btn btn-info btn-sm btnVerReserva" data-id="${reserva.reserva_id}" title="Ver detalles">
                                     <i class="fas fa-eye"></i>
-                                </button>
-                                ${reserva.reserva_estado === 'PENDIENTE' ? 
+                                </button>                                ${reserva.reserva_estado === 'PENDIENTE' ? 
                                 `<button class="btn btn-success btn-sm btnConfirmarReserva" data-id="${reserva.reserva_id}" title="Confirmar reserva">
                                     <i class="fas fa-check"></i>
+                                </button>` : ''}
+                                ${reserva.reserva_estado === 'CONFIRMADA' ? 
+                                `<button class="btn btn-primary btn-sm btnIrAConsulta" 
+                                        data-paciente-id="${reserva.paciente_id || reserva.patient_id || ''}" 
+                                        data-reserva-id="${reserva.reserva_id}"
+                                        title="Ir a Consulta">
+                                    <i class="fas fa-stethoscope"></i>
                                 </button>` : ''}
                                 <button class="btn btn-warning btn-sm btnEditarReserva" data-id="${reserva.reserva_id}" title="Editar">
                                     <i class="fas fa-edit"></i>

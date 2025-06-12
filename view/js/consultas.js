@@ -11,12 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnGuardarConsulta = document.getElementById('btnGuardarConsulta');
     const btnSubirArchivos = document.getElementById('btnSubirArchivos');
     const btnDescargarPDF = document.getElementById('btnDescargarPDF');
-   
-    // Inicializar autocompletado para el campo de búsqueda de paciente
+     // Inicializar autocompletado para el campo de búsqueda de paciente
     inicializarAutocompletado();
     
     // Inicializar editores de texto enriquecido si existen
     inicializarEditoresTexto();
+
+    // Verificar si hay parámetros de URL para cargar automáticamente un paciente
+    procesarParametrosURL();
 
     $("#btnNuevaPersona").on("click", abrirModalNuevaPersona);
     
@@ -2232,40 +2234,105 @@ function buscarPersonaPorId(idPersona, callback) {
  * @param {number} idPersona - ID de la persona
  */
 function buscarPersonaPorId(idPersona) {
-    console.log('Buscando persona por ID:', idPersona);
+    console.log('=== BUSCANDO PERSONA POR ID ===');
+    console.log('ID recibido:', idPersona, 'Tipo:', typeof idPersona);
     
     // Mostrar spinner de carga
-    document.getElementById('loadingSpinner')?.classList.remove('d-none');
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.classList.remove('d-none');
+        console.log('✓ Spinner mostrado');
+    } else {
+        console.log('⚠️ No se encontró el spinner de carga');
+    }
     
     // Crear objeto para enviar datos
     const formData = new FormData();
     formData.append('operacion', 'getPersonById');
     formData.append('idPersona', idPersona);
     
+    console.log('📤 Enviando petición AJAX a: ajax/persona.ajax.php');
+    console.log('📋 Datos enviados:', {
+        operacion: 'getPersonById',
+        idPersona: idPersona
+    });
+    
     // Realizar petición AJAX
     fetch('ajax/persona.ajax.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📨 Respuesta HTTP recibida:', response.status, response.statusText);
+        return response.json();
+    })
     .then(data => {
-        console.log('Datos recibidos de persona:', data);
+        console.log('📋 Datos JSON recibidos:', data);
         
         // Ocultar spinner de carga
-        document.getElementById('loadingSpinner')?.classList.add('d-none');
+        const spinner = document.getElementById('loadingSpinner');
+        if (spinner) {
+            spinner.classList.add('d-none');
+        }
         
         if (data.status === 'success') {
-            // Llenar los campos del formulario con los datos de la persona
-            document.getElementById('idPersona').value = data.persona.id_persona;
-            document.getElementById('documentoPersona').value = data.persona.documento;
-            document.getElementById('fichaPersona').value = data.persona.ficha || '';
-            document.getElementById('nombrePersona').value = data.persona.nombre;
-            document.getElementById('apellidoPersona').value = data.persona.apellido;
-            document.getElementById('edadPersona').value = data.persona.edad;
-            document.getElementById('telefonoPersona').value = data.persona.telefono || '';
+            console.log('✅ Persona encontrada, llenando formulario...');
+            console.log('👤 Datos de la persona:', data.persona);
+              // Verificar que los elementos del formulario existan
+            const campos = [
+                'idPersona', 'txtdocumento', 'txtficha', 'paciente', 'id_persona_file'
+            ];
             
-            // También actualizar el campo oculto para archivos
-            document.getElementById('id_persona_file').value = data.persona.id_persona;
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (!elemento) {
+                    console.error(`❌ Campo no encontrado: ${campo}`);
+                } else {
+                    console.log(`✓ Campo encontrado: ${campo}`);
+                }
+            });
+            
+            // Llenar los campos del formulario con los datos de la persona
+            const setFieldValue = (fieldId, value) => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = value || '';
+                    console.log(`✓ ${fieldId}: "${value}"`);
+                } else {
+                    console.error(`❌ Campo no encontrado: ${fieldId}`);
+                }
+            };
+            
+            // Llenar campos del formulario
+            setFieldValue('idPersona', data.persona.id_persona);
+            setFieldValue('txtdocumento', data.persona.documento);
+            setFieldValue('txtficha', data.persona.ficha);
+            setFieldValue('id_persona_file', data.persona.id_persona);
+            
+            // El campo 'paciente' es para búsqueda, llenémoslo con el nombre completo
+            const nombreCompleto = `${data.persona.nombre} ${data.persona.apellido}`.trim();
+            setFieldValue('paciente', nombreCompleto);
+            
+            // Actualizar información del perfil lateral (si existen los elementos)
+            const updateProfileField = (fieldId, value) => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.textContent = value || '';
+                    console.log(`✓ Perfil ${fieldId}: "${value}"`);
+                } else {
+                    console.log(`ℹ️ Campo de perfil no encontrado: ${fieldId}`);
+                }
+            };
+            
+            // Actualizar campos del perfil lateral
+            updateProfileField('profile-username', nombreCompleto);
+            updateProfileField('profile-ci', `CI: ${data.persona.documento}`);
+            
+            // Si hay campo de edad en algún lugar, actualizarlo
+            const edadField = document.querySelector('[data-field="edad"]');
+            if (edadField) {
+                edadField.textContent = data.persona.edad + ' años';
+            }
             
             // Obtener historial de consultas después de cargar los datos de la persona
             obtenerResumenConsulta(data.persona.id_persona);
@@ -2795,3 +2862,85 @@ function enviarPDFPorWhatsApp() {
         }
     });
 }
+
+/**
+ * Procesa los parámetros de URL para cargar automáticamente un paciente
+ * si se viene desde el módulo de reservas
+ */
+function procesarParametrosURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pacienteId = urlParams.get('paciente_id');
+    const reservaId = urlParams.get('reserva_id');
+    
+    console.log('=== PROCESANDO PARÁMETROS URL ===');
+    console.log('URL completa:', window.location.href);
+    console.log('Parámetros encontrados:');
+    console.log('- Paciente ID:', pacienteId);
+    console.log('- Reserva ID:', reservaId);
+    
+    // Si hay un ID de paciente, cargarlo automáticamente
+    if (pacienteId) {
+        console.log('✓ ID de paciente detectado, iniciando carga automática...');
+        
+        // Mostrar mensaje de información al usuario
+        Swal.fire({
+            title: 'Cargando paciente...',
+            text: 'Se están cargando los datos del paciente desde la reserva',
+            icon: 'info',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+          // Usar un setTimeout para dar tiempo a que se inicialice completamente la página
+        setTimeout(() => {
+            console.log('⏱️ Ejecutando buscarPersonaPorId con ID:', pacienteId);
+            buscarPersonaPorId(pacienteId);
+            
+            // Si también hay una reserva ID, podríamos usarla para mostrar información adicional
+            if (reservaId) {
+                console.log('ℹ️ Información adicional: Reserva ID:', reservaId);
+                // Se podría agregar lógica adicional para manejar la reserva
+                // Por ejemplo, precargar información específica de la reserva
+            }
+        }, 1000);
+    } else {
+        console.log('❌ No se encontró ID de paciente en los parámetros URL');
+    }
+}
+
+/**
+ * Función de prueba para cargar un paciente por ID específico
+ * Utilizar desde la consola del navegador: testCargarPaciente(ID)
+ */
+window.testCargarPaciente = function(pacienteId) {
+    console.log('=== FUNCIÓN DE PRUEBA: CARGAR PACIENTE ===');
+    console.log('ID a probar:', pacienteId);
+    
+    if (!pacienteId) {
+        console.error('❌ Debe proporcionar un ID de paciente');
+        return;
+    }
+    
+    buscarPersonaPorId(pacienteId);
+};
+
+/**
+ * Función de prueba para simular parámetros URL
+ */
+window.testParametrosURL = function(pacienteId, reservaId) {
+    console.log('=== FUNCIÓN DE PRUEBA: PARÁMETROS URL ===');
+    
+    // Simular que hay parámetros en la URL
+    const urlParams = new URLSearchParams();
+    urlParams.set('paciente_id', pacienteId);
+    if (reservaId) {
+        urlParams.set('reserva_id', reservaId);
+    }
+    
+    // Modificar temporalmente la URL del navegador
+    const nuevaUrl = window.location.origin + window.location.pathname + '?' + urlParams.toString();
+    window.history.pushState({}, '', nuevaUrl);
+    
+    // Ejecutar la función de procesamiento
+    procesarParametrosURL();
+};
