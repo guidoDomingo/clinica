@@ -1232,6 +1232,29 @@ function inicializarTabReservas() {
         console.log(`Cambiando estado de reserva ${reservaId} a ${nuevoEstado}`);
         cambiarEstadoReservaTab(reservaId, nuevoEstado);
     });
+    
+    // Evento para confirmar reserva (nuevo)
+    $(document).off('click', '.btnConfirmarReserva');
+    $(document).on('click', '.btnConfirmarReserva', function() {
+        const reservaId = $(this).data('id');
+        console.log(`Confirmando reserva ${reservaId}`);
+        
+        // Mostrar confirmación usando SweetAlert2
+        Swal.fire({
+            title: '¿Confirmar esta reserva?',
+            text: "La reserva se marcará como CONFIRMADA",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cambiarEstadoReservaTab(reservaId, 'CONFIRMADA');
+            }
+        });
+    });
       // Eventos de cambio para actualizar automáticamente
     $(document).on('change', '#fechaReservas', function() {
         console.log('Fecha cambiada a:', $(this).val());
@@ -1396,31 +1419,30 @@ function buscarReservas() {
                 respuesta.data.forEach(function(reserva) {
                     // Formatear la fecha para mostrar
                     const fechaFormateada = formatearFechaParaMostrar(reserva.fecha_reserva);
-                    
-                    // Determinar color según estado
+                      // Determinar color según estado
                     let claseFila = '';
                     let iconoEstado = '';
                     
                     switch (reserva.reserva_estado) {
                         case 'PENDIENTE':
-                            claseFila = 'table-warning';
-                            iconoEstado = '<i class="fas fa-clock text-warning"></i>';
+                            claseFila = 'table-warning estado-pendiente';
+                            iconoEstado = '<i class="fas fa-clock text-warning mr-1"></i>';
                             break;
                         case 'CONFIRMADA':
-                            claseFila = 'table-info';
-                            iconoEstado = '<i class="fas fa-check-circle text-info"></i>';
+                            claseFila = 'table-success estado-confirmada';
+                            iconoEstado = '<i class="fas fa-check-circle text-success mr-1"></i>';
                             break;
                         case 'COMPLETADA':
-                            claseFila = 'table-success';
-                            iconoEstado = '<i class="fas fa-check-double text-success"></i>';
+                            claseFila = 'table-info estado-completada';
+                            iconoEstado = '<i class="fas fa-check-double text-info mr-1"></i>';
                             break;
                         case 'CANCELADA':
-                            claseFila = 'table-danger';
-                            iconoEstado = '<i class="fas fa-times-circle text-danger"></i>';
+                            claseFila = 'table-danger estado-cancelada';
+                            iconoEstado = '<i class="fas fa-times-circle text-danger mr-1"></i>';
                             break;
                         default:
                             claseFila = '';
-                            iconoEstado = '<i class="fas fa-question-circle text-secondary"></i>';
+                            iconoEstado = '<i class="fas fa-question-circle text-secondary mr-1"></i>';
                     }
                     
                     // Calcular día de la semana
@@ -1454,14 +1476,22 @@ function buscarReservas() {
                         <td>${reserva.serv_descripcion || reserva.nombre_servicio || 'N/A'}</td>
                         <td>${reserva.sala_nombre || 'Sin asignar'}</td>
                         <td>${reserva.serv_monto ? `$${parseFloat(reserva.serv_monto).toFixed(2)}` : 'N/A'}</td>
-                        <td>${iconoEstado} ${reserva.reserva_estado}</td>                        <td>
+                        <td><span class="badge badge-${claseFila.includes('warning') ? 'warning estado-pendiente' : 
+                                      claseFila.includes('success') ? 'success estado-confirmada' : 
+                                      claseFila.includes('info') ? 'info estado-completada' : 
+                                      claseFila.includes('danger') ? 'danger estado-cancelada' : 'secondary'}">${iconoEstado} ${reserva.reserva_estado}</span></td>                        <td>
                             <div class="btn-group">
                                 <button class="btn btn-info btn-sm btnVerReserva" data-id="${reserva.reserva_id}" title="Ver detalles">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                ${reserva.reserva_estado === 'PENDIENTE' ? 
+                                `<button class="btn btn-success btn-sm btnConfirmarReserva" data-id="${reserva.reserva_id}" title="Confirmar reserva">
+                                    <i class="fas fa-check"></i>
+                                </button>` : ''}
                                 <button class="btn btn-warning btn-sm btnEditarReserva" data-id="${reserva.reserva_id}" title="Editar">
                                     <i class="fas fa-edit"></i>
-                                </button>                                <button class="btn btn-danger btn-sm btnCancelarReserva" data-id="${reserva.reserva_id}" title="Cancelar">
+                                </button>                                
+                                <button class="btn btn-danger btn-sm btnCancelarReserva" data-id="${reserva.reserva_id}" title="Cancelar">
                                     <i class="fas fa-times"></i>
                                 </button>
                                 <a href="generar_pdf_reserva.php?id=${reserva.reserva_id}" class="btn btn-success btn-sm" target="_blank" title="Descargar PDF">

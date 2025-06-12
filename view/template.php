@@ -35,10 +35,11 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="view/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="view/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="view/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-    <!-- Estilos propios -->
+    <link rel="stylesheet" href="view/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">    <!-- Estilos propios -->
     <link rel="stylesheet" href="view/css/frmConsulta.css">
     <link rel="stylesheet" href="view/css/consultas.css">
+    <link rel="stylesheet" href="view/css/reservas_new.css">
+    <link rel="stylesheet" href="view/css/estados_reserva.css">
     <!-- Toastr -->
     <link rel="stylesheet" href="view/plugins/toastr/toastr.min.css">
     <!-- Tempus Dominus Bootstrap 4 (DateTimePicker) -->
@@ -220,9 +221,9 @@ switch ($ruta) {
           case "roles":
         echo '<script src="view/js/roles.js"></script>';
         break;
-        
-    case "servicios":
-        // Removed servicios.js inclusion since it's already included in the module file
+          case "servicios":
+        // Include reservation confirmation script for servicios module
+        echo '<script src="view/js/reservation_confirmation.js"></script>';
         break;
           case "rs_servicios":
         echo '<script src="view/js/rs_servicios.js"></script>';

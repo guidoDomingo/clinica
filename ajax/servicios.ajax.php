@@ -188,17 +188,21 @@ if (isset($_POST['action'])) {
             $resultado = ControladorServicios::ctrCrearReserva($datos);
             echo json_encode($resultado);
             break;
-            
-        case 'cambiarEstadoReserva':
-            if (isset($_POST['reserva_id']) && isset($_POST['estado'])) {
+              case 'cambiarEstadoReserva':
+            if (isset($_POST['reserva_id']) && isset($_POST['nuevo_estado'])) {
                 $reservaId = $_POST['reserva_id'];
-                $estado = $_POST['estado'];
+                $estado = $_POST['nuevo_estado'];
                 
                 $resultado = ControladorServicios::ctrCambiarEstadoReserva($reservaId, $estado);
-                echo json_encode($resultado);
+                
+                // Adaptar la respuesta al formato esperado por el cliente
+                echo json_encode([
+                    "status" => $resultado["error"] ? "error" : "success",
+                    "mensaje" => $resultado["mensaje"]
+                ]);
             } else {
                 echo json_encode([
-                    "error" => true,
+                    "status" => "error",
                     "mensaje" => "Faltan parámetros requeridos"
                 ]);
             }

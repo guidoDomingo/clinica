@@ -1,0 +1,94 @@
+/**
+ * Estilos para estados de reservas
+ */
+
+/* Estilos para las etiquetas de estado */
+.badge.badge-success.estado-confirmada {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.badge.badge-warning.estado-pendiente {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+.badge.badge-danger.estado-cancelada {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+.badge.badge-info.estado-completada {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+/* Estilos para filas de la tabla según estado */
+tr.estado-confirmada {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+}
+
+tr.estado-pendiente {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+tr.estado-cancelada {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+tr.estado-completada {
+    background-color: rgba(23, 162, 184, 0.1) !important;
+}
+
+/* Estilos para botones de acción de confirmación */
+.btnConfirmarReservaTab, .btnConfirmarReserva {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.btnConfirmarReservaTab:hover, .btnConfirmarReserva:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Animación de confirmación */
+@keyframes confirmationPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.recien-confirmada {
+    animation: confirmationPulse 1s ease;
+}
+
+/* Mejoras para visibilidad de filtros */
+#selectEstadoReserva option[value="CONFIRMADA"] {
+    background-color: #d4edda;
+    font-weight: bold;
+}
+
+#selectEstadoReserva option[value="PENDIENTE"] {
+    background-color: #fff3cd;
+}
+
+#selectEstadoReserva option[value="CANCELADA"] {
+    background-color: #f8d7da;
+}
+
+#selectEstadoReserva option[value="COMPLETADA"] {
+    background-color: #d1ecf1;
+}

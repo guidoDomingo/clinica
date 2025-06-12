@@ -2002,3 +2002,1916 @@ function animarConfirmacionExitosa(reservaId) {
     }
 }
 
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas de reservas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animación de confirmación exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                
+                // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cambiar estado de reserva:", error);
+            // Intentar obtener más información del error
+            let errorMessage = "Error al actualizar: " + error;
+            try {
+                const responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.mensaje) {
+                    errorMessage = responseJson.mensaje;
+                }
+            } catch (e) {
+                console.error("Respuesta de error (no es JSON):", xhr.responseText);
+            }
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+/**
+ * Mostrar animación de confirmación exitosa en la fila de la tabla
+ * @param {number} reservaId ID de la reserva confirmada
+ */
+function animarConfirmacionExitosa(reservaId) {
+    // Buscar la fila de la reserva en la tabla de reservas por fecha
+    const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    
+    if ($fila.length) {
+        // Añadir clase para animar
+        $fila.addClass('recien-confirmada');
+        
+        // Actualizar el estilo visual de la fila a "confirmada"
+        $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar el texto y estilo de la celda de estado
+        const $celdaEstado = $fila.find('td:nth-child(5)');
+        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        
+        // Reemplazar el botón de confirmar con un ícono de verificación
+        const $celdaAccion = $fila.find('td:nth-child(6)');
+        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        
+        // Remover la animación después de completada para permitir re-animación si es necesario
+        setTimeout(() => {
+            $fila.removeClass('recien-confirmada');
+        }, 1500);
+    } else {
+        console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+    }
+    
+    // También buscar la fila en la tabla principal de reservas (por si está visible)
+    const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    if ($filaMain.length) {
+        // Aplicar los mismos cambios a la tabla principal
+        $filaMain.addClass('recien-confirmada');
+        $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
+        
+        // Actualizar la celda de estado (puede tener diferente estructura)
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        if ($celdaEstadoMain.length) {
+            $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        }
+        
+        // Actualizar la celda de acciones
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        if ($celdaAccionMain.length) {
+            $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        }
+        
+        // Remover la animación después de completada
+        setTimeout(() => {
+            $filaMain.removeClass('recien-confirmada');
+        }, 1500);
+    }
+}
+
+/**
+ * Cambia el estado de una reserva y actualiza la interfaz
+ * @param {number} reservaId ID de la reserva
+ * @param {string} nuevoEstado Nuevo estado a asignar
+ */
+function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
+    // Verificar que tengamos datos válidos
+    if (!reservaId) {
+        console.error("ID de reserva no proporcionado");
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo identificar la reserva',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "ajax/servicios.ajax.php",
+        method: "POST",
+        data: { 
+            action: "cambiarEstadoReserva",
+            reserva_id: reservaId,
+            nuevo_estado: nuevoEstado
+        },
+        dataType: "json",
+        beforeSend: function() {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Actualizando estado de la reserva',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
+        },
+        success: function(respuesta) {
+            console.log("Respuesta de cambio de estado:", respuesta);
+            
+            if (respuesta.status === "success") {
+                // Cerrar el diálogo de carga
+                Swal.close();
+                
+                // Mostrar mensaje de éxito con SweetAlert2
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+
+                // Recargar las tablas
+                const fechaActual = $('#fechaReservaNew').val();
+                if (fechaActual) {
+                    cargarReservasPorFecha(fechaActual);
+                }
+
+                // Mostrar animaci�n de confirmaci�n exitosa en la fila de la tabla
+                animarConfirmacionExitosa(reservaId);
+                  // Registrar log
+                console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cambiar estado: ' + (respuesta.mensaje || 'Error desconocido'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al cambiar estado de reserva:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al actualizar: ' + error,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+

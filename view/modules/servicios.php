@@ -358,14 +358,21 @@ if (!isset($_SESSION['perfil'])) {
                                                 <!-- Las opciones se cargan con JavaScript -->
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="selectEstadoReserva">Estado:</label>
+                                        <div class="col-md-3">                                            <label for="selectEstadoReserva">Estado:</label>
                                             <select class="form-control" id="selectEstadoReserva">
                                                 <option value="0">Todos los estados</option>
-                                                <option value="PENDIENTE">Pendientes</option>
-                                                <option value="CONFIRMADA">Confirmadas</option>
-                                                <option value="COMPLETADA">Completadas</option>
-                                                <option value="CANCELADA">Canceladas</option>
+                                                <option value="PENDIENTE" class="estado-pendiente-option">
+                                                    <i class="fas fa-clock"></i> Pendientes
+                                                </option>
+                                                <option value="CONFIRMADA" class="estado-confirmada-option">
+                                                    <i class="fas fa-check-circle"></i> Confirmadas
+                                                </option>
+                                                <option value="COMPLETADA" class="estado-completada-option">
+                                                    <i class="fas fa-check-double"></i> Completadas
+                                                </option>
+                                                <option value="CANCELADA" class="estado-cancelada-option">
+                                                    <i class="fas fa-times-circle"></i> Canceladas
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
@@ -622,12 +629,12 @@ if (!isset($_SESSION['perfil'])) {
                                                         <div class="table-responsive datatable-container">
                                                             <table class="table table-sm table-striped table-hover" id="tablaReservasPorFecha" width="100%">
                                                                 <thead class="bg-dark text-white">
-                                                                    <tr>
-                                                                        <th>Hora</th>
+                                                                    <tr>                                                                        <th>Hora</th>
                                                                         <th>Doctor</th>
                                                                         <th>Paciente</th>
                                                                         <th>Servicio</th>
                                                                         <th>Estado</th>
+                                                                        <th>Acciones</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -965,6 +972,7 @@ if (!isset($_SESSION['perfil'])) {
 <link href="view/css/servicios.css" rel="stylesheet">
 <link href="view/css/slots_horario.css?v=1.3" rel="stylesheet">
 <link href="view/css/reservas_new.css?v=1.0" rel="stylesheet">
+<link href="view/css/estados_reserva.css?v=1.0" rel="stylesheet">
 
 <!-- Incluir JavaScript personalizado -->
 <script src="view/js/servicios.js"></script>
