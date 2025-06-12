@@ -86,3 +86,24 @@ Data: {
     "reg_lastname": "isnardi"
 }
 ----------------------------------------
+[2025-06-12 22:39:20] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-12 22:39:20] [INFO] [user.controller.php:22] user: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+Data: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+----------------------------------------
+[2025-06-12 22:39:20] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-11 18:49:47.773161",
+    "user_is_active": true,
+    "profile_photo": null,
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------

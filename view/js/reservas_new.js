@@ -2153,3 +2153,50 @@ function refrescarTablaManual() {
     }
 }
 
+/**
+ * Inicializa los event handlers para los botones de las reservas
+ * Esta función asegura que los botones funcionen correctamente sin DataTables
+ */
+function inicializarBotonesReservas() {
+    console.log('Inicializando botones de reservas...');
+    
+    // Los event handlers ya están definidos en el $(document).ready()
+    // Esta función puede servir para reinicializar si es necesario
+    
+    // Verificar que los botones existan y sean clickeables
+    const botonesConfirmar = $('.btnConfirmarReservaTab');
+    const botonesConsulta = $('.btnIrAConsultaTab');
+    
+    console.log(`Botones confirmar encontrados: ${botonesConfirmar.length}`);
+    console.log(`Botones ir a consulta encontrados: ${botonesConsulta.length}`);
+    
+    // Los event handlers están configurados con event delegation en $(document).ready()
+    // Por lo que no necesitamos reinicializarlos aquí
+      return true;
+}
+
+/**
+ * Verifica si DataTables Buttons está disponible
+ * @returns {boolean} true si está disponible, false si no
+ */
+function verificarDisponibilidadDatatablesBotones() {
+    try {
+        // Verificar si DataTables está disponible
+        if (typeof $.fn.DataTable === 'undefined') {
+            console.log('DataTables no está disponible');
+            return false;
+        }
+        
+        // Verificar si DataTables Buttons está disponible
+        if (typeof $.fn.DataTable.Buttons === 'undefined') {
+            console.log('DataTables Buttons no está disponible');
+            return false;
+        }
+        
+        console.log('DataTables Buttons está disponible');
+        return true;
+    } catch (error) {
+        console.error('Error verificando disponibilidad de DataTables Buttons:', error);
+        return false;
+    }
+}
