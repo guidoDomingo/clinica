@@ -1799,9 +1799,7 @@ function inicializarReservasNew() {
                         
                         // Ajustar altura del contenedor
                         $('.datatable-container').css('max-height', '300px');
-                    };
-                      // Intentar agregar botones solo si están disponibles las librerías
-                    try {
+                    };                    try {
                         // Si los botones están disponibles, añadirlos a las opciones
                         if (botonesDisponibles) {
                             opcionesDataTable.dom = '<"small"<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>>' +
@@ -1821,12 +1819,27 @@ function inicializarReservasNew() {
                             ];
                         }
                         
-                        // Inicializar DataTable con las opciones
-                        $('#tablaReservasPorFecha').DataTable(opcionesDataTable);
+                        // Inicializar DataTable SOLO UNA VEZ
+                        if (!$.fn.DataTable.isDataTable('#tablaReservasPorFecha')) {
+                            $('#tablaReservasPorFecha').DataTable(opcionesDataTable);
+                            console.log('DataTable inicializada correctamente');
+                        } else {
+                            console.log('DataTable ya está inicializada, saltando...');
+                        }
                     } catch (error) {
-                        console.error('Error al inicializar DataTable con botones:', error);
-                        // Inicializar DataTable sin botones en caso de error
-                        $('#tablaReservasPorFecha').DataTable(opcionesDataTable);
+                        console.error('Error al inicializar DataTable:', error);
+                        // En caso de error, intentar inicializar sin botones
+                        if (!$.fn.DataTable.isDataTable('#tablaReservasPorFecha')) {
+                            try {
+                                $('#tablaReservasPorFecha').DataTable({
+                                    responsive: true,
+                                    pageLength: 5,
+                                    order: [[0, 'asc']]
+                                });
+                            } catch (e) {
+                                console.error('Error incluso con configuración básica:', e);
+                            }
+                        }
                     }
                 } else {
                     $('#tablaReservasPorFecha tbody').html('<tr><td colspan="5" class="text-center">No hay reservas para esta fecha</td></tr>');
@@ -1866,27 +1879,14 @@ function inicializarReservasNew() {
             $('#btnConfirmarReserva').prop('disabled', false);
         } else {
             $('#btnConfirmarReserva').prop('disabled', true);
-        }
-
-        // Inicializar botones alternativos si no están disponibles los de DataTables
+        }        // Inicializar botones alternativos si no están disponibles los de DataTables
         inicializarBotonesReservas();
 
-        try {
-            // Intentar inicializar DataTable con las opciones finales
-            $('#tablaReservasPorFecha').DataTable(opcionesFinales);
-        } catch (error) {
-            console.error('Error al inicializar DataTable con opciones completas:', error);
-            // Si falla, intentar con opciones más simples
-            try {
-                $('#tablaReservasPorFecha').DataTable({
-                    responsive: true,
-                    pageLength: 5,
-                    order: [[0, 'asc']]
-                });
-            } catch (error2) {
-                console.error('Error al inicializar DataTable con opciones simples:', error2);
-                // No hacer nada más, dejamos la tabla HTML simple
-            }
+        // NO reinicializar DataTable aquí - ya se hizo en cargarReservasPorFecha
+        if ($.fn.DataTable.isDataTable('#tablaReservasPorFecha')) {
+            console.log('DataTable ya está inicializada correctamente');
+        } else {
+            console.log('DataTable no está inicializada, esto podría ser un problema');
         }
     }
 }
