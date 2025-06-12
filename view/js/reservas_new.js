@@ -1901,16 +1901,8 @@ function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
                     icon: 'success',
                     confirmButtonText: 'OK',
                     timer: 2000
-                });
-
-                // Recargar las tablas de reservas
-                const fechaActual = $('#fechaReservaNew').val();
-                if (fechaActual) {
-                    cargarReservasPorFecha(fechaActual);
-                }
-
-                // Mostrar animación de confirmación exitosa en la fila de la tabla
-                animarConfirmacionExitosa(reservaId);
+                });                // Forzar actualización de tabla con el nuevo estado
+                forzarActualizacionTabla(reservaId, nuevoEstado);
                 
                 // Registrar log
                 console.log(`Reserva ${reservaId} actualizada a estado: ${nuevoEstado}`);
@@ -1946,14 +1938,67 @@ function cambiarEstadoReservaTab(reservaId, nuevoEstado) {
 }
 
 /**
+ * Función para forzar la actualización de la tabla después de cambiar estado
+ * @param {number} reservaId - ID de la reserva que se actualizó
+ * @param {string} nuevoEstado - Nuevo estado de la reserva
+ */
+function forzarActualizacionTabla(reservaId, nuevoEstado) {
+    console.log(`Forzando actualización de tabla para reserva ${reservaId} con nuevo estado ${nuevoEstado}`);
+    
+    // Obtener la fecha actual
+    const fechaActual = $('#fechaReservaNew').val();
+    
+    if (fechaActual) {
+        // Primero, actualizar visualmente la fila existente si es posible
+        const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+        if ($fila.length) {
+            console.log('Actualizando fila existente antes de recargar...');
+            
+            // Actualizar inmediatamente la celda de estado
+            const $celdaEstado = $fila.find('td:nth-child(5)');
+            if ($celdaEstado.length) {
+                $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+            }
+            
+            // Actualizar la celda de acción
+            const $celdaAccion = $fila.find('td:nth-child(6)');
+            if ($celdaAccion.length) {
+                $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+            }
+            
+            // Actualizar clases de fila
+            $fila.removeClass('estado-pendiente').addClass('estado-confirmada');
+        }
+        
+        // Luego recargar completamente la tabla para asegurar consistencia
+        setTimeout(() => {
+            console.log('Recargando tabla completa...');
+            cargarReservasPorFecha(fechaActual);
+        }, 1000);
+    }
+    
+    // También actualizar la tabla principal si existe
+    if (typeof cargarReservas === 'function') {
+        setTimeout(() => {
+            cargarReservas();
+        }, 1000);
+    }
+}
+
+/**
  * Mostrar animación de confirmación exitosa en la fila de la tabla
  * @param {number} reservaId ID de la reserva confirmada
  */
 function animarConfirmacionExitosa(reservaId) {
+    console.log(`Iniciando animación de confirmación para reserva ${reservaId}`);
+    
     // Buscar la fila de la reserva en la tabla de reservas por fecha
     const $fila = $(`#tablaReservasPorFecha tr[data-reserva-id="${reservaId}"]`);
+    console.log(`Fila encontrada en tablaReservasPorFecha: ${$fila.length > 0 ? 'SÍ' : 'NO'}`);
     
     if ($fila.length) {
+        console.log('Aplicando cambios visuales a la fila...');
+        
         // Añadir clase para animar
         $fila.addClass('recien-confirmada');
         
@@ -1962,35 +2007,47 @@ function animarConfirmacionExitosa(reservaId) {
         
         // Actualizar el texto y estilo de la celda de estado
         const $celdaEstado = $fila.find('td:nth-child(5)');
-        $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+        if ($celdaEstado.length) {
+            $celdaEstado.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
+            console.log('Celda de estado actualizada');
+        }
         
         // Reemplazar el botón de confirmar con un ícono de verificación
         const $celdaAccion = $fila.find('td:nth-child(6)');
-        $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+        if ($celdaAccion.length) {
+            $celdaAccion.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
+            console.log('Celda de acción actualizada');
+        }
         
         // Remover la animación después de completada para permitir re-animación si es necesario
         setTimeout(() => {
             $fila.removeClass('recien-confirmada');
+            console.log('Animación completada');
         }, 1500);
     } else {
         console.log(`No se encontró fila para la reserva ID ${reservaId} en tablaReservasPorFecha`);
+        // Intentar buscar por otros selectores posibles
+        const $filaAlternativa = $(`tr[data-reserva-id="${reservaId}"]`);
+        console.log(`Búsqueda alternativa encontró: ${$filaAlternativa.length} filas`);
     }
     
     // También buscar la fila en la tabla principal de reservas (por si está visible)
     const $filaMain = $(`#tablaReservas tr[data-reserva-id="${reservaId}"]`);
+    console.log(`Fila encontrada en tablaReservas: ${$filaMain.length > 0 ? 'SÍ' : 'NO'}`);
+    
     if ($filaMain.length) {
         // Aplicar los mismos cambios a la tabla principal
         $filaMain.addClass('recien-confirmada');
         $filaMain.removeClass('estado-pendiente').addClass('estado-confirmada');
         
         // Actualizar la celda de estado (puede tener diferente estructura)
-        const $celdaEstadoMain = $filaMain.find('td.estado-reserva');
+        const $celdaEstadoMain = $filaMain.find('td.estado-reserva, td:nth-child(5)');
         if ($celdaEstadoMain.length) {
             $celdaEstadoMain.html('<span class="badge badge-success estado-confirmada"><i class="fas fa-check-circle mr-1"></i>CONFIRMADA</span>');
         }
         
         // Actualizar la celda de acciones
-        const $celdaAccionMain = $filaMain.find('td.acciones-reserva');
+        const $celdaAccionMain = $filaMain.find('td.acciones-reserva, td:nth-child(6)');
         if ($celdaAccionMain.length) {
             $celdaAccionMain.html('<i class="fas fa-check-double text-success" title="Reserva confirmada"></i>');
         }
@@ -1999,6 +2056,59 @@ function animarConfirmacionExitosa(reservaId) {
         setTimeout(() => {
             $filaMain.removeClass('recien-confirmada');
         }, 1500);
+    }
+}
+
+/**
+ * Función de debugging para verificar el estado de las tablas
+ * Puede llamarse desde la consola del navegador
+ */
+function debugTablaReservas() {
+    console.log('=== DEBUG TABLA RESERVAS ===');
+    
+    // Verificar si existe la tabla
+    const tabla = $('#tablaReservasPorFecha');
+    console.log('Tabla existe:', tabla.length > 0);
+    
+    if (tabla.length > 0) {
+        // Verificar si es DataTable
+        const esDataTable = $.fn.DataTable.isDataTable('#tablaReservasPorFecha');
+        console.log('Es DataTable:', esDataTable);
+        
+        // Contar filas
+        const filas = tabla.find('tbody tr');
+        console.log('Número de filas:', filas.length);
+        
+        // Verificar filas con data-reserva-id
+        const filasConId = tabla.find('tbody tr[data-reserva-id]');
+        console.log('Filas con data-reserva-id:', filasConId.length);
+        
+        // Listar IDs de reservas
+        const ids = [];
+        filasConId.each(function() {
+            ids.push($(this).data('reserva-id'));
+        });
+        console.log('IDs de reservas encontrados:', ids);
+        
+        // Verificar botones de confirmación
+        const botonesConfirmar = tabla.find('.btnConfirmarReservaTab');
+        console.log('Botones de confirmación:', botonesConfirmar.length);
+    }
+    
+    console.log('=== FIN DEBUG ===');
+}
+
+/**
+ * Función para refrescar manualmente la tabla (para testing)
+ */
+function refrescarTablaManual() {
+    const fecha = $('#fechaReservaNew').val();
+    console.log('Refrescando tabla manual para fecha:', fecha);
+    
+    if (fecha) {
+        cargarReservasPorFecha(fecha);
+    } else {
+        console.error('No hay fecha seleccionada');
     }
 }
 
