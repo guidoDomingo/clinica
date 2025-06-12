@@ -51,9 +51,15 @@ if (!isset($_SESSION['perfil'])) {
                                         <i class="fas fa-clipboard-list mr-1"></i>Servicios
                                     </a>
                                 </li> -->
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link" id="tab-reserva-tab" data-toggle="pill" href="#tabReserva" role="tab" aria-controls="tabReserva" aria-selected="false">
                                         <i class="fas fa-calendar-plus mr-1"></i>Nueva Reserva
+                                    </a>
+                                </li> -->
+                               
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="tab-reservas-new-tab" data-toggle="pill" href="#tabReservasNew" role="tab" aria-controls="tabReservasNew" aria-selected="false">
+                                        <i class="fas fa-calendar-check mr-1"></i>Nueva reserva
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -66,11 +72,7 @@ if (!isset($_SESSION['perfil'])) {
                                         <i class="fas fa-calendar-week mr-1"></i>Calendario
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab-reservas-new-tab" data-toggle="pill" href="#tabReservasNew" role="tab" aria-controls="tabReservasNew" aria-selected="false">
-                                        <i class="fas fa-calendar-check mr-1"></i>Reservas New
-                                    </a>
-                                </li>
+
                                 <?php if (in_array($_SESSION['perfil'], ['Administrador', 'Director Médico'])): ?>
                                     <li class="nav-item">
                                         <a class="nav-link" id="tab-admin-tab" data-toggle="pill" href="#tabAdmin" role="tab" aria-controls="tabAdmin" aria-selected="false">
@@ -475,13 +477,13 @@ if (!isset($_SESSION['perfil'])) {
                                                     </div>
                                                     <div class="form-col">
                                                         <div class="form-group">
-                                                            <label for="buscarMedicoNew">Buscar médico</label>
+                                                            <label for="buscarMedicoNew">Médico</label>
                                                             <div class="input-group">
-                                                                <input type="text" id="buscarMedicoNew" class="form-control" placeholder="Nombre del médico...">
+                                                                <input type="text" id="buscarMedicoNew" disabled class="form-control" placeholder="Nombre del médico...">
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-outline-primary" type="button" id="btnBuscarMedicoNew">
+                                                                    <!-- <button class="btn btn-outline-primary" type="button" id="btnBuscarMedicoNew">
                                                                         <i class="fas fa-search"></i>
-                                                                    </button>
+                                                                    </button> -->
                                                                     <button class="btn btn-outline-secondary d-none" type="button" id="btnCambiarMedicoNew">
                                                                         <i class="fas fa-times"></i>
                                                                     </button>

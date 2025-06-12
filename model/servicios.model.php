@@ -1619,16 +1619,14 @@ class ModelServicios {
     static public function mdlGuardarReserva($datos) {
         try {
             error_log("Intentando guardar reserva: " . json_encode($datos), 3, 'c:/laragon/www/clinica/logs/reservas.log');
-            
-            // Verificar si ya existe una reserva en el mismo horario para el mismo doctor
+              // Verificar si ya existe una reserva en el mismo horario para el mismo doctor
+            // La lógica modificada permite reservas adyacentes (cuando una termina exactamente cuando la otra comienza)
             $stmtVerificar = Conexion::conectar()->prepare(
                 "SELECT COUNT(*) AS coincidencias
                 FROM servicios_reservas
                 WHERE doctor_id = :doctor_id 
                 AND fecha_reserva = :fecha_reserva
-                AND ((hora_inicio BETWEEN :hora_inicio AND :hora_fin)
-                OR (hora_fin BETWEEN :hora_inicio AND :hora_fin)
-                OR (hora_inicio <= :hora_inicio AND hora_fin >= :hora_fin))
+                AND ((hora_inicio < :hora_fin AND hora_fin > :hora_inicio))
                 AND reserva_estado IN ('PENDIENTE', 'CONFIRMADA')"
             );
             
