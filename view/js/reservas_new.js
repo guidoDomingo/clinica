@@ -2223,43 +2223,161 @@ function procesarParametrosURLPaciente() {
         // Pre-llenar el campo de búsqueda con el nombre completo
         const nombreCompleto = `${nombre} ${apellido}`;
         $('#buscarPacienteNew').val(nombreCompleto);
-        
-        // Guardar la información del paciente seleccionado
-        $('#pacienteSeleccionadoId').val(pacienteId);
-        $('#pacienteSeleccionadoNombre').val(nombreCompleto);
-        $('#pacienteSeleccionadoDocumento').val(documento || '');
-        
-        // Actualizar la información del resumen
-        $('#resumenPacienteNew').text(nombreCompleto);
-        if (documento) {
-            $('#resumenDocumentoNew').text(documento);
-        }
-        
-        // Marcar el campo de búsqueda como seleccionado
-        $('#buscarPacienteNew').addClass('selected-patient').prop('readonly', true);
-        
-        // Mostrar el botón de cambiar paciente
-        $('#btnCambiarPacienteNew').removeClass('d-none');
-        $('#btnBuscarPacienteNew').addClass('d-none');
-        
-        // Hacer scroll al siguiente paso (fecha/médico)
+          // Ejecutar búsqueda automáticamente para llenar la tabla
         setTimeout(function() {
-            $('html, body').animate({
-                scrollTop: $('#fechaReservaNew').offset().top - 100
-            }, 500);
+            console.log('Ejecutando búsqueda automática del paciente por ID...');
             
-            // Mostrar mensaje informativo
-            toastr.success(`Paciente ${nombreCompleto} pre-seleccionado desde RH Personas`, 'Información cargada', {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true
+            // Mostrar loading en la tabla
+            $('#tablaPacientesNew tbody').html('<tr><td colspan="3" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando información del paciente...</td></tr>');
+            
+            // Realizar búsqueda por ID primero
+            $.ajax({
+                url: 'ajax/servicios.ajax.php',
+                method: 'POST',
+                data: {
+                    action: 'buscarPacientePorId',
+                    paciente_id: pacienteId
+                },
+                dataType: 'json',
+                success: function(respuesta) {                    if (respuesta && respuesta.data && respuesta.data.length > 0) {
+                        console.log('Paciente encontrado por ID:', respuesta.data[0]);
+                        
+                        // Cargar tabla con el resultado específico (lógica inline)
+                        const pacienteEncontrado = respuesta.data[0];
+                        const nombreCompletoEncontrado = `${pacienteEncontrado.first_name || ''} ${pacienteEncontrado.last_name || ''}`.trim();
+                        
+                        const html = `
+                            <tr class="selected">
+                                <td>${nombreCompletoEncontrado}</td>
+                                <td>${pacienteEncontrado.document_number || 'No especificado'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success btn-select-paciente" 
+                                            data-paciente-id="${pacienteEncontrado.person_id}" 
+                                            data-paciente-nombre="${nombreCompletoEncontrado}">
+                                        <i class="fas fa-check"></i> Seleccionado
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        
+                        $('#tablaPacientesNew tbody').html(html);
+                        
+                        // Seleccionar automáticamente el paciente
+                        setTimeout(function() {
+                            const pacienteEncontrado = respuesta.data[0];
+                            
+                            // Simular click en el botón de seleccionar
+                            $(`.btn-select-paciente[data-paciente-id="${pacienteId}"]`).trigger('click');
+                            
+                            // Actualizar campos adicionales
+                            $('#selectPacienteNew').val(pacienteId);
+                            $('#pacienteSeleccionadoId').val(pacienteId);
+                            $('#pacienteSeleccionadoNombre').val(nombreCompleto);
+                            $('#pacienteSeleccionadoDocumento').val(documento || pacienteEncontrado.document_number || '');
+                            
+                            // Actualizar información del header y resumen
+                            $('#pacienteNombreMostrar').text(nombreCompleto);
+                            $('#resumenPacienteNew').text(nombreCompleto);
+                            if (documento || pacienteEncontrado.document_number) {
+                                $('#resumenDocumentoNew').text(documento || pacienteEncontrado.document_number);
+                            }
+                            
+                            // Marcar el campo de búsqueda como seleccionado
+                            $('#buscarPacienteNew').addClass('selected-patient').prop('readonly', true);
+                            
+                            // Mostrar el botón de cambiar paciente
+                            $('#btnCambiarPacienteNew').removeClass('d-none');
+                            $('#btnBuscarPacienteNew').addClass('d-none');
+                            
+                            console.log('Paciente seleccionado automáticamente:', nombreCompleto);
+                            
+                            // Hacer scroll al siguiente paso después de un momento
+                            setTimeout(function() {
+                                $('html, body').animate({
+                                    scrollTop: $('#fechaReservaNew').offset().top - 100
+                                }, 500);
+                                
+                                // Mostrar mensaje informativo
+                                toastr.success(`Paciente ${nombreCompleto} cargado correctamente desde RH Personas`, 'Información cargada', {
+                                    timeOut: 3000,
+                                    positionClass: 'toast-top-right',
+                                    closeButton: true
+                                });
+                            }, 1000);
+                            
+                            // Verificar si el formulario está completo
+                            setTimeout(function() {
+                                verificarFormularioCompleto();
+                            }, 1500);
+                        }, 500);
+                    } else {
+                        console.warn('No se encontró el paciente por ID, intentando búsqueda por nombre...');
+                        
+                        // Fallback: buscar por nombre como respaldo
+                        $.ajax({
+                            url: 'ajax/servicios.ajax.php',
+                            method: 'POST',
+                            data: {
+                                action: 'buscarPaciente',
+                                termino: nombreCompleto
+                            },
+                            dataType: 'json',                            success: function(respuestaFallback) {
+                                if (respuestaFallback && respuestaFallback.data && respuestaFallback.data.length > 0) {
+                                    // Cargar tabla con resultados fallback (lógica inline)
+                                    let htmlFallback = '';
+                                    respuestaFallback.data.forEach(function (paciente) {
+                                        const nombreCompleto = `${paciente.first_name || ''} ${paciente.last_name || ''}`.trim();
+                                        htmlFallback += `
+                                        <tr>
+                                            <td>${nombreCompleto}</td>
+                                            <td>${paciente.document_number || 'No especificado'}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary btn-select-paciente" 
+                                                        data-paciente-id="${paciente.person_id}" 
+                                                        data-paciente-nombre="${nombreCompleto}">
+                                                    <i class="fas fa-check"></i> Seleccionar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                    });
+                                    
+                                    $('#tablaPacientesNew tbody').html(htmlFallback);
+                                    toastr.warning('Se encontraron pacientes similares, verifique y seleccione el correcto', 'Verificar selección', {
+                                        timeOut: 4000,
+                                        positionClass: 'toast-top-right',
+                                        closeButton: true
+                                    });
+                                } else {
+                                    $('#tablaPacientesNew tbody').html('<tr><td colspan="3" class="text-center text-warning">No se encontró el paciente especificado</td></tr>');
+                                    toastr.error('No se encontró el paciente especificado', 'Paciente no encontrado', {
+                                        timeOut: 4000,
+                                        positionClass: 'toast-top-right',
+                                        closeButton: true
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error en búsqueda fallback:', error);
+                                $('#tablaPacientesNew tbody').html('<tr><td colspan="3" class="text-center text-danger">Error al buscar paciente</td></tr>');
+                            }
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al buscar paciente por ID:', error);
+                    console.log('Respuesta error:', xhr.responseText);
+                    
+                    // En caso de error, mostrar mensaje y permitir búsqueda manual
+                    $('#tablaPacientesNew tbody').html('<tr><td colspan="3" class="text-center text-warning">Ingrese un término para buscar pacientes</td></tr>');
+                    toastr.error('Error al cargar información del paciente automáticamente', 'Error de conexión', {
+                        timeOut: 4000,
+                        positionClass: 'toast-top-right',
+                        closeButton: true
+                    });
+                }
             });
-        }, 1000);
-        
-        // Verificar si el formulario está completo después de pre-llenar
-        setTimeout(function() {
-            verificarFormularioCompleto();
-        }, 1500);
+        }, 500);
         
         // Limpiar los parámetros URL para evitar que se procesen nuevamente
         const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?ruta=servicios";

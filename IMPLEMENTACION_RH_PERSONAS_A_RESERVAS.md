@@ -38,22 +38,50 @@ function crearReservaParaPaciente() {
 procesarParametrosURLPaciente();
 ```
 
-- **Líneas 2205-2263**: Implementada función `procesarParametrosURLPaciente()`
+- **Líneas 2205-2355**: Implementada función `procesarParametrosURLPaciente()` mejorada
 ```javascript
 function procesarParametrosURLPaciente() {
   const urlParams = new URLSearchParams(window.location.search);
-  const pacienteId = urlParams.get('paciente_id');
-  const nombre = urlParams.get('nombre');
-  const apellido = urlParams.get('apellido');
-  const documento = urlParams.get('documento');
+  // ... obtener parámetros ...
   
   if (pacienteId && nombre && apellido) {
     // Pre-llenar campos del paciente
-    // Actualizar UI
+    // Ejecutar búsqueda por ID via AJAX (método principal)
+    // Fallback: búsqueda por nombre si falla la búsqueda por ID
+    // Cargar tabla de resultados
+    // Seleccionar paciente automáticamente
+    // Actualizar UI completa
     // Hacer scroll al siguiente paso
     // Limpiar URL
   }
 }
+```
+
+### 3. `controller/servicios.controller.php`
+
+#### Cambios realizados:
+- **Líneas 250-275**: Agregado método `ctrBuscarPacientePorId()`
+```php
+static public function ctrBuscarPacientePorId($pacienteId) {
+    // Búsqueda específica por ID del paciente
+    // Consulta SQL optimizada
+    // Manejo de errores
+    // Retorna array consistente con búsqueda por nombre
+}
+```
+
+### 4. `ajax/servicios.ajax.php`
+
+#### Cambios realizados:
+- **Líneas 230-250**: Agregada acción `buscarPacientePorId`
+```php
+case 'buscarPacientePorId':
+    if (isset($_POST['paciente_id'])) {
+        $pacienteId = $_POST['paciente_id'];
+        $paciente = ControladorServicios::ctrBuscarPacientePorId($pacienteId);
+        // Logging y respuesta JSON
+    }
+    break;
 ```
 
 ## Funcionalidad Implementada
@@ -72,12 +100,17 @@ function procesarParametrosURLPaciente() {
 ### Comportamiento en Reservas
 Cuando se detectan parámetros URL:
 1. **Pre-llenado**: Campo de búsqueda de paciente se llena con el nombre completo
-2. **Estado visual**: Campo se marca como solo lectura con clase `selected-patient`
-3. **Botones**: Se muestran botones de "Cambiar Paciente" en lugar de "Buscar Paciente"
-4. **Resumen**: Se actualiza la información del resumen con datos del paciente
-5. **UX**: Scroll automático al siguiente paso (fecha/médico)
-6. **Notificación**: Toast informativo confirmando la carga del paciente
-7. **Limpieza**: URL se limpia para evitar reprocesamiento
+2. **Búsqueda por ID**: Se ejecuta automáticamente la búsqueda AJAX por ID del paciente (método principal)
+3. **Búsqueda fallback**: Si falla la búsqueda por ID, se ejecuta búsqueda por nombre como respaldo
+4. **Carga de tabla**: Se llena la tabla de resultados con la información del paciente específico
+5. **Selección automática**: Se selecciona automáticamente el paciente correcto de los resultados
+6. **Estado visual**: Campo se marca como solo lectura con clase `selected-patient`
+7. **Botones**: Se muestran botones de "Cambiar Paciente" en lugar de "Buscar Paciente"
+8. **Resumen**: Se actualiza la información del resumen con datos del paciente
+9. **Campos ocultos**: Se llenan todos los campos necesarios (`selectPacienteNew`, `pacienteSeleccionadoId`, etc.)
+10. **UX**: Scroll automático al siguiente paso (fecha/médico)
+11. **Notificación**: Toast informativo confirmando la carga del paciente
+12. **Limpieza**: URL se limpia para evitar reprocesamiento
 
 ## Estado del Botón "Crear Reserva"
 
@@ -90,8 +123,11 @@ const btnReserva = `<button class="btn btn-success btn-sm btn-crear-reserva" btn
 
 ### Manejo de Errores
 - Validación de parámetros URL antes del procesamiento
-- Logs de depuración en consola para seguimiento
-- Fallback graceful si faltan parámetros
+- **Búsqueda dual**: Primero por ID (más preciso), luego por nombre como fallback
+- Logs de depuración en consola para seguimiento de ambos métodos de búsqueda
+- Manejo de errores AJAX con mensajes informativos específicos
+- Fallback graceful si fallan ambos métodos de búsqueda
+- Notificaciones diferenciadas para cada tipo de resultado
 
 ### Compatibilidad
 - Usa APIs web estándar (`URLSearchParams`)
@@ -108,9 +144,13 @@ const btnReserva = `<button class="btn btn-success btn-sm btn-crear-reserva" btn
 
 1. **Navegación básica**: Hacer clic en "Crear Reserva" desde RH Personas
 2. **Pre-llenado**: Verificar que los datos del paciente se cargan correctamente
-3. **Flujo completo**: Completar una reserva iniciada desde RH Personas
-4. **Limpieza URL**: Verificar que la URL se limpia después del procesamiento
-5. **Compatibilidad**: Verificar que el flujo normal de reservas sigue funcionando
+3. **Búsqueda automática**: Verificar que la tabla se llena automáticamente con los resultados
+4. **Selección automática**: Verificar que el paciente correcto se selecciona automáticamente
+5. **Estados UI**: Verificar cambios visuales (campo readonly, botones cambiados, tabla llena)
+6. **Flujo completo**: Completar una reserva iniciada desde RH Personas
+7. **Limpieza URL**: Verificar que la URL se limpia después del procesamiento
+8. **Manejo de errores**: Probar con parámetros inválidos o conexión fallida
+9. **Compatibilidad**: Verificar que el flujo normal de reservas sigue funcionando
 
 ## Notas de Implementación
 
@@ -118,3 +158,17 @@ const btnReserva = `<button class="btn btn-success btn-sm btn-crear-reserva" btn
 - La funcionalidad es completamente opcional y no afecta el flujo normal
 - Se implementó limpieza automática de URL para evitar confusión
 - Compatible con el sistema de navegación por pestañas existente
+- **Corrección de ámbito**: Se implementó la lógica de carga de tabla inline para evitar problemas de ámbito de funciones
+- **Búsqueda dual**: Método principal por ID + fallback por nombre para máxima confiabilidad
+
+## Correcciones Aplicadas
+
+### Problema de Ámbito de Funciones
+**Problema**: `ReferenceError: cargarTablaPacientes is not defined`
+**Causa**: La función `cargarTablaPacientes` estaba definida dentro del ámbito de `inicializarReservasNew` pero se llamaba desde `procesarParametrosURLPaciente` que está en ámbito global.
+**Solución**: Se implementó la lógica de carga de tabla directamente inline en `procesarParametrosURLPaciente` para evitar dependencias de ámbito.
+
+### Búsqueda por ID vs Nombre
+**Problema**: La búsqueda por nombre devolvía `{"status":"success","data":[]}`
+**Causa**: Los nombres en la base de datos podrían no coincidir exactamente con el formato de búsqueda.
+**Solución**: Se implementó búsqueda principal por ID del paciente (más precisa) con fallback por nombre.

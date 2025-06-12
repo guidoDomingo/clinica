@@ -245,6 +245,40 @@ class ControladorServicios {
     }
     
     /**
+     * Busca un paciente específico por su ID
+     * @param int $pacienteId ID del paciente
+     * @return array|null Datos del paciente encontrado o null si no existe
+     */
+    static public function ctrBuscarPacientePorId($pacienteId) {
+        try {
+            $stmt = Conexion::conectar()->prepare(
+                "SELECT 
+                    p.person_id,
+                    p.first_name,
+                    p.last_name,
+                    p.document_number,
+                    p.email,
+                    p.phone_number
+                FROM 
+                    rh_person p
+                WHERE 
+                    p.person_id = :paciente_id
+                    AND p.is_active = true"
+            );
+            
+            $stmt->bindParam(":paciente_id", $pacienteId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado ? [$resultado] : []; // Devolver array para mantener consistencia con buscarPaciente
+            
+        } catch (PDOException $e) {
+            error_log("Error al buscar paciente por ID: " . $e->getMessage(), 0);
+            return [];
+        }
+    }
+    
+    /**
      * Guarda una nueva reserva médica
      * @param array $datos Datos de la reserva
      * @return mixed ID de la reserva creada o false en caso de error

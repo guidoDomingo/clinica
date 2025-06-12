@@ -228,6 +228,26 @@ if (isset($_POST['action'])) {
             }
             break;
             
+        case 'buscarPacientePorId':
+            if (isset($_POST['paciente_id'])) {
+                $pacienteId = $_POST['paciente_id'];
+                $paciente = ControladorServicios::ctrBuscarPacientePorId($pacienteId);
+                
+                // Debug info
+                error_log("Búsqueda de paciente por ID: " . $pacienteId . " - Resultados: " . count($paciente));
+                
+                echo json_encode([
+                    "status" => "success",
+                    "data" => $paciente
+                ]);
+            } else {
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "ID de paciente no proporcionado"
+                ]);
+            }
+            break;
+            
         case 'guardarReserva':
             if (isset($_POST['doctor_id']) && isset($_POST['servicio_id']) && isset($_POST['paciente_id']) && 
                 isset($_POST['fecha_reserva']) && isset($_POST['hora_inicio']) && isset($_POST['hora_fin'])) {
