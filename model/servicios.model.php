@@ -269,8 +269,7 @@ class ModelServicios {
         $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }    /**
-     * Obtiene los horarios disponibles para un servicio y doctor específico
+    }    /**     * Obtiene los horarios disponibles para un servicio y doctor específico
      * @param int $servicioId ID del servicio
      * @param int $doctorId ID del doctor
      * @param string $fecha Fecha para la verificación (formato YYYY-MM-DD)
@@ -287,57 +286,76 @@ class ModelServicios {
         
         // Mapping directo para los días de la semana
         $diasSemanaTexto = [1 => 'LUNES', 2 => 'MARTES', 3 => 'MIERCOLES', 4 => 'JUEVES', 5 => 'VIERNES', 6 => 'SABADO', 7 => 'DOMINGO'];
-        $diaSemanaTexto = $diasSemanaTexto[$diaSemanaNum];
-          try {
-            // SQL base
+        $diaSemanaTexto = $diasSemanaTexto[$diaSemanaNum];        try {
+            // Usando la SQL exacta proporcionada por el cliente
             $sql = "SELECT 
-                    sh.horario_id,
-                    sh.servicio_id,
-                    sh.turno_id,
-                    t.turno_nombre,
-                    sh.sala_id,
-                    s.sala_nombre,
-                    sh.doctor_id,
-                    rd.person_id,
-                    p.first_name || ' ' || p.last_name AS nombre_doctor,
-                    sh.dia_semana,
-                    sh.hora_inicio,
-                    sh.hora_fin,
-                    sh.intervalo_minutos,
-                    sh.cupo_maximo
-                FROM 
-                    servicios_horarios sh
-                INNER JOIN 
-                    turnos t ON sh.turno_id = t.turno_id
-                LEFT JOIN 
-                    salas s ON sh.sala_id = s.sala_id
-                INNER JOIN 
-                    rh_doctors rd ON sh.doctor_id = rd.doctor_id
-                INNER JOIN 
-                    rh_person p ON rd.person_id = p.person_id
-                WHERE 
-                    sh.doctor_id = :doctor_id
-                    AND sh.dia_semana = :dia_semana
-                    AND sh.horario_estado = true";
+                ad.detalle_id as horario_id,
+                ad.detalle_id as agenda_id,
+                ac.agenda_id as cabecera_agenda_id,
+                ad.turno_id,
+                t.turno_nombre,
+                ad.sala_id,
+                s.sala_nombre,
+                ac.medico_id as doctor_id,
+                coalesce(p.first_name, '') || ' ' || coalesce(p.last_name, '') as nombre_doctor,
+                ad.dia_semana,
+                ad.hora_inicio,
+                ad.hora_fin,
+                ad.intervalo_minutos,
+                ad.cupo_maximo
+            FROM
+                agendas_detalle ad
+            INNER JOIN 
+                agendas_cabecera ac ON ad.agenda_id = ac.agenda_id
+            INNER JOIN 
+                turnos t ON ad.turno_id = t.turno_id
+            INNER JOIN 
+                salas s ON ad.sala_id = s.sala_id
+            INNER JOIN
+                rh_doctors rd ON rd.doctor_id = ac.medico_id 
+            INNER JOIN 
+                rh_person p ON p.person_id = rd.person_id
+            WHERE
+                ac.medico_id = :doctor_id
+                AND ad.dia_semana = :dia_semana
+                AND ad.detalle_estado = true
+                AND ac.agenda_estado = true";
             
             // Si se proporcionó un ID de servicio, agregar al WHERE
             if (!empty($servicioId) && $servicioId > 0) {
-                $sql .= " AND sh.servicio_id = :servicio_id";
+                $sql .= " AND ac.servicio_id = :servicio_id";
             }
             
             // Agregar ORDER BY
-            $sql .= " ORDER BY sh.hora_inicio ASC";
+            $sql .= " ORDER BY ad.hora_inicio ASC";
             
             $stmt = Conexion::conectar()->prepare($sql);
             
             // Bind params
             if (!empty($servicioId) && $servicioId > 0) {
                 $stmt->bindParam(":servicio_id", $servicioId, PDO::PARAM_INT);
-            }
-            $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
+            }            $stmt->bindParam(":doctor_id", $doctorId, PDO::PARAM_INT);
             $stmt->bindParam(":dia_semana", $diaSemanaTexto, PDO::PARAM_STR);
+            
+            // Log query before execution for debugging
+            error_log("mdlObtenerHorariosDisponibles: SQL para DoctorID=$doctorId, Dia=$diaSemanaTexto: $sql", 
+                      3, 'c:/laragon/www/clinica/logs/database.log');
+            
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $conteo = count($resultados);
+            
+            // Log detailed results for debugging
+            error_log("mdlObtenerHorariosDisponibles: Se encontraron $conteo resultados para DoctorID=$doctorId, Dia=$diaSemanaTexto", 
+                      3, 'c:/laragon/www/clinica/logs/database.log');
+            
+            if ($conteo > 0) {
+                error_log("Primer resultado: " . json_encode($resultados[0]), 
+                          3, 'c:/laragon/www/clinica/logs/database.log');
+            }
+            
+            return $resultados;
         } catch (PDOException $e) {
             error_log("Error al obtener horarios disponibles: " . $e->getMessage(), 0);
             return [];

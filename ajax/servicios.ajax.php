@@ -424,26 +424,7 @@ if (isset($_POST['action'])) {
                     
                     // Si aún no hay horarios, crear horarios predeterminados para demo
                     if (empty($horarios)) {
-                        error_log("No se encontraron horarios en la base de datos. Generando horarios predeterminados para demo.", 3, 'c:/laragon/www/clinica/logs/slots.log');
-                        
-                        // Horarios predeterminados para demo (mañana, tarde y noche)
-                        $horariosMañana = ['08:00', '09:00', '10:00', '11:00', '12:00'];
-                        $horariosTarde = ['14:00', '15:00', '16:00', '17:00', '18:00'];
-                        $horariosNoche = ['19:00', '20:00', '21:00'];
-                        
-                        $todosHorarios = array_merge($horariosMañana, $horariosTarde, $horariosNoche);
-                        
                         $horarios = [];
-                        foreach ($todosHorarios as $hora) {
-                            $horarios[] = [
-                                'horario_id' => rand(1000, 9999),
-                                'doctor_id' => $doctorId,
-                                'hora_inicio' => $hora,
-                                'hora_fin' => date('H:i', strtotime("$hora +30 minutes")),
-                                'turno_nombre' => (in_array($hora, $horariosMañana) ? 'Mañana' : (in_array($hora, $horariosTarde) ? 'Tarde' : 'Noche')),
-                                'disponible' => true
-                            ];
-                        }
                     }
                     
                     echo json_encode([

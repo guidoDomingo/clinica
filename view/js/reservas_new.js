@@ -5,10 +5,9 @@
 $(document).ready(function() {
     console.log('Inicializando módulo Reservas New');
     inicializarReservasNew();
-    
-    // Submit button click handler
+      // Submit button click handler
     $('#btnConfirmarReserva').on('click', function() {
-        submitReservaForm();
+        guardarReserva();
     });
     
     // Debug logging for hora-btn clicks
@@ -53,13 +52,15 @@ function inicializarReservasNew() {
     // Search for available doctors on date change (step 2)
     $('#fechaReservaNew').change(function() {
         buscarMedicosDisponibles();
-        
-        // Si hay un médico seleccionado, actualizar sus servicios para la nueva fecha
+          // Si hay un médico seleccionado, actualizar sus servicios para la nueva fecha
         const medicoSeleccionado = $('#selectMedicoNew').val();
         if (medicoSeleccionado) {
             const fecha = $(this).val();
             cargarServiciosPorFechaMedico(fecha, medicoSeleccionado);
         }
+        
+        // Check if form is complete after changing date
+        verificarFormularioCompleto();
     });
     
     // Doctor search on Enter key
@@ -85,12 +86,14 @@ function inicializarReservasNew() {
         $('#tablaMedicosNew tbody tr').removeClass('selected');
         $(this).closest('tr').addClass('selected');        // Update summary
         $('#resumenMedicoNew').text(medicoNombre);
-        
-        // Load doctor's services for the selected date
+          // Load doctor's services for the selected date
         const fecha = $('#fechaReservaNew').val();
         if (fecha) {
             cargarServiciosPorFechaMedico(fecha, medicoId);
         }
+        
+        // Check if form is complete after selecting doctor
+        verificarFormularioCompleto();
         
         // Remove any existing time slot rows
         $('.horario-row').remove();
@@ -183,27 +186,41 @@ function inicializarReservasNew() {
         const hora = $(this).data('hora');
         
         // Update UI
-        $('.hora-slot').removeClass('selected');
-        $(this).addClass('selected');
+        $('.hora-slot').removeClass('selected');        $(this).addClass('selected');
         $('#horaSeleccionada').val(hora);
         
         // Update summary
         $('#resumenHoraNew').text(hora);
-    });    // Action for time slot selection from the table
+    });
+    
+    // Action for time slot selection from the table    
     $(document).on('click', '.hora-btn', function() {
         console.log("Hora button clicked", this);
+          // Get data attributes - SIGUIENDO PATRÓN DE SERVICIOS.JS
+        const slotId = $(this).attr('data-id');
+        const horaInicio = $(this).attr('data-inicio');
+        const horaFin = $(this).attr('data-fin');
+        const textoHorario = $(this).attr('data-texto');
+        const agendaIdFromAttr = $(this).attr('data-agenda-id');
         
-        // Get data attributes
-        const horaInicio = $(this).data('hora-inicio');
-        const horaFin = $(this).data('hora-fin');
+        // También intentar obtener desde el input hidden como fallback
+        const agendaIdFromInput = $(this).find('.agenda-id-value').val();
         
-        console.log("Data attributes extracted:", {
-            horaInicio: horaInicio,
-            horaFin: horaFin
-        });
+        // El agenda_id principal (siguiendo lógica de servicios.js)
+        const agendaId = agendaIdFromAttr || agendaIdFromInput || slotId;
         
-        if (!horaInicio) {
-            console.error("No se encontró el atributo data-hora-inicio en el botón");
+        console.log("=== DATOS DEL SLOT SELECCIONADO (PATRÓN SERVICIOS.JS) ===");
+        console.log("Slot ID:", slotId);
+        console.log("Hora inicio:", horaInicio);
+        console.log("Hora fin:", horaFin);
+        console.log("Texto horario:", textoHorario);
+        console.log("Agenda ID desde atributo:", agendaIdFromAttr);
+        console.log("Agenda ID desde input:", agendaIdFromInput);
+        console.log("Agenda ID final:", agendaId);
+        console.log("Elemento HTML:", $(this)[0].outerHTML);
+        console.log("================================");
+          if (!horaInicio) {
+            console.error("No se encontró el atributo data-inicio en el botón");
             alert("Error al seleccionar el horario. Por favor intente nuevamente.");
             return;
         }
@@ -214,20 +231,27 @@ function inicializarReservasNew() {
         // Visual feedback
         $('.hora-btn').removeClass('btn-success').addClass('btn-primary');
         $(this).removeClass('btn-primary').addClass('btn-success');
-        
-        // Store selected time
+          // Store selected time in multiple fields for compatibility
         $('#horaInicioSeleccionada').val(horaInicio);
         $('#horaFinSeleccionada').val(horaFin);
+        $('#horaSeleccionada').val(horaInicio); // Add this for backward compatibility
+        $('#agendaId').val(agendaId); // Store the agenda_id (SIGUIENDO PATRÓN DE SERVICIOS.JS)
+        
+        console.log("Valor asignado al campo #agendaId:", $('#agendaId').val());
+        
         console.log("Valores guardados en campos ocultos:", {
-            inicio: $('#horaInicioSeleccionada').val(),
-            fin: $('#horaFinSeleccionada').val()
+            horaInicioSeleccionada: $('#horaInicioSeleccionada').val(),
+            horaFinSeleccionada: $('#horaFinSeleccionada').val(),
+            horaSeleccionada: $('#horaSeleccionada').val(),
+            agendaId: $('#agendaId').val()
         });
         
         // Update summary information
         $('#resumenHoraNew').text(horarioTexto);
         console.log("Resumen actualizado:", $('#resumenHoraNew').text());
         
-        // Scroll to service selection as next step
+        // Check if form is complete after selecting time
+        verificarFormularioCompleto();        // Scroll to service selection as next step
         $('html, body').animate({
             scrollTop: $('#servicioSelect').offset().top - 100
         }, 500);
@@ -237,7 +261,8 @@ function inicializarReservasNew() {
             $('#servicioSelect').focus();
         }, 600);
     });
-      // Service selection
+    
+    // Service selection
     $('#servicioSelect').change(function() {
         const servicioId = $(this).val();
         const servicioNombre = $(this).find('option:selected').text();
@@ -281,18 +306,16 @@ function inicializarReservasNew() {
             // Si existe la función para cargar planes
             if (typeof cargarPlanesSeguro === 'function') {
                 cargarPlanesSeguro(seguroId);
-            } else {
-                console.log('Función cargarPlanesSeguro no disponible');
-                // Agregar planes demo
-                $('#planSelect').html('<option value="0">Sin plan</option>');
-                $('#planSelect').append('<option value="1">Plan Básico</option>');
-                $('#planSelect').append('<option value="2">Plan Premium</option>');
-                $('#planSelect').prop('disabled', false);
-            }
-        } else {
+            } else {                console.log('Función cargarPlanesSeguro no disponible');
+                // Sin planes disponibles
+                $('#planSelect').html('<option value="0">Sin plan disponible</option>').prop('disabled', true);
+            }} else {
             $('#resumenSeguroNew').text('Sin seguro');
             $('#planSelect').html('<option value="0">Sin plan</option>').prop('disabled', true);
         }
+        
+        // Check if form is complete after selecting insurance
+        verificarFormularioCompleto();
     });
     
     // New patient button
@@ -453,17 +476,14 @@ function cargarTablaMedicos(respuesta) {
     if (medicos && medicos.length > 0) {
         // Store doctors in global variable for later use
         window.medicosDisponibles = medicos;
-        
-        medicos.forEach(function(medico) {
+          medicos.forEach(function(medico) {
             // Get doctor ID and name from response
             const medicoId = medico.doctor_id || medico.id || medico.person_id;
             const medicoNombre = medico.nombre_doctor || medico.nombre || medico.nombre_completo || '';
             
-            // For demo purposes, assign turnos based on counter
-            const turno = counter % 3 === 0 ? 'Noche' : (counter % 2 === 0 ? 'Tarde' : 'Mañana');
-            
-            // Random availability between 1-20
-            const disponibles = Math.floor(Math.random() * 20) + 1;
+            // Use real data from backend
+            const turno = medico.turno_nombre || medico.turno || 'No especificado';
+            const disponibles = medico.cupo_disponible || medico.disponibles || 0;
             
             html += `
                 <tr class="doctor-row" data-medico-id="${medicoId}">
@@ -490,35 +510,6 @@ function cargarTablaMedicos(respuesta) {
     
     // Remove any existing time slot rows
     $('.horario-row').remove();
-}
-
-/**
- * Generate time slot rows for a doctor
- */
-function generateTimeSlotRows(...horarios) {
-    let rows = '';
-    
-    horarios.forEach(function(hora, index) {
-        // Alternating background colors based on row position
-        const bgClass = index % 2 === 0 ? 'bg-light' : '';
-        
-        // Success (green) button for 13:00, gray for others
-        const btnClass = hora === '13:00' ? 'success' : 'secondary';
-        
-        rows += `
-            <tr class="horario-row ${bgClass}">
-                <td colspan="4" class="text-right hora-column">${hora}</td>
-                <td class="check-column">
-                    <button class="btn btn-${btnClass} btn-circle hora-btn" 
-                            data-hora="${hora}">
-                        <i class="fas fa-check"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
-    
-    return rows;
 }
 
 /**
@@ -559,11 +550,11 @@ function generateTimeSlotRowsFromData(horarios) {
         // Procesar cada horario
         horarios.forEach(function(horario) {
             // Debugging
-            console.log("Procesando horario:", horario);
-            
-            // La estructura de datos puede variar según el backend, adaptamos el código
+            console.log("Procesando horario:", horario);            // La estructura de datos puede variar según el backend, adaptamos el código
             const horaInicio = horario.hora_inicio || '';
             const horaFin = horario.hora_fin || '';
+            const horarioId = horario.horario_id || ''; // This is the main ID
+            const agendaId = horario.agenda_id || horarioId || ''; // Use agenda_id if available, fallback to horario_id
             const disponible = horario.disponible !== false; // Asumimos disponible a menos que se indique lo contrario
             
             const disponibleClass = disponible ? '' : 'text-muted';
@@ -576,10 +567,14 @@ function generateTimeSlotRowsFromData(horarios) {
                 <td>${horarioTexto}</td>
                 <td class="text-center">
                     <button type="button" class="btn ${buttonClass} btn-sm btn-circle hora-btn" 
-                            data-hora-inicio="${horaInicio}" 
-                            data-hora-fin="${horaFin}" 
+                            data-id="${horarioId}"
+                            data-inicio="${horaInicio}" 
+                            data-fin="${horaFin}" 
+                            data-agenda-id="${agendaId}"
+                            data-texto="${horarioTexto}"
                             ${buttonDisabled}>
                         <i class="fas fa-check"></i>
+                        <input type="hidden" class="agenda-id-value" value="${agendaId}">
                     </button>
                 </td>
             </tr>
@@ -691,10 +686,12 @@ $(document).on('click', '.btn-select-paciente', function() {
     // Highlight selected patient
     $('#tablaPacientesNew tbody tr').removeClass('selected');
     $(this).closest('tr').addClass('selected');
-    
-    // Update header info and summary
+      // Update header info and summary
     $('#pacienteNombreMostrar').text(pacienteNombre);
     $('#resumenPacienteNew').text(pacienteNombre);
+    
+    // Check if form is complete after selecting patient
+    verificarFormularioCompleto();
     
     // Focus on the fecha element to guide user to next step
     setTimeout(function() {
@@ -751,12 +748,12 @@ function mostrarHorariosDisponibles(horarios) {
     let html = '';
     
     if (horarios && horarios.length > 0) {
-        html = '<div class="horarios-grid">';
-        
-        horarios.forEach(function(horario) {
+        html = '<div class="horarios-grid">';        horarios.forEach(function(horario) {
             // La estructura de datos puede variar según el backend, adaptamos el código
             const horaInicio = horario.hora_inicio || horario.hora || '';
             const horaFin = horario.hora_fin || '';
+            const horarioId = horario.horario_id || ''; // This is the main ID
+            const agendaId = horario.agenda_id || horarioId || ''; // Use agenda_id if available, fallback to horario_id
             const disponible = horario.disponible !== false; // Asumimos disponible a menos que se indique lo contrario
             
             const disponibleClass = disponible ? '' : 'no-disponible';
@@ -764,13 +761,17 @@ function mostrarHorariosDisponibles(horarios) {
             
             html += `
                 <div class="hora-slot ${disponibleClass}" 
-                     data-hora-inicio="${horaInicio}"
-                     data-hora-fin="${horaFin}" 
+                     data-id="${horarioId}"
+                     data-inicio="${horaInicio}"
+                     data-fin="${horaFin}" 
+                     data-agenda-id="${agendaId}"
+                     data-texto="${horarioTexto}"
                      data-disponible="${disponible ? 'true' : 'false'}">
                     <span class="hora-texto">${horarioTexto}</span>
                     <button class="btn-select-horario" ${!disponible ? 'disabled' : ''}>
                         <i class="fas fa-check"></i>
                     </button>
+                    <input type="hidden" class="agenda-id-value" value="${agendaId}">
                 </div>
             `;
         });
@@ -864,23 +865,10 @@ function cargarServiciosMedico(medicoId) {
                             ${nombre}
                         </option>
                     `);
-                });
-            } else {
-                // Si no hay servicios, mostrar servicios demo
-                console.warn('No se encontraron servicios. Mostrando servicios de demostración.');
-                const serviciosDemo = [
-                    { id: 1, nombre: 'Consulta General', precio: 150000 },
-                    { id: 2, nombre: 'Examen de Rutina', precio: 200000 },
-                    { id: 3, nombre: 'Diagnóstico Especializado', precio: 350000 }
-                ];
-                
-                serviciosDemo.forEach(function(servicio) {
-                    $('#servicioSelect').append(`
-                        <option value="${servicio.id}" data-precio="${servicio.precio}">
-                            ${servicio.nombre}
-                        </option>
-                    `);
-                });
+                });            } else {
+                // Si no hay servicios, mostrar mensaje
+                console.warn('No se encontraron servicios disponibles');
+                $('#servicioSelect').append('<option value="">No hay servicios disponibles</option>');
             }
             
             // Update price if needed
@@ -907,19 +895,8 @@ function cargarPlanesSeguro(seguroId) {
     }
     
     // Since we don't have a specific action for plans in the API yet,
-    // we'll add placeholder plans for now
-    $('#planSelect').html('<option value="0">Seleccione un plan</option>').prop('disabled', false);
-    
-    // Add some sample plans
-    const planes = [
-        { id: 1, nombre: 'Plan Básico' },
-        { id: 2, nombre: 'Plan Estándar' },
-        { id: 3, nombre: 'Plan Premium' }
-    ];
-    
-    planes.forEach(function(plan) {
-        $('#planSelect').append(`<option value="${plan.id}">${plan.nombre}</option>`);
-    });
+    // show no plans available message
+    $('#planSelect').html('<option value="0">Sin planes disponibles</option>').prop('disabled', true);
     
     /* Uncomment this when the API endpoint is available
     // AJAX call to get insurance plans
@@ -1043,12 +1020,39 @@ function guardarReserva() {
     const medicoId = $('#selectMedicoNew').val();
     const pacienteId = $('#selectPacienteNew').val();
     const fecha = $('#fechaReservaNew').val();
-    const hora = $('#horaSeleccionada').val();
-    const servicioId = $('#servicioSelect').val();
+      // Check multiple possible hour fields (same logic as verificarFormularioCompleto)
+    const hora = $('#horaInicioSeleccionada').val() || 
+                 $('#horaSeleccionada').val() || 
+                 $('.hora-btn.btn-success').data('hora-inicio') ||
+                 $('.hora-slot.selected').data('hora') ||
+                 '';
+    
+    const horaFin = $('#horaFinSeleccionada').val() || 
+                    $('.hora-btn.btn-success').data('hora-fin') ||
+                    hora; // Use same as start if no end time
+                   const servicioId = $('#servicioSelect').val();
     const seguroId = $('#seguroSelect').val();
     const planId = $('#planSelect').val();
+    const agendaId = $('#agendaId').val(); // Get the agenda_id
     const importe = $('#importeReservaNew').val().replace('S/ ', '');
-    const observaciones = $('#observacionesNew').val();
+    const observaciones = $('#observacionesNew').val();    console.log('Datos del formulario para guardar:', {
+        medicoId: medicoId,
+        pacienteId: pacienteId,
+        fecha: fecha,
+        hora: hora,
+        horaFin: horaFin,
+        agendaId: agendaId,
+        servicioId: servicioId,
+        seguroId: seguroId,
+        planId: planId,
+        horaInicioSeleccionada: $('#horaInicioSeleccionada').val(),
+        horaFinSeleccionada: $('#horaFinSeleccionada').val(),
+        horaSeleccionada: $('#horaSeleccionada').val(),
+        btnSuccessCount: $('.hora-btn.btn-success').length,
+        btnSuccessData: $('.hora-btn.btn-success').data('hora-inicio'),
+        btnSuccessFinData: $('.hora-btn.btn-success').data('hora-fin'),
+        btnSuccessHorarioId: $('.hora-btn.btn-success').data('horario-id')
+    });
     
     // Validate required fields
     if (!medicoId) {
@@ -1074,21 +1078,18 @@ function guardarReserva() {
     if (!servicioId) {
         mostrarAlerta('warning', 'Por favor seleccione un servicio');
         return;
-    }
-    
-    // Prepare data for AJAX
+    }    // Prepare data for AJAX - matching server parameter names
     const datos = {
-        accion: 'guardarReserva',
-        medicoId: medicoId,
-        pacienteId: pacienteId,
-        fecha: fecha,
-        hora: hora,
-        servicioId: servicioId,
-        seguroId: seguroId || 0,
-        planId: planId || 0,
-        importe: importe,
-        observaciones: observaciones,
-        estado: 'PENDIENTE'
+        action: 'guardarReserva',  // Changed from 'accion' to 'action'
+        doctor_id: medicoId,
+        paciente_id: pacienteId,
+        fecha_reserva: fecha,
+        hora_inicio: hora,
+        hora_fin: horaFin,
+        servicio_id: servicioId,
+        seguro_id: seguroId || 0,
+        agenda_id: agendaId || 0, // Add agenda_id
+        observaciones: observaciones
     };
     
     // Show confirmation dialog
@@ -1102,23 +1103,21 @@ function guardarReserva() {
         confirmButtonText: 'Sí, guardar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.isConfirmed) {
-            // AJAX call to save reservation
+        if (result.isConfirmed) {            // AJAX call to save reservation
             $.ajax({
-                url: 'ajax/reservas.ajax.php',
+                url: 'ajax/servicios.ajax.php',
                 method: 'POST',
                 data: datos,
-                dataType: 'json',
-                success: function(respuesta) {
-                    if (respuesta.ok) {
+                dataType: 'json',                success: function(respuesta) {
+                    console.log('Respuesta del servidor:', respuesta);
+                    if (respuesta.status === 'success') {
                         Swal.fire({
                             title: '¡Reserva guardada!',
-                            text: respuesta.mensaje || 'La reserva se ha guardado correctamente',
+                            text: respuesta.message || 'La reserva se ha guardado correctamente',
                             icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
+                            confirmButtonText: 'Aceptar'                        }).then(() => {
                             // Reset form and refresh data
-                            limpiarFormulario();
+                            limpiarFormularioReserva();
                             // Reload reservations if we're showing them
                             if (typeof cargarReservas === 'function') {
                                 cargarReservas();
@@ -1127,7 +1126,7 @@ function guardarReserva() {
                     } else {
                         Swal.fire({
                             title: 'Error',
-                            text: respuesta.mensaje || 'No se pudo guardar la reserva',
+                            text: respuesta.message || 'No se pudo guardar la reserva',
                             icon: 'error',
                             confirmButtonText: 'Aceptar'
                         });
@@ -1372,4 +1371,57 @@ function cargarServiciosPorFechaMedico(fecha, doctorId) {
             $('#servicioSelect').html('<option value="">Error al cargar servicios</option>');
         }
     });
+}
+
+/**
+ * Verify if the reservation form is complete
+ * Enable or disable the submit button accordingly
+ */
+function verificarFormularioCompleto() {
+    // Get form values
+    const pacienteId = $('#pacienteIdNew').val() || $('#selectPacienteNew').val();
+    const fecha = $('#fechaReservaNew').val();
+    const medicoId = $('#selectMedicoNew').val();
+    const servicioId = $('#servicioSelect').val();
+    
+    // Check multiple possible hour fields
+    const horaInicio = $('#horaInicioSeleccionada').val() || 
+                      $('#horaSeleccionada').val() || 
+                      $('.hora-btn.btn-success').data('hora-inicio') ||
+                      $('.hora-slot.selected').data('hora') ||
+                      '';
+    
+    // Additional checks for UI state
+    const horaSeleccionadaUI = $('.hora-btn.btn-success').length > 0 || 
+                              $('.hora-slot.selected').length > 0;
+    
+    // Check if all required fields have values
+    const formularioCompleto = pacienteId && fecha && medicoId && servicioId && (horaInicio || horaSeleccionadaUI);
+      console.log('Verificando formulario completo:', {
+        pacienteId: !!pacienteId,
+        fecha: !!fecha,
+        medicoId: !!medicoId,
+        servicioId: !!servicioId,
+        horaInicio: horaInicio,
+        horaSeleccionadaUI: horaSeleccionadaUI,
+        detalleHora: {
+            horaInicioSeleccionada: $('#horaInicioSeleccionada').val(),
+            horaSeleccionada: $('#horaSeleccionada').val(),
+            btnSuccessCount: $('.hora-btn.btn-success').length,
+            slotSelectedCount: $('.hora-slot.selected').length,
+            btnSuccessData: $('.hora-btn.btn-success').data('hora-inicio')
+        },
+        completo: formularioCompleto
+    });
+    
+    // Enable or disable the submit button
+    if (formularioCompleto) {
+        $('#btnConfirmarReserva').prop('disabled', false);
+        console.log('Formulario completo - habilitando botón de confirmación');
+    } else {
+        $('#btnConfirmarReserva').prop('disabled', true);
+        console.log('Formulario incompleto - deshabilitando botón de confirmación');
+    }
+    
+    return formularioCompleto;
 }
