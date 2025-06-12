@@ -612,15 +612,13 @@ if (!isset($_SESSION['perfil'])) {
                                                     <div class="form-group mt-3">
                                                         <label for="observacionesNew">Observaciones:</label>
                                                         <textarea id="observacionesNew" class="form-control" rows="2" placeholder="Observaciones adicionales..."></textarea>
-                                                    </div>
-
-                                                    <!-- Tabla de reservas existentes para la fecha seleccionada -->
+                                                    </div>                                                    <!-- Tabla de reservas existentes para la fecha seleccionada -->
                                                     <div class="reservas-existentes mt-3">
                                                         <div class="reservas-header">
                                                             <h3><i class="fas fa-calendar-check"></i> Reservas existentes para esta fecha</h3>
                                                         </div>
-                                                        <div class="table-responsive horarios-container">
-                                                            <table class="table table-sm table-hover table-reservas" id="tablaReservasPorFecha">
+                                                        <div class="table-responsive datatable-container">
+                                                            <table class="table table-sm table-striped table-hover" id="tablaReservasPorFecha" width="100%">
                                                                 <thead class="bg-dark text-white">
                                                                     <tr>
                                                                         <th>Hora</th>
