@@ -814,3 +814,60 @@ body .container-fluid .content-wrapper #reservasNewTab .table-horarios .btn-circ
 .tab-content .tab-pane#tabReservasNew .compact-view .reservas-section + .reservas-section {
     margin-top: 3px;
 }
+
+/* Estilos para la tabla de reservas por fecha */
+.reservas-existentes {
+    margin-top: 8px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 5px;
+}
+
+.reservas-existentes .horarios-container {
+    height: 120px !important; /* Altura más reducida que la tabla principal */
+    margin-bottom: 0;
+}
+
+.reservas-existentes .table-reservas {
+    margin-bottom: 0;
+}
+
+.reservas-existentes .table-reservas th {
+    font-size: 12px;
+    padding: 4px 6px;
+}
+
+.reservas-existentes .table-reservas td {
+    font-size: 12px;
+    padding: 4px 6px;
+}
+
+.reservas-existentes .badge {
+    font-size: 11px;
+    padding: 3px 6px;
+}
+
+/* Estilos para los estados de las reservas */
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}

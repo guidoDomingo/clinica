@@ -614,6 +614,30 @@ if (!isset($_SESSION['perfil'])) {
                                                         <textarea id="observacionesNew" class="form-control" rows="2" placeholder="Observaciones adicionales..."></textarea>
                                                     </div>
 
+                                                    <!-- Tabla de reservas existentes para la fecha seleccionada -->
+                                                    <div class="reservas-existentes mt-3">
+                                                        <div class="reservas-header">
+                                                            <h3><i class="fas fa-calendar-check"></i> Reservas existentes para esta fecha</h3>
+                                                        </div>
+                                                        <div class="table-responsive horarios-container">
+                                                            <table class="table table-sm table-hover table-reservas" id="tablaReservasPorFecha">
+                                                                <thead class="bg-dark text-white">
+                                                                    <tr>
+                                                                        <th>Hora</th>
+                                                                        <th>Doctor</th>
+                                                                        <th>Paciente</th>
+                                                                        <th>Servicio</th>
+                                                                        <th>Estado</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="5" class="text-center">Seleccione una fecha para ver las reservas</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
 
                                                 </div>
                                                 <!-- Contenedor de horarios -->
