@@ -87,7 +87,7 @@ if (!isset($_SESSION['perfil'])) {
                             <div class="tab-content" id="custom-tabs-content">
 
                                 <!-- PESTAÑA: LISTA DE SERVICIOS -->
-                                <div class="tab-pane fade show " id="tabServicios" role="tabpanel" aria-labelledby="tab-servicios-tab">
+                                <div class="tab-pane fade" id="tabServicios" role="tabpanel" aria-labelledby="tab-servicios-tab">
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -126,7 +126,7 @@ if (!isset($_SESSION['perfil'])) {
                                 </div>
 
                                 <!-- PESTAÑA: CREAR NUEVA RESERVA -->
-                                <div class="tab-pane fade active" id="tabReserva" role="tabpanel" aria-labelledby="tab-reserva-tab">
+                                <div class="tab-pane fade" id="tabReserva" role="tabpanel" aria-labelledby="tab-reserva-tab">
                                     <div class="row">
                                         <!-- Panel izquierdo: Selección de fecha y Médico -->
                                         <div class="col-md-4">
@@ -412,7 +412,7 @@ if (!isset($_SESSION['perfil'])) {
                                     <div id="calendar"></div>
                                 </div>
                                 <!-- PESTAÑA: RESERVAS NEW -->
-                                <div class="tab-pane fade" id="tabReservasNew" role="tabpanel" aria-labelledby="tab-reservas-new-tab">
+                                <div class="tab-pane fade show active" id="tabReservasNew" role="tabpanel" aria-labelledby="tab-reservas-new-tab">
                                     <div class="reservas-new-container compact-view">
                                         <!-- Panel izquierdo -->
                                         <div class="section-left">
@@ -973,3 +973,13 @@ if (!isset($_SESSION['perfil'])) {
 <script src="view/js/slots_pagination.js"></script>
 <script src="view/js/enviar_pdf_reserva.js"></script>
 <script src="view/js/reservas_new.js"></script>
+
+<!-- Script para asegurar que la pestaña "Nueva reserva" se abra por defecto -->
+<script>
+    $(document).ready(function() {
+        // Asegurar que la pestaña "Nueva reserva" esté activa al cargar la página
+        setTimeout(function() {
+            $('#tab-reservas-new-tab').tab('show');
+        }, 100);
+    });
+</script>
