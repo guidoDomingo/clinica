@@ -107,3 +107,27 @@ Data: {
     "reg_lastname": "isnardi"
 }
 ----------------------------------------
+[2025-06-13 23:23:35] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-13 23:23:35] [INFO] [user.controller.php:22] user: angel123
+Data: angel123
+----------------------------------------
+[2025-06-13 23:23:35] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-12 18:39:20.221388",
+    "user_is_active": true,
+    "profile_photo": null,
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-13 20:02:35] [INFO] [RhPersonController.php:138] {"document_number":"000321|","birth_date":"1995-02-02","first_name":"francisca","last_name":"chavez","phone_number":"09823123358","gender":"M","record_number":"456230456","address":"sdfsdfdsfsdf","email":"francisca@francisca.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-06-13 20:02:35"}
+Data: Creating person
+----------------------------------------

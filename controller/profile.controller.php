@@ -132,7 +132,8 @@ class ControllerProfile {
         }
         
         // Configurar la ruta donde se guardará la imagen
-        $uploadDir = 'view/uploads/profile/';
+        //$uploadDir = 'view/uploads/profile/';
+        $uploadDir = __DIR__ . '/../view/uploads/profile/';
         
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
@@ -142,7 +143,8 @@ class ControllerProfile {
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $fileName = 'user_' . $userId . '_' . time() . '.' . $extension;
         $targetFile = $uploadDir . $fileName;
-        
+        $imageUrl = 'view/uploads/profile/' . $fileName;
+
         // Mover el archivo a la carpeta de destino
         if (move_uploaded_file($file['tmp_name'], $targetFile)) {
             // Actualizar la ruta de la imagen en la base de datos
@@ -153,7 +155,7 @@ class ControllerProfile {
                     "status" => "success",
                     "message" => "Foto de perfil actualizada correctamente",
                     "data" => [
-                        "photo_url" => $targetFile
+                        "photo_url" => $imageUrl
                     ]
                 ];
             } else {

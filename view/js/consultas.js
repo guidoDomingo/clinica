@@ -592,6 +592,8 @@ function guardarConsulta() {
                     if (btnEnviarWhatsApp) {
                         btnEnviarWhatsApp.disabled = false;
                     }
+
+                    limpiarFormularioConsulta();
                 }
             }
             

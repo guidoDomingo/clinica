@@ -610,11 +610,11 @@ class SysUserController
             Response::error(['message' => 'Invalid file type. Only JPG, PNG and GIF are allowed'], 400);
             return;
         }
-        
-        // Validate file size (max 2MB)
-        $maxSize = 2 * 1024 * 1024; // 2MB
+
+        // Validate file size (max 10MB)
+        $maxSize = 10 * 1024 * 1024; // 10MB
         if ($file['size'] > $maxSize) {
-            Response::error(['message' => 'File too large. Maximum size is 2MB'], 400);
+            Response::error(['message' => 'File too large. Maximum size is 10MB'], 400);
             return;
         }
         

@@ -118,3 +118,85 @@
 
 )
 
+[2025-06-14 00:26:23][CONSULTA] Iniciando proceso de guardar consulta 
+[POST] => Array
+(
+    [txtdocumento] => 000321|
+    [txtficha] => 456230456
+    [txtnombre] => francisca chavez
+    [idPersona] => 59
+    [motivoscomunes] => 1
+    [formatoConsulta] => 9
+    [txtmotivo] => Dolor de diente
+    [visionod] => 2345
+    [visionoi] => 345
+    [tensionod] => 345
+    [tensionoi] => 345
+    [consulta-textarea] => <p><font color="#000000" style="background-color: rgb(255, 255, 0);"><span style="font-size: 24px;"><b>pruebaaaaaaaaaaaaaaaaaa</b></span></font></p>
+    [formatoreceta] => Seleccionar
+    [receta-textarea] => <p><br></p><p><strong>IBUDOLANET</strong> (GRAMON PARAGUAY)</p><p>Indicaciones: tomar cada 5 minutos</p>
+    [txtnota] => asdasd
+    [proximaconsulta] => 
+    [whatsapptxt] => 
+    [email] => 
+    [id_user] => 9
+    [id_reserva] => 0
+    [medico_id] => 1
+    [id_consulta_actual] => 
+)
+
+[FILES] => Array
+(
+    [files] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+
+[2025-06-14 00:42:27][CONSULTA] Iniciando proceso de guardar consulta 
+[POST] => Array
+(
+    [txtdocumento] => 000321|
+    [txtficha] => 456230456
+    [txtnombre] => francisca chavez
+    [idPersona] => 59
+    [motivoscomunes] => 1
+    [formatoConsulta] => 9
+    [txtmotivo] => Dolor de diente
+    [visionod] => 234
+    [visionoi] => 234
+    [tensionod] => 24
+    [tensionoi] => 234
+    [consulta-textarea] => <p><font color="#000000" style="background-color: rgb(255, 255, 0);"><span style="font-size: 24px;"><b>pruebaaaaaaaaaaaaaaaaaa</b></span></font></p>
+    [formatoreceta] => Seleccionar
+    [receta-textarea] => <p><br></p><p><strong>CARDIOASPIRINA</strong> (BAYER)</p><p>Indicaciones: cada 10 minutos</p>
+    [txtnota] => aspirina
+    [proximaconsulta] => 
+    [whatsapptxt] => 
+    [email] => 
+    [id_user] => 9
+    [id_reserva] => 0
+    [medico_id] => 1
+    [id_consulta_actual] => 
+)
+
+[FILES] => Array
+(
+    [files] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+
