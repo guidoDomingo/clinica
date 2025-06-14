@@ -48,12 +48,42 @@ class ControllerUser {
                     else if ($storedHash === $password) {
                         $passwordValid = true;
                     }
-                    
-                    if ($passwordValid) {
+                      if ($passwordValid) {
                         $_SESSION["iniciarSesion"] = "ok";
-                        $_SESSION["perfil_user"] = "ADMIN"; // You might want to get this from user roles table
                         $_SESSION["usuario"] = $user['reg_name'] . ' ' . $user['reg_lastname'];
                         $_SESSION["user_id"] = $user['user_id'];
+                        $_SESSION["profile_photo"] = $user['profile_photo'];
+                        
+                        // Obtener roles del usuario desde la base de datos
+                        try {
+                            $rolesStmt = $db->prepare("
+                                SELECT r.role_name 
+                                FROM sys_user_roles ur
+                                JOIN sys_roles r ON ur.role_id = r.role_id
+                                WHERE ur.user_id = :user_id
+                            ");
+                            $rolesStmt->execute(['user_id' => $user['user_id']]);
+                            $roles = $rolesStmt->fetchAll(PDO::FETCH_COLUMN);
+                            
+                            // Si no tiene roles asignados, asignar un rol por defecto (puedes ajustar esto según tus necesidades)
+                            if (empty($roles)) {
+                                $_SESSION["perfil_user"] = "USER";
+                            } else {
+                                // Si es admin, guardarlo específicamente
+                                if (in_array('admin', $roles)) {
+                                    $_SESSION["perfil_user"] = "ADMIN";
+                                } else {
+                                    $_SESSION["perfil_user"] = $roles[0]; // Usar el primer rol como perfil principal
+                                }
+                                
+                                // Guardar todos los roles en la sesión para uso futuro
+                                $_SESSION["roles"] = $roles;
+                            }
+                        } catch (PDOException $e) {
+                            // Si hay error al consultar roles, asignar un rol por defecto
+                            $_SESSION["perfil_user"] = "USER";
+                            error_log("Error al consultar roles del usuario: " . $e->getMessage());
+                        }
                         
                         // Guardar el ID del doctor si existe en alguna tabla relacionada
                         $doctorId = self::obtenerDoctorIdPorUsuario($user['user_id']);

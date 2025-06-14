@@ -131,3 +131,138 @@ Data: {
 [2025-06-13 20:02:35] [INFO] [RhPersonController.php:138] {"document_number":"000321|","birth_date":"1995-02-02","first_name":"francisca","last_name":"chavez","phone_number":"09823123358","gender":"M","record_number":"456230456","address":"sdfsdfdsfsdf","email":"francisca@francisca.com","department_id":1,"city_id":1,"is_minor":false,"guardian_name":null,"guardian_document":null,"is_active":true,"created_at":"2025-06-13 20:02:35"}
 Data: Creating person
 ----------------------------------------
+[2025-06-14 15:32:06] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-14 15:32:06] [INFO] [user.controller.php:22] user: angel123
+Data: angel123
+----------------------------------------
+[2025-06-14 15:32:06] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-14 10:45:01.035471",
+    "user_is_active": true,
+    "profile_photo": "user_9_1749859280.JPG",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-14 15:44:57] [INFO] [user.controller.php:21] user: juan.perez@example.com
+Data: juan.perez@example.com
+----------------------------------------
+[2025-06-14 15:44:57] [INFO] [user.controller.php:22] user: aa2e2bc2c8de834e7a906a2813787979
+Data: aa2e2bc2c8de834e7a906a2813787979
+----------------------------------------
+[2025-06-14 15:44:57] [INFO] [user.controller.php:33] Login attempt for user: juan.perez@example.com
+Data: 
+----------------------------------------
+[2025-06-14 15:45:11] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-14 15:45:11] [INFO] [user.controller.php:22] user: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+Data: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+----------------------------------------
+[2025-06-14 15:45:11] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-14 11:32:06.370386",
+    "user_is_active": true,
+    "profile_photo": "user_9_1749859280.JPG",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-14 15:48:23] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-14 15:48:23] [INFO] [user.controller.php:22] user: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+Data: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+----------------------------------------
+[2025-06-14 15:48:23] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-14 11:45:11.901469",
+    "user_is_active": true,
+    "profile_photo": "user_9_1749859280.JPG",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-14 15:57:47] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-14 15:57:47] [INFO] [user.controller.php:22] user: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+Data: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+----------------------------------------
+[2025-06-14 15:57:47] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-14 11:48:23.451271",
+    "user_is_active": true,
+    "profile_photo": "user_9_1749859280.JPG",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-14 18:02:27] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-14 18:02:27] [INFO] [user.controller.php:22] user: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+Data: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+----------------------------------------
+[2025-06-14 18:02:27] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-14 11:57:47.680106",
+    "user_is_active": true,
+    "profile_photo": "user_9_1749859280.JPG",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------
+[2025-06-14 18:15:31] [INFO] [user.controller.php:21] user: angel@angel.com
+Data: angel@angel.com
+----------------------------------------
+[2025-06-14 18:15:31] [INFO] [user.controller.php:22] user: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+Data: $2y$10$SkQZfw11AR9V/fZt/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW
+----------------------------------------
+[2025-06-14 18:15:31] [INFO] [user.controller.php:33] Login attempt for user: angel@angel.com
+Data: {
+    "user_id": 9,
+    "reg_id": 9,
+    "user_email": "angel@angel.com",
+    "user_pass": "$2y$10$SkQZfw11AR9V\/fZt\/eZWkOnwhDFI7CEWX1KGKbNgdYi.j7H0oY.hW",
+    "user_expire": "2025-07-09 07:08:03.380971",
+    "user_first_login": null,
+    "user_last_login": "2025-06-14 14:02:27.345741",
+    "user_is_active": true,
+    "profile_photo": "user_9_1749859280.JPG",
+    "reg_name": "angel",
+    "reg_lastname": "isnardi"
+}
+----------------------------------------

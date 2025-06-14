@@ -12,7 +12,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="view/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                <img src="view/uploads/profile/<?php echo isset($_SESSION['profile_photo']) ? $_SESSION['profile_photo'] : 'user2-160x160.jpg'; ?>" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <a href="#"
@@ -31,13 +31,13 @@
                         <p>Inicio</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('ver_consultas'); ?>">
                     <a href="index.php?ruta=consultas" class="nav-link">
                         <i class="nav-icon fas fa-stethoscope"></i>
                         <p>Consultas</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('ver_agenda'); ?>">
                     <a href="index.php?ruta=citas" class="nav-link">
                         <i class="nav-icon fas fa-calendar-alt"></i>
                         <p>Citas</p>
@@ -49,37 +49,38 @@
                         <p>Personas</p>
                     </a>
                 </li> -->
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('ver_pacientes'); ?>">
                     <a href="index.php?ruta=rhpersonas" class="nav-link">
                         <i class="nav-icon fas fa-user-md"></i>
                         <p>Personas</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('ver_preformatos'); ?>">
                     <a href="index.php?ruta=preformatos" class="nav-link">
                         <i class="nav-icon fas fa-file-alt"></i>
                         <p>Preformatos</p>
                     </a>
-                </li>                <li class="nav-item">
+                </li>
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('ver_agenda'); ?>">
                     <a href="index.php?ruta=agendas" class="nav-link">
                         <i class="nav-icon fas fa-calendar-check"></i>
                         <p>Agendas</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('ver_servicios'); ?>">
                     <a href="index.php?ruta=servicios" class="nav-link">
                         <i class="nav-icon fas fa-notes-medical"></i>
                         <p>Servicios</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('administrar_servicios'); ?>">
                     <a href="index.php?ruta=rs_servicios" class="nav-link">
                         <i class="nav-icon fas fa-briefcase-medical"></i>
                         <p>Gestión de Servicios</p>
                     </a>
                 </li>
                 <li class="nav-header">CONFIGURACIÓN</li>
-                <li class="nav-item">
+                <li class="nav-item <?php echo mostrar_si_tiene_permiso('administrar_roles'); ?>">
                     <a href="index.php?ruta=roles" class="nav-link">
                         <i class="nav-icon fas fa-user-tag"></i>
                         <p>Roles y Permisos</p>

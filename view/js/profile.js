@@ -267,6 +267,11 @@ function uploadProfilePhoto() {
                     } else {
                         loadUserProfile(); // Recargar todo el perfil
                     }
+
+                    setInterval(() => {
+                        window.location.reload(); // Recargar la página para reflejar los cambios
+                    }, 2000); // Actualizar la imagen cada segundo para evitar caché
+                    
                 } else {
                     Swal.fire('Error', data.message || 'Error al actualizar la foto de perfil', 'error');
                 }

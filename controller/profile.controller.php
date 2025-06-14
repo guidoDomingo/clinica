@@ -151,6 +151,9 @@ class ControllerProfile {
             $result = ModelProfile::mdlUpdateProfilePhoto($userId, $fileName);
             
             if ($result === "ok") {
+
+                $_SESSION["profile_photo"] = $fileName; // Actualizar la sesión con la nueva foto de perfil
+                
                 return [
                     "status" => "success",
                     "message" => "Foto de perfil actualizada correctamente",

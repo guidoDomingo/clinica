@@ -3,7 +3,8 @@
         session_start();
    }
 
-
+   // Incluir helper de permisos
+   include_once "view/helpers/permisos_helper.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +13,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AdminLTE 3 | Legacy User Menu</title>
-
+    <link rel="icon" href="data:,">
+    
     <link rel="stylesheet" href="view/css/custom.css">
 
     <!-- Google Font: Source Sans Pro -->
@@ -133,10 +135,62 @@ if (isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"] == "ok") {
         $_SESSION['check_profile_on_next_page'] = true;
     }
     
-    // Manejo de páginas con inicio de sesión    
+    // Manejo de páginas con inicio de sesión      
     if(isset($_GET["ruta"])){
         if ($_GET["ruta"] == "home" || $_GET["ruta"] == "logout"|| $_GET["ruta"] == "consultas" || $_GET["ruta"] == "personas" || $_GET["ruta"] == "roles" || $_GET["ruta"] == "perfil" || $_GET["ruta"] == "rhpersonas" || $_GET["ruta"] == "preformatos" || $_GET["ruta"] == "agendas" || $_GET["ruta"] == "servicios" || $_GET["ruta"] == "rs_servicios") {
-            include "view/modules/".$_GET["ruta"].".php";
+            
+            // Verificar permisos para acceder a ciertas rutas
+            $requierePermiso = false;
+            $permisoRequerido = '';
+            
+            switch ($_GET["ruta"]) {
+                case "roles":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'administrar_roles';
+                    break;
+                case "consultas":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'ver_consultas';
+                    break;
+                case "agendas":
+                case "citas":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'ver_agenda';
+                    break;
+                case "rhpersonas":
+                case "personas":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'ver_pacientes';
+                    break;
+                case "servicios":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'ver_servicios';
+                    break;
+                case "rs_servicios":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'administrar_servicios';
+                    break;
+                case "preformatos":
+                    $requierePermiso = true;
+                    $permisoRequerido = 'ver_preformatos';
+                    break;
+            }
+            
+            // Verificar si la ruta requiere un permiso específico
+            if ($requierePermiso && !tiene_permiso($permisoRequerido)) {
+                echo '<script>
+                    Swal.fire({
+                        icon: "error",
+                        title: "Acceso denegado",
+                        text: "No tienes permiso para acceder a esta sección",
+                        showConfirmButton: true
+                    }).then(function() {
+                        window.location.href = "index.php?ruta=home";                    });
+                </script>';
+                include "view/modules/home.php";
+            } else {
+                include "view/modules/".$_GET["ruta"].".php";
+            }
         } else {
             include "view/modules/404.php";
         }
@@ -229,10 +283,27 @@ switch ($ruta) {
         echo '<script src="view/js/rs_servicios.js"></script>';
         echo '<script src="view/js/reservas_confirmacion.js"></script>';
         break;
-        
-    // Caso por defecto para el home o páginas que no requieren JS específico
+          // Caso por defecto para el home o páginas que no requieren JS específico
     default:
         break;
+}
+
+// Siempre cargar el script de permisos
+echo '<script src="view/js/permisos.js"></script>';
+
+// Si el usuario está logueado, pasamos los permisos a JavaScript
+if (isset($_SESSION['user_id'])) {
+    $permisos = get_permisos_usuario();
+    $roles = get_roles_usuario();
+    
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            initPermisos({
+                permisos: '.json_encode($permisos).',
+                roles: '.json_encode($roles).'
+            });
+        });
+    </script>';
 }
 ?>
 </body>
