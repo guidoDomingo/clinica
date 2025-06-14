@@ -200,3 +200,44 @@
 
 )
 
+[2025-06-14 01:16:13][CONSULTA] Iniciando proceso de guardar consulta 
+[POST] => Array
+(
+    [txtdocumento] => 000321|
+    [txtficha] => 456230456
+    [txtnombre] => francisca chavez
+    [idPersona] => 59
+    [motivoscomunes] => 1
+    [formatoConsulta] => 9
+    [txtmotivo] => Dolor de diente
+    [visionod] => 34
+    [visionoi] => 45
+    [tensionod] => 34
+    [tensionoi] => 54
+    [consulta-textarea] => <p><font color="#000000" style="background-color: rgb(255, 255, 0);"><span style="font-size: 24px;"><b>pruebaaaaaaaaaaaaaaaaaa</b></span></font></p>
+    [formatoreceta] => Seleccionar
+    [receta-textarea] => <p><br></p><p><strong>FUSIMED CREMA</strong> (PABLO CASSARA)</p><p>Indicaciones: cada 10 minutos</p>
+    [txtnota] => Indicaciones: cada 10 minutos
+    [proximaconsulta] => 
+    [whatsapptxt] => 
+    [email] => 
+    [id_user] => 9
+    [id_reserva] => 0
+    [medico_id] => 1
+    [id_consulta_actual] => 
+)
+
+[FILES] => Array
+(
+    [files] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+

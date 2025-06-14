@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#perDpto").on("change", function() {
         cargarCiudades($(this).val(), "#perCity");
     });
+
 });
 
 function abrirModalNuevaPersona() {
@@ -286,7 +287,9 @@ function buscarPersona() {
                 
                 // Actualizar tabla de consultas con solo las del paciente seleccionado
                 inicializarTablaConsultas(persona.id_persona);
-                
+
+                mostrarHistorialConsultas(persona.id_persona);
+
                 Swal.fire({
                     position: "center",
                     icon: "success",
@@ -398,6 +401,9 @@ function mostrarSeleccionPaciente(pacientes) {
             obtenerCuota(id);
             cargarUltimaConsulta(id);
             inicializarTablaConsultas(id);
+            console.log('Paciente seleccionado:', nombre, 'ID:', id);
+            alert('Paciente seleccionado: ' + nombre);
+            mostrarHistorialConsultas(id);
             
             Swal.fire({
                 position: "center",
@@ -593,6 +599,8 @@ function guardarConsulta() {
                         btnEnviarWhatsApp.disabled = false;
                     }
 
+                    actualizarTablaConsultas();
+
                     limpiarFormularioConsulta();
                 }
             }
@@ -677,7 +685,7 @@ function mostrarHistorialConsultas(idPersona) {
     timelineContainer.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-3x"></i><p>Cargando historial de consultas...</p></div>';
     
     // Activar la pestaña de Timeline
-    $('a[href="#timeline"]').tab('show');
+    //$('a[href="#timeline"]').tab('show');
     
     // Crear objeto FormData para enviar los datos
     const formData = new FormData();
@@ -2032,6 +2040,7 @@ function inicializarTablaConsultas(idPaciente) {
                             console.log('Se encontraron ' + (Array.isArray(preCheck) ? preCheck.length : 'desconocido') + ' registros.');
                             
                             // Proceder con la inicialización de la tabla
+                            mostrarHistorialConsultas(idPaciente);
                             initializeDataTableWithData(idPaciente);
                         } catch (parseError) {
                             console.error('Error al parsear respuesta de pre-verificación:', parseError);
@@ -2946,3 +2955,23 @@ window.testParametrosURL = function(pacienteId, reservaId) {
     // Ejecutar la función de procesamiento
     procesarParametrosURL();
 };
+
+function actualizarTablaConsultas() {
+    console.log('Actualizando tabla de consultas...');
+    
+    if (window.tablaConsultasInstance && $.fn.DataTable.isDataTable('#tabla-consultas')) {
+        // Guardar la página actual antes de recargar
+        const currentPage = window.tablaConsultasInstance.page();
+        
+        // Recargar manteniendo la página actual 
+        window.tablaConsultasInstance.ajax.reload(function() {
+            // Volver a la misma página si existía
+            if (currentPage !== undefined) {
+                window.tablaConsultasInstance.page(currentPage).draw('page');
+            }
+        }, false); // false = no resetear paginación
+    } else {
+        const idPaciente = $('#id_persona').val() || null;
+        initializeDataTableWithData(idPaciente);
+    }
+}

@@ -4309,3 +4309,189 @@ Parameters: {
 [2025-06-13 20:41:21] [INFO] [Model.php:175]
 SQL: SELECT COUNT(*) as total FROM rh_person
 ----------------------------------------
+[2025-06-13 21:15:09] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-13 21:15:09] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-13 21:15:09] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-06-13 21:17:22] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-13 21:17:22] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-13 21:17:22] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-06-13 21:24:06] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-13 21:24:06] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-13 21:24:06] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-06-13 21:35:00] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-13 21:35:00] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-13 21:35:00] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-06-13 21:35:06] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-13 21:35:06] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-13 21:35:06] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
+[2025-06-13 21:35:11] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%fran%"
+}
+----------------------------------------
+[2025-06-13 21:35:15] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:15] [INFO] [Model.php:175]
+SQL: SELECT e.* FROM especialidades e INNER JOIN persona_especialidad pe ON e.especialidad_id = pe.especialidad_id WHERE pe.persona_id = :persona_id AND e.activo = true
+Parameters: {
+    "persona_id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE document_number = :document_number
+Parameters: {
+    "document_number": "000321"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Model.php:143]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "000321",
+    "birth_date": "1995-02-02",
+    "first_name": "francisca",
+    "last_name": "chavez",
+    "phone_number": "09823123358",
+    "gender": "M",
+    "record_number": "456230456",
+    "address": "sdfsdfdsfsdf",
+    "email": "francisca@francisca.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-06-13 21:35:23",
+    "id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Database.php:281]
+SQL: UPDATE rh_person SET document_number = :document_number, birth_date = :birth_date, first_name = :first_name, last_name = :last_name, phone_number = :phone_number, gender = :gender, record_number = :record_number, address = :address, email = :email, department_id = :department_id, city_id = :city_id, is_minor = :is_minor, guardian_name = :guardian_name, guardian_document = :guardian_document, last_modified_at = :last_modified_at WHERE person_id = :id
+Parameters: {
+    "document_number": "000321",
+    "birth_date": "1995-02-02",
+    "first_name": "francisca",
+    "last_name": "chavez",
+    "phone_number": "09823123358",
+    "gender": "M",
+    "record_number": "456230456",
+    "address": "sdfsdfdsfsdf",
+    "email": "francisca@francisca.com",
+    "department_id": 1,
+    "city_id": 1,
+    "is_minor": false,
+    "guardian_name": null,
+    "guardian_document": null,
+    "last_modified_at": "2025-06-13 21:35:23",
+    "id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Database.php:231]
+SQL: SELECT * FROM rh_person WHERE person_id = :id
+Parameters: {
+    "id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Model.php:175]
+SQL: DELETE FROM persona_especialidad WHERE persona_id = :persona_id
+Parameters: {
+    "persona_id": "59"
+}
+----------------------------------------
+[2025-06-13 21:35:23] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person WHERE first_name ILIKE :name ORDER BY person_id DESC
+Parameters: {
+    "name": "%fran%"
+}
+----------------------------------------
+[2025-06-13 21:56:05] [INFO] [Database.php:219]
+SQL: SELECT * FROM especialidades WHERE activo = :value
+Parameters: {
+    "value": true
+}
+----------------------------------------
+[2025-06-13 21:56:05] [INFO] [Model.php:175]
+SQL: SELECT * FROM rh_person ORDER BY person_id DESC LIMIT :limit OFFSET :offset
+Parameters: {
+    "limit": 10,
+    "offset": 0
+}
+----------------------------------------
+[2025-06-13 21:56:05] [INFO] [Model.php:175]
+SQL: SELECT COUNT(*) as total FROM rh_person
+----------------------------------------
