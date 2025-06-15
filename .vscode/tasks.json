@@ -10,4 +10,4 @@
 			"problemMatcher": []
 		}
 	]
-}
+}  {" label\: \Open ICD-11 Advanced Test in browser\, \type\: \shell\, \command\: \start http://localhost/clinica/test_icd11_advanced.php\, \group\: \test\, \isBackground\: false},
