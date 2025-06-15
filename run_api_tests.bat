@@ -1,0 +1,6 @@
+@echo off
+echo Ejecutando tests de API ICD-11...
+powershell -ExecutionPolicy Bypass -File "%~dp0test_api_powershell.ps1"
+echo.
+echo Presiona cualquier tecla para cerrar...
+pause > nul

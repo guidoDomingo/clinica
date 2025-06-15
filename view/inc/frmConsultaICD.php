@@ -1,4 +1,3 @@
-
 <div class="container icd11-container">
     <!-- Contenedor para alertas -->
     <div id="alerts-container"></div>
@@ -9,8 +8,19 @@
                 <div class="card-header bg-primary text-white">
                     <h2 class="mb-0">Herramienta de Codificación ICD-11</h2>
                 </div>
-                <div class="card-body">
-                    <div class="mb-4">
+                <div class="card-body">                } finally {
+                    // Restaurar el botón
+                    searchButton.innerHTML = '<i class="fas fa-search"></i> Buscar';
+                    searchButton.disabled = false;
+                    
+                    // Registrar estado del cliente para depuración
+                    if (window.icd11Client) {
+                        console.log('Cliente ICD-11 disponible. Estado:', 
+                            window.icd11Client.initialized ? 'Inicializado' : 'No inicializado');
+                    } else {
+                        console.error('¡ALERTA! El cliente ICD-11 no está disponible en el objeto window');
+                    }
+                }<div class="mb-4">
                         <p>Esta página integra la herramienta oficial de codificación ICD-11 de la Organización Mundial de la Salud.</p>
                     </div>
 
@@ -62,9 +72,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> -->
-
-                    <!-- Instrucciones de uso -->
+                    </div> -->                    <!-- Instrucciones de uso -->
                     <div class="alert alert-info mb-4" role="alert">
                         <h5><i class="fas fa-info-circle"></i> Instrucciones de uso:</h5>
                         <ol>
@@ -74,7 +82,44 @@
                             <li>También puede ingresar manualmente el diagnóstico si lo prefiere</li>
                             <li>Haga clic en "Guardar selección" para utilizar estos valores</li>
                         </ol>
-                        <p class="mb-0"><strong>Consejo:</strong> Puede ver el código seleccionado en la barra de estado de la herramienta donde dice "Seleccionado: XXX"</p>
+                        <p class="mb-0"><strong>Consejo:</strong> Puede ver el código seleccionado en la barra de estado de la herramienta donde dice "Seleccionado: XXX"</p>                        <div class="mt-2 border-top pt-2">
+                            <p class="mb-0">
+                                <i class="fas fa-shield-alt text-success"></i> 
+                                <strong>IMPORTANTE:</strong> Este sistema solo utiliza datos oficiales de la API de ICD-11 de la OMS. 
+                                <span class="badge bg-success">No hay datos locales, respuestas predefinidas o autocompletadas</span>
+                            </p>
+                            <small class="text-muted">Todos los resultados provienen directamente de la API oficial de la OMS.</small>
+                              <!-- Panel de herramientas y diagnóstico -->
+                            <div class="mt-3 d-flex flex-wrap gap-2">
+                                <a href="icd11_reference_codes.php" target="_blank" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-list-ul"></i> Códigos de Referencia
+                                </a>
+                                <a href="debug_icd.php" target="_blank" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-bug"></i> Depurar Conexión
+                                </a>
+                                <a href="test_icd11_class.php" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-wrench"></i> Diagnóstico de API
+                                </a>
+                                <a href="icd11_check_requirements.php" target="_blank" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-check-circle"></i> Verificar Requisitos
+                                </a>
+                            </div><!-- Notas sobre posibles errores -->
+                            <div class="mt-3 small">
+                                <p class="mb-1"><i class="fas fa-info-circle text-primary"></i> <strong>Consejos para la búsqueda por código:</strong></p>
+                                <ul class="mb-1">
+                                    <li><strong>Códigos válidos conocidos:</strong> MB36 (Diabetes), BA00 (Hipertensión), CA20.Z (Gripe)</li>
+                                    <li>Use códigos ICD-11 específicos y completos (ej. MB36.0 en lugar de M12)</li>
+                                    <li>Si un código no funciona, intente con la búsqueda por término en su lugar</li>
+                                </ul>
+                                
+                                <p class="mb-1 mt-2"><i class="fas fa-exclamation-triangle text-warning"></i> <strong>Solución de problemas:</strong></p>
+                                <ul class="mb-1">
+                                    <li><strong>Error 400:</strong> Falta el encabezado API-Version (corregido en esta versión)</li>
+                                    <li><strong>Error 404:</strong> El código no existe en la base de datos ICD-11</li>
+                                    <li><strong>Otros errores:</strong> Verificar conexión a Internet y usar las herramientas de diagnóstico</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Contenedor para la herramienta de codificación -->
@@ -102,6 +147,137 @@
     </div>
 </div>
 
+<!-- Implementación interna del cliente ICD-11 para evitar problemas de carga -->
+<script>
+// Cliente simplificado para la API ICD-11
+class ICD11ApiClient {
+    constructor() {
+        this.endpoint = 'ajax/icd11.ajax.php';
+        this.initialized = false;
+    }
+    
+    // Inicializa el cliente
+    async initialize() {
+        if (this.initialized) {
+            return Promise.resolve(true);
+        }
+        
+        try {
+            // Probar conectividad con el endpoint
+            const formData = new FormData();
+            formData.append('action', 'searchByCode');
+            formData.append('code', 'MD12'); // Código de prueba
+            
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+            }
+            
+            const jsonResponse = await response.json();
+            if (!jsonResponse.success) {
+                throw new Error(`Error en la API: ${jsonResponse.message || 'Desconocido'}`);
+            }
+            
+            console.log('API ICD-11 funcionando correctamente');
+            this.initialized = true;
+            return true;
+        } catch (error) {
+            console.error('Error al inicializar el cliente ICD-11:', error);
+            throw error;
+        }
+    }
+    
+    // Busca un término en la API
+    async searchByTerm(term, language = 'es') {
+        if (!term) {
+            return Promise.reject(new Error('El término es requerido'));
+        }
+        
+        if (!this.initialized) {
+            await this.initialize();
+        }
+        
+        const formData = new FormData();
+        formData.append('action', 'searchByTerm');
+        formData.append('term', term);
+        formData.append('language', language);
+        
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+            }
+            
+            const jsonResponse = await response.json();
+            if (!jsonResponse.success) {
+                throw new Error(jsonResponse.message || 'Error desconocido en la respuesta del servidor');
+            }
+            
+            return jsonResponse.data;
+        } catch (error) {
+            console.error('Error en solicitud searchByTerm:', error);
+            throw error;
+        }
+    }
+    
+    // Busca un código en la API
+    async searchByCode(code) {
+        if (!code) {
+            return Promise.reject(new Error('El código es requerido'));
+        }
+        
+        if (!this.initialized) {
+            await this.initialize();
+        }
+        
+        const formData = new FormData();
+        formData.append('action', 'searchByCode');
+        formData.append('code', code);
+        
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+            }
+            
+            const jsonResponse = await response.json();
+            if (!jsonResponse.success) {
+                throw new Error(jsonResponse.message || 'Error desconocido en la respuesta del servidor');
+            }
+            
+            return jsonResponse.data;
+        } catch (error) {
+            console.error('Error en solicitud searchByCode:', error);
+            throw error;
+        }
+    }
+}
+
+// Crear la instancia global
+window.icd11Client = new ICD11ApiClient();
+console.log('Cliente ICD-11 creado. Se inicializará cuando sea necesario.');
+</script>
 <script>
     function handleIframeError() {
         document.getElementById('loading-spinner').innerHTML =
@@ -311,9 +487,164 @@
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
+            });        }
+    });
+</script>
+
+<script>
+    // Código para integración directa con la API de ICD-11
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar botón directo para búsqueda API
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'card mb-3';
+        searchContainer.innerHTML = `
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Búsqueda directa API ICD-11</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="api-search-term">Buscar término médico:</label>
+                            <input type="text" id="api-search-term" class="form-control" placeholder="Ej: tos, diabetes, covid">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button id="btn-api-search" class="btn btn-primary btn-block">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="api-results" class="mt-3" style="display: none;">
+                    <h6>Resultados de búsqueda:</h6>
+                    <div class="list-group" id="api-results-list">
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Insertar el contenedor de búsqueda antes del iframe
+        const iframeContainer = document.querySelector('.coding-tool-container');
+        if (iframeContainer) {
+            iframeContainer.parentNode.insertBefore(searchContainer, iframeContainer);
+        }
+        
+        // Configurar evento para el botón de búsqueda
+        const searchButton = document.getElementById('btn-api-search');
+        const searchInput = document.getElementById('api-search-term');
+        const resultsContainer = document.getElementById('api-results');
+        const resultsList = document.getElementById('api-results-list');
+        
+        if (searchButton && searchInput) {
+            searchButton.addEventListener('click', async () => {
+                const term = searchInput.value.trim();
+                if (!term) return;
+                
+                // Mostrar spinner
+                searchButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...';
+                searchButton.disabled = true;                try {
+                    // Verificar que existe el cliente (debería existir siempre con nuestra implementación interna)
+                    if (!window.icd11Client) {
+                        console.error('El cliente ICD-11 no está disponible');
+                        throw new Error('Error interno: cliente ICD-11 no disponible. Por favor, recargue la página.');
+                    }
+                    
+                    // Iniciar búsqueda (la inicialización se maneja dentro de searchByTerm)
+                    console.log('Ejecutando búsqueda con término:', term);
+                    const results = await window.icd11Client.searchByTerm(term);
+                    
+                    // Vaciar y mostrar contenedor de resultados
+                    resultsList.innerHTML = '';
+                    resultsContainer.style.display = 'block';
+                      // Si no hay resultados válidos de la API
+                    if (!results || !results.destinationEntities || results.destinationEntities.length === 0) {
+                        resultsList.innerHTML = '<div class="alert alert-info">No se encontraron resultados para este término en la API oficial de ICD-11</div>';
+                        return;
+                    }
+                    
+                    // Mostrar los resultados
+                    results.destinationEntities.slice(0, 10).forEach(entity => {
+                        const code = entity.theCode || '';
+                        const title = entity.title || '';
+                        
+                        const item = document.createElement('a');
+                        item.href = '#';
+                        item.className = 'list-group-item list-group-item-action';
+                        item.innerHTML = `
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${code}</h6>
+                            </div>
+                            <p class="mb-1">${title}</p>
+                        `;
+                        
+                        // Evento para seleccionar el código
+                        item.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            
+                            // Disparar evento de código seleccionado
+                            window.icd11Client.dispatchCodeSelected({
+                                code: code,
+                                title: title,
+                                uri: entity.uri || ''
+                            });
+                        });
+                        
+                        resultsList.appendChild(item);
+                    });                } catch (error) {
+                    console.error('Error al buscar término:', error);                    // Mostrar mensaje de error adaptado al tipo
+                    if (error.message.includes('no disponible') || error.message.includes('Error interno')) {
+                        resultsList.innerHTML = `
+                            <div class="alert alert-danger">
+                                <h5>Error en el cliente ICD-11</h5>
+                                <p>${error.message}</p>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-outline-danger" onclick="location.reload()">
+                                        <i class="fas fa-sync"></i> Recargar página
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        resultsList.innerHTML = `
+                            <div class="alert alert-danger">
+                                <h5>Error en la API de ICD-11</h5>
+                                <p>${error.message || 'Error desconocido'}</p>
+                                <small>Solo se utilizan datos oficiales de la API de ICD-11. No hay respuestas locales o autocompletadas.</small>
+                            </div>
+                        `;
+                    }
+                    
+                    resultsContainer.style.display = 'block';
+                } finally {
+                    // Restaurar botón
+                    searchButton.innerHTML = '<i class="fas fa-search"></i> Buscar';
+                    searchButton.disabled = false;
+                }
+            });
+            
+            // Permitir buscar presionando Enter
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchButton.click();
+                }
             });
         }
     });
 </script>
 
+<script>    // Función simplificada para manejar errores de API
+    function handleApiError(error) {
+        console.error('Error en la API de ICD-11:', error);
+        showAlert('danger', 'Error en la API de ICD-11: ' + error.message);
+    }
+    
+    // Inicializar el cliente cuando sea necesario
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Documento cargado. El cliente ICD-11 se inicializará en la primera búsqueda.');
+    });
+</script>
 
