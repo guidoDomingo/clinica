@@ -154,6 +154,13 @@ class ICD11ApiClient {
     constructor() {
         this.endpoint = 'ajax/icd11.ajax.php';
         this.initialized = false;
+        
+        // Evento personalizado para cuando se selecciona un código
+        this.codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
+            bubbles: true,
+            cancelable: true,
+            detail: null
+        });
     }
     
     // Inicializa el cliente
@@ -233,8 +240,7 @@ class ICD11ApiClient {
             throw error;
         }
     }
-    
-    // Busca un código en la API
+      // Busca un código en la API
     async searchByCode(code) {
         if (!code) {
             return Promise.reject(new Error('El código es requerido'));
@@ -246,9 +252,7 @@ class ICD11ApiClient {
         
         const formData = new FormData();
         formData.append('action', 'searchByCode');
-        formData.append('code', code);
-        
-        try {
+        formData.append('code', code);        try {
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 body: formData,
@@ -272,11 +276,76 @@ class ICD11ApiClient {
             throw error;
         }
     }
+    
+    /**
+     * Dispara el evento de código seleccionado
+     * @param {Object} data - Datos del código seleccionado (code, title, uri)
+     */
+    dispatchCodeSelected(data) {
+        // Asegurar que recibimos datos válidos
+        if (!data || !data.code) {
+            console.error('Datos de código seleccionado inválidos:', data);
+            return;
+        }
+        
+        // Crear un evento personalizado
+        const codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
+            bubbles: true,
+            cancelable: true,
+            detail: data
+        });
+        
+        // Disparar el evento en el documento
+        document.dispatchEvent(codeSelectedEvent);
+        
+        // Actualizar los campos de código y diagnóstico si existen
+        try {
+            const codeField = document.getElementById('selected-code');
+            const diagnosisField = document.getElementById('selected-diagnosis');
+            
+            if (codeField) {
+                codeField.value = data.code || '';
+            }
+            
+            if (diagnosisField) {
+                diagnosisField.value = data.title || '';
+            }
+            
+            console.log('Código ICD-11 seleccionado:', data);
+        } catch (e) {
+            console.error('Error al procesar código seleccionado:', e);
+        }
+    }
 }
 
 // Crear la instancia global
 window.icd11Client = new ICD11ApiClient();
 console.log('Cliente ICD-11 creado. Se inicializará cuando sea necesario.');
+
+// Agregar manejador de eventos para la selección de códigos
+document.addEventListener('icd11:codeSelected', function(event) {
+    try {
+        console.log('Evento icd11:codeSelected recibido:', event.detail);
+        
+        // Actualizar los campos de código y diagnóstico
+        const codeField = document.getElementById('selected-code');
+        const diagnosisField = document.getElementById('selected-diagnosis');
+        
+        if (codeField && event.detail && event.detail.code) {
+            codeField.value = event.detail.code || '';
+            codeField.dispatchEvent(new Event('change', { bubbles: true }));
+            console.log('Campo de código actualizado:', event.detail.code);
+        }
+        
+        if (diagnosisField && event.detail && event.detail.title) {
+            diagnosisField.value = event.detail.title || '';
+            diagnosisField.dispatchEvent(new Event('change', { bubbles: true }));
+            console.log('Campo de diagnóstico actualizado:', event.detail.title);
+        }
+    } catch (e) {
+        console.error('Error al procesar evento de código seleccionado:', e);
+    }
+});
 </script>
 <script>
     function handleIframeError() {
@@ -579,18 +648,65 @@ console.log('Cliente ICD-11 creado. Se inicializará cuando sea necesario.');
                                 <h6 class="mb-1">${code}</h6>
                             </div>
                             <p class="mb-1">${title}</p>
-                        `;
-                        
-                        // Evento para seleccionar el código
+                        `;                          // Evento para seleccionar el código
                         item.addEventListener('click', (e) => {
                             e.preventDefault();
                             
-                            // Disparar evento de código seleccionado
-                            window.icd11Client.dispatchCodeSelected({
-                                code: code,
-                                title: title,
-                                uri: entity.uri || ''
-                            });
+                            try {
+                                // Verificar que el cliente existe y tiene el método
+                                if (window.icd11Client) {
+                                    // Disparar evento de código seleccionado
+                                    // Incluso si el método no existe, intentamos crearlo sobre la marcha para evitar errores
+                                    if (typeof window.icd11Client.dispatchCodeSelected !== 'function') {
+                                        console.warn('Método dispatchCodeSelected no encontrado, creando uno dinámicamente');
+                                        window.icd11Client.dispatchCodeSelected = function(data) {
+                                            // Crear un evento personalizado
+                                            const codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
+                                                bubbles: true,
+                                                cancelable: true,
+                                                detail: data
+                                            });
+                                            
+                                            // Disparar el evento en el documento
+                                            document.dispatchEvent(codeSelectedEvent);
+                                            
+                                            // Log para depuración
+                                            console.log('Evento icd11:codeSelected disparado con datos:', data);
+                                        };
+                                    }
+                                    
+                                    // Ahora podemos usar el método con seguridad
+                                    window.icd11Client.dispatchCodeSelected({
+                                        code: code,
+                                        title: title,
+                                        uri: entity.uri || ''
+                                    });
+                                    
+                                    // Como respaldo, también actualizar directamente los campos
+                                    const codeField = document.getElementById('selected-code');
+                                    const diagnosisField = document.getElementById('selected-diagnosis');
+                                    
+                                    if (codeField) codeField.value = code || '';
+                                    if (diagnosisField) diagnosisField.value = title || '';
+                                    
+                                    // Mostrar un mensaje de selección exitosa
+                                    const alertDiv = document.createElement('div');
+                                    alertDiv.className = 'alert alert-success mt-3';
+                                    alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> Código <strong>${code}</strong> seleccionado correctamente.`;
+                                    resultsContainer.appendChild(alertDiv);
+                                    
+                                    // Ocultar el mensaje después de 3 segundos
+                                    setTimeout(() => {
+                                        alertDiv.style.display = 'none';
+                                    }, 3000);
+                                } else {
+                                    console.error('Error: window.icd11Client no está disponible');
+                                    throw new Error('Error interno: cliente ICD-11 no disponible');
+                                }
+                            } catch (err) {
+                                console.error('Error al seleccionar código:', err);
+                                alert('Error al seleccionar el código. Por favor, intente nuevamente.');
+                            }
                         });
                         
                         resultsList.appendChild(item);
