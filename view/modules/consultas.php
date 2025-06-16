@@ -238,7 +238,7 @@
 </div>
 
 <!-- Scripts para la funcionalidad del módulo de consultas -->
-<script src="view/js/icd11-client.js"></script>
+<!-- <script src="view/js/icd11-client.js"></script> -->
 <script src="view/js/icd11-integration.js"></script>
 <script src="view/js/consultas.js"></script>
 <script src="view/js/remedios.js"></script>
