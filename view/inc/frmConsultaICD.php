@@ -11,103 +11,8 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <p>Esta página integra la herramienta oficial de codificación ICD-11 de la Organización Mundial de la Salud.</p>
-                    </div>                    <!-- Panel de código y diagnóstico seleccionados -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-light">
-                            <h5 class="mb-0">Selección de código y diagnóstico</h5>
-                            <p class="text-muted small mt-1 mb-0">Busque y seleccione un diagnóstico en la herramienta de codificación, luego copie el código y la descripción</p>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="selected-code" class="form-label"><strong>Código ICD-11:</strong></label>
-                                        <div class="input-group">
-                                            <input type="text" id="selected-code" class="form-control" placeholder="Ej: MD12">
-                                            <button class="btn btn-outline-secondary" type="button" id="search-code-btn" title="Buscar diagnóstico por código">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                            <button class="btn btn-outline-secondary" type="button" id="clear-code-btn">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                        <div class="form-text">Introduzca el código y presione <i class="fas fa-search"></i> para buscar</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="form-group">
-                                        <label for="selected-diagnosis" class="form-label"><strong>Diagnóstico:</strong></label>
-                                        <div class="input-group">
-                                            <input type="text" id="selected-diagnosis" class="form-control" placeholder="Ej: Tos">
-                                            <button class="btn btn-outline-secondary" type="button" id="clear-diagnosis-btn">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                        <div class="form-text">Introduzca o copie el diagnóstico desde la herramienta</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-12 text-end">
-                                    <div id="api-status" class="d-inline-block me-2"></div>
-                                    <button id="save-selection-btn" class="btn btn-success">
-                                        <i class="fas fa-save"></i> Guardar selección
-                                    </button>
-                                    <button id="copy-to-clipboard-btn" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Copiar al portapapeles">
-                                        <i class="fas fa-clipboard"></i> Copiar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- Instrucciones de uso -->
-                    <div class="alert alert-info mb-4" role="alert">
-                        <h5><i class="fas fa-info-circle"></i> Instrucciones de uso:</h5>
-                        <ol>
-                            <li>Utilice la herramienta de búsqueda ICD-11 a continuación para encontrar el diagnóstico deseado</li>
-                            <li>Cuando encuentre el código correcto, selecciónelo en la herramienta</li>
-                            <li>Copie el código (ej: MD12) en el campo correspondiente y haga clic en <i class="fas fa-search"></i> para obtener el diagnóstico automáticamente</li>
-                            <li>También puede ingresar manualmente el diagnóstico si lo prefiere</li>
-                            <li>Haga clic en "Guardar selección" para utilizar estos valores</li>
-                        </ol>
-                        <p class="mb-0"><strong>Consejo:</strong> Puede ver el código seleccionado en la barra de estado de la herramienta donde dice "Seleccionado: XXX"</p>                        <div class="mt-2 border-top pt-2">
-                            <p class="mb-0">
-                                <i class="fas fa-shield-alt text-success"></i> 
-                                <strong>IMPORTANTE:</strong> Este sistema solo utiliza datos oficiales de la API de ICD-11 de la OMS. 
-                                <span class="badge bg-success">No hay datos locales, respuestas predefinidas o autocompletadas</span>
-                            </p>
-                            <small class="text-muted">Todos los resultados provienen directamente de la API oficial de la OMS.</small>
-                              <!-- Panel de herramientas y diagnóstico -->
-                            <div class="mt-3 d-flex flex-wrap gap-2">
-                                <a href="icd11_reference_codes.php" target="_blank" class="btn btn-sm btn-outline-success">
-                                    <i class="fas fa-list-ul"></i> Códigos de Referencia
-                                </a>
-                                <a href="debug_icd.php" target="_blank" class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-bug"></i> Depurar Conexión
-                                </a>
-                                <a href="test_icd11_class.php" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-wrench"></i> Diagnóstico de API
-                                </a>
-                                <a href="icd11_check_requirements.php" target="_blank" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-check-circle"></i> Verificar Requisitos
-                                </a>
-                            </div><!-- Notas sobre posibles errores -->
-                            <div class="mt-3 small">
-                                <p class="mb-1"><i class="fas fa-info-circle text-primary"></i> <strong>Consejos para la búsqueda por código:</strong></p>
-                                <ul class="mb-1">
-                                    <li><strong>Códigos válidos conocidos:</strong> MB36 (Diabetes), BA00 (Hipertensión), CA20.Z (Gripe)</li>
-                                    <li>Use códigos ICD-11 específicos y completos (ej. MB36.0 en lugar de M12)</li>
-                                    <li>Si un código no funciona, intente con la búsqueda por término en su lugar</li>
-                                </ul>
-                                
-                                <p class="mb-1 mt-2"><i class="fas fa-exclamation-triangle text-warning"></i> <strong>Solución de problemas:</strong></p>
-                                <ul class="mb-1">
-                                    <li><strong>Error 400:</strong> Falta el encabezado API-Version (corregido en esta versión)</li>
-                                    <li><strong>Error 404:</strong> El código no existe en la base de datos ICD-11</li>
-                                    <li><strong>Otros errores:</strong> Verificar conexión a Internet y usar las herramientas de diagnóstico</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    </div> <!-- Panel de código y diagnóstico seleccionados -->
+                   
 
                     <!-- Contenedor para la herramienta de codificación -->
                     <div class="coding-tool-container" style="height: 700px; margin-bottom: 20px; position: relative;">
@@ -136,203 +41,208 @@
 
 <!-- Implementación interna del cliente ICD-11 para evitar problemas de carga -->
 <script>
-// Cliente simplificado para la API ICD-11
-class ICD11ApiClient {
-    constructor() {
-        this.endpoint = 'ajax/icd11.ajax.php';
-        this.initialized = false;
-        
-        // Evento personalizado para cuando se selecciona un código
-        this.codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
-            bubbles: true,
-            cancelable: true,
-            detail: null
-        });
-    }
-    
-    // Inicializa el cliente
-    async initialize() {
-        if (this.initialized) {
-            return Promise.resolve(true);
+    // Cliente simplificado para la API ICD-11
+    class ICD11ApiClient {
+        constructor() {
+            this.endpoint = 'ajax/icd11.ajax.php';
+            this.initialized = false;
+
+            // Evento personalizado para cuando se selecciona un código
+            this.codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
+                bubbles: true,
+                cancelable: true,
+                detail: null
+            });
         }
-        
-        try {
-            // Probar conectividad con el endpoint
+
+        // Inicializa el cliente
+        async initialize() {
+            if (this.initialized) {
+                return Promise.resolve(true);
+            }
+
+            try {
+                // Probar conectividad con el endpoint
+                const formData = new FormData();
+                formData.append('action', 'searchByCode');
+                formData.append('code', 'MD12'); // Código de prueba
+
+                const response = await fetch(this.endpoint, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+
+                const jsonResponse = await response.json();
+                if (!jsonResponse.success) {
+                    throw new Error(`Error en la API: ${jsonResponse.message || 'Desconocido'}`);
+                }
+
+                console.log('API ICD-11 funcionando correctamente');
+                this.initialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error al inicializar el cliente ICD-11:', error);
+                throw error;
+            }
+        }
+
+        // Busca un término en la API
+        async searchByTerm(term, language = 'es') {
+            if (!term) {
+                return Promise.reject(new Error('El término es requerido'));
+            }
+
+            if (!this.initialized) {
+                await this.initialize();
+            }
+
+            const formData = new FormData();
+            formData.append('action', 'searchByTerm');
+            formData.append('term', term);
+            formData.append('language', language);
+
+            try {
+                const response = await fetch(this.endpoint, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+
+                const jsonResponse = await response.json();
+                if (!jsonResponse.success) {
+                    throw new Error(jsonResponse.message || 'Error desconocido en la respuesta del servidor');
+                }
+
+                return jsonResponse.data;
+            } catch (error) {
+                console.error('Error en solicitud searchByTerm:', error);
+                throw error;
+            }
+        }
+        // Busca un código en la API
+        async searchByCode(code) {
+            if (!code) {
+                return Promise.reject(new Error('El código es requerido'));
+            }
+
+            if (!this.initialized) {
+                await this.initialize();
+            }
+
             const formData = new FormData();
             formData.append('action', 'searchByCode');
-            formData.append('code', 'MD12'); // Código de prueba
-            
-            const response = await fetch(this.endpoint, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+            formData.append('code', code);
+            try {
+                const response = await fetch(this.endpoint, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
                 }
+
+                const jsonResponse = await response.json();
+                if (!jsonResponse.success) {
+                    throw new Error(jsonResponse.message || 'Error desconocido en la respuesta del servidor');
+                }
+
+                return jsonResponse.data;
+            } catch (error) {
+                console.error('Error en solicitud searchByCode:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Dispara el evento de código seleccionado
+         * @param {Object} data - Datos del código seleccionado (code, title, uri)
+         */
+        dispatchCodeSelected(data) {
+            // Asegurar que recibimos datos válidos
+            if (!data || !data.code) {
+                console.error('Datos de código seleccionado inválidos:', data);
+                return;
+            }
+
+            // Crear un evento personalizado
+            const codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
+                bubbles: true,
+                cancelable: true,
+                detail: data
             });
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+
+            // Disparar el evento en el documento
+            document.dispatchEvent(codeSelectedEvent);
+
+            // Actualizar los campos de código y diagnóstico si existen
+            try {
+                const codeField = document.getElementById('selected-code');
+                const diagnosisField = document.getElementById('selected-diagnosis');
+
+                if (codeField) {
+                    codeField.value = data.code || '';
+                }
+
+                if (diagnosisField) {
+                    diagnosisField.value = data.title || '';
+                }
+
+                console.log('Código ICD-11 seleccionado:', data);
+            } catch (e) {
+                console.error('Error al procesar código seleccionado:', e);
             }
-            
-            const jsonResponse = await response.json();
-            if (!jsonResponse.success) {
-                throw new Error(`Error en la API: ${jsonResponse.message || 'Desconocido'}`);
-            }
-            
-            console.log('API ICD-11 funcionando correctamente');
-            this.initialized = true;
-            return true;
-        } catch (error) {
-            console.error('Error al inicializar el cliente ICD-11:', error);
-            throw error;
         }
     }
-    
-    // Busca un término en la API
-    async searchByTerm(term, language = 'es') {
-        if (!term) {
-            return Promise.reject(new Error('El término es requerido'));
-        }
-        
-        if (!this.initialized) {
-            await this.initialize();
-        }
-        
-        const formData = new FormData();
-        formData.append('action', 'searchByTerm');
-        formData.append('term', term);
-        formData.append('language', language);
-        
+
+    // Crear la instancia global
+    window.icd11Client = new ICD11ApiClient();
+    console.log('Cliente ICD-11 creado. Se inicializará cuando sea necesario.');
+
+    // Agregar manejador de eventos para la selección de códigos
+    document.addEventListener('icd11:codeSelected', function(event) {
         try {
-            const response = await fetch(this.endpoint, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
-            }
-            
-            const jsonResponse = await response.json();
-            if (!jsonResponse.success) {
-                throw new Error(jsonResponse.message || 'Error desconocido en la respuesta del servidor');
-            }
-            
-            return jsonResponse.data;
-        } catch (error) {
-            console.error('Error en solicitud searchByTerm:', error);
-            throw error;
-        }
-    }
-      // Busca un código en la API
-    async searchByCode(code) {
-        if (!code) {
-            return Promise.reject(new Error('El código es requerido'));
-        }
-        
-        if (!this.initialized) {
-            await this.initialize();
-        }
-        
-        const formData = new FormData();
-        formData.append('action', 'searchByCode');
-        formData.append('code', code);        try {
-            const response = await fetch(this.endpoint, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
-            }
-            
-            const jsonResponse = await response.json();
-            if (!jsonResponse.success) {
-                throw new Error(jsonResponse.message || 'Error desconocido en la respuesta del servidor');
-            }
-            
-            return jsonResponse.data;
-        } catch (error) {
-            console.error('Error en solicitud searchByCode:', error);
-            throw error;
-        }
-    }
-    
-    /**
-     * Dispara el evento de código seleccionado
-     * @param {Object} data - Datos del código seleccionado (code, title, uri)
-     */
-    dispatchCodeSelected(data) {
-        // Asegurar que recibimos datos válidos
-        if (!data || !data.code) {
-            console.error('Datos de código seleccionado inválidos:', data);
-            return;
-        }
-        
-        // Crear un evento personalizado
-        const codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
-            bubbles: true,
-            cancelable: true,
-            detail: data
-        });
-        
-        // Disparar el evento en el documento
-        document.dispatchEvent(codeSelectedEvent);
-        
-        // Actualizar los campos de código y diagnóstico si existen
-        try {
+            console.log('Evento icd11:codeSelected recibido:', event.detail);
+
+            // Actualizar los campos de código y diagnóstico
             const codeField = document.getElementById('selected-code');
             const diagnosisField = document.getElementById('selected-diagnosis');
-            
-            if (codeField) {
-                codeField.value = data.code || '';
+
+            if (codeField && event.detail && event.detail.code) {
+                codeField.value = event.detail.code || '';
+                codeField.dispatchEvent(new Event('change', {
+                    bubbles: true
+                }));
+                console.log('Campo de código actualizado:', event.detail.code);
             }
-            
-            if (diagnosisField) {
-                diagnosisField.value = data.title || '';
+
+            if (diagnosisField && event.detail && event.detail.title) {
+                diagnosisField.value = event.detail.title || '';
+                diagnosisField.dispatchEvent(new Event('change', {
+                    bubbles: true
+                }));
+                console.log('Campo de diagnóstico actualizado:', event.detail.title);
             }
-            
-            console.log('Código ICD-11 seleccionado:', data);
         } catch (e) {
-            console.error('Error al procesar código seleccionado:', e);
+            console.error('Error al procesar evento de código seleccionado:', e);
         }
-    }
-}
-
-// Crear la instancia global
-window.icd11Client = new ICD11ApiClient();
-console.log('Cliente ICD-11 creado. Se inicializará cuando sea necesario.');
-
-// Agregar manejador de eventos para la selección de códigos
-document.addEventListener('icd11:codeSelected', function(event) {
-    try {
-        console.log('Evento icd11:codeSelected recibido:', event.detail);
-        
-        // Actualizar los campos de código y diagnóstico
-        const codeField = document.getElementById('selected-code');
-        const diagnosisField = document.getElementById('selected-diagnosis');
-        
-        if (codeField && event.detail && event.detail.code) {
-            codeField.value = event.detail.code || '';
-            codeField.dispatchEvent(new Event('change', { bubbles: true }));
-            console.log('Campo de código actualizado:', event.detail.code);
-        }
-        
-        if (diagnosisField && event.detail && event.detail.title) {
-            diagnosisField.value = event.detail.title || '';
-            diagnosisField.dispatchEvent(new Event('change', { bubbles: true }));
-            console.log('Campo de diagnóstico actualizado:', event.detail.title);
-        }
-    } catch (e) {
-        console.error('Error al procesar evento de código seleccionado:', e);
-    }
-});
+    });
 </script>
 <script>
     function handleIframeError() {
@@ -355,14 +265,16 @@ document.addEventListener('icd11:codeSelected', function(event) {
 
         // Configurar eventos para los botones
         setupButtonEvents();
-    }    function setupButtonEvents() {
+    }
+
+    function setupButtonEvents() {
         // Verificar que existen los elementos antes de asignar eventos
         const searchButton = document.getElementById('search-code-btn');
         const codeInput = document.getElementById('selected-code');
         const clearCodeButton = document.getElementById('clear-code-btn');
         const clearDiagnosisButton = document.getElementById('clear-diagnosis-btn');
         const saveButton = document.getElementById('save-selection-btn');
-        
+
         // Verificar cada elemento antes de asignar eventos
         if (searchButton) {
             searchButton.addEventListener('click', function() {
@@ -404,180 +316,186 @@ document.addEventListener('icd11:codeSelected', function(event) {
         // Botón para guardar selección
         if (saveButton) {
             saveButton.addEventListener('click', function() {
-            const code = document.getElementById('selected-code').value.trim();
-            const diagnosis = document.getElementById('selected-diagnosis').value.trim();
+                const code = document.getElementById('selected-code').value.trim();
+                const diagnosis = document.getElementById('selected-diagnosis').value.trim();
 
+                if (!code) {
+                    showAlert('warning', 'Por favor, introduzca un código ICD-11.');
+                    document.getElementById('selected-code').focus();
+                    return;
+                }
+
+                if (!diagnosis) {
+                    showAlert('warning', 'Por favor, introduzca un diagnóstico.');
+                    document.getElementById('selected-diagnosis').focus();
+                    return;
+                }
+
+                // Aquí puedes añadir el código para guardar o procesar la selección
+                // Por ejemplo, enviarla a un servidor, mostrarla en otra parte, etc.
+
+                // Por ahora, solo mostramos un mensaje de éxito
+                showAlert('success', 'Selección guardada: ' + code + ' - ' + diagnosis);
+
+                // Destacar los campos brevemente
+                flashElement(document.getElementById('selected-code'));
+                flashElement(document.getElementById('selected-diagnosis'));
+            });
+
+            // Botón para copiar al portapapeles
+            document.getElementById('copy-to-clipboard-btn').addEventListener('click', function() {
+                const code = document.getElementById('selected-code').value.trim();
+                const diagnosis = document.getElementById('selected-diagnosis').value.trim();
+
+                if (!code && !diagnosis) {
+                    showAlert('warning', 'No hay datos para copiar.');
+                    return;
+                }
+
+                const textToCopy = `${code} - ${diagnosis}`;
+
+                // Copiar al portapapeles
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    showAlert('success', 'Copiado al portapapeles: ' + textToCopy);
+                }, function(err) {
+                    console.error('Error al copiar: ', err);
+                    showAlert('danger', 'No se pudo copiar al portapapeles. Por favor, copie manualmente.');
+                });
+            });
+        }
+
+        function searchCodeFromApi() {
+            const code = document.getElementById('selected-code').value.trim();
             if (!code) {
-                showAlert('warning', 'Por favor, introduzca un código ICD-11.');
+                showAlert('warning', 'Por favor, introduzca un código ICD-11 para buscar.');
                 document.getElementById('selected-code').focus();
                 return;
             }
 
-            if (!diagnosis) {
-                showAlert('warning', 'Por favor, introduzca un diagnóstico.');
-                document.getElementById('selected-diagnosis').focus();
-                return;
-            }
+            // Mostrar que estamos buscando
+            const apiStatus = document.getElementById('api-status');
+            apiStatus.innerHTML = '<span class="badge bg-info"><i class="fas fa-spinner fa-spin"></i> Buscando...</span>';
 
-            // Aquí puedes añadir el código para guardar o procesar la selección
-            // Por ejemplo, enviarla a un servidor, mostrarla en otra parte, etc.
-
-            // Por ahora, solo mostramos un mensaje de éxito
-            showAlert('success', 'Selección guardada: ' + code + ' - ' + diagnosis);
-
-            // Destacar los campos brevemente
-            flashElement(document.getElementById('selected-code'));
-            flashElement(document.getElementById('selected-diagnosis'));
-        });
-
-        // Botón para copiar al portapapeles
-        document.getElementById('copy-to-clipboard-btn').addEventListener('click', function() {
-            const code = document.getElementById('selected-code').value.trim();
-            const diagnosis = document.getElementById('selected-diagnosis').value.trim();
-
-            if (!code && !diagnosis) {
-                showAlert('warning', 'No hay datos para copiar.');
-                return;
-            }
-
-            const textToCopy = `${code} - ${diagnosis}`;
-
-            // Copiar al portapapeles
-            navigator.clipboard.writeText(textToCopy).then(function() {
-                showAlert('success', 'Copiado al portapapeles: ' + textToCopy);
-            }, function(err) {
-                console.error('Error al copiar: ', err);
-                showAlert('danger', 'No se pudo copiar al portapapeles. Por favor, copie manualmente.');
-            });
-        });
-    }    function searchCodeFromApi() {
-        const code = document.getElementById('selected-code').value.trim();
-        if (!code) {
-            showAlert('warning', 'Por favor, introduzca un código ICD-11 para buscar.');
-            document.getElementById('selected-code').focus();
-            return;
-        }
-
-        // Mostrar que estamos buscando
-        const apiStatus = document.getElementById('api-status');
-        apiStatus.innerHTML = '<span class="badge bg-info"><i class="fas fa-spinner fa-spin"></i> Buscando...</span>';
-
-        // Verificar que existe el cliente ICD-11
-        if (!window.icd11Client) {
-            console.error('Error: Cliente ICD-11 no disponible');
-            apiStatus.innerHTML = '<span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> Error</span>';
-            showAlert('danger', 'Error interno: Cliente ICD-11 no disponible. Por favor, recargue la página.');
-            setTimeout(() => { apiStatus.innerHTML = ''; }, 3000);
-            return;
-        }
-
-        // Usar nuestro cliente ICD-11 para buscar el código
-        window.icd11Client.searchByCode(code)
-            .then(data => {
-                if (data && data.destinationEntities && data.destinationEntities.length > 0) {
-                    // Obtener la primera entidad
-                    const entity = data.destinationEntities[0];
-                    
-                    // Actualizar el campo de diagnóstico con el resultado
-                    document.getElementById('selected-diagnosis').value = entity.title || '';
-
-                    // Guardar los datos completos en un atributo para uso posterior si es necesario
-                    document.getElementById('selected-code').setAttribute('data-full-entity',
-                                                                       JSON.stringify(entity));
-
-                    // Mostrar resultado positivo
-                    apiStatus.innerHTML = '<span class="badge bg-success"><i class="fas fa-check"></i> Encontrado</span>';
-
-                    // Destacar los campos brevemente
-                    flashElement(document.getElementById('selected-code'));
-                    flashElement(document.getElementById('selected-diagnosis'));
-
-                    // Eliminar el estado después de un tiempo
-                    setTimeout(() => {
-                        apiStatus.innerHTML = '';
-                    }, 3000);
-                    
-                    // Opcional: mostrar el modal con detalles completos
-                    if (typeof fetchEntityDetails === 'function' && entity.id) {
-                        fetchEntityDetails(entity.id, code, entity.title);
-                    }
-                } else {
-                    // Mostrar error
-                    apiStatus.innerHTML = '<span class="badge bg-danger"><i class="fas fa-times"></i> No encontrado</span>';
-                    document.getElementById('selected-diagnosis').value = '';
-                    showAlert('warning', `No se encontró el código ICD-11 "${code}". Por favor, verifique e intente de nuevo.`);
-
-                    // Eliminar el estado después de un tiempo
-                    setTimeout(() => {
-                        apiStatus.innerHTML = '';
-                    }, 3000);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+            // Verificar que existe el cliente ICD-11
+            if (!window.icd11Client) {
+                console.error('Error: Cliente ICD-11 no disponible');
                 apiStatus.innerHTML = '<span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> Error</span>';
-                showAlert('danger', 'Error al consultar la API: ' + (error.message || 'Error desconocido'));
-
-                // Eliminar el estado después de un tiempo
+                showAlert('danger', 'Error interno: Cliente ICD-11 no disponible. Por favor, recargue la página.');
                 setTimeout(() => {
                     apiStatus.innerHTML = '';
                 }, 3000);
-            });
-    }
+                return;
+            }
 
-    function showAlert(type, message) {
-        // Crear el elemento de alerta
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-        alertDiv.role = 'alert';
-        alertDiv.innerHTML = `
+            // Usar nuestro cliente ICD-11 para buscar el código
+            window.icd11Client.searchByCode(code)
+                .then(data => {
+                    if (data && data.destinationEntities && data.destinationEntities.length > 0) {
+                        // Obtener la primera entidad
+                        const entity = data.destinationEntities[0];
+
+                        // Actualizar el campo de diagnóstico con el resultado
+                        document.getElementById('selected-diagnosis').value = entity.title || '';
+
+                        // Guardar los datos completos en un atributo para uso posterior si es necesario
+                        document.getElementById('selected-code').setAttribute('data-full-entity',
+                            JSON.stringify(entity));
+
+                        // Mostrar resultado positivo
+                        apiStatus.innerHTML = '<span class="badge bg-success"><i class="fas fa-check"></i> Encontrado</span>';
+
+                        // Destacar los campos brevemente
+                        flashElement(document.getElementById('selected-code'));
+                        flashElement(document.getElementById('selected-diagnosis'));
+
+                        // Eliminar el estado después de un tiempo
+                        setTimeout(() => {
+                            apiStatus.innerHTML = '';
+                        }, 3000);
+
+                        // Opcional: mostrar el modal con detalles completos
+                        if (typeof fetchEntityDetails === 'function' && entity.id) {
+                            fetchEntityDetails(entity.id, code, entity.title);
+                        }
+                    } else {
+                        // Mostrar error
+                        apiStatus.innerHTML = '<span class="badge bg-danger"><i class="fas fa-times"></i> No encontrado</span>';
+                        document.getElementById('selected-diagnosis').value = '';
+                        showAlert('warning', `No se encontró el código ICD-11 "${code}". Por favor, verifique e intente de nuevo.`);
+
+                        // Eliminar el estado después de un tiempo
+                        setTimeout(() => {
+                            apiStatus.innerHTML = '';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    apiStatus.innerHTML = '<span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> Error</span>';
+                    showAlert('danger', 'Error al consultar la API: ' + (error.message || 'Error desconocido'));
+
+                    // Eliminar el estado después de un tiempo
+                    setTimeout(() => {
+                        apiStatus.innerHTML = '';
+                    }, 3000);
+                });
+        }
+
+        function showAlert(type, message) {
+            // Crear el elemento de alerta
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
 
-        // Encontrar el contenedor de alertas
-        const container = document.getElementById('alerts-container');
+            // Encontrar el contenedor de alertas
+            const container = document.getElementById('alerts-container');
 
-        // Insertar la alerta al inicio del contenedor
-        container.appendChild(alertDiv);
+            // Insertar la alerta al inicio del contenedor
+            container.appendChild(alertDiv);
 
-        // Eliminar la alerta después de 5 segundos
-        setTimeout(() => {
-            alertDiv.classList.remove('show');
+            // Eliminar la alerta después de 5 segundos
             setTimeout(() => {
-                if (container.contains(alertDiv)) {
-                    container.removeChild(alertDiv);
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    if (container.contains(alertDiv)) {
+                        container.removeChild(alertDiv);
+                    }
+                }, 150);
+            }, 5000);
+        }
+
+        function flashElement(element) {
+            // Añadir clase para destacar brevemente el elemento
+            element.classList.add('bg-success', 'text-white');
+
+            // Eliminar la clase después de un breve período
+            setTimeout(function() {
+                element.classList.remove('bg-success', 'text-white');
+            }, 1000);
+        }
+
+        // Verificar si el iframe se cargó correctamente después de un tiempo
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const iframe = document.getElementById('coding-tool-iframe');
+                if (iframe && document.getElementById('loading-spinner').style.display !== 'none') {
+                    handleIframeError();
                 }
-            }, 150);
-        }, 5000);
-    }
+            }, 15000); // Esperar 15 segundos como máximo
 
-    function flashElement(element) {
-        // Añadir clase para destacar brevemente el elemento
-        element.classList.add('bg-success', 'text-white');
-
-        // Eliminar la clase después de un breve período
-        setTimeout(function() {
-            element.classList.remove('bg-success', 'text-white');
-        }, 1000);
-    }
-
-    // Verificar si el iframe se cargó correctamente después de un tiempo
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            const iframe = document.getElementById('coding-tool-iframe');
-            if (iframe && document.getElementById('loading-spinner').style.display !== 'none') {
-                handleIframeError();
+            // Inicializar tooltips de Bootstrap si está disponible
+            if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
             }
-        }, 15000); // Esperar 15 segundos como máximo
-
-        // Inicializar tooltips de Bootstrap si está disponible
-        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });        }
-    });
+        });
+    }
 </script>
 
 <script>
@@ -615,51 +533,51 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 </div>
             </div>
         `;
-        
+
         // Insertar el contenedor de búsqueda antes del iframe
         const iframeContainer = document.querySelector('.coding-tool-container');
         if (iframeContainer) {
             iframeContainer.parentNode.insertBefore(searchContainer, iframeContainer);
         }
-        
+
         // Configurar evento para el botón de búsqueda
         const searchButton = document.getElementById('btn-api-search');
         const searchInput = document.getElementById('api-search-term');
         const resultsContainer = document.getElementById('api-results');
         const resultsList = document.getElementById('api-results-list');
-        
+
         if (searchButton && searchInput) {
             searchButton.addEventListener('click', async function() {
                 const term = searchInput.value.trim();
                 if (!term) return;
-                  // Mostrar spinner
+                // Mostrar spinner
                 searchButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Buscando...';
                 searchButton.disabled = true;
-                
+
                 try {
                     // Verificar que existe el cliente (debería existir siempre con nuestra implementación interna)
                     if (!window.icd11Client) {
                         console.error('El cliente ICD-11 no está disponible');
                         throw new Error('Error interno: cliente ICD-11 no disponible. Por favor, recargue la página.');
                     }
-                    
+
                     // Iniciar búsqueda (la inicialización se maneja dentro de searchByTerm)
                     console.log('Ejecutando búsqueda con término:', term);
                     const results = await window.icd11Client.searchByTerm(term);
-                    
+
                     // Vaciar y mostrar contenedor de resultados
                     resultsList.innerHTML = '';
                     resultsContainer.style.display = 'block';
-                      // Si no hay resultados válidos de la API
+                    // Si no hay resultados válidos de la API
                     if (!results || !results.destinationEntities || results.destinationEntities.length === 0) {
                         resultsList.innerHTML = '<div class="alert alert-info">No se encontraron resultados para este término en la API oficial de ICD-11</div>';
                         return;
                     }
-                      // Mostrar los resultados
+                    // Mostrar los resultados
                     results.destinationEntities.slice(0, 10).forEach(function(entity) {
                         const code = entity.theCode || '';
                         const title = entity.title || '';
-                        
+
                         const item = document.createElement('a');
                         item.href = '#';
                         item.className = 'list-group-item list-group-item-action';
@@ -668,10 +586,10 @@ document.addEventListener('icd11:codeSelected', function(event) {
                                 <h6 class="mb-1">${code}</h6>
                             </div>
                             <p class="mb-1">${title}</p>
-                        `;// Evento para seleccionar el código
+                        `; // Evento para seleccionar el código
                         item.addEventListener('click', function(e) {
                             e.preventDefault();
-                              try {
+                            try {
                                 // Mostrar el modal de detalles si la función está disponible
                                 if (typeof fetchEntityDetails === 'function') {
                                     // Guardar información básica para usar después
@@ -680,20 +598,20 @@ document.addEventListener('icd11:codeSelected', function(event) {
                                         title: title,
                                         uri: entity.id || ''
                                     };
-                                    
+
                                     // Mostrar el modal con detalles ampliados
                                     fetchEntityDetails(entity.id, code, title);
-                                    
+
                                     // Guardar en sessionStorage para recuperar en caso de error
                                     try {
                                         sessionStorage.setItem('lastSelectedIcd11', JSON.stringify(entityInfo));
                                     } catch (e) {
                                         console.warn('No se pudo guardar en sessionStorage', e);
                                     }
-                                    
+
                                     return; // Salir temprano, el resto se maneja en el modal
                                 }
-                                
+
                                 // Código original como fallback si no está disponible el modal
                                 // Verificar que el cliente existe y tiene el método
                                 if (window.icd11Client) {
@@ -707,7 +625,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                                         });
                                     } else {
                                         console.warn('Método dispatchCodeSelected no encontrado, creando evento manualmente');
-                                        
+
                                         // Crear y disparar evento manualmente
                                         const codeSelectedEvent = new CustomEvent('icd11:codeSelected', {
                                             bubbles: true,
@@ -718,25 +636,25 @@ document.addEventListener('icd11:codeSelected', function(event) {
                                                 uri: entity.id || ''
                                             }
                                         });
-                                        
+
                                         // Disparar el evento en el documento
                                         document.dispatchEvent(codeSelectedEvent);
                                         console.log('Evento icd11:codeSelected disparado con datos:', code, title);
                                     }
-                                    
+
                                     // Como respaldo, también actualizar directamente los campos
                                     const codeField = document.getElementById('selected-code');
                                     const diagnosisField = document.getElementById('selected-diagnosis');
-                                    
+
                                     if (codeField) codeField.value = code || '';
                                     if (diagnosisField) diagnosisField.value = title || '';
-                                    
+
                                     // Mostrar un mensaje de selección exitosa
                                     const alertDiv = document.createElement('div');
                                     alertDiv.className = 'alert alert-success mt-3';
                                     alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> Código <strong>${code}</strong> seleccionado correctamente.`;
                                     resultsContainer.appendChild(alertDiv);
-                                    
+
                                     // Ocultar el mensaje después de 3 segundos
                                     setTimeout(() => {
                                         if (alertDiv.parentNode === resultsContainer) {
@@ -752,16 +670,15 @@ document.addEventListener('icd11:codeSelected', function(event) {
                                 alert('Error al seleccionar el código. Por favor, intente nuevamente.');
                             }
                         });
-                        
+
                         resultsList.appendChild(item);
                     });
                 } catch (error) {
-                    console.error('Error al buscar término:', error);                    // Mostrar mensaje de error adaptado al tipo
+                    console.error('Error al buscar término:', error); // Mostrar mensaje de error adaptado al tipo
                     if (error.message.includes('no disponible') || error.message.includes('Error interno')) {
                         resultsList.innerHTML = `
                             <div class="alert alert-danger">
                                 <h5>Error en el cliente ICD-11</h5>
-                                <p>${error.message}</p>
                                 <div class="mt-3">
                                     <button class="btn btn-sm btn-outline-danger" onclick="location.reload()">
                                         <i class="fas fa-sync"></i> Recargar página
@@ -772,13 +689,12 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     } else {
                         resultsList.innerHTML = `
                             <div class="alert alert-danger">
-                                <h5>Error en la API de ICD-11</h5>
-                                <p>${error.message || 'Error desconocido'}</p>
-                                <small>Solo se utilizan datos oficiales de la API de ICD-11. No hay respuestas locales o autocompletadas.</small>
+                                <h5>Error en la búsqueda</h5>
+                                <small>Solo se utilizan datos oficiales de la API de ICD-11.</small>
                             </div>
                         `;
                     }
-                    
+
                     resultsContainer.style.display = 'block';
                 } finally {
                     // Restaurar botón
@@ -786,7 +702,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     searchButton.disabled = false;
                 }
             });
-              // Permitir buscar presionando Enter
+            // Permitir buscar presionando Enter
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     searchButton.click();
@@ -796,35 +712,36 @@ document.addEventListener('icd11:codeSelected', function(event) {
     });
 </script>
 
-<script>    // Función simplificada para manejar errores de API
+<script>
+    // Función simplificada para manejar errores de API
     function handleApiError(error) {
         console.error('Error en la API de ICD-11:', error);
         showAlert('danger', 'Error en la API de ICD-11: ' + error.message);
     }
-      // Inicializar el cliente cuando sea necesario
+    // Inicializar el cliente cuando sea necesario
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Documento cargado. El cliente ICD-11 se inicializará en la primera búsqueda.');
-        
+
         // Agregar manejadores para cambios de pestaña
         setupTabNavigation();
     });
-      // Función para configurar la navegación entre pestañas
+    // Función para configurar la navegación entre pestañas
     function setupTabNavigation() {
         try {
             // Encontrar todos los enlaces de navegación de pestañas
             const tabLinks = document.querySelectorAll('.nav-link');
-            
+
             // Configurar manejador de eventos para cada enlace
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(event) {
                     // Identificar la pestaña actual y destino
                     const currentTab = link.getAttribute('href');
                     console.log('Cambio de pestaña a:', currentTab);
-                    
+
                     // Si se está yendo a la pestaña de registro después de ICD, preparar la transición
                     if (currentTab === '#activity' && document.querySelector('.nav-link.active')?.getAttribute('href') === '#icd') {
                         console.log('Transición de ICD a Registro, verificando textarea...');
-                        
+
                         // Esperar a que cambie la pestaña y luego verificar el textarea
                         setTimeout(() => {
                             const textarea = window.findConsultaTextarea();
@@ -837,7 +754,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     }
                 });
             });
-            
+
             console.log('Configurada navegación entre pestañas para ICD-11');
         } catch (e) {
             console.error('Error al configurar navegación entre pestañas:', e);
@@ -848,9 +765,17 @@ document.addEventListener('icd11:codeSelected', function(event) {
 <!-- Estilos para resaltar el textarea después de la inserción -->
 <style>
     @keyframes highlightTextarea {
-        0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
-        50% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0.8); }
-        100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        0% {
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 10px rgba(40, 167, 69, 0.8);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+        }
     }
 
     .highlight-textarea {
@@ -894,7 +819,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                             <p class="text-muted small" id="icd-details-uri">--</p>
                         </div>
                     </div>
-                    
+
                     <!-- Descripción -->
                     <div class="mb-4">
                         <h5>Descripción</h5>
@@ -902,7 +827,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                             <p class="text-muted">No hay descripción disponible</p>
                         </div>
                     </div>
-                    
+
                     <!-- Sección de términos relacionados -->
                     <div class="row">
                         <div class="col-md-6">
@@ -920,7 +845,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Enlaces y referencias -->
                     <div class="mt-3 border-top pt-3">
                         <div id="icd-details-links">
@@ -928,14 +853,14 @@ document.addEventListener('icd11:codeSelected', function(event) {
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="icd-details-error" class="alert alert-danger" style="display: none;">
                     <h6>Error al cargar detalles</h6>
                     <p id="icd-details-error-message">No se pudieron cargar los detalles desde la API.</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary" id="icd-details-use-btn">Usar este diagnóstico</button>
             </div>
         </div>
@@ -943,41 +868,44 @@ document.addEventListener('icd11:codeSelected', function(event) {
 </div>
 
 <script>
-   
-    let currentEntityDetails = null;    
+    let currentEntityDetails = null;
     async function fetchEntityDetails(uri, code, title) {
         try {
             // Asegurarse de que tenemos un URI válido
             if (!uri) {
                 throw new Error('URI no válido o vacío');
             }
-            
-            console.log('Obteniendo detalles para:', { uri, code, title });
-            
+
+            console.log('Obteniendo detalles para:', {
+                uri,
+                code,
+                title
+            });
+
             // Mostrar modal con spinner
             $('#icd-details-modal').modal('show');
             $('#icd-details-loading').show();
             $('#icd-details-content').hide();
             $('#icd-details-error').hide();
-            
+
             // Configurar información básica mientras carga
             $('#icd-details-code').text(code);
             $('#icd-details-title').text(title);
             $('#icd-details-uri').text(uri);
-            
+
             // Verificar que existe el cliente
             if (!window.icd11Client) {
                 throw new Error('Cliente ICD-11 no disponible');
             }
-            
+
             // Preparar FormData para la petición
             const formData = new FormData();
             formData.append('action', 'getEntityDetails');
             formData.append('uri', uri);
-            
+
             // Registrar URI para depuración
             console.log('Enviando solicitud para URI:', uri);
-            
+
             // Realizar petición AJAX para obtener detalles
             console.log('Enviando solicitud a icd11.ajax.php para obtener detalles');
             const response = await fetch('ajax/icd11.ajax.php', {
@@ -987,11 +915,11 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             });
-            
+
             // Obtener texto de respuesta para mejor diagnóstico
             const responseText = await response.text();
             console.log('Respuesta del servidor (texto):', responseText.substring(0, 500));
-            
+
             // Intentar analizar como JSON
             let jsonData;
             try {
@@ -999,28 +927,28 @@ document.addEventListener('icd11:codeSelected', function(event) {
             } catch (e) {
                 throw new Error(`Error al analizar respuesta JSON: ${e.message}. Respuesta: ${responseText.substring(0, 200)}`);
             }
-            
+
             if (!response.ok) {
                 throw new Error(`Error HTTP: ${response.status}. ${jsonData?.message || ''}`);
             }
-            
+
             // Ya tenemos jsonData parseado en el paso anterior
             const data = jsonData;
             if (!data.success) {
                 throw new Error(data.message || 'Error desconocido');
             }
-            
+
             // Guardar datos para uso posterior
             currentEntityDetails = data.data;
-            
+
             // Verificar que tenemos datos válidos
             if (!data.data || typeof data.data !== 'object') {
                 throw new Error('Datos inválidos o vacíos recibidos de la API');
             }
-            
+
             // Registrar estructura para depuración
             console.log('Estructura de datos recibida:', JSON.stringify(data.data, null, 2).substring(0, 500));
-            
+
             // Determinar el título real si está en formato anidado
             let displayTitle = title;
             if (data.data.title) {
@@ -1030,21 +958,22 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     displayTitle = data.data.title;
                 }
             }
-            
+
             console.log('Detalles obtenidos correctamente, título:', displayTitle);
-            
+
             // Actualizar UI con los detalles
             displayEntityDetails(data.data, code, displayTitle);
-            
-        } catch (error) {            console.error('Error al cargar detalles:', error);
+
+        } catch (error) {
+            console.error('Error al cargar detalles:', error);
             $('#icd-details-loading').hide();
             $('#icd-details-error').show();
-            
+
             // Mostrar mensaje de error más detallado
             let errorHtml = `<p>${error.message || 'Error desconocido al obtener detalles'}</p>`;
-            
+
             // Añadir consejos de solución según el error            // Ver si el error está relacionado con redirecciones o problemas de conectividad
-            if (error.message.includes('301') || error.message.includes('302') || 
+            if (error.message.includes('301') || error.message.includes('302') ||
                 error.message.includes('redirección') || error.message.includes('redirect')) {
                 errorHtml += `
                     <div class="alert alert-info mt-2">
@@ -1083,18 +1012,18 @@ document.addEventListener('icd11:codeSelected', function(event) {
                         </ul>
                     </div>`;
             }
-            
+
             $('#icd-details-error-message').html(errorHtml);
         }
-    }    // Mostrar los detalles en el modal
+    } // Mostrar los detalles en el modal
     function displayEntityDetails(entityData, code, title) {
         // Ocultar carga, mostrar contenido
         $('#icd-details-loading').hide();
         $('#icd-details-content').show();
-        
+
         // Actualizar encabezado
         $('#icd-details-code').text(code || entityData.code || '--');
-        
+
         // Determinar el título correcto según el formato de datos
         let displayTitle = title;
         if (entityData.title) {
@@ -1104,13 +1033,13 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 displayTitle = entityData.title;
             }
         }
-        
+
         $('#icd-details-title').text(displayTitle || entityData.label || '--');
         $('#icd-details-uri').text(entityData.id || entityData['@id'] || '--');
-        
+
         // Intentar encontrar la descripción en diferentes lugares del objeto
         let description = '';
-        
+
         // Buscar primero en definition.@value (formato nuevo de la API)
         if (entityData.definition && entityData.definition['@value']) {
             description = entityData.definition['@value'];
@@ -1118,7 +1047,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
         // Buscar en definitionElement si existe (formato anterior)
         else if (entityData.definitionElement && entityData.definitionElement.length > 0) {
             description = entityData.definitionElement.map(def => def.textContent || def.label).join('<br><br>');
-        } 
+        }
         // Buscar en longDefinition si existe
         else if (entityData.longDefinition) {
             description = entityData.longDefinition;
@@ -1134,18 +1063,18 @@ document.addEventListener('icd11:codeSelected', function(event) {
         // Si no hay descripción disponible
         else {
             description = '<em>No hay descripción detallada disponible para este código.</em>';
-        }        // Actualizar descripción
+        } // Actualizar descripción
         $('#icd-details-description').html(description);
-        
+
         // Procesar sinónimos en sección separada
         const synonymsContainer = $('#icd-details-synonyms');
         const synonymsList = $('#icd-synonyms-list');
         synonymsList.empty();
-        
+
         if (entityData.synonym && entityData.synonym.length > 0) {
             entityData.synonym.forEach(syn => {
-                const label = syn.label && syn.label['@value'] ? syn.label['@value'] : 
-                              (typeof syn.label === 'string' ? syn.label : '');
+                const label = syn.label && syn.label['@value'] ? syn.label['@value'] :
+                    (typeof syn.label === 'string' ? syn.label : '');
                 if (label) {
                     synonymsList.append(`<li class="list-group-item">${label}</li>`);
                 }
@@ -1154,16 +1083,16 @@ document.addEventListener('icd11:codeSelected', function(event) {
         } else {
             synonymsContainer.hide();
         }
-        
+
         // Procesar términos de inclusión en sección separada
         const inclusionsContainer = $('#icd-details-inclusions');
         const inclusionsList = $('#icd-inclusions-list');
         inclusionsList.empty();
-        
+
         if (entityData.inclusion && entityData.inclusion.length > 0) {
             entityData.inclusion.forEach(inc => {
-                const label = inc.label && inc.label['@value'] ? inc.label['@value'] : 
-                              (typeof inc.label === 'string' ? inc.label : '');
+                const label = inc.label && inc.label['@value'] ? inc.label['@value'] :
+                    (typeof inc.label === 'string' ? inc.label : '');
                 if (label) {
                     inclusionsList.append(`<li class="list-group-item">${label}</li>`);
                 }
@@ -1172,11 +1101,11 @@ document.addEventListener('icd11:codeSelected', function(event) {
         } else {
             inclusionsContainer.hide();
         }
-        
+
         // Añadir enlaces y referencias
         const linksContainer = $('#icd-details-links');
         linksContainer.empty();
-        
+
         // Añadir URL del navegador si está disponible
         if (entityData.browserUrl) {
             linksContainer.append(`
@@ -1186,7 +1115,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 </div>
             `);
         }
-        
+
         // Añadir enlace a la API si hay ID
         if (entityData.id || entityData['@id']) {
             const apiUrl = entityData.id || entityData['@id'];
@@ -1196,20 +1125,20 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     <small class="text-muted">URI API: ${apiUrl}</small>
                 </div>
             `);
-        }        // Configurar botón "Usar este diagnóstico"
+        } // Configurar botón "Usar este diagnóstico"
         $('#icd-details-use-btn').off('click').on('click', function() {
             // Preparar datos del diagnóstico
             const titleValue = displayTitle || title;
-            
+
             // Recopilar sinónimos y términos de inclusión
             let synonyms = [];
             if (entityData.synonym && entityData.synonym.length > 0) {
-                synonyms = entityData.synonym.map(syn => 
-                    syn.label && syn.label['@value'] ? syn.label['@value'] : 
-                    (typeof syn.label === 'string' ? syn.label : ''))
+                synonyms = entityData.synonym.map(syn =>
+                        syn.label && syn.label['@value'] ? syn.label['@value'] :
+                        (typeof syn.label === 'string' ? syn.label : ''))
                     .filter(label => label.length > 0);
             }
-            
+
             // Crear objeto de datos completo
             const diagData = {
                 code: code,
@@ -1220,21 +1149,21 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 synonyms: synonyms,
                 context: entityData['@context'] || ''
             };
-              // Registrar datos completos para diagnóstico
+            // Registrar datos completos para diagnóstico
             console.log('Datos completos del diagnóstico seleccionado:', diagData);
-              
+
             // Actualizar el textarea de descripción de consulta (consulta-textarea)
             // Llamar a la función global findConsultaTextarea definida en icd11-integration.js
             const textareaResult = window.findConsultaTextarea();
-            
+
             function processTextArea(textareaWrapper) {
                 if (textareaWrapper) {
                     console.log('Editor/textarea encontrado, insertando diagnóstico...');
-                    
+
                     // Formatear el diagnóstico para agregar al textarea
                     // Para HTML, usamos <br> en lugar de \n
                     let diagnosisHtml = '';
-                    
+
                     if (textareaWrapper.isSummernote) {
                         // Formateo para Summernote (HTML)
                         diagnosisHtml = `<p><strong>[Diagnóstico ICD-11: ${code} - ${titleValue}]</strong></p>
@@ -1244,30 +1173,33 @@ document.addEventListener('icd11:codeSelected', function(event) {
                         // Formateo para textarea normal
                         diagnosisHtml = `[Diagnóstico ICD-11: ${code} - ${titleValue}]\n${description}\n\n`;
                     }
-                    
+
                     // Obtener el contenido actual
                     let currentContent = textareaWrapper.getValue() || '';
-                    
+
                     // Verificar si ya tiene contenido de diagnóstico ICD
-                    if ((textareaWrapper.isSummernote && !currentContent.includes('[Diagnóstico ICD-11:')) || 
+                    if ((textareaWrapper.isSummernote && !currentContent.includes('[Diagnóstico ICD-11:')) ||
                         (!textareaWrapper.isSummernote && !currentContent.startsWith('[Diagnóstico ICD-11:'))) {
-                        
+
                         // Insertar al principio
                         textareaWrapper.setValue(diagnosisHtml + currentContent);
                     } else {
                         // Reemplazar contenido
                         textareaWrapper.setValue(diagnosisHtml);
                     }
-                    
+
                     // Intentar enfocar después de insertar
                     try {
                         textareaWrapper.focus();
-                        
+
                         // Si es un elemento DOM y no Summernote, intentar hacer scroll
                         if (!textareaWrapper.isSummernote && textareaWrapper.element) {
-                            textareaWrapper.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            textareaWrapper.element.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
                         }
-                        
+
                         // Resaltar el textarea brevemente si no es Summernote
                         if (!textareaWrapper.isSummernote && textareaWrapper.element) {
                             textareaWrapper.element.classList.add('highlight-textarea');
@@ -1278,9 +1210,9 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     } catch (e) {
                         console.error('Error al enfocar elemento después de insertar:', e);
                     }
-                    
+
                     console.log('Diagnóstico insertado correctamente en el editor/textarea');
-                    
+
                     // Intentar activar la pestaña de registro para mostrar al usuario el resultado
                     try {
                         const registroTabLink = document.querySelector('a[href="#activity"]');
@@ -1291,14 +1223,14 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     } catch (e) {
                         console.error('Error al cambiar a la pestaña de registro:', e);
                     }
-                    
+
                     return true; // Éxito
                 } else {
                     console.warn('No se encontró el editor/textarea de consulta');
                     return false; // Fallo
                 }
             }
-            
+
             // Si tenemos un resultado pendiente (cambio de pestaña), esperamos la resolución
             if (textareaResult && textareaResult.pending) {
                 textareaResult.resolve(textareaWrapper => {
@@ -1314,12 +1246,12 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     handleInsertionFailure();
                 }
             }
-            
+
             // Función para manejar el caso de fallo en la inserción
             function handleInsertionFailure() {
                 // Intentar crear un mensaje visual para guiar al usuario
                 showAlert('warning', 'No se pudo insertar automáticamente en el editor de consulta. Por favor, copie manualmente el diagnóstico.');
-                
+
                 // Copiar al portapapeles como alternativa
                 try {
                     // Crear un formato amigable para pegar
@@ -1331,7 +1263,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 } catch (e) {
                     console.error('Error al copiar al portapapeles', e);
                 }
-                
+
                 // Intentar activar la pestaña de registro
                 try {
                     const registroTabLink = document.querySelector('a[href="#activity"]');
@@ -1343,7 +1275,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     console.error('Error al cambiar a pestaña de registro:', e);
                 }
             }
-            
+
             // Disparar evento de código seleccionado
             if (window.icd11Client && typeof window.icd11Client.dispatchCodeSelected === 'function') {
                 window.icd11Client.dispatchCodeSelected(diagData);
@@ -1351,24 +1283,28 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 // Fallback: actualizar directamente los campos
                 const codeField = document.getElementById('selected-code');
                 const diagnosisField = document.getElementById('selected-diagnosis');
-                
+
                 if (codeField) codeField.value = code || '';
                 if (diagnosisField) diagnosisField.value = titleValue || '';
-                
+
                 // Disparar eventos para notificar cambios
-                if (codeField) codeField.dispatchEvent(new Event('change', { bubbles: true }));
-                if (diagnosisField) diagnosisField.dispatchEvent(new Event('change', { bubbles: true }));
+                if (codeField) codeField.dispatchEvent(new Event('change', {
+                    bubbles: true
+                }));
+                if (diagnosisField) diagnosisField.dispatchEvent(new Event('change', {
+                    bubbles: true
+                }));
             }
-            
+
             // Cerrar modal
             $('#icd-details-modal').modal('hide');
-              // Mostrar confirmación y guiar al usuario hacia la pestaña de registro si es necesario
-            const mensaje = consultaTextarea ? 
-                `Diagnóstico seleccionado: ${code} - ${titleValue} (agregado a la descripción de consulta)` : 
+            // Mostrar confirmación y guiar al usuario hacia la pestaña de registro si es necesario
+            const mensaje = consultaTextarea ?
+                `Diagnóstico seleccionado: ${code} - ${titleValue} (agregado a la descripción de consulta)` :
                 `Diagnóstico seleccionado: ${code} - ${titleValue}. Vaya a la pestaña "Registro" para ver o editar la descripción.`;
-            
+
             showAlert('success', mensaje);
-            
+
             // Si no se encontró el textarea, intentar activar la pestaña de registro y mostrar un botón para navegar
             if (!consultaTextarea) {
                 setTimeout(() => {
@@ -1382,12 +1318,12 @@ document.addEventListener('icd11:codeSelected', function(event) {
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     `;
-                    
+
                     // Insertar el botón
                     const alertsContainer = document.getElementById('alerts-container');
                     if (alertsContainer) {
                         alertsContainer.appendChild(navButton);
-                        
+
                         // Configurar el evento del botón
                         document.getElementById('goto-registro-btn')?.addEventListener('click', function() {
                             // Intentar activar la pestaña de registro
@@ -1404,15 +1340,16 @@ document.addEventListener('icd11:codeSelected', function(event) {
                         });
                     }
                 }, 500);
-            }        });
+            }
+        });
     }
 </script>
 
-<!-- Función para seleccionar código aunque fallen los detalles -->
+
 <script>
     // La función para seleccionar código sin detalles se carga desde icd11-integration.js
     // donde se expone globalmente como window.selectCodeWithoutDetails
-    
+
     // Cuando el usuario hace clic en "Usar este código sin detalles", se debe llamar a esta función
     function handleSelectCodeWithoutDetails(code, title) {
         // Llamar a la función global definida en icd11-integration.js
