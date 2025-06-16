@@ -804,7 +804,66 @@ document.addEventListener('icd11:codeSelected', function(event) {
       // Inicializar el cliente cuando sea necesario
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Documento cargado. El cliente ICD-11 se inicializará en la primera búsqueda.');
+        
+        // Agregar manejadores para cambios de pestaña
+        setupTabNavigation();
     });
+      // Función para configurar la navegación entre pestañas
+    function setupTabNavigation() {
+        try {
+            // Encontrar todos los enlaces de navegación de pestañas
+            const tabLinks = document.querySelectorAll('.nav-link');
+            
+            // Configurar manejador de eventos para cada enlace
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    // Identificar la pestaña actual y destino
+                    const currentTab = link.getAttribute('href');
+                    console.log('Cambio de pestaña a:', currentTab);
+                    
+                    // Si se está yendo a la pestaña de registro después de ICD, preparar la transición
+                    if (currentTab === '#activity' && document.querySelector('.nav-link.active')?.getAttribute('href') === '#icd') {
+                        console.log('Transición de ICD a Registro, verificando textarea...');
+                        
+                        // Esperar a que cambie la pestaña y luego verificar el textarea
+                        setTimeout(() => {
+                            const textarea = window.findConsultaTextarea();
+                            if (textarea) {
+                                console.log('Textarea de consulta encontrado después del cambio de pestaña');
+                            } else {
+                                console.warn('No se encontró el textarea después del cambio de pestaña');
+                            }
+                        }, 300);
+                    }
+                });
+            });
+            
+            console.log('Configurada navegación entre pestañas para ICD-11');
+        } catch (e) {
+            console.error('Error al configurar navegación entre pestañas:', e);
+        }
+    }
+</script>
+
+<!-- Estilos para resaltar el textarea después de la inserción -->
+<style>
+    @keyframes highlightTextarea {
+        0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0.8); }
+        100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+    }
+
+    .highlight-textarea {
+        animation: highlightTextarea 2s ease-out;
+        background-color: #d4edda !important;
+        border-color: #28a745 !important;
+        transition: background-color 2s ease, border-color 2s ease;
+    }
+</style>
+
+<!-- Las funciones para la integración de ICD-11 se cargan desde icd11-integration.js -->
+<script>
+    // Las funciones findConsultaTextarea y selectCodeWithoutDetails ahora se cargan desde icd11-integration.js
 </script>
 
 <!-- Modal para detalles de diagnóstico -->
@@ -884,8 +943,8 @@ document.addEventListener('icd11:codeSelected', function(event) {
 </div>
 
 <script>
-    // Funciones para gestionar el modal de detalles ICD-11
-    let currentEntityDetails = null;    // Obtener detalles completos de una entidad ICD-11
+   
+    let currentEntityDetails = null;    
     async function fetchEntityDetails(uri, code, title) {
         try {
             // Asegurarse de que tenemos un URI válido
@@ -1137,8 +1196,7 @@ document.addEventListener('icd11:codeSelected', function(event) {
                     <small class="text-muted">URI API: ${apiUrl}</small>
                 </div>
             `);
-        }
-          // Configurar botón "Usar este diagnóstico"
+        }        // Configurar botón "Usar este diagnóstico"
         $('#icd-details-use-btn').off('click').on('click', function() {
             // Preparar datos del diagnóstico
             const titleValue = displayTitle || title;
@@ -1162,9 +1220,129 @@ document.addEventListener('icd11:codeSelected', function(event) {
                 synonyms: synonyms,
                 context: entityData['@context'] || ''
             };
-            
-            // Registrar datos completos para diagnóstico
+              // Registrar datos completos para diagnóstico
             console.log('Datos completos del diagnóstico seleccionado:', diagData);
+              
+            // Actualizar el textarea de descripción de consulta (consulta-textarea)
+            // Llamar a la función global findConsultaTextarea definida en icd11-integration.js
+            const textareaResult = window.findConsultaTextarea();
+            
+            function processTextArea(textareaWrapper) {
+                if (textareaWrapper) {
+                    console.log('Editor/textarea encontrado, insertando diagnóstico...');
+                    
+                    // Formatear el diagnóstico para agregar al textarea
+                    // Para HTML, usamos <br> en lugar de \n
+                    let diagnosisHtml = '';
+                    
+                    if (textareaWrapper.isSummernote) {
+                        // Formateo para Summernote (HTML)
+                        diagnosisHtml = `<p><strong>[Diagnóstico ICD-11: ${code} - ${titleValue}]</strong></p>
+                        <p>${description}</p>
+                        <p>&nbsp;</p>`;
+                    } else {
+                        // Formateo para textarea normal
+                        diagnosisHtml = `[Diagnóstico ICD-11: ${code} - ${titleValue}]\n${description}\n\n`;
+                    }
+                    
+                    // Obtener el contenido actual
+                    let currentContent = textareaWrapper.getValue() || '';
+                    
+                    // Verificar si ya tiene contenido de diagnóstico ICD
+                    if ((textareaWrapper.isSummernote && !currentContent.includes('[Diagnóstico ICD-11:')) || 
+                        (!textareaWrapper.isSummernote && !currentContent.startsWith('[Diagnóstico ICD-11:'))) {
+                        
+                        // Insertar al principio
+                        textareaWrapper.setValue(diagnosisHtml + currentContent);
+                    } else {
+                        // Reemplazar contenido
+                        textareaWrapper.setValue(diagnosisHtml);
+                    }
+                    
+                    // Intentar enfocar después de insertar
+                    try {
+                        textareaWrapper.focus();
+                        
+                        // Si es un elemento DOM y no Summernote, intentar hacer scroll
+                        if (!textareaWrapper.isSummernote && textareaWrapper.element) {
+                            textareaWrapper.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        
+                        // Resaltar el textarea brevemente si no es Summernote
+                        if (!textareaWrapper.isSummernote && textareaWrapper.element) {
+                            textareaWrapper.element.classList.add('highlight-textarea');
+                            setTimeout(() => {
+                                textareaWrapper.element.classList.remove('highlight-textarea');
+                            }, 2000);
+                        }
+                    } catch (e) {
+                        console.error('Error al enfocar elemento después de insertar:', e);
+                    }
+                    
+                    console.log('Diagnóstico insertado correctamente en el editor/textarea');
+                    
+                    // Intentar activar la pestaña de registro para mostrar al usuario el resultado
+                    try {
+                        const registroTabLink = document.querySelector('a[href="#activity"]');
+                        if (registroTabLink && typeof $ !== 'undefined') {
+                            $(registroTabLink).tab('show');
+                            console.log('Pestaña de registro activada después de insertar diagnóstico');
+                        }
+                    } catch (e) {
+                        console.error('Error al cambiar a la pestaña de registro:', e);
+                    }
+                    
+                    return true; // Éxito
+                } else {
+                    console.warn('No se encontró el editor/textarea de consulta');
+                    return false; // Fallo
+                }
+            }
+            
+            // Si tenemos un resultado pendiente (cambio de pestaña), esperamos la resolución
+            if (textareaResult && textareaResult.pending) {
+                textareaResult.resolve(textareaWrapper => {
+                    const success = processTextArea(textareaWrapper);
+                    if (!success) {
+                        handleInsertionFailure();
+                    }
+                });
+            } else {
+                // Procesamiento directo
+                const success = processTextArea(textareaResult);
+                if (!success) {
+                    handleInsertionFailure();
+                }
+            }
+            
+            // Función para manejar el caso de fallo en la inserción
+            function handleInsertionFailure() {
+                // Intentar crear un mensaje visual para guiar al usuario
+                showAlert('warning', 'No se pudo insertar automáticamente en el editor de consulta. Por favor, copie manualmente el diagnóstico.');
+                
+                // Copiar al portapapeles como alternativa
+                try {
+                    // Crear un formato amigable para pegar
+                    const textToCopy = `[Diagnóstico ICD-11: ${code} - ${titleValue}]\n${description}`;
+                    navigator.clipboard.writeText(textToCopy).then(
+                        () => showAlert('info', 'Diagnóstico copiado al portapapeles. Péguelo en el campo de descripción.'),
+                        () => console.warn('No se pudo copiar al portapapeles')
+                    );
+                } catch (e) {
+                    console.error('Error al copiar al portapapeles', e);
+                }
+                
+                // Intentar activar la pestaña de registro
+                try {
+                    const registroTabLink = document.querySelector('a[href="#activity"]');
+                    if (registroTabLink && typeof $ !== 'undefined') {
+                        $(registroTabLink).tab('show');
+                        console.log('Cambiado a pestaña de registro para facilitar la inserción manual');
+                    }
+                } catch (e) {
+                    console.error('Error al cambiar a pestaña de registro:', e);
+                }
+            }
             
             // Disparar evento de código seleccionado
             if (window.icd11Client && typeof window.icd11Client.dispatchCodeSelected === 'function') {
@@ -1184,51 +1362,65 @@ document.addEventListener('icd11:codeSelected', function(event) {
             
             // Cerrar modal
             $('#icd-details-modal').modal('hide');
+              // Mostrar confirmación y guiar al usuario hacia la pestaña de registro si es necesario
+            const mensaje = consultaTextarea ? 
+                `Diagnóstico seleccionado: ${code} - ${titleValue} (agregado a la descripción de consulta)` : 
+                `Diagnóstico seleccionado: ${code} - ${titleValue}. Vaya a la pestaña "Registro" para ver o editar la descripción.`;
             
-            // Mostrar confirmación
-            showAlert('success', `Diagnóstico seleccionado: ${code} - ${titleValue}`);
-        });
+            showAlert('success', mensaje);
+            
+            // Si no se encontró el textarea, intentar activar la pestaña de registro y mostrar un botón para navegar
+            if (!consultaTextarea) {
+                setTimeout(() => {
+                    // Crear un botón de navegación rápida
+                    const navButton = document.createElement('div');
+                    navButton.className = 'alert alert-info alert-dismissible fade show mt-3';
+                    navButton.innerHTML = `
+                        <strong>Consejo:</strong> Para ver el diagnóstico insertado, vaya a la pestaña "Registro".
+                        <button type="button" id="goto-registro-btn" class="btn btn-info btn-sm ms-3">
+                            <i class="fas fa-arrow-right"></i> Ir a Registro
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    
+                    // Insertar el botón
+                    const alertsContainer = document.getElementById('alerts-container');
+                    if (alertsContainer) {
+                        alertsContainer.appendChild(navButton);
+                        
+                        // Configurar el evento del botón
+                        document.getElementById('goto-registro-btn')?.addEventListener('click', function() {
+                            // Intentar activar la pestaña de registro
+                            const registroTabLink = document.querySelector('a[href="#activity"]');
+                            if (registroTabLink) {
+                                if (typeof $ !== 'undefined') {
+                                    $(registroTabLink).tab('show');
+                                } else if (typeof bootstrap !== 'undefined') {
+                                    new bootstrap.Tab(registroTabLink).show();
+                                } else {
+                                    registroTabLink.click();
+                                }
+                            }
+                        });
+                    }
+                }, 500);
+            }        });
     }
 </script>
 
-<!-- Función para seleccionar un código aunque fallen los detalles -->
+<!-- Función para seleccionar código aunque fallen los detalles -->
 <script>
-    // Función para seleccionar un código aunque fallen los detalles
-    function selectCodeWithoutDetails(code, title) {
-        try {
-            console.log('Usando código sin detalles:', code, title);
-            
-            // Cerrar el modal de detalles
-            $('#icd-details-modal').modal('hide');
-            
-            // Crear datos simplificados
-            const simpleData = {
-                code: code,
-                title: title,
-                description: "No se pudieron obtener detalles adicionales para este código.",
-                uri: ""
-            };
-            
-            // Actualizar los campos de diagnóstico
-            if (window.icd11Client && typeof window.icd11Client.dispatchCodeSelected === 'function') {
-                window.icd11Client.dispatchCodeSelected(simpleData);
-                
-                // Mostrar mensaje de confirmación
-                showAlert('success', `Diagnóstico seleccionado: ${code} - ${title}`);
-            } else {
-                // Como respaldo, también actualizar directamente los campos
-                const codeField = document.getElementById('selected-code');
-                const diagnosisField = document.getElementById('selected-diagnosis');
-                
-                if (codeField) codeField.value = code || '';
-                if (diagnosisField) diagnosisField.value = title || '';
-                
-                showAlert('success', `Código ${code} seleccionado`);
-            }
-        } catch (err) {
-            console.error('Error al seleccionar código sin detalles:', err);
-            showAlert('danger', 'Error al seleccionar el código: ' + err.message);
+    // La función para seleccionar código sin detalles se carga desde icd11-integration.js
+    // donde se expone globalmente como window.selectCodeWithoutDetails
+    
+    // Cuando el usuario hace clic en "Usar este código sin detalles", se debe llamar a esta función
+    function handleSelectCodeWithoutDetails(code, title) {
+        // Llamar a la función global definida en icd11-integration.js
+        if (typeof window.selectCodeWithoutDetails === 'function') {
+            window.selectCodeWithoutDetails(code, title);
+        } else {
+            console.error('La función selectCodeWithoutDetails no está disponible. Asegúrate de que icd11-integration.js esté cargado correctamente.');
+            showAlert('danger', 'Error al seleccionar el código: La función necesaria no está disponible');
         }
     }
 </script>
-
